@@ -44,112 +44,91 @@
 # #########################################################################
 
 """
-Utility module.
+Data Management Lib for Sector 2-BM and 32-ID internal data transfer.
 """
 
-import numexpr as ne
-import argparse
-import numpy as np
+from __future__ import print_function
 
-from skimage import filters
-from skimage.measure import regionprops
+import os
+import subprocess
+import pathlib
+from paramiko import SSHClient
 
-from tomo2bm import log
-
-
-def center_of_mass(image):
-    
-    threshold_value = filters.threshold_otsu(image)
-    log.info("  ***  *** threshold_value: %f" % (threshold_value))
-    labeled_foreground = (image < threshold_value).astype(int)
-    properties = regionprops(labeled_foreground, image)
-    return properties[0].weighted_centroid
-    #return properties[0].centroid
+from tomoscan import log
 
 
-def normalize(arr, flat, dark, cutoff=None, out=None):
-    """
-    Normalize raw projection data using the flat and dark field projections.
+def check_remote_directory(remote_server, remote_dir):
+    try:
+        rcmd = 'ls ' + remote_dir
+        # rcmd is the command used to check if the remote directory exists
+        subprocess.check_call(['ssh', remote_server, rcmd], stderr=open(os.devnull, 'wb'), stdout=open(os.devnull, 'wb'))
+        log.warning('      *** remote directory %s exists' % (remote_dir))
+        return 0
 
-    Parameters
-    ----------
-    arr : ndarray
-        2D of projections.
-    flat : ndarray
-        2D flat field data.
-    dark : ndarray
-        2D dark field data.
-    cutoff : float, optional
-        Permitted maximum vaue for the normalized data.
-    out : ndarray, optional
-        Output array for result. If same as arr,
-        process will be done in-place.
-
-    Returns
-    -------
-    ndarray
-        Normalized 2D tomographic data.
-    """
-    arr = as_float32(arr)
-    l = np.float32(1e-5)
-    log.info('  ***  *** image size: [%d, %d]' % (flat.shape[0], flat.shape[1]))
-    # flat = np.mean(flat, axis=0, dtype=np.float32)
-    # dark = np.mean(dark, axis=0, dtype=np.float32)
-    flat = flat.astype('float32')
-    dark = dark.astype('float32')
-
-    denom = ne.evaluate('flat')
-    # denom = ne.evaluate('flat-dark')
-    ne.evaluate('where(denom<l,l,denom)', out=denom)
-    out = ne.evaluate('arr', out=out)
-    # out = ne.evaluate('arr-dark', out=out)
-    ne.evaluate('out/denom', out=out, truediv=True)
-    if cutoff is not None:
-        cutoff = np.float32(cutoff)
-        ne.evaluate('where(out>cutoff,cutoff,out)', out=out)
-    return out
+    except subprocess.CalledProcessError as e: 
+        # log.info('      *** return code = %d' % (e.returncode))
+        log.warning('      *** remote directory %s does not exist' % (remote_dir))
+        if e.returncode == 2:
+            return e.returncode
+        else:
+            log.error('  *** Unknown error code returned: %d' % (e.returncode))
+            return -1
 
 
-def yes_or_no(question):
-    answer = str(input(question + " (Y/N): ")).lower().strip()
-    while not(answer == "y" or answer == "yes" or answer == "n" or answer == "no"):
-        log.warning("Input yes or no")
-        answer = str(input(question + "(Y/N): ")).lower().strip()
-    if answer[0] == "y":
-        return True
+def create_remote_directory(remote_server, remote_dir):
+    cmd = 'mkdir -p ' + remote_dir
+    try:
+        # log.info('      *** sending command %s' % (cmd))
+        log.info('      *** creating remote directory %s' % (remote_dir))
+        subprocess.check_call(['ssh', remote_server, cmd])
+        log.info('      *** creating remote directory %s: Done!' % (remote_dir))
+        return 0
+
+    except subprocess.CalledProcessError as e:
+        log.error('  *** Error while creating remote directory. Error code: %d' % (e.returncode))
+        return -1
+
+
+def scp(global_PVs, params):
+
+    log.info(' ')
+    log.info('  *** Data transfer')
+
+    remote_server = params.remote_analysis_dir.split(':')[0]
+    remote_top_dir = params.remote_analysis_dir.split(':')[1]
+    log.info('      *** remote server: %s' % remote_server)
+    log.info('      *** remote top directory: %s' % remote_top_dir)
+
+    fname_origin = global_PVs['HDF1_FullFileName_RBV'].get(as_string=True)
+    p = pathlib.Path(fname_origin)
+    fname_destination = params.remote_analysis_dir + p.parts[-3] + '/' + p.parts[-2] + '/'
+    remote_dir = remote_top_dir + p.parts[-3] + '/' + p.parts[-2] + '/'
+
+    log.info('      *** origin: %s' % fname_origin)
+    log.info('      *** destination: %s' % fname_destination)
+    # log.info('      *** remote directory: %s' % remote_dir)
+
+    ret = check_remote_directory(remote_server, remote_dir)
+
+    if ret == 0:
+        os.system('scp -q ' + fname_origin + ' ' + fname_destination + '&')
+        log.info('  *** Data transfer: Done!')
+        return 0
+    elif ret == 2:
+        iret = create_remote_directory(remote_server, remote_dir)
+        if iret == 0: 
+            os.system('scp -q ' + fname_origin + ' ' + fname_destination + '&')
+        log.info('  *** Data transfer: Done!')
+        return 0
     else:
-        return False
+        log.error('  *** Quitting the copy operation')
+        return -1
 
 
-def positive_int(value):
-    """Convert *value* to an integer and make sure it is positive."""
-    result = int(value)
-    if result < 0:
-        raise argparse.ArgumentTypeError('Only positive integers are allowed')
-    return result
+def mkdir(remote_server, remote_dir):
 
-
-def restricted_float(x):
-
-    x = float(x)
-    if x < 0.0 or x > 1.0:
-        raise argparse.ArgumentTypeError("%r not in range [0.0, 1.0]"%(x,))
-    return x
-
-
-def as_dtype(arr, dtype, copy=False):
-    if not arr.dtype == dtype:
-        arr = np.array(arr, dtype=dtype, copy=copy)
-    return arr
-
-
-def as_ndarray(arr, dtype=None, copy=False):
-    if not isinstance(arr, np.ndarray):
-        arr = np.array(arr, dtype=dtype, copy=copy)
-    return arr
-
-
-def as_float32(arr):
-    arr = as_ndarray(arr, np.float32)
-    return as_dtype(arr, np.float32)
+    log.info('Creating directory on server %s:%s' % (remote_server, remote_dir))
+    ret = dm_lib.check_remote_directory(remote_server , remote_dir)
+    if ret == 2:
+        iret = dm_lib.create_remote_directory(remote_server, remote_dir)
 

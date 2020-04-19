@@ -67,18 +67,18 @@ from epics import PV
 from skimage.feature import register_translation
 from datetime import datetime
 
-from tomo2bm import log
-from tomo2bm import flir
-from tomo2bm import aps2bm
-from tomo2bm import config
-from tomo2bm import util
+from tomoscan import log
+from tomoscan import flir
+from tomoscan import pv
+from tomoscan import config
+from tomoscan import util
 
 SPHERE_DIAMETER = 0.5     # in mm
 GAP = 0.02                # empty space between the shere and the edge of the FOV used when measuring roll, in mm 
 
 def adjust(params):
 
-    global_PVs = aps2bm.init_general_PVs(params)
+    global_PVs = pv.init_general_PVs(params)
 
     params.file_name = None # so we don't run the flir._setup_hdf_writer 
 
@@ -124,7 +124,7 @@ def adjust(params):
 
 def adjust_center(params, dark_field, white_field):
 
-    global_PVs = aps2bm.init_general_PVs(params)
+    global_PVs = pv.init_general_PVs(params)
 
     log.warning(' *** Adjusting center ***')              
     for ang in [params.adjust_center_angle_1, params.adjust_center_angle_2]: 
@@ -186,7 +186,7 @@ def adjust_center(params, dark_field, white_field):
 
 def move_center(params, cmass_0, x, y):
 
-    global_PVs = aps2bm.init_general_PVs(params)
+    global_PVs = pv.init_general_PVs(params)
 
     log.info('  *** moving sample top X to the rotation center ***')
     global_PVs["Motor_Sample_Top_0"].put(global_PVs["Motor_Sample_Top_0"].get()+x*params.image_resolution/1000, wait=True, timeout=5.0)
@@ -198,7 +198,7 @@ def move_center(params, cmass_0, x, y):
  
 def check_center(params, white_field, dark_field):
 
-    global_PVs = aps2bm.init_general_PVs(params)
+    global_PVs = pv.init_general_PVs(params)
 
     log.warning('  *** CHECK center of mass for the centered sphere')
 
@@ -216,7 +216,7 @@ def adjust_roll(params, dark_field, white_field, angle_shift):
     # angle_shift is the correction that is needed to apply to the rotation axis position
     # to align the Z stage on top of the rotary stage with the beam
 
-    global_PVs = aps2bm.init_general_PVs(params)
+    global_PVs = pv.init_general_PVs(params)
 
     log.warning(' *** Adjusting roll ***')
     log.info('  *** moving rotary stage to %f deg position ***' % float(0+angle_shift))                                                
@@ -269,7 +269,7 @@ def adjust_roll(params, dark_field, white_field, angle_shift):
 
 def adjust_pitch(params, dark_field, white_field, angle_shift):
 
-    global_PVs = aps2bm.init_general_PVs(params)
+    global_PVs = pv.init_general_PVs(params)
     
     log.warning(' *** Adjusting pitch ***')              
     log.info('  *** acquire sphere after moving it along the beam axis by 1mm ***')             
@@ -305,7 +305,7 @@ def adjust_pitch(params, dark_field, white_field, angle_shift):
 
 def find_resolution(params, dark_field, white_field, angle_shift):
 
-    global_PVs = aps2bm.init_general_PVs(params)
+    global_PVs = pv.init_general_PVs(params)
 
     log.warning(' *** Find resolution ***')
     log.info('  *** moving rotary stage to %f deg position ***' % float(0+angle_shift))                                                            
@@ -322,7 +322,7 @@ def find_resolution(params, dark_field, white_field, angle_shift):
     sphere_1 = util.normalize(flir.take_image(global_PVs, params), white_field, dark_field)
 
     log.info('  *** moving X stage back to %f mm position' % (params.sample_in_position))
-    aps2bm.move_sample_in(global_PVs, params)
+    pv.move_sample_in(global_PVs, params)
 
     shift = register_translation(sphere_0, sphere_1, 100)
     log.info('  *** shift X: %f, Y: %f' % (shift[0][1],shift[0][0]))
@@ -331,12 +331,12 @@ def find_resolution(params, dark_field, white_field, angle_shift):
     log.warning('  *** found resolution %f um/pixel' % (image_resolution))    
     params.image_resolution = image_resolution
 
-    aps2bm.image_resolution_pv_update(global_PVs, params)            
+    pv.image_resolution_pv_update(global_PVs, params)            
 
 
 def adjust_focus(params):
     
-    global_PVs = aps2bm.init_general_PVs(params)
+    global_PVs = pv.init_general_PVs(params)
 
     step = 1
     

@@ -1,8 +1,8 @@
-========
-2bm-tomo
-========
+=========
+tomo scan
+=========
 
-**tomo** is commad-line-interface for running tomographic scans at beamline `beamline 2bm <https://docs2bm.readthedocs.io>`_ of the `Advanced Photon Source <https://www.aps.anl.gov/>`_
+**tomo** is commad-line-interface for running tomographic scans used at the `Advanced Photon Source <https://www.aps.anl.gov/>`_
 
 
 Installation
@@ -10,8 +10,8 @@ Installation
 
 ::
 
-    $ git clone https://github.com/xray-imaging/2bm-tomo.git
-    $ cd 2bm-tomo
+    $ git clone https://github.com/tomography/tomoscan.git
+    $ cd tomoscan
     $ python setup.py install
 
 in a prepared virtualenv or as root for system-wide installation.

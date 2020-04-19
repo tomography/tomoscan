@@ -1,5 +1,5 @@
 import subprocess
-from tomo2bm import log
+from tomoscan import log
 
 def run(fname):
     try:

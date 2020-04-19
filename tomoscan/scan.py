@@ -7,11 +7,11 @@ import time
 import signal
 import numpy as np
 
-from tomo2bm import dm
-from tomo2bm import log
-from tomo2bm import flir
-from tomo2bm import aps2bm
-from tomo2bm import config
+from tomoscan import dm
+from tomoscan import log
+from tomoscan import flir
+from tomoscan import aps2bm
+from tomoscan import config
 
 
 def fly_scan(params):

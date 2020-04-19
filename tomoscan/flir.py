@@ -54,8 +54,8 @@ import h5py
 import traceback
 import numpy as np
 
-from tomo2bm import aps2bm
-from tomo2bm import log
+from tomoscan import aps2bm
+from tomoscan import log
 
 FrameTypeData = 0
 FrameTypeDark = 1

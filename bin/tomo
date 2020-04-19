@@ -59,11 +59,11 @@ import shutil
 import pathlib
 from datetime import datetime
 
-from tomo2bm import config, __version__
-from tomo2bm import log
-from tomo2bm import scan
-from tomo2bm import aps2bm
-from tomo2bm import sphere
+from tomoscan import config, __version__
+from tomoscan import log
+from tomoscan import scan
+from tomoscan import aps2bm
+from tomoscan import sphere
 
 
 def init(args):
@@ -148,7 +148,7 @@ def main():
     if not os.path.exists(logs_home):
         os.makedirs(logs_home)
 
-    lfname = os.path.join(logs_home, 'tomo2bm_' + datetime.strftime(datetime.now(), "%Y-%m-%d_%H_%M_%S") + '.log')
+    lfname = os.path.join(logs_home, 'tomoscan_' + datetime.strftime(datetime.now(), "%Y-%m-%d_%H_%M_%S") + '.log')
  
     log.setup_custom_logger(lfname)
     log.info("Saving log at %s" % lfname)

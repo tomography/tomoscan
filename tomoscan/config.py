@@ -58,13 +58,13 @@ import numpy as np
 
 from collections import OrderedDict
 
-from tomo2bm import log
-from tomo2bm import util
-from tomo2bm import __version__
+from tomoscan import log
+from tomoscan import util
+from tomoscan import __version__
 
 home = os.path.expanduser("~")
 LOGS_HOME = os.path.join(home, 'logs')
-CONFIG_FILE_NAME = os.path.join(home, 'tomo2bm.conf')
+CONFIG_FILE_NAME = os.path.join(home, 'tomoscan.conf')
 
 SECTIONS = OrderedDict()
 
@@ -600,11 +600,11 @@ def log_values(args):
 
 
 def update_config(args):
-    # update tomo2bm.conf
+    # update tomoscan.conf
     sections = SCAN_PARAMS
     write(args.config, args=args, sections=sections)
 
-    # copy tomo2bm.conf to the raw data directory with a unique name (sample_name.conf)
+    # copy tomoscan.conf to the raw data directory with a unique name (sample_name.conf)
     log_fname = args.file_path + os.sep + args.file_name + '.conf'
     try:
         shutil.copyfile(args.config, log_fname)
@@ -618,6 +618,6 @@ def update_config(args):
 
 
 def update_sphere(args):
-       # update tomo2bm.conf
+       # update tomoscan.conf
         sections = SPHERE_PARAMS
         write(args.config, args=args, sections=sections)

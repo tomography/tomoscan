@@ -50,7 +50,7 @@ Epics PV definition for Sector 2-BM.
 import time
 
 from epics import PV
-from tomo2bm import log
+from tomoscan import log
 
 TESTING = False
 
