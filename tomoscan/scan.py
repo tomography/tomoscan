@@ -10,15 +10,15 @@ import numpy as np
 from tomoscan import dm
 from tomoscan import log
 from tomoscan import flir
-from tomoscan import aps2bm
+from tomoscan import pv
 from tomoscan import config
 
 
 def fly_scan(params):
 
     tic =  time.time()
-    global_PVs = aps2bm.init_general_PVs(params)
-    aps2bm.user_info_params_update_from_pv(global_PVs, params)
+    global_PVs = pv.init_general_PVs(params)
+    pv.user_info_params_update_from_pv(global_PVs, params)
 
     try: 
         detector_sn = global_PVs['Cam1_SerialNumber'].get()
@@ -79,8 +79,8 @@ def fly_scan(params):
 def fly_scan_vertical(params):
 
     tic =  time.time()
-    global_PVs = aps2bm.init_general_PVs(params)
-    aps2bm.user_info_params_update_from_pv(global_PVs, params)
+    global_PVs = pv.init_general_PVs(params)
+    pv.user_info_params_update_from_pv(global_PVs, params)
 
     try: 
         detector_sn = global_PVs['Cam1_SerialNumber'].get()
@@ -155,8 +155,8 @@ def fly_scan_vertical(params):
 def fly_scan_mosaic(params):
 
     tic =  time.time()
-    global_PVs = aps2bm.init_general_PVs(params)
-    aps2bm.user_info_params_update_from_pv(global_PVs, params)
+    global_PVs = pv.init_general_PVs(params)
+    pv.user_info_params_update_from_pv(global_PVs, params)
 
     try: 
         detector_sn = global_PVs['Cam1_SerialNumber'].get()
@@ -248,8 +248,8 @@ def fly_scan_mosaic(params):
 
 def dummy_scan(params):
     tic =  time.time()
-    global_PVs = aps2bm.init_general_PVs(params)
-    aps2bm.user_info_params_update_from_pv(global_PVs, params)
+    global_PVs = pv.init_general_PVs(params)
+    pv.user_info_params_update_from_pv(global_PVs, params)
 
     try: 
         detector_sn = global_PVs['Cam1_SerialNumber'].get()
@@ -295,14 +295,14 @@ def tomo_fly_scan(global_PVs, params):
         params.sample_rotation_start = rotation_end
         params.sample_rotation_end = rotation_start
 
-    aps2bm.set_pso(global_PVs, params)
+    pv.set_pso(global_PVs, params)
 
     # fname = global_PVs['HDF1_FileName'].get(as_string=True)
     log.info('  *** File name prefix: %s' % params.file_name)
     flir.set(global_PVs, params) 
 
-    aps2bm.open_shutters(global_PVs, params)
-    aps2bm.move_sample_in(global_PVs, params)
+    pv.open_shutters(global_PVs, params)
+    pv.move_sample_in(global_PVs, params)
 
 
     theta = flir.acquire(global_PVs, params)
@@ -316,11 +316,11 @@ def tomo_fly_scan(global_PVs, params):
         # print('\x1b[2;30;41m' + '  *** Rotary Stage ERROR. Theta stopped at: ***' + theta_end + '\x1b[0m')
         log.error('  *** Rotary Stage ERROR. Theta stopped at: %s ***' % str(theta_end))
 
-    aps2bm.move_sample_out(global_PVs, params)
+    pv.move_sample_out(global_PVs, params)
     flir.acquire_flat(global_PVs, params)
-    aps2bm.move_sample_in(global_PVs, params)
+    pv.move_sample_in(global_PVs, params)
 
-    aps2bm.close_shutters(global_PVs, params)
+    pv.close_shutters(global_PVs, params)
     time.sleep(2)
 
     flir.acquire_dark(global_PVs, params)
@@ -405,7 +405,7 @@ def stop_scan(global_PVs, params):
         log.error('  *** Stopping the scan: PLEASE WAIT')
         global_PVs['Motor_SampleRot_Stop'].put(1)
         global_PVs['HDF1_Capture'].put(0)
-        aps2bm.wait_pv(global_PVs['HDF1_Capture'], 0)
+        pv.wait_pv(global_PVs['HDF1_Capture'], 0)
         flir.init(global_PVs, params)
         log.error('  *** Stopping scan: Done!')
         ##init(global_PVs, params)

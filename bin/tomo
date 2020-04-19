@@ -62,7 +62,7 @@ from datetime import datetime
 from tomoscan import config, __version__
 from tomoscan import log
 from tomoscan import scan
-from tomoscan import aps2bm
+from tomoscan import pv
 from tomoscan import sphere
 
 
