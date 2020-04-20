@@ -1,0 +1,390 @@
+# Database for EPICS PVS for tomography data collection software
+
+######################
+# EPICS PVs Names
+######################
+
+record(stringout, "$(P)$(R)CameraPVPrefix")
+{
+   field(VAL,  "$(CAMERA)")
+}
+
+record(stringout, "$(P)$(R)MCSPVPrefix")
+{
+   field(VAL,  "$(MCS)")
+}
+
+record(stringout, "$(P)$(R)CloseShutterPVName")
+{
+   field(VAL,  "$(CLOSE_SHUTTER)")
+}
+
+record(stringout, "$(P)$(R)CloseShutterValue")
+{
+   field(VAL,  "$(CLOSE_VALUE)")
+}
+
+record(stringout, "$(P)$(R)OpenShutterPVName")
+{
+   field(VAL,  "$(OPEN_SHUTTER)")
+}
+
+record(stringout, "$(P)$(R)OpenShutterValue")
+{
+   field(VAL,  "$(OPEN_VALUE)")
+}
+
+record(stringout, "$(P)$(R)CloseShutterValue")
+{
+   field(VAL,  "$(CLOSE_VALUE)")
+}
+
+record(stringout, "$(P)$(R)OpenShutterPVName")
+{
+   field(VAL,  "$(OPEN_SHUTTER)")
+}
+
+record(stringout, "$(P)$(R)OpenShutterValue")
+{
+   field(VAL,  "$(OPEN_VALUE)")
+}
+record(stringout, "$(P)$(R)RotationPVName")
+{
+   field(VAL,  "$(ROTATION)")
+}
+
+record(stringout, "$(P)$(R)SampleXPVName")
+{
+   field(VAL,  "$(SAMPLE_X)")
+}
+
+record(stringout, "$(P)$(R)SampleYPVName")
+{
+   field(VAL,  "$(SAMPLE_Y)")
+}
+
+record(stringout, "$(P)$(R)BeamReadyPVName")
+{
+   field(VAL,  "$(BEAM_READY)")
+}
+
+record(stringout, "$(P)$(R)BeamReadyValue")
+{
+   field(VAL,  "$(READY_VALUE)")
+}
+
+######################
+# Energy information
+######################
+
+record(mbbo, "$(P)$(R)EnergyMode")
+{
+   field(ZRVL, "0")
+   field(ZRST, "Mono")
+   field(ONVL, "1")
+   field(ONST, "Pink")
+   field(TWVL, "2")
+   field(TWST, "White")
+}
+
+######################
+# Optics information
+######################
+
+record(stringout, "$(P)$(R)ScintillatorType")
+{
+   field(VAL,  "Unknown")
+}
+
+record(ao, "$(P)$(R)ScintillatorThickness")
+{
+   field(PREC,  "0")
+}
+
+record(ao, "$(P)$(R)ImagePixelSize")
+{
+   field(PREC, "2")
+   field(EGU,  "microns")
+}
+
+record(ao, "$(P)$(R)DetectorPixelSize")
+{
+   field(PREC, "2")
+   field(EGU,  "microns")
+}
+
+record(stringout, "$(P)$(R)CameraObjective")
+{
+   field(VAL,  "Unknown")
+}
+
+record(ao, "$(P)$(R)CameraTubeLength")
+{
+   field(PREC, "0")
+   field(EGU,  "mm")
+}
+
+######################
+# Rotation axis
+######################
+
+record(ao, "$(P)$(R)RotationStart")
+{
+   field(PREC,  "3")
+}
+
+record(ao, "$(P)$(R)RotationStep")
+{
+   field(PREC,  "3")
+}
+
+record(longout, "$(P)$(R)NumAngles")
+{
+}
+
+record(bo, "$(P)$(R)ReturnRotation")
+{
+   field(ZNAM, "No")
+   field(ONAM, "Yes")
+}
+
+######################
+# Dark field control
+######################
+
+record(longout, "$(P)$(R)NumDarkFields")
+{
+}
+
+record(mbbo, "$(P)$(R)DarkFieldMode")
+{
+   field(ZRVL, "0")
+   field(ZRST, "Start")
+   field(ONVL, "1")
+   field(ONST, "End")
+   field(TWVL, "2")
+   field(TWST, "Both")
+   field(THVL, "3")
+   field(THST, "None")
+}
+
+record(ao, "$(P)$(R)DarkFieldValue")
+{
+   field(PREC,  "0")
+}
+
+######################
+# Flat field control
+######################
+
+record(longout, "$(P)$(R)NumFlatFields")
+{
+}
+
+record(mbbo, "$(P)$(R)FlatFieldMode")
+{
+   field(ZRVL, "0")
+   field(ZRST, "Start")
+   field(ONVL, "1")
+   field(ONST, "End")
+   field(TWVL, "2")
+   field(TWST, "Both")
+   field(THVL, "3")
+   field(THST, "None")
+}
+
+record(mbbo, "$(P)$(R)FlatFieldAxis")
+{
+   field(ZRVL, "1")
+   field(ZRST, "X")
+   field(ONVL, "2")
+   field(ONST, "Y")
+   field(TWVL, "3")
+   field(TWST, "Both")
+}
+
+record(ao, "$(P)$(R)FlatFieldValue")
+{
+   field(PREC,  "0")
+}
+
+record(ao, "$(P)$(R)SampleInX")
+{
+   field(PREC,  "3")
+}
+
+record(ao, "$(P)$(R)SampleOutX")
+{
+   field(PREC,  "3")
+}
+
+record(ao, "$(P)$(R)SampleInY")
+{
+   field(PREC,  "3")
+}
+
+record(ao, "$(P)$(R)SampleOutY")
+{
+   field(PREC,  "3")
+}
+
+record(sseq, "$(P)$(R)MoveSampleIn")
+{
+   field(SELL, "$(P)$(R)FlatFieldAxis.RVAL")
+   field(SELM, "Mask")
+   field(DOL1, "$(P)$(R)SampleInX")
+   field(LNK1, "$(SAMPLE_X) CA")
+   field(WAIT1,"Wait")
+   field(DOL2, "$(P)$(R)SampleInY")
+   field(LNK2, "$(SAMPLE_Y) CA")
+   field(WAIT2,"Wait")
+}
+
+record(sseq, "$(P)$(R)MoveSampleOut")
+{
+   field(SELL, "$(P)$(R)FlatFieldAxis.RVAL")
+   field(SELM, "Mask")
+   field(DOL1, "$(P)$(R)SampleOutX")
+   field(LNK1, "$(SAMPLE_X) CA")
+   field(WAIT1,"Wait")
+   field(DOL2, "$(P)$(R)SampleOutY")
+   field(LNK2, "$(SAMPLE_Y) CA")
+   field(WAIT2,"Wait")
+}
+
+######################
+# Sample information
+######################
+
+record(stringout, "$(P)$(R)SampleName")
+{
+   field(VAL,  "Unknown")
+}
+
+record(stringout, "$(P)$(R)SampleDescription1")
+{
+   field(VAL,  "Unknown")
+}
+
+record(stringout, "$(P)$(R)SampleDescription2")
+{
+   field(VAL,  "Unknown")
+}
+
+record(stringout, "$(P)$(R)SampleDescription3")
+{
+   field(VAL,  "Unknown")
+}
+
+######################
+# User information
+######################
+
+record(stringout, "$(P)$(R)UserName")
+{
+   field(VAL,  "Unknown")
+}
+
+record(stringout, "$(P)$(R)UserInstitution")
+{
+   field(VAL,  "Unknown")
+}
+
+record(stringout, "$(P)$(R)UserBadge")
+{
+   field(VAL,  "Unknown")
+}
+
+record(stringout, "$(P)$(R)UserEmail")
+{
+   field(VAL,  "Unknown")
+}
+
+record(stringout, "$(P)$(R)ProposalNumber")
+{
+   field(VAL,  "Unknown")
+}
+
+record(stringout, "$(P)$(R)ProposalTitle")
+{
+   field(VAL,  "Unknown")
+}
+
+record(stringout, "$(P)$(R)ESAFNumber")
+{
+   field(VAL,  "Unknown")
+}
+
+######################
+# Data collection
+######################
+
+record(longin,"$(P)$(R)OTFGroups") {
+}
+
+record(ao, "$(P)$(R)ExposureTime")
+{
+   field(PREC,  "3")
+}
+
+record(bi, "$(P)$(R)ScanReady") {
+   field(ZNAM,"Ready")
+   field(ZSV, "NO_ALARM")
+   field(ONAM,"Not ready")
+   field(OSV, "MAJOR")
+}
+
+
+record(busy,"$(P)$(R)StartScan")
+{
+   field(ZNAM,"Done")
+   field(ONAM,"Start")
+   field(VAL, "0")
+}
+
+record(bo,"$(P)$(R)AbortScan")
+{
+   field(ZNAM,"No")
+   field(ONAM,"Yes")
+}
+
+
+######################
+# File setup
+######################
+
+record(waveform, "$(P)$(R)FilePath")
+{
+   field(FTVL, "UCHAR")
+   field(NELM, "256")
+}
+
+record(waveform, "$(P)$(R)FileName")
+{
+   field(FTVL, "UCHAR")
+   field(NELM, "256")
+}
+
+
+######################
+# Scan status
+######################
+
+record(waveform,"$(P)$(R)ScanStatus") 
+{
+   field(FTVL, "UCHAR")
+   field(NELM, "256")
+}
+
+record(stringout,"$(P)$(R)ScanPoint")
+{
+}
+
+record(stringout, "$(P)$(R)ElapsedTime")
+{
+}
+
+record(stringout, "$(P)$(R)RemainingTime")
+{
+}
+
