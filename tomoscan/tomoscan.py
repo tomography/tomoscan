@@ -9,15 +9,17 @@ class tomoscan:
     if (autoSettingsFile != None):
       self.readAutoSettingsFile(autoSettingsFile, macros)
 
+    self.epicsPVs = {**self.configPVs, **self.controlPVs}
+
+  def showPVs(self):
     print("configPVS:")
     for pv in self.configPVs:
       print(pv, ":", self.configPVs[pv].get(as_string=True))
 
+    print("")
     print("controlPVS:")
     for pv in self.controlPVs:
       print(pv, ":", self.controlPVs[pv].get(as_string=True))
-
-    self.epicsPVs = {**self.configPVs, **self.controlPVs}
 
   def readAutoSettingsFile(self, autoSettingsFile, macros):
     f = open(autoSettingsFile)
