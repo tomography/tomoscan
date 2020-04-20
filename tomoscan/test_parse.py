@@ -1,10 +1,20 @@
 from xml.dom.minidom import parseString
 from epics import PV
+from collections import namedtuple
 
+class TomoParam(namedtuple('TomoParam', ['name', 'type', 'source', 'dbrtype', 'description', 'pv'])):
+
+  def get(self):
+    if (self.dbrtype == "DBR_STRING"):
+      self.value = self.pv.get(as_string=True)
+    else:
+      self.value = self.pv.get()
+    return self.value;
 
 def test_parse(xmlFile, macros=[]):
 
     epicsPVs = {}
+    TomoParams = {}
 
     # A valid first line of an xml file will be optional whitespace followed by '<'
     xml_lines = open(xmlFile).read()
@@ -34,8 +44,9 @@ def test_parse(xmlFile, macros=[]):
         if node.nodeName == "Attributes":
             for n in elements(node):
                 handle_node(n)
-        elif node.hasAttribute("name"):
-            name = str(node.getAttribute("name"))
+        elif node.nodeName == "Attribute":
+            if (node.hasAttribute("name")):
+              name = str(node.getAttribute("name"))
             if node.hasAttribute("type"):
               type = str(node.getAttribute("type"))
             if node.hasAttribute("source"):
@@ -45,12 +56,12 @@ def test_parse(xmlFile, macros=[]):
             if node.hasAttribute("description"):
               description = str(node.getAttribute("description"))
             if (name != None) and (source != None) and (type == "EPICS_PV"):
-              epicsPVs[name] = PV(source)
-        else:
-            print("Node has no name attribute", node)
+              pv = PV(source)
+              epicsPVs[name] = pv
+              TomoParams[name] = TomoParam(name, type, source, dbrtype, description, pv)
     
     # list of all nodes    
     for node in elements(elements(xml_root)[0]):
         handle_node(node)
-    for key in epicsPVs:
-      print(key, ":", epicsPVs[key], ":", epicsPVs[key].get(as_string=True))
+    for key in TomoParams:
+      print(key, ":", TomoParams[key].get())
