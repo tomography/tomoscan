@@ -13,12 +13,29 @@ class tomoscan:
         prefix = self.pvPrefixes['Camera']
         if (prefix != None):
             camPrefix = prefix + 'cam1:'
+            self.controlPVs['CamManufacturer']    = PV(camPrefix + 'Manufacturer_RBV')
+            self.controlPVs['CamModel']           = PV(camPrefix + 'Model_RBV')
             self.controlPVs['CamAcquire']         = PV(camPrefix + 'Acquire')
             self.controlPVs['CamImageMode']       = PV(camPrefix + 'ImageMode')
             self.controlPVs['CamTriggerMode']     = PV(camPrefix + 'TriggerMode')
             self.controlPVs['CamNumImages']       = PV(camPrefix + 'NumImages')
             self.controlPVs['CamAcquireTime']     = PV(camPrefix + 'AcquireTime')
+            self.controlPVs['CamAcquireTimeRBV']  = PV(camPrefix + 'AcquireTime_RBV')
+            self.controlPVs['CamBinX']            = PV(camPrefix + 'BinX')
+            self.controlPVs['CamBinY']            = PV(camPrefix + 'BinY')
             self.controlPVs['CamWaitForPlugins']  = PV(camPrefix + 'WaitForPlugins')
+            
+            # If this is a Point Grey camera then assume we are running ADSpinnaker
+            # and create some PVs specific to that driver
+            manufacturer = self.controlPVs['CamManufacturer'].char_value
+            model = self.controlPVs['CamModel'].char_value
+            if (manufacturer.find('Point Grey') != -1):
+                self.controlPVs['CamExposureMode']   = PV(camPrefix + 'ExposureMode')
+                self.controlPVs['CamTriggerOverlap'] = PV(camPrefix + 'TriggerOverlap')
+                self.controlPVs['CamPixelFormat']    = PV(camPrefix + 'PixelFormat')
+                if (model.find('Grasshopper3') != -1):
+                    self.controlPVs['CamVideoMode']  = PV(camPrefix + 'GC_VideoMode_RBV')
+ 
             hdfPrefix = prefix + 'HDF1:'
             self.controlPVs['HdfFileWriteMode']   = PV(hdfPrefix + 'FileWriteMode')
             self.controlPVs['HdfNumCapture']      = PV(hdfPrefix + 'NumCapture')
@@ -34,6 +51,17 @@ class tomoscan:
             fileName = self.configPVs['FileName'].char_value
             self.controlPVs['HdfFileName'].put(filePath)
              
+        prefix = self.pvPrefixes['MCS']
+        if (prefix != None):
+            self.controlPVs['MCSEraseStart']      = PV(prefix + 'EraseStart')
+            self.controlPVs['MCSStopAll']         = PV(prefix + 'StopAll')
+            self.controlPVs['MCSPrescale']        = PV(prefix + 'Prescale')
+            self.controlPVs['MCSDwell']           = PV(prefix + 'Dwell')
+            self.controlPVs['MCSLNEOutputWidth']  = PV(prefix + 'LNEOutputWidth')
+            self.controlPVs['MCSChannelAdvance']  = PV(prefix + 'ChannelAdvance')
+            self.controlPVs['MCSMaxChannels']     = PV(prefix + 'MaxChannels')
+            self.controlPVs['MCSNuseAll']         = PV(prefix + 'NuseAll')
+ 
         self.epicsPVs = {**self.configPVs, **self.controlPVs}
 
     def showPVs(self):
@@ -158,3 +186,37 @@ class tomoscan:
             self.collectDarkFields(numDarkFields)
             self.openShutter()
 
+    def computeFrameTime(self):
+        exposure = self.epicsPVs['ExposureTime'].value
+        self.epicsPVs['CamAcquireTime'].put(exposure, wait=True)
+        biny = self.epicsPVs['CamBinY'].get(as_string = False)
+        # The readout time of the camera depends on the model, Format7Mode and the PixelFormat.
+        # These measurements were done with firmware 2.14.3 and Flycap2 8.3.1.
+        # The measured times in ms with 100 microsecond exposure time and 1000 frames without dropping any are:
+        cameraModel = self.epicsPVs['CamModel'].get(as_string=True)
+        pixelFormat = self.epicsPVs['CamPixelFormat'].get(as_string=True)
+        if (cameraModel == 'Grasshopper3 GS3-U3-23S6M'): 
+            videoMode   = self.epicsPVs['CamVideoMode'].get(as_string=True)
+            print(pixelFormat, videoMode)
+            readoutTimes = {'Mono8':        {'Mode0': 6.2, 'Mode1': 6.2, 'Mode5': 6.2, 'Mode7': 7.9},
+                            'Mono12Packed': {'Mode0': 9.2, 'Mode1': 6.2, 'Mode5': 6.2, 'Mode7': 11.5},
+                            'Mono16':       {'Mode0': 12.2,'Mode1': 6.2, 'Mode5': 6.2, 'Mode7': 12.2}}       
+            readout = readoutTimes[pixelFormat][videoMode]/1000.
+        
+        if (readout == None):
+            print('Unsupported combination of camera model, pixel format and video mode: ',
+                  cameraModel, pixelFormat, videoMode)
+            return 0
+
+        # We need to use the actual exposure time that the camera is using, not the requested exposure time
+        exposure = self.epicsPVs['CamAcquireTimeRBV'].value
+        # Add 1 or 5 ms to exposure time for margin
+        if (exposure > 2.3):
+            time = exposure + .005 
+        else:
+            time = exposure + .001
+
+        # If the time is less than the readout time then use the readout time
+        if (time < readout):
+            time = readout
+        return time
