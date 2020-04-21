@@ -78,7 +78,7 @@ def init(global_PVs, params):
         global_PVs['Cam1Acquire'].put(DetectorAcquire)
         pv.wait_pv(global_PVs['Cam1Acquire'], DetectorAcquire, 2)
         global_PVs['Proc1_Callbacks'].put('Disable')
-        global_PVs['Proc1_Filter_Enable'].put('Disable')
+        global_PVs['Proc1EnableFilter'].put('Disable')
         global_PVs['HDFArrayPort'].put('PG3')
         log.info('  *** init Point Grey camera: Done!')
     elif (params.camera_ioc_prefix == '2bmbSP1:'):   
@@ -207,7 +207,7 @@ def _setup_hdf_writer(global_PVs, params, fname=None):
             global_PVs['Proc1_Enable_High_Clip'].put('Disable', wait=True)
 
             global_PVs['Proc1_Callbacks'].put('Enable', wait=True)
-            global_PVs['Proc1_Filter_Enable'].put('Enable', wait=True)
+            global_PVs['Proc1EnableFilter'].put('Enable', wait=True)
             global_PVs['HDFArrayPort'].put('PROC1', wait=True)
             global_PVs['Proc1_Filter_Type'].put(Recursive_Filter_Type, wait=True)
             global_PVs['Proc1_Num_Filter'].put(int(params.recursive_filter_n_images), wait=True)
@@ -216,8 +216,8 @@ def _setup_hdf_writer(global_PVs, params, fname=None):
             global_PVs['Proc1_Filter_Callbacks'].put('Array N only', wait=True)
             log.info('    *** Recursive Filter Enabled: Done!')
         else:
-            global_PVs['Proc1_Filter_Enable'].put('Disable')
-            global_PVs['HDFArrayPort'].put(global_PVs['Proc1_ArrayPort'].get())
+            global_PVs['Proc1EnableFilter'].put('Disable')
+            global_PVs['HDFArrayPort'].put(global_PVs['Proc1NDArrayPort'].get())
         global_PVs['HDFAutoSave'].put('Yes')
         global_PVs['HDFDeleteDriverFile'].put('No')
         global_PVs['HDFEnableCallbacks'].put('Enable')

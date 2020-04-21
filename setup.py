@@ -6,7 +6,7 @@ class PostInstallCommand(install):
     """Post-installation for installation mode."""
     def run(self):        
         install.run(self)
-        from tomo2bm.auto_complete import create_complete_scan
+        from tomoscan.auto_complete import create_complete_scan
         import pathlib
         create_complete_scan.run(str(pathlib.Path.home())+'/complete_tomo.sh')
         print('For autocomplete please run: \n\n $ source '+str(pathlib.Path.home())+'/complete_tomo.sh\n'     )

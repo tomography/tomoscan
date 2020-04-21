@@ -158,14 +158,6 @@ SECTIONS['detector'] = {
         'default': 3.45,
         'type': float,
         'help': " "},
-    'camera-objective': {
-        'default': 5,
-        'type': float,
-        'help': " "},
-    'camera-tube-length': {
-        'default': 1,
-        'type': float,
-        'help': " "},
     'camera-readout': {
         'choices': [0.006, 0.01],
         'default': 0.01,
@@ -320,7 +312,7 @@ SECTIONS['scan'] = {
         'type': util.positive_int,
         'default': 1,
         'help': " "},
-    'num-dark-images': {
+    'num-dark-fields': {
         'type': util.positive_int,
         'default': 20,
         'help': " "},
@@ -410,6 +402,10 @@ SECTIONS['stage-settings'] = {
 SECTIONS['sphere'] = {
     'camera-objective': {
         'default': None,
+        'type': float,
+        'help': " "},
+    'camera-tube-length': {
+        'default': 1,
         'type': float,
         'help': " "},
     'image-pixel-size': {
