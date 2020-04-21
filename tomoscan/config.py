@@ -154,11 +154,11 @@ SECTIONS['detector'] = {
         'default': 0.1,
         'type': float,
         'help': " "},
-    'ccd-pixel-size': {
+    'detector-pixel-size': {
         'default': 3.45,
         'type': float,
         'help': " "},
-    'ccd-readout': {
+    'camera-readout': {
         'choices': [0.006, 0.01],
         'default': 0.01,
         'type': float,
@@ -220,7 +220,15 @@ SECTIONS['sample'] = {
         'default': None,
         'type': str,
         'help': " "},
-    'sample-description': {
+    'sample-description1': {
+        'default': None,
+        'type': str,
+        'help': " "},
+    'sample-description2': {
+        'default': None,
+        'type': str,
+        'help': " "},
+    'sample-description3': {
         'default': None,
         'type': str,
         'help': " "},
@@ -231,26 +239,39 @@ SECTIONS['sample'] = {
     }
 
 SECTIONS['sample-motion'] = {
-    'sample-rotation-start': {
+    'rotation-start': {
         'default': 0,
         'type': float,
         'help': " "},
-    'sample-rotation-end': {
+    'rotation-end': {
         'default': 180,
         'type': float,
         'help': " "},
-    'sample-in-position': {
+    'rotation-step': {
+        'default': 1,
+        'type': float,
+        'help': " "},
+    'sample-in-x': {
         'default': 0,
         'type': float,
         'help': "Sample position during data collection"},
-    'sample-out-position': {
+    'sample-out-x': {
         'default': 1,
         'type': float,
         'help': "Sample position for white field images"},
-    'sample-in-out': {
-        'default': 'horizontal',
+    'sample-in-y': {
+        'default': 0,
+        'type': float,
+        'help': "Sample position during data collection"},
+    'sample-out-y': {
+        'default': 1,
+        'type': float,
+        'help': "Sample position for white field images"},
+    'flat-field-axis': {
         'choices': ['horizontal', 'vertical'],
-        'help': "which stage is used to take the white field"},
+        'default': 'horizontal',
+        'type': str,
+        'help': " "},
     'sample-move-freeze': {
         'default': False,
         'action': 'store_true',
@@ -271,22 +292,37 @@ SECTIONS['scan'] = {
         'default': 'standard',
         'type': str,
         'help': " "},
-    'num-projections': {
+    'num-angles': {
         'type': util.positive_int,
         'default': 1500,
-        'help': " "},
-    'num-white-images': {
+        'help': " "},    
+    'return-rotation': {
+        'default': False,
+        'action': 'store_true',
+        'help': "True: return to rotation start at the end of the scan"},
+    'num-flat-fields': {
         'type': util.positive_int,
         'default': 20,
         'help': " "},
-    'num-dark-images': {
+    'flat-field-mode': {
+        'default': 'option1',
+        'choices': ['option1', 'option2'],
+        'help': "to be configured"},
+    'flat-field-value': {
+        'type': util.positive_int,
+        'default': 1,
+        'help': " "},
+    'num-dark-fields': {
         'type': util.positive_int,
         'default': 20,
         'help': " "},
-    'white-field-motion': {
-        'choices': ['horizontal', 'vertical'],
-        'default': 'horizontal',
-        'type': str,
+    'dark-field-mode': {
+        'default': 'option1',
+        'choices': ['option1', 'option2'],
+        'help': "to be configured"},
+    'dark-field-value': {
+        'type': util.positive_int,
+        'default': 1,
         'help': " "},
     'vertical-scan-start': {
         'default': 0,
@@ -364,11 +400,15 @@ SECTIONS['stage-settings'] = {
     }
 
 SECTIONS['sphere'] = {
-    'lens-magnification': {
+    'camera-objective': {
         'default': None,
         'type': float,
         'help': " "},
-    'image-resolution': {
+    'camera-tube-length': {
+        'default': 1,
+        'type': float,
+        'help': " "},
+    'image-pixel-size': {
         'default': None,
         'type': float,
         'help': "Detector pixel size in micron/pixel"},

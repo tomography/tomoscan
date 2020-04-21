@@ -56,9 +56,9 @@ TESTING = True
 
 ShutterAisFast = True           # True: use m7 as shutter; False: use Front End Shutter
 
-ShutterA_Open_Value = 1
-ShutterA_Close_Value = 0
-ShutterB_Open_Value = 1
+ShutterAOpen_Value = 1
+ShutterAClose_Value = 0
+ShutterBOpen_Value = 1
 ShutterB_Close_Value = 0
 
 Recursive_Filter_Type = 'RecursiveAve'
@@ -100,52 +100,52 @@ def init_general_PVs(params):
     global_PVs['Camera_IOC_Prefix'] = PV('2bmS1:ExpInfo:CameraIOCPrefix.VAL')
 
     # shutter pv's
-    global_PVs['ShutterA_Open'] = PV('2bma:A_shutter:open.VAL')
-    global_PVs['ShutterA_Close'] = PV('2bma:A_shutter:close.VAL')
-    global_PVs['ShutterA_Move_Status'] = PV('PA:02BM:STA_A_FES_OPEN_PL')
-    global_PVs['ShutterB_Open'] = PV('2bma:B_shutter:open.VAL')
+    global_PVs['ShutterAOpen'] = PV('2bma:A_shutter:open.VAL')
+    global_PVs['ShutterAClose'] = PV('2bma:A_shutter:close.VAL')
+    global_PVs['ShutterAMoveStatus'] = PV('PA:02BM:STA_A_FES_OPEN_PL')
+    global_PVs['ShutterBOpen'] = PV('2bma:B_shutter:open.VAL')
     global_PVs['ShutterB_Close'] = PV('2bma:B_shutter:close.VAL')
     global_PVs['ShutterB_Move_Status'] = PV('PA:02BM:STA_B_SBS_OPEN_PL')
 
 
     # Experimment Info
-    global_PVs['User_Name'] = PV('2bmS1:ExpInfo:UserName.VAL')
-    global_PVs['User_Email'] = PV('2bmS1:ExpInfo:UserEmail.VAL')
-    global_PVs['User_Badge'] = PV('2bmS1:ExpInfo:UserBadge.VAL')
-    global_PVs['Proposal_Number'] = PV('2bmS1:ExpInfo:ProposalNumber.VAL')
-    global_PVs['Proposal_Title'] = PV('2bmS1:ExpInfo:ProposalTitle.VAL')
-    global_PVs['User_Institution'] = PV('2bmS1:ExpInfo:UserInstitution.VAL')
-    global_PVs['User_Info_Update'] = PV('2bmS1:ExpInfo:UserInfoUpdate.VAL')
+    global_PVs['UserName'] = PV('2bmS1:ExpInfo:UserName.VAL')
+    global_PVs['UserEmail'] = PV('2bmS1:ExpInfo:UserEmail.VAL')
+    global_PVs['UserBadge'] = PV('2bmS1:ExpInfo:UserBadge.VAL')
+    global_PVs['ProposalNumber'] = PV('2bmS1:ExpInfo:ProposalNumber.VAL')
+    global_PVs['ProposalTitle'] = PV('2bmS1:ExpInfo:ProposalTitle.VAL')
+    global_PVs['UserInstitution'] = PV('2bmS1:ExpInfo:UserInstitution.VAL')
+    global_PVs['UserInfoUpdate'] = PV('2bmS1:ExpInfo:UserInfoUpdate.VAL')
     global_PVs['Time'] = PV('S:IOC:timeOfDayISO8601')
 
 
-    global_PVs['Scintillator_Type'] = PV('2bmS1:ExpInfo:ScintillatorType.VAL')
-    global_PVs['Scintillator_Thickness'] = PV('2bmS1:ExpInfo:ScintillatorThickness.VAL')
+    global_PVs['ScintillatorType'] = PV('2bmS1:ExpInfo:ScintillatorType.VAL')
+    global_PVs['ScintillatorThickness'] = PV('2bmS1:ExpInfo:ScintillatorThickness.VAL')
 
-    global_PVs['Image_Pixel_Size'] = PV('2bmS1:ExpInfo:ImagePixelSize.VAL')
-    global_PVs['Detector_Pixel_Size'] = PV('2bmS1:ExpInfo:DetectorPixelSize.VAL')
+    global_PVs['ImagePixelSize'] = PV('2bmS1:ExpInfo:ImagePixelSize.VAL')
+    global_PVs['DetectorPixelSize'] = PV('2bmS1:ExpInfo:DetectorPixelSize.VAL')
     global_PVs['CameraObjective'] = PV('2bmS1:CameraObjective.VAL')
-    global_PVs['Camera_Tube_Length'] = PV('22bmS1:ExpInfo:CameraTubeLength.VAL')
+    global_PVs['CameraTubeLength'] = PV('22bmS1:ExpInfo:CameraTubeLength.VAL')
 
     # energy info
     global_PVs['Energy'] = PV('2bmS1:ExpInfo:Energy.VAL')
-    global_PVs['Energy_Mode'] = PV('2bmS1:ExpInfo:EnergyMode.VAL')
+    global_PVs['EnergyMode'] = PV('2bmS1:ExpInfo:EnergyMode.VAL')
     global_PVs['Filters'] = PV('2bmS1:ExpInfo:Filters.VAL')
 
     # scan info
-    global_PVs['Rotation_Start'] = PV('2bmS1:ExpInfo:RotationStart.VAL')
-    global_PVs['Rotation_End'] = PV('2bmS1:ExpInfo:RotationEnd.VAL')
-    global_PVs['Rotation_Step'] = PV('2bmS1:ExpInfo:RotationStep.VAL')
-    global_PVs['Num_Angles'] = PV('2bmS1:ExpInfo:NumAngles.VAL')
-    global_PVs['Return_Rotation'] = PV('2bmS1:ExpInfo:ReturnRotation')
+    global_PVs['RotationStart'] = PV('2bmS1:ExpInfo:RotationStart.VAL')
+    global_PVs['RotationEnd'] = PV('2bmS1:ExpInfo:RotationEnd.VAL')
+    global_PVs['RotationStep'] = PV('2bmS1:ExpInfo:RotationStep.VAL')
+    global_PVs['NumAngles'] = PV('2bmS1:ExpInfo:NumAngles.VAL')
+    global_PVs['ReturnRotation'] = PV('2bmS1:ExpInfo:ReturnRotation')
 
-    global_PVs['Num_Flat_Fields'] = PV('2bmS1:ExpInfo:NumFlatFields.VAL')
-    global_PVs['Flat_Field_Mode'] = PV('2bmS1:ExpInfo:FlatFieldMode')
-    global_PVs['Flat_Field_Value'] = PV('2bmS1:ExpInfo:FlatFieldValue')
+    global_PVs['NumFlatFields'] = PV('2bmS1:ExpInfo:NumFlatFields.VAL')
+    global_PVs['FlatFieldMode'] = PV('2bmS1:ExpInfo:FlatFieldMode')
+    global_PVs['FlatFieldValue'] = PV('2bmS1:ExpInfo:FlatFieldValue')
 
-    global_PVs['Num_Dark_Fields'] = PV('2bmS1:ExpInfo:NumDarkFields.VAL')
-    global_PVs['Dark_Field_Mode'] = PV('2bmS1:ExpInfo:DarkFieldMode')
-    global_PVs['Dark_Field_Value'] = PV('2bmS1:ExpInfo:DarkFieldValue')
+    global_PVs['NumDarkFields'] = PV('2bmS1:ExpInfo:NumDarkFields.VAL')
+    global_PVs['DarkFieldMode'] = PV('2bmS1:ExpInfo:DarkFieldMode')
+    global_PVs['DarkFieldValue'] = PV('2bmS1:ExpInfo:DarkFieldValue')
 
     global_PVs['FlatFieldAxis'] = PV('2bmS1:ExpInfo:FlatFieldAxis')
     global_PVs['SampleInX'] = PV('2bmS1:ExpInfo:SampleInX')
@@ -153,144 +153,179 @@ def init_general_PVs(params):
     global_PVs['SampleInY'] = PV('2bmS1:ExpInfo:SampleInY')
     global_PVs['SampleOutY'] = PV('2bmS1:ExpInfo:SampleOutY')
 
-    global_PVs['Scan_Type'] = PV('2bmS1:ExpInfo:ScanType.VAL')
-    global_PVs['Sleep_Time'] = PV('2bmS1:ExpInfo:SleepTime.VAL')
-    global_PVs['Vertical_Scan_Start'] = PV('2bmS1:ExpInfo:VerticalScanStart.VAL')
-    global_PVs['Vertical_Scan_End'] = PV('2bmS1:ExpInfo:VerticalScanEnd.VAL')
-    global_PVs['Vertical_Scan_Step_Size'] = PV('2bmS1:ExpInfo:VerticalScanStepSize.VAL')
-    global_PVs['Horizontal_Scan_Start'] = PV('2bmS1:ExpInfo:HorizontalScanStart.VAL')
-    global_PVs['Horizontal_Scan_End'] = PV('2bmS1:ExpInfo:HorizontalScanEnd.VAL')
-    global_PVs['Horizontal_Scan_Step_Size'] = PV('2bmS1:ExpInfo:HorizontalScanStepSize.VAL')
+    global_PVs['ScanType'] = PV('2bmS1:ExpInfo:ScanType.VAL')
+    global_PVs['SleepTime'] = PV('2bmS1:ExpInfo:SleepTime.VAL')
+    global_PVs['VerticalScanStart'] = PV('2bmS1:ExpInfo:VerticalScanStart.VAL')
+    global_PVs['VerticalScanEnd'] = PV('2bmS1:ExpInfo:VerticalScanEnd.VAL')
+    global_PVs['VerticalScanStepSize'] = PV('2bmS1:ExpInfo:VerticalScanStepSize.VAL')
+    global_PVs['HorizontalScanStart'] = PV('2bmS1:ExpInfo:HorizontalScanStart.VAL')
+    global_PVs['HorizontalScanEnd'] = PV('2bmS1:ExpInfo:HorizontalScanEnd.VAL')
+    global_PVs['HorizontalScanStepSize'] = PV('2bmS1:ExpInfo:HorizontalScanStepSize.VAL')
 
     # sample info
-    global_PVs['Sample_Name'] = PV('2bmS1:ExpInfo:SampleName')
-    global_PVs['Sample_Description1'] = PV('2bmS1:ExpInfo:SampleDescription1.VAL')
-    global_PVs['Sample_Description2'] = PV('2bmS1:ExpInfo:SampleDescription2.VAL')
-    global_PVs['Sample_Description3'] = PV('2bmS1:ExpInfo:SampleDescription3.VAL')
+    global_PVs['SampleName'] = PV('2bmS1:ExpInfo:SampleName')
+    global_PVs['SampleDescription1'] = PV('2bmS1:ExpInfo:SampleDescription1.VAL')
+    global_PVs['SampleDescription2'] = PV('2bmS1:ExpInfo:SampleDescription2.VAL')
+    global_PVs['SampleDescription3'] = PV('2bmS1:ExpInfo:SampleDescription3.VAL')
 
     # environment info
-    global_PVs['Use_Furnace'] = PV('2bmS1:ExpInfo:UseFurnace.VAL')
-    global_PVs['Furnace_In_Position'] = PV('2bmS1:ExpInfo:FurnaceInPosition.VAL')
-    global_PVs['Furnace_Out_Position'] = PV('2bmS1:ExpInfo:FurnaceOutPosition.VAL')
+    global_PVs['UseFurnace'] = PV('2bmS1:ExpInfo:UseFurnace.VAL')
+    global_PVs['FurnaceInPosition'] = PV('2bmS1:ExpInfo:FurnaceInPosition.VAL')
+    global_PVs['FurnaceOutPosition'] = PV('2bmS1:ExpInfo:FurnaceOutPosition.VAL')
 
     # data management info
-    global_PVs['Experiment_Year_Month'] = PV('2bmS1:ExpInfo:ExperimentYearMonth.VAL')
-    global_PVs['User_Last_Name'] = PV('2bmS1:ExpInfo:UserLastName.VAL')
-    global_PVs['Remote_Data_Trasfer'] = PV('2bmS1:ExpInfo:RemoteDataTrasfer.VAL')
-    global_PVs['Remote_Analysis_Dir'] = PV('2bmS1:ExpInfo:RemoteAnalysisDir.VAL')
+    global_PVs['ExperimentYearMonth'] = PV('2bmS1:ExpInfo:ExperimentYearMonth.VAL')
+    global_PVs['UserLastName'] = PV('2bmS1:ExpInfo:UserLastName.VAL')
+    global_PVs['RemoteDataTransfer'] = PV('2bmS1:ExpInfo:RemoteDataTrasfer.VAL')
+    global_PVs['RemoteAnalysisDir'] = PV('2bmS1:ExpInfo:RemoteAnalysisDir.VAL')
 
     if params.station == '2-BM-A':
         log.info('*** Running in station A:')
         # Set sample stack motor pv's:
-        global_PVs['Motor_SampleX'] = PV('2bma:m49.VAL')
-        global_PVs['Motor_SampleX_SET'] = PV('2bma:m49.SET')
-        global_PVs['Motor_SampleY'] = PV('2bma:m20.VAL')
-        global_PVs['Motor_SampleRot'] = PV('2bma:m82.VAL') # Aerotech ABR-250
-        global_PVs['Motor_SampleRot_RBV'] = PV('2bma:m82.RBV') # Aerotech ABR-250
-        global_PVs['Motor_SampleRot_Cnen'] = PV('2bma:m82.CNEN') 
-        global_PVs['Motor_SampleRot_Accl'] = PV('2bma:m82.ACCL') 
-        global_PVs['Motor_SampleRot_Stop'] = PV('2bma:m82.STOP') 
-        global_PVs['Motor_SampleRot_Set'] = PV('2bma:m82.SET') 
-        global_PVs['Motor_SampleRot_Velo'] = PV('2bma:m82.VELO') 
-        global_PVs['Motor_Sample_Top_0'] = PV('2bmS1:m2.VAL')
-        global_PVs['Motor_Sample_Top_90'] = PV('2bmS1:m1.VAL') 
-        global_PVs['Motor_Pitch'] = PV('2bma:m50.VAL')
-        global_PVs['Motor_Roll'] = PV('2bma:m51.VAL')
-        global_PVs['Camera_Distance'] = PV('2bma:m22.VAL')
+        global_PVs['SampleX'] = PV('2bma:m49.VAL')
+        global_PVs['SampleXSET'] = PV('2bma:m49.SET')
+        global_PVs['SampleY'] = PV('2bma:m20.VAL')
+        global_PVs['SampleOmega'] = PV('2bma:m82.VAL') # Aerotech ABR-250
+        global_PVs['SampleOmegaRBV'] = PV('2bma:m82.RBV') # Aerotech ABR-250
+        global_PVs['SampleOmegaCnen'] = PV('2bma:m82.CNEN') 
+        global_PVs['SampleOmegaAccl'] = PV('2bma:m82.ACCL') 
+        global_PVs['SampleOmegaStop'] = PV('2bma:m82.STOP') 
+        global_PVs['SampleOmegaSet'] = PV('2bma:m82.SET') 
+        global_PVs['SampleOmegaVelo'] = PV('2bma:m82.VELO') 
+        global_PVs['SampleXCent'] = PV('2bmS1:m2.VAL')
+        global_PVs['SampleZCent'] = PV('2bmS1:m1.VAL') 
+        global_PVs['SamplePitch'] = PV('2bma:m50.VAL')
+        global_PVs['SampleRoll'] = PV('2bma:m51.VAL')
+        global_PVs['CameraDistance'] = PV('2bma:m22.VAL')
        
         # Set FlyScan
-        global_PVs['Fly_ScanDelta'] = PV('2bma:PSOFly2:scanDelta')
-        global_PVs['Fly_StartPos'] = PV('2bma:PSOFly2:startPos')
-        global_PVs['Fly_EndPos'] = PV('2bma:PSOFly2:endPos')
-        global_PVs['Fly_SlewSpeed'] = PV('2bma:PSOFly2:slewSpeed')
-        global_PVs['Fly_Taxi'] = PV('2bma:PSOFly2:taxi')
-        global_PVs['Fly_Run'] = PV('2bma:PSOFly2:fly')
-        global_PVs['Fly_ScanControl'] = PV('2bma:PSOFly2:scanControl')
-        global_PVs['Fly_Calc_Projections'] = PV('2bma:PSOFly2:numTriggers')
-        global_PVs['Theta_Array'] = PV('2bma:PSOFly2:motorPos.AVAL')
+        global_PVs['FlyScanDelta'] = PV('2bma:PSOFly2:scanDelta')
+        global_PVs['FlyStartPos'] = PV('2bma:PSOFly2:startPos')
+        global_PVs['FlyEndPos'] = PV('2bma:PSOFly2:endPos')
+        global_PVs['FlySlewSpeed'] = PV('2bma:PSOFly2:slewSpeed')
+        global_PVs['FlyTaxi'] = PV('2bma:PSOFly2:taxi')
+        global_PVs['FlyRun'] = PV('2bma:PSOFly2:fly')
+        global_PVs['FlyScanControl'] = PV('2bma:PSOFly2:scanControl')
+        global_PVs['FlyCalcProjections'] = PV('2bma:PSOFly2:numTriggers')
+        global_PVs['OmegaArray'] = PV('2bma:PSOFly2:motorPos.AVAL')
 
-        global_PVs['Fast_Shutter'] = PV('2bma:m23.VAL')
-        global_PVs['Motor_Focus'] = PV('2bma:m41.VAL')
-        global_PVs['Motor_Focus_Name'] = PV('2bma:m41.DESC')
+        global_PVs['FastShutter'] = PV('2bma:m23.VAL')
+        global_PVs['Focus'] = PV('2bma:m41.VAL')
+        global_PVs['FocusName'] = PV('2bma:m41.DESC')
         
+    elif params.station == '2-BM-B':   
+        log.info('*** Running in station B:')
+        # Sample stack motor pv's:
+        global_PVs['SampleX'] = PV('2bmb:m63.VAL')
+        global_PVs['SampleXSET'] = PV('2bmb:m63.SET')
+        global_PVs['SampleY'] = PV('2bmb:m57.VAL') 
+        global_PVs['SampleOmega'] = PV('2bmb:m100.VAL') # Aerotech ABR-150
+        global_PVs['SampleOmegaAccl'] = PV('2bma:m100.ACCL') 
+        global_PVs['SampleOmegaStop'] = PV('2bma:m100.STOP') 
+        global_PVs['SampleOmegaSet'] = PV('2bma:m100.SET') 
+        global_PVs['SampleOmegaVelo'] = PV('2bma:m100.VELO') 
+        global_PVs['SampleXCent'] = PV('2bmb:m76.VAL') 
+        global_PVs['SampleZCent'] = PV('2bmb:m77.VAL')
+
+        # Set CCD stack motor PVs:
+        global_PVs['Motor_CCD_Z'] = PV('2bmb:m31.VAL')
+
+        # Set FlyScan
+        global_PVs['FlyScanDelta'] = PV('2bmb:PSOFly:scanDelta')
+        global_PVs['FlyStartPos'] = PV('2bmb:PSOFly:startPos')
+        global_PVs['FlyEndPos'] = PV('2bmb:PSOFly:endPos')
+        global_PVs['FlySlewSpeed'] = PV('2bmb:PSOFly:slewSpeed')
+        global_PVs['FlyTaxi'] = PV('2bmb:PSOFly:taxi')
+        global_PVs['FlyRun'] = PV('2bmb:PSOFly:fly')
+        global_PVs['FlyScanControl'] = PV('2bmb:PSOFly:scanControl')
+        global_PVs['FlyCalcProjections'] = PV('2bmb:PSOFly:numTriggers')
+        global_PVs['OmegaArray'] = PV('2bmb:PSOFly:motorPos.AVAL')
+
+        global_PVs['Focus'] = PV('2bmb:m78.VAL')
+        global_PVs['FocusName'] = PV('2bmb:m78.DESC')
+
     else:
         log.error('*** %s is not a valid station' % params.station)
 
     # detector pv's
-    if (params.camera_ioc_prefix == '2bmbSP1:'):
+    if ((params.camera_ioc_prefix == '2bmbPG3:') or (params.camera_ioc_prefix == '2bmbSP1:')): 
     
         # general PV's
-        global_PVs['Cam1_SerialNumber'] = PV(params.camera_ioc_prefix + 'cam1:SerialNumber_RBV')
-        global_PVs['Cam1_ImageMode'] = PV(params.camera_ioc_prefix + 'cam1:ImageMode')
-        global_PVs['Cam1_ArrayCallbacks'] = PV(params.camera_ioc_prefix + 'cam1:ArrayCallbacks')
-        global_PVs['Cam1_AcquirePeriod'] = PV(params.camera_ioc_prefix + 'cam1:AcquirePeriod')
-        global_PVs['Cam1_TriggerMode'] = PV(params.camera_ioc_prefix + 'cam1:TriggerMode')
-        global_PVs['Cam1_SoftwareTrigger'] = PV(params.camera_ioc_prefix + 'cam1:SoftwareTrigger')  ### ask Mark is this is exposed in the medm screen
-        global_PVs['Cam1_AcquireTime'] = PV(params.camera_ioc_prefix + 'cam1:AcquireTime')
-        global_PVs['Cam1_FrameType'] = PV(params.camera_ioc_prefix + 'cam1:FrameType')
-        global_PVs['Cam1_NumImages'] = PV(params.camera_ioc_prefix + 'cam1:NumImages')
-        global_PVs['Cam1_Acquire'] = PV(params.camera_ioc_prefix + 'cam1:Acquire')
-        global_PVs['Cam1_AttributeFile'] = PV(params.camera_ioc_prefix + 'cam1:NDAttributesFile')
-        global_PVs['Cam1_FrameTypeZRST'] = PV(params.camera_ioc_prefix + 'cam1:FrameType.ZRST')
-        global_PVs['Cam1_FrameTypeONST'] = PV(params.camera_ioc_prefix + 'cam1:FrameType.ONST')
-        global_PVs['Cam1_FrameTypeTWST'] = PV(params.camera_ioc_prefix + 'cam1:FrameType.TWST')
-        global_PVs['Cam1_Display'] = PV(params.camera_ioc_prefix + 'image1:EnableCallbacks')
+        global_PVs['Cam1SerialNumber'] = PV(params.camera_ioc_prefix + 'cam1:SerialNumber_RBV')
+        global_PVs['Cam1ImageMode'] = PV(params.camera_ioc_prefix + 'cam1:ImageMode')
+        global_PVs['Cam1ArrayCallbacks'] = PV(params.camera_ioc_prefix + 'cam1:ArrayCallbacks')
+        global_PVs['Cam1AcquirePeriod'] = PV(params.camera_ioc_prefix + 'cam1:AcquirePeriod')
+        global_PVs['Cam1TriggerMode'] = PV(params.camera_ioc_prefix + 'cam1:TriggerMode')
+        global_PVs['Cam1SoftwareTrigger'] = PV(params.camera_ioc_prefix + 'cam1:SoftwareTrigger')  ### ask Mark is this is exposed in the medm screen
+        global_PVs['Cam1AcquireTime'] = PV(params.camera_ioc_prefix + 'cam1:AcquireTime')
+        global_PVs['Cam1FrameType'] = PV(params.camera_ioc_prefix + 'cam1:FrameType')
+        global_PVs['Cam1NumImages'] = PV(params.camera_ioc_prefix + 'cam1:NumImages')
+        global_PVs['Cam1Acquire'] = PV(params.camera_ioc_prefix + 'cam1:Acquire')
+        global_PVs['Cam1AttributeFile'] = PV(params.camera_ioc_prefix + 'cam1:NDAttributesFile')
+        global_PVs['Cam1FrameTypeZRST'] = PV(params.camera_ioc_prefix + 'cam1:FrameType.ZRST')
+        global_PVs['Cam1FrameTypeONST'] = PV(params.camera_ioc_prefix + 'cam1:FrameType.ONST')
+        global_PVs['Cam1FrameTypeTWST'] = PV(params.camera_ioc_prefix + 'cam1:FrameType.TWST')
+        global_PVs['Cam1Display'] = PV(params.camera_ioc_prefix + 'image1:EnableCallbacks')
 
-        global_PVs['Cam1_SizeX'] = PV(params.camera_ioc_prefix + 'cam1:SizeX')
-        global_PVs['Cam1_SizeY'] = PV(params.camera_ioc_prefix + 'cam1:SizeY')
-        global_PVs['Cam1_SizeX_RBV'] = PV(params.camera_ioc_prefix + 'cam1:SizeX_RBV')
-        global_PVs['Cam1_SizeY_RBV'] = PV(params.camera_ioc_prefix + 'cam1:SizeY_RBV')
-        global_PVs['Cam1_MaxSizeX_RBV'] = PV(params.camera_ioc_prefix + 'cam1:MaxSizeX_RBV')
-        global_PVs['Cam1_MaxSizeY_RBV'] = PV(params.camera_ioc_prefix + 'cam1:MaxSizeY_RBV')
+        global_PVs['Cam1SizeX'] = PV(params.camera_ioc_prefix + 'cam1:SizeX')
+        global_PVs['Cam1SizeY'] = PV(params.camera_ioc_prefix + 'cam1:SizeY')
+        global_PVs['Cam1SizeX_RBV'] = PV(params.camera_ioc_prefix + 'cam1:SizeX_RBV')
+        global_PVs['Cam1SizeY_RBV'] = PV(params.camera_ioc_prefix + 'cam1:SizeY_RBV')
+        global_PVs['Cam1MaxSizeX_RBV'] = PV(params.camera_ioc_prefix + 'cam1:MaxSizeX_RBV')
+        global_PVs['Cam1MaxSizeY_RBV'] = PV(params.camera_ioc_prefix + 'cam1:MaxSizeY_RBV')
         global_PVs['Cam1PixelFormat_RBV'] = PV(params.camera_ioc_prefix + 'cam1:PixelFormat_RBV')
 
-        global_PVs['Cam1_Image'] = PV(params.camera_ioc_prefix + 'image1:ArrayData')
+        global_PVs['Cam1Image'] = PV(params.camera_ioc_prefix + 'image1:ArrayData')
 
         # hdf5 writer PV's
-        global_PVs['HDF1_AutoSave'] = PV(params.camera_ioc_prefix + 'HDF1:AutoSave')
-        global_PVs['HDF1_DeleteDriverFile'] = PV(params.camera_ioc_prefix + 'HDF1:DeleteDriverFile')
-        global_PVs['HDF1_EnableCallbacks'] = PV(params.camera_ioc_prefix + 'HDF1:EnableCallbacks')
-        global_PVs['HDF1_BlockingCallbacks'] = PV(params.camera_ioc_prefix + 'HDF1:BlockingCallbacks')
-        global_PVs['HDF1_FileWriteMode'] = PV(params.camera_ioc_prefix + 'HDF1:FileWriteMode')
-        global_PVs['HDF1_NumCapture'] = PV(params.camera_ioc_prefix + 'HDF1:NumCapture')
-        global_PVs['HDF1_Capture'] = PV(params.camera_ioc_prefix + 'HDF1:Capture')
-        global_PVs['HDF1_Capture_RBV'] = PV(params.camera_ioc_prefix + 'HDF1:Capture_RBV')
-        global_PVs['HDF1_FilePath'] = PV(params.camera_ioc_prefix + 'HDF1:FilePath')
-        global_PVs['HDF1_FileName'] = PV(params.camera_ioc_prefix + 'HDF1:FileName')
-        global_PVs['HDF1_FullFileName_RBV'] = PV(params.camera_ioc_prefix + 'HDF1:FullFileName_RBV')
-        global_PVs['HDF1_FileTemplate'] = PV(params.camera_ioc_prefix + 'HDF1:FileTemplate')
-        global_PVs['HDF1_ArrayPort'] = PV(params.camera_ioc_prefix + 'HDF1:NDArrayPort')
-        global_PVs['HDF1_FileNumber'] = PV(params.camera_ioc_prefix + 'HDF1:FileNumber')
-        global_PVs['HDF1_XMLFileName'] = PV(params.camera_ioc_prefix + 'HDF1:XMLFileName')
+        global_PVs['HDFAutoSave'] = PV(params.camera_ioc_prefix + 'HDF1:AutoSave')
+        global_PVs['HDFDeleteDriverFile'] = PV(params.camera_ioc_prefix + 'HDF1:DeleteDriverFile')
+        global_PVs['HDFEnableCallbacks'] = PV(params.camera_ioc_prefix + 'HDF1:EnableCallbacks')
+        global_PVs['HDFBlockingCallbacks'] = PV(params.camera_ioc_prefix + 'HDF1:BlockingCallbacks')
+        global_PVs['HDFFileWriteMode'] = PV(params.camera_ioc_prefix + 'HDF1:FileWriteMode')
+        global_PVs['HDFNumCapture'] = PV(params.camera_ioc_prefix + 'HDF1:NumCapture')
+        global_PVs['HDFCapture'] = PV(params.camera_ioc_prefix + 'HDF1:Capture')
+        global_PVs['HDFCapture_RBV'] = PV(params.camera_ioc_prefix + 'HDF1:Capture_RBV')
+        global_PVs['HDFFilePath'] = PV(params.camera_ioc_prefix + 'HDF1:FilePath')
+        global_PVs['HDFFileName'] = PV(params.camera_ioc_prefix + 'HDF1:FileName')
+        global_PVs['HDFFullFileName_RBV'] = PV(params.camera_ioc_prefix + 'HDF1:FullFileName_RBV')
+        global_PVs['HDFFileTemplate'] = PV(params.camera_ioc_prefix + 'HDF1:FileTemplate')
+        global_PVs['HDFArrayPort'] = PV(params.camera_ioc_prefix + 'HDF1:NDArrayPort')
+        global_PVs['HDFFileNumber'] = PV(params.camera_ioc_prefix + 'HDF1:FileNumber')
+        global_PVs['HDFXMLFileName'] = PV(params.camera_ioc_prefix + 'HDF1:XMLFileName')
 
-        global_PVs['HDF1_QueueSize'] = PV(params.camera_ioc_prefix + 'HDF1:QueueSize')
-        global_PVs['HDF1_QueueFree'] = PV(params.camera_ioc_prefix + 'HDF1:QueueFree')
+        global_PVs['HDFQueueSize'] = PV(params.camera_ioc_prefix + 'HDF1:QueueSize')
+        global_PVs['HDFQueueFree'] = PV(params.camera_ioc_prefix + 'HDF1:QueueFree')
                                                                       
         # proc1 PV's
-        global_PVs['Image1_Callbacks'] = PV(params.camera_ioc_prefix + 'image1:EnableCallbacks')
-        global_PVs['Proc1_Callbacks'] = PV(params.camera_ioc_prefix + 'Proc1:EnableCallbacks')
-        global_PVs['Proc1_ArrayPort'] = PV(params.camera_ioc_prefix + 'Proc1:NDArrayPort')
-        global_PVs['Proc1_Filter_Enable'] = PV(params.camera_ioc_prefix + 'Proc1:EnableFilter')
-        global_PVs['Proc1_Filter_Type'] = PV(params.camera_ioc_prefix + 'Proc1:FilterType')
-        global_PVs['Proc1_Num_Filter'] = PV(params.camera_ioc_prefix + 'Proc1:NumFilter')
-        global_PVs['Proc1_Reset_Filter'] = PV(params.camera_ioc_prefix + 'Proc1:ResetFilter')
-        global_PVs['Proc1_AutoReset_Filter'] = PV(params.camera_ioc_prefix + 'Proc1:AutoResetFilter')
-        global_PVs['Proc1_Filter_Callbacks'] = PV(params.camera_ioc_prefix + 'Proc1:FilterCallbacks')       
+        global_PVs['Image1EnableCallbacks'] = PV(params.camera_ioc_prefix + 'image1:EnableCallbacks')
+        global_PVs['Proc1nableCallbacks'] = PV(params.camera_ioc_prefix + 'Proc1:EnableCallbacks')
+        global_PVs['Proc1NDArrayPort'] = PV(params.camera_ioc_prefix + 'Proc1:NDArrayPort')
+        global_PVs['Proc1EnableFilter'] = PV(params.camera_ioc_prefix + 'Proc1:EnableFilter')
+        global_PVs['Proc1FilterType'] = PV(params.camera_ioc_prefix + 'Proc1:FilterType')
+        global_PVs['Proc1Num_Filter'] = PV(params.camera_ioc_prefix + 'Proc1:NumFilter')
+        global_PVs['Proc1ResetFilter'] = PV(params.camera_ioc_prefix + 'Proc1:ResetFilter')
+        global_PVs['Proc1AutoResetFilter'] = PV(params.camera_ioc_prefix + 'Proc1:AutoResetFilter')
+        global_PVs['Proc1FilterCallbacks'] = PV(params.camera_ioc_prefix + 'Proc1:FilterCallbacks')       
 
-        global_PVs['Proc1_Enable_Background'] = PV(params.camera_ioc_prefix + 'Proc1:EnableBackground')
-        global_PVs['Proc1_Enable_FlatField'] = PV(params.camera_ioc_prefix + 'Proc1:EnableFlatField')
-        global_PVs['Proc1_Enable_Offset_Scale'] = PV(params.camera_ioc_prefix + 'Proc1:EnableOffsetScale')
-        global_PVs['Proc1_Enable_Low_Clip'] = PV(params.camera_ioc_prefix + 'Proc1:EnableLowClip')
-        global_PVs['Proc1_Enable_High_Clip'] = PV(params.camera_ioc_prefix + 'Proc1:EnableHighClip')
+        global_PVs['Proc1EnableBackground'] = PV(params.camera_ioc_prefix + 'Proc1:EnableBackground')
+        global_PVs['Proc1EnableFlatField'] = PV(params.camera_ioc_prefix + 'Proc1:EnableFlatField')
+        global_PVs['Proc1EnableOffsetScale'] = PV(params.camera_ioc_prefix + 'Proc1:EnableOffsetScale')
+        global_PVs['Proc1EnableLowClip'] = PV(params.camera_ioc_prefix + 'Proc1:EnableLowClip')
+        global_PVs['Proc1EnableHighClip'] = PV(params.camera_ioc_prefix + 'Proc1:EnableHighClip')
 
-        global_PVs['Cam1_AcquireTimeAuto'] = PV(params.camera_ioc_prefix + 'cam1:AcquireTimeAuto')
-        global_PVs['Cam1_FrameRateOnOff'] = PV(params.camera_ioc_prefix + 'cam1:FrameRateEnable')
+    if (params.camera_ioc_prefix == '2bmbPG3:'):
+        global_PVs['Cam1FrameRateOnOff'] = PV(params.camera_ioc_prefix + 'cam1:FrameRateOnOff')
 
-        global_PVs['Cam1_TriggerSource'] = PV(params.camera_ioc_prefix + 'cam1:TriggerSource')
-        global_PVs['Cam1_TriggerOverlap'] = PV(params.camera_ioc_prefix + 'cam1:TriggerOverlap')
-        global_PVs['Cam1_ExposureMode'] = PV(params.camera_ioc_prefix + 'cam1:ExposureMode')
-        global_PVs['Cam1_TriggerSelector'] = PV(params.camera_ioc_prefix + 'cam1:TriggerSelector')
-        global_PVs['Cam1_TriggerActivation'] = PV(params.camera_ioc_prefix + 'cam1:TriggerActivation')
+    elif (params.camera_ioc_prefix == '2bmbSP1:'):
+        global_PVs['Cam1AcquireTimeAuto'] = PV(params.camera_ioc_prefix + 'cam1:AcquireTimeAuto')
+        global_PVs['Cam1FrameRateOnOff'] = PV(params.camera_ioc_prefix + 'cam1:FrameRateEnable')
+
+        global_PVs['Cam1TriggerSource'] = PV(params.camera_ioc_prefix + 'cam1:TriggerSource')
+        global_PVs['Cam1TriggerOverlap'] = PV(params.camera_ioc_prefix + 'cam1:TriggerOverlap')
+        global_PVs['Cam1ExposureMode'] = PV(params.camera_ioc_prefix + 'cam1:ExposureMode')
+        global_PVs['Cam1TriggerSelector'] = PV(params.camera_ioc_prefix + 'cam1:TriggerSelector')
+        global_PVs['Cam1TriggerActivation'] = PV(params.camera_ioc_prefix + 'cam1:TriggerActivation')
     
     else:
         log.error('Detector %s is not defined' % params.camera_ioc_prefix)
@@ -301,24 +336,24 @@ def init_general_PVs(params):
 
 def user_info_params_update_from_pv(global_PVs, params):
 
-    params.proposal_title = global_PVs['Proposal_Title'].get(as_string=True)
-    params.user_email = global_PVs['User_Email'].get(as_string=True)
-    params.user_badge = global_PVs['User_Badge'].get(as_string=True)
-    params.user_last_name = global_PVs['User_Last_Name'].get(as_string=True)
-    params.proposal_number = global_PVs['Proposal_Number'].get(as_string=True)
-    params.user_institution = global_PVs['User_Institution'].get(as_string=True)
-    params.experiment_year_month = global_PVs['Experiment_Year_Month'].get(as_string=True)
-    params.user_info_update = global_PVs['User_Info_Update'].get(as_string=True)
+    params.proposal_title = global_PVs['ProposalTitle'].get(as_string=True)
+    params.user_email = global_PVs['UserEmail'].get(as_string=True)
+    params.user_badge = global_PVs['UserBadge'].get(as_string=True)
+    params.user_last_name = global_PVs['UserLastName'].get(as_string=True)
+    params.proposal_number = global_PVs['ProposalNumber'].get(as_string=True)
+    params.user_institution = global_PVs['UserInstitution'].get(as_string=True)
+    params.experiment_year_month = global_PVs['ExperimentYearMonth'].get(as_string=True)
+    params.user_info_update = global_PVs['UserInfoUpdate'].get(as_string=True)
 
 
-def image_resolution_pv_update(global_PVs, params):
+def image_pixel_size_pv_update(global_PVs, params):
 
-    if (params.image_resolution is not None):
-        global_PVs['Image_Resolution'].put(params.image_resolution, wait=True)
-    if (params.ccd_pixel_size is not None):
-        global_PVs['CCD_Pixel_Size'].put(params.ccd_pixel_size, wait=True)
-    if (params.lens_magnification is not None):
-        global_PVs['Lens_Magnification'].put(params.lens_magnification, wait=True)
+    if (params.image_pixel_size is not None):
+        global_PVs['ImagePixelSize'].put(params.image_pixel_size, wait=True)
+    if (params.detector_pixel_size is not None):
+        global_PVs['DetectorPixelSize'].put(params.detector_pixel_size, wait=True)
+    if (params.camera_objective is not None):
+        global_PVs['CameraObjective'].put(params.camera_objective, wait=True)
 
 
 def open_shutters(global_PVs, params):
@@ -332,20 +367,20 @@ def open_shutters(global_PVs, params):
         if params.station == '2-BM-A':
         # Use Shutter A
             if ShutterAisFast:
-                global_PVs['ShutterA_Open'].put(1, wait=True)
-                wait_pv(global_PVs['ShutterA_Move_Status'], ShutterA_Open_Value)
+                global_PVs['ShutterAOpen'].put(1, wait=True)
+                wait_pv(global_PVs['ShutterAMoveStatus'], ShutterAOpen_Value)
                 time.sleep(3)                
-                global_PVs['Fast_Shutter'].put(1, wait=True)
+                global_PVs['FastShutter'].put(1, wait=True)
                 time.sleep(1)
                 log.info('  *** open_shutter fast: Done!')
             else:
-                global_PVs['ShutterA_Open'].put(1, wait=True)
-                wait_pv(global_PVs['ShutterA_Move_Status'], ShutterA_Open_Value)
+                global_PVs['ShutterAOpen'].put(1, wait=True)
+                wait_pv(global_PVs['ShutterAMoveStatus'], ShutterAOpen_Value)
                 time.sleep(3)
                 log.info('  *** open_shutter A: Done!')
         elif params.station == '2-BM-B':
-            global_PVs['ShutterB_Open'].put(1, wait=True)
-            wait_pv(global_PVs['ShutterB_Move_Status'], ShutterB_Open_Value)
+            global_PVs['ShutterBOpen'].put(1, wait=True)
+            wait_pv(global_PVs['ShutterB_Move_Status'], ShutterBOpen_Value)
             log.info('  *** open_shutter B: Done!')
  
 
@@ -359,12 +394,12 @@ def close_shutters(global_PVs, params):
     else:
         if params.station == '2-BM-A':
             if ShutterAisFast:
-                global_PVs['Fast_Shutter'].put(0, wait=True)
+                global_PVs['FastShutter'].put(0, wait=True)
                 time.sleep(1)
                 log.info('  *** close_shutter fast: Done!')
             else:
-                global_PVs['ShutterA_Close'].put(1, wait=True)
-                wait_pv(global_PVs['ShutterA_Move_Status'], ShutterA_Close_Value)
+                global_PVs['ShutterAClose'].put(1, wait=True)
+                wait_pv(global_PVs['ShutterAMoveStatus'], ShutterAClose_Value)
                 log.info('  *** close_shutter A: Done!')
         elif params.station == '2-BM-B':
             global_PVs['ShutterB_Close'].put(1, wait=True)
@@ -376,12 +411,12 @@ def move_sample_out(global_PVs, params):
 
     log.info('      *** Sample out')
     if not (params.sample_move_freeze):
-        if (params.sample_in_out=="vertical"):
-            log.info('      *** *** Move Sample Y out at: %f' % params.sample_out_position)
-            global_PVs['Motor_SampleY'].put(str(params.sample_out_position), wait=True, timeout=1000.0)                
-            if wait_pv(global_PVs['Motor_SampleY'], float(params.sample_out_position), 60) == False:
-                log.error('Motor_SampleY did not move in properly')
-                log.error(global_PVs['Motor_SampleY'].get())
+        if (params.flat_field_axis=="vertical"):
+            log.info('      *** *** Move Sample Y out at: %f' % params.sample_out_y)
+            global_PVs['SampleY'].put(str(params.sample_out_y), wait=True, timeout=1000.0)                
+            if wait_pv(global_PVs['SampleY'], float(params.sample_out_y), 60) == False:
+                log.error('SampleY did not move in properly')
+                log.error(global_PVs['SampleY'].get())
         else:
             if (params.use_furnace):
                 log.info('      *** *** Move Furnace Y out at: %f' % params.furnace_out_position)
@@ -389,11 +424,11 @@ def move_sample_out(global_PVs, params):
                 if wait_pv(global_PVs['Motor_FurnaceY'], float(params.furnace_out_position), 60) == False:
                     log.error('Motor_FurnaceY did not move in properly')
                     log.error(global_PVs['Motor_FurnaceY'].get())
-            log.info('      *** *** Move Sample X out at: %f' % params.sample_out_position)
-            global_PVs['Motor_SampleX'].put(str(params.sample_out_position), wait=True, timeout=1000.0)
-            if wait_pv(global_PVs['Motor_SampleX'], float(params.sample_out_position), 60) == False:
-                log.error('Motor_SampleX did not move in properly')
-                log.error(global_PVs['Motor_SampleX'].get())
+            log.info('      *** *** Move Sample X out at: %f' % params.sample_out_x)
+            global_PVs['SampleX'].put(str(params.sample_out_x), wait=True, timeout=1000.0)
+            if wait_pv(global_PVs['SampleX'], float(params.sample_out_x), 60) == False:
+                log.error('SampleX did not move in properly')
+                log.error(global_PVs['SampleX'].get())
     else:
         log.info('      *** *** Sample Stack is Frozen')
 
@@ -402,18 +437,18 @@ def move_sample_in(global_PVs, params):
 
     log.info('      *** Sample in')
     if not (params.sample_move_freeze):
-        if (params.sample_in_out=="vertical"):
-            log.info('      *** *** Move Sample Y in at: %f' % params.sample_in_position)
-            global_PVs['Motor_SampleY'].put(str(params.sample_in_position), wait=True, timeout=1000.0)                
-            if wait_pv(global_PVs['Motor_SampleY'], float(params.sample_in_position), 60) == False:
-                log.error('Motor_SampleY did not move in properly')
-                log.error(global_PVs['Motor_SampleY'].get())
+        if (params.flat_field_axis=="vertical"):
+            log.info('      *** *** Move Sample Y in at: %f' % params.sample_in_y)
+            global_PVs['SampleY'].put(str(params.sample_in_y), wait=True, timeout=1000.0)                
+            if wait_pv(global_PVs['SampleY'], float(params.sample_in_y), 60) == False:
+                log.error('SampleY did not move in properly')
+                log.error(global_PVs['SampleY'].get())
         else:
-            log.info('      *** *** Move Sample X in at: %f' % params.sample_in_position)
-            global_PVs['Motor_SampleX'].put(str(params.sample_in_position), wait=True, timeout=1000.0)
-            if wait_pv(global_PVs['Motor_SampleX'], float(params.sample_in_position), 60) == False:
-                log.error('Motor_SampleX did not move in properly')
-                log.error(global_PVs['Motor_SampleX'].get())
+            log.info('      *** *** Move Sample X in at: %f' % params.sample_in_x)
+            global_PVs['SampleX'].put(str(params.sample_in_x), wait=True, timeout=1000.0)
+            if wait_pv(global_PVs['SampleX'], float(params.sample_in_x), 60) == False:
+                log.error('SampleX did not move in properly')
+                log.error(global_PVs['SampleX'].get())
             if (params.use_furnace):
                 log.info('      *** *** Move Furnace Y in at: %f' % params.furnace_in_position)
                 global_PVs['Motor_FurnaceY'].put(str(params.furnace_in_position), wait=True, timeout=1000.0)
@@ -427,32 +462,32 @@ def move_sample_in(global_PVs, params):
 def set_pso(global_PVs, params):
 
     acclTime = 1.0 * params.slew_speed/params.accl_rot
-    scanDelta = abs(((float(params.sample_rotation_end) - float(params.sample_rotation_start))) / ((float(params.num_projections)) * float(params.recursive_filter_n_images)))
+    scanDelta = abs(((float(params.rotation_end) - float(params.rotation_start))) / ((float(params.num_angles)) * float(params.recursive_filter_n_images)))
 
-    log.info('  *** *** start_pos %f' % float(params.sample_rotation_start))
-    log.info('  *** *** end pos %f' % float(params.sample_rotation_end))
+    log.info('  *** *** start_pos %f' % float(params.rotation_start))
+    log.info('  *** *** end pos %f' % float(params.rotation_end))
 
-    global_PVs['Fly_StartPos'].put(float(params.sample_rotation_start), wait=True)
-    global_PVs['Fly_EndPos'].put(float(params.sample_rotation_end), wait=True)
-    global_PVs['Fly_SlewSpeed'].put(params.slew_speed, wait=True)
-    global_PVs['Fly_ScanDelta'].put(scanDelta, wait=True)
+    global_PVs['FlyStartPos'].put(float(params.rotation_start), wait=True)
+    global_PVs['FlyEndPos'].put(float(params.rotation_end), wait=True)
+    global_PVs['FlySlewSpeed'].put(params.slew_speed, wait=True)
+    global_PVs['FlyScanDelta'].put(scanDelta, wait=True)
     time.sleep(3.0)
 
-    calc_num_proj = global_PVs['Fly_Calc_Projections'].get()
+    calc_num_proj = global_PVs['FlyCalcProjections'].get()
     
     if calc_num_proj == None:
         log.error('  *** *** Error getting fly calculated number of projections!')
-        calc_num_proj = global_PVs['Fly_Calc_Projections'].get()
-        log.error('  *** *** Using %s instead of %s' % (calc_num_proj, params.num_projections))
-    if calc_num_proj != int(params.num_projections):
-        log.warning('  *** *** Changing number of projections from: %s to: %s' % (params.num_projections, int(calc_num_proj)))
-        params.num_projections = int(calc_num_proj)
-    log.info('  *** *** Number of projections: %d' % int(params.num_projections))
+        calc_num_proj = global_PVs['FlyCalcProjections'].get()
+        log.error('  *** *** Using %s instead of %s' % (calc_num_proj, params.num_angles))
+    if calc_num_proj != int(params.num_angles):
+        log.warning('  *** *** Changing number of projections from: %s to: %s' % (params.num_angles, int(calc_num_proj)))
+        params.num_angles = int(calc_num_proj)
+    log.info('  *** *** Number of projections: %d' % int(params.num_angles))
     log.info('  *** *** Fly calc triggers: %d' % int(calc_num_proj))
-    global_PVs['Fly_ScanControl'].put('Standard')
+    global_PVs['FlyScanControl'].put('Standard')
 
     log.info(' ')
     log.info('  *** Taxi before starting capture')
-    global_PVs['Fly_Taxi'].put(1, wait=True)
-    wait_pv(global_PVs['Fly_Taxi'], 0)
+    global_PVs['FlyTaxi'].put(1, wait=True)
+    wait_pv(global_PVs['FlyTaxi'], 0)
     log.info('  *** Taxi before starting capture: Done!')

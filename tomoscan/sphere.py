@@ -83,7 +83,7 @@ def adjust(params):
     params.file_name = None # so we don't run the flir._setup_hdf_writer 
 
     try: 
-        detector_sn = global_PVs['Cam1_SerialNumber'].get()
+        detector_sn = global_PVs['Cam1SerialNumber'].get()
         if ((detector_sn == None) or (detector_sn == 'Unknown')):
             log.info('*** The Point Grey Camera with EPICS IOC prefix %s is down' % params.camera_ioc_prefix)
             log.info('  *** Failed!')
@@ -99,7 +99,7 @@ def adjust(params):
             if (params.resolution==True):
                 find_resolution(params, dark_field, white_field, angle_shift = -0.7)            
 
-            if(params.image_resolution==None):
+            if(params.image_pixel_size==None):
                 log.error('  *** Detector resolution is not determined. Please run tomo adjust --resolution first!')
                 exit()
             else:
@@ -133,21 +133,21 @@ def adjust_center(params, dark_field, white_field):
         #sphere 0
         log.info('  *** sphere 0')
         log.info('  ***  *** moving rotary stage to %f deg position ***' % float(0))
-        global_PVs["Motor_SampleRot"].put(float(0), wait=True, timeout=600.0)            
+        global_PVs["SampleOmega"].put(float(0), wait=True, timeout=600.0)            
         log.error('  ***  *** acquire sphere at %f deg position ***' % float(0))                                
         sphere_0 = util.normalize(flir.take_image(global_PVs, params), white_field, dark_field)    
 
         #sphere 1
         log.info('  *** sphere 1')
         log.info('  ***  *** moving rotary stage to %f deg position ***' % float(ang))                
-        global_PVs["Motor_SampleRot"].put(float(ang), wait=True, timeout=600.0)
+        global_PVs["SampleOmega"].put(float(ang), wait=True, timeout=600.0)
         log.error('  ***  *** acquire sphere at %f deg position ***' % float(ang))                                 
         sphere_1 = util.normalize(flir.take_image(global_PVs, params), white_field, dark_field)
         
         #sphere 2
         log.info('  *** sphere 2')
         log.info('  ***  *** moving rotary stage to %f deg position ***' % float(2*ang))                                
-        global_PVs["Motor_SampleRot"].put(float(2*ang), wait=True, timeout=600.0)
+        global_PVs["SampleOmega"].put(float(2*ang), wait=True, timeout=600.0)
         log.error('  ***  *** acquire sphere at %f deg position ***' % float(2*ang))                                                 
         sphere_2 = util.normalize(flir.take_image(global_PVs, params), white_field, dark_field)
 
@@ -189,11 +189,11 @@ def move_center(params, cmass_0, x, y):
     global_PVs = pv.init_general_PVs(params)
 
     log.info('  *** moving sample top X to the rotation center ***')
-    global_PVs["Motor_Sample_Top_0"].put(global_PVs["Motor_Sample_Top_0"].get()+x*params.image_resolution/1000, wait=True, timeout=5.0)
+    global_PVs["SampleXCent"].put(global_PVs["SampleXCent"].get()+x*params.image_pixel_size/1000, wait=True, timeout=5.0)
     log.info('  *** moving sample top Z to the rotation center ***')
-    global_PVs["Motor_Sample_Top_90"].put(global_PVs["Motor_Sample_Top_90"].get()+y*params.image_resolution/1000, wait=True, timeout=5.0)
+    global_PVs["SampleZCent"].put(global_PVs["SampleZCent"].get()+y*params.image_pixel_size/1000, wait=True, timeout=5.0)
     log.info('  *** moving rotation center to the detector center ***')
-    global_PVs["Motor_SampleX"].put(global_PVs["Motor_SampleX"].get()-(cmass_0[1]-x-global_PVs['Cam1_SizeX'].get()/2)*params.image_resolution/1000, wait=True, timeout=600.0)
+    global_PVs["SampleX"].put(global_PVs["SampleX"].get()-(cmass_0[1]-x-global_PVs['Cam1SizeX'].get()/2)*params.image_pixel_size/1000, wait=True, timeout=600.0)
 
  
 def check_center(params, white_field, dark_field):
@@ -203,7 +203,7 @@ def check_center(params, white_field, dark_field):
     log.warning('  *** CHECK center of mass for the centered sphere')
 
     log.info('  *** moving rotary stage to %f deg position ***' % float(0))
-    global_PVs["Motor_SampleRot"].put(float(0), wait=True, timeout=600.0)
+    global_PVs["SampleOmega"].put(float(0), wait=True, timeout=600.0)
     log.info('  *** acquire sphere at %f deg position ***' % float(0))
 
     sphere_0 = util.normalize(flir.take_image(global_PVs, params), white_field, dark_field)                   
@@ -220,13 +220,13 @@ def adjust_roll(params, dark_field, white_field, angle_shift):
 
     log.warning(' *** Adjusting roll ***')
     log.info('  *** moving rotary stage to %f deg position ***' % float(0+angle_shift))                                                
-    global_PVs["Motor_SampleRot"].put(float(0+angle_shift), wait=True, timeout=600.0)    
+    global_PVs["SampleOmega"].put(float(0+angle_shift), wait=True, timeout=600.0)    
     log.info('  *** moving sphere to the detector border ***')                                                
-    global_PVs["Motor_Sample_Top_0"].put(global_PVs["Motor_Sample_Top_0"].get()+global_PVs['Cam1_SizeX'].get()/2*params.image_resolution/1000-((SPHERE_DIAMETER / 2) + GAP), wait=True, timeout=600.0)
+    global_PVs["SampleXCent"].put(global_PVs["SampleXCent"].get()+global_PVs['Cam1SizeX'].get()/2*params.image_pixel_size/1000-((SPHERE_DIAMETER / 2) + GAP), wait=True, timeout=600.0)
     log.info('  *** acquire sphere at %f deg position ***' % float(0+angle_shift)) 
     sphere_0 = util.normalize(flir.take_image(global_PVs, params), white_field, dark_field)       
     log.info('  *** moving rotary stage to %f deg position ***' % float(180+angle_shift))                                                            
-    global_PVs["Motor_SampleRot"].put(float(180+angle_shift), wait=True, timeout=600.0)            
+    global_PVs["SampleOmega"].put(float(180+angle_shift), wait=True, timeout=600.0)            
     log.info('  *** acquire sphere at %f deg position ***' % float(180+angle_shift)) 
     sphere_180 = util.normalize(flir.take_image(global_PVs, params), white_field, dark_field)
 
@@ -239,26 +239,26 @@ def adjust_roll(params, dark_field, white_field, angle_shift):
     log.warning('  *** found roll error: %f' % roll)
 
     log.info('  *** moving rotary stage to %f deg position ***' % float(0+angle_shift))                                                            
-    global_PVs["Motor_SampleRot"].put(float(0+angle_shift), wait=True, timeout=600.0)    
+    global_PVs["SampleOmega"].put(float(0+angle_shift), wait=True, timeout=600.0)    
     log.info('  *** moving sphere back to the detector center ***')                                                            
-    global_PVs["Motor_Sample_Top_0"].put(global_PVs["Motor_Sample_Top_0"].get()-(global_PVs['Cam1_SizeX'].get()/2*params.image_resolution/1000-((SPHERE_DIAMETER / 2) + GAP)), wait=True, timeout=600.0)
+    global_PVs["SampleXCent"].put(global_PVs["SampleXCent"].get()-(global_PVs['Cam1SizeX'].get()/2*params.image_pixel_size/1000-((SPHERE_DIAMETER / 2) + GAP)), wait=True, timeout=600.0)
     
     log.info('  *** find shifts resulting by the roll change ***')                                                            
     log.info('  *** acquire sphere at the current roll position ***')             
     sphere_0 = util.normalize(flir.take_image(global_PVs, params), white_field, dark_field)           
 
     ang = roll/2 # if roll is too big then ang should be decreased to keep the sphere in the field of view
-    log.info('  *** acquire sphere after testing roll change %f ***' % float(global_PVs["Motor_Roll"].get()+ang))                                     
-    global_PVs["Motor_Roll"].put(global_PVs["Motor_Roll"].get()+ang, wait=True, timeout=600.0)
+    log.info('  *** acquire sphere after testing roll change %f ***' % float(global_PVs["SampleRoll"].get()+ang))                                     
+    global_PVs["SampleRoll"].put(global_PVs["SampleRoll"].get()+ang, wait=True, timeout=600.0)
     sphere_1 = util.normalize(flir.take_image(global_PVs, params), white_field, dark_field)
 
     shift0 = register_translation(sphere_1, sphere_0, 100)[0][1]            
     shift1 = shift0*np.sin(roll)*(np.cos(roll)*1/np.tan(ang)+np.sin(roll))
     log.info('  *** the testing roll change corresponds to %f shift in x, calculated resulting roll change gives %f shift in x ***' % (shift0,shift1))             
-    log.warning('  *** change roll to %f ***' % float(global_PVs["Motor_Roll"].get()+roll-ang))
-    global_PVs["Motor_Roll"].put(global_PVs["Motor_Roll"].get()+roll-ang, wait=True, timeout=600.0)
+    log.warning('  *** change roll to %f ***' % float(global_PVs["SampleRoll"].get()+roll-ang))
+    global_PVs["SampleRoll"].put(global_PVs["SampleRoll"].get()+roll-ang, wait=True, timeout=600.0)
     log.info('  *** moving sphere to the detector center ***')
-    global_PVs["Motor_SampleX"].put(global_PVs["Motor_SampleX"].get()-shift1*params.image_resolution/1000, wait=True, timeout=600.0)
+    global_PVs["SampleX"].put(global_PVs["SampleX"].get()-shift1*params.image_pixel_size/1000, wait=True, timeout=600.0)
     
 
     log.info('  *** TEST: acquire sphere at %f deg position ***' % float(0+angle_shift)) 
@@ -273,15 +273,15 @@ def adjust_pitch(params, dark_field, white_field, angle_shift):
     
     log.warning(' *** Adjusting pitch ***')              
     log.info('  *** acquire sphere after moving it along the beam axis by 1mm ***')             
-    global_PVs["Motor_Sample_Top_90"].put(global_PVs["Motor_Sample_Top_90"].get()-1.0, wait=True, timeout=600.0)            
+    global_PVs["SampleZCent"].put(global_PVs["SampleZCent"].get()-1.0, wait=True, timeout=600.0)            
 
     log.info('  *** moving rotary stage to %f deg position ***' % float(0+angle_shift))                                                            
-    global_PVs["Motor_SampleRot"].put(float(0+angle_shift), wait=True, timeout=600.0)                
+    global_PVs["SampleOmega"].put(float(0+angle_shift), wait=True, timeout=600.0)                
     log.info('  *** acquire sphere at %f deg position ***' % float(0+angle_shift))             
     sphere_0 = util.normalize(flir.take_image(global_PVs, params), white_field, dark_field)         
 
     log.info('  *** moving rotary stage to %f deg position ***' % float(0+angle_shift))                                                            
-    global_PVs["Motor_SampleRot"].put(float(180+angle_shift), wait=True, timeout=600.0)            
+    global_PVs["SampleOmega"].put(float(180+angle_shift), wait=True, timeout=600.0)            
     log.info('  *** acquire sphere at %f deg position ***' % float(180+angle_shift))             
     sphere_180 = util.normalize(flir.take_image(global_PVs, params), white_field, dark_field)
 
@@ -289,13 +289,13 @@ def adjust_pitch(params, dark_field, white_field, angle_shift):
     cmass_180 = util.center_of_mass(sphere_180)   
     log.info('  *** center of mass for the initial sphere (%f,%f) ***' % (cmass_0[1],cmass_0[0]))
     log.info('  *** center of mass for the shifted sphere (%f,%f) ***' % (cmass_180[1],cmass_180[0]))                                 
-    pitch = np.rad2deg(np.arctan((cmass_180[0] - cmass_0[0])*params.image_resolution/1000 / 2.0))
+    pitch = np.rad2deg(np.arctan((cmass_180[0] - cmass_0[0])*params.image_pixel_size/1000 / 2.0))
     log.warning('  *** found pitch error: %f' % pitch)
     log.info('  *** acquire sphere back along the beam axis by -1mm ***')             
-    global_PVs["Motor_Sample_Top_90"].put(global_PVs["Motor_Sample_Top_90"].get()+1.0, wait=True, timeout=600.0)
-    log.warning('  *** change pitch to %f ***' % float(global_PVs["Motor_Pitch"].get()-pitch))             
-    global_PVs["Motor_Pitch"].put(global_PVs["Motor_Pitch"].get()-pitch, wait=True, timeout=600.0)
-    global_PVs["Motor_SampleRot"].put(float(0+angle_shift), wait=True, timeout=600.0)    
+    global_PVs["SampleZCent"].put(global_PVs["SampleZCent"].get()+1.0, wait=True, timeout=600.0)
+    log.warning('  *** change pitch to %f ***' % float(global_PVs["SamplePitch"].get()-pitch))             
+    global_PVs["SamplePitch"].put(global_PVs["SamplePitch"].get()-pitch, wait=True, timeout=600.0)
+    global_PVs["SampleOmega"].put(float(0+angle_shift), wait=True, timeout=600.0)    
     
     log.info('  *** TEST: acquire sphere at %f deg position ***' % float(0+angle_shift)) 
     sphere_0 = util.normalize(flir.take_image(global_PVs, params), white_field, dark_field)                   
@@ -309,29 +309,29 @@ def find_resolution(params, dark_field, white_field, angle_shift):
 
     log.warning(' *** Find resolution ***')
     log.info('  *** moving rotary stage to %f deg position ***' % float(0+angle_shift))                                                            
-    global_PVs["Motor_SampleRot"].put(float(0+angle_shift), wait=True, timeout=600.0)    
-    log.info('  *** First image at X: %f mm' % (params.sample_in_position))
+    global_PVs["SampleOmega"].put(float(0+angle_shift), wait=True, timeout=600.0)    
+    log.info('  *** First image at X: %f mm' % (params.sample_in_x))
     log.info('  *** acquire first image')
 
     sphere_0 = util.normalize(flir.take_image(global_PVs, params), white_field, dark_field)
 
-    second_image_x_position = params.sample_in_position + params.off_axis_position
+    second_image_x_position = params.sample_in_x + params.off_axis_position
     log.info('  *** Second image at X: %f mm' % (second_image_x_position))
-    global_PVs["Motor_SampleX"].put(second_image_x_position, wait=True, timeout=600.0)
+    global_PVs["SampleX"].put(second_image_x_position, wait=True, timeout=600.0)
     log.info('  *** acquire second image')
     sphere_1 = util.normalize(flir.take_image(global_PVs, params), white_field, dark_field)
 
-    log.info('  *** moving X stage back to %f mm position' % (params.sample_in_position))
+    log.info('  *** moving X stage back to %f mm position' % (params.sample_in_x))
     pv.move_sample_in(global_PVs, params)
 
     shift = register_translation(sphere_0, sphere_1, 100)
     log.info('  *** shift X: %f, Y: %f' % (shift[0][1],shift[0][0]))
-    image_resolution =  abs(params.off_axis_position) / np.linalg.norm(shift[0]) * 1000.0
+    image_pixel_size =  abs(params.off_axis_position) / np.linalg.norm(shift[0]) * 1000.0
     
-    log.warning('  *** found resolution %f um/pixel' % (image_resolution))    
-    params.image_resolution = image_resolution
+    log.warning('  *** found resolution %f um/pixel' % (image_pixel_size))    
+    params.image_pixel_size = image_pixel_size
 
-    pv.image_resolution_pv_update(global_PVs, params)            
+    pv.image_pixel_size_pv_update(global_PVs, params)            
 
 
 def adjust_focus(params):
@@ -346,9 +346,9 @@ def adjust_focus(params):
     cnt = 0
     decrease_step = False
     while(step>0.01):
-        initpos = global_PVs['Motor_Focus'].get()
+        initpos = global_PVs['Focus'].get()
         curpos = initpos + step*direction
-        global_PVs['Motor_Focus'].put(curpos, wait=True, timeout=600.0)
+        global_PVs['Focus'].put(curpos, wait=True, timeout=600.0)
         img = flir.take_image(global_PVs, params)        
         cur_std = np.std(img)
         log.info('  ***   *** Positon: %f Standard deviation: %f ' % (curpos,cur_std))
