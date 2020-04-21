@@ -99,7 +99,7 @@ def scp(global_PVs, params):
     log.info('      *** remote server: %s' % remote_server)
     log.info('      *** remote top directory: %s' % remote_top_dir)
 
-    fname_origin = global_PVs['HDF1_FullFileName_RBV'].get(as_string=True)
+    fname_origin = global_PVs['HDFFullFileName_RBV'].get(as_string=True)
     p = pathlib.Path(fname_origin)
     fname_destination = params.remote_analysis_dir + p.parts[-3] + '/' + p.parts[-2] + '/'
     remote_dir = remote_top_dir + p.parts[-3] + '/' + p.parts[-2] + '/'
