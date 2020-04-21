@@ -6,17 +6,6 @@ class tomoscan_13bm(tomoscan):
     def __init__(self, autoSettingsFile, macros=[]):
         tomoscan.__init__(self, autoSettingsFile, macros)
         
-        prefix = self.pvPrefixes['MCS']
-        if (prefix != None):
-            self.controlPVs['MCSEraseStart']      = PV(prefix + 'EraseStart')
-            self.controlPVs['MCSStopAll']         = PV(prefix + 'StopAll')
-            self.controlPVs['MCSPrescale']        = PV(prefix + 'Prescale')
-            self.controlPVs['MCSDwell']           = PV(prefix + 'Dwell')
-            self.controlPVs['MCSLNEOutputWidth']  = PV(prefix + 'LNEOutputWidth')
-            self.controlPVs['MCSChannelAdvance']  = PV(prefix + 'ChannelAdvance')
-            self.controlPVs['MCSMaxChannels']     = PV(prefix + 'MaxChannels')
-            self.controlPVs['MCSNuseAll']         = PV(prefix + 'NuseAll')
-        self.epicsPVs = {**self.configPVs, **self.controlPVs}
 
     def configureCamera(self):
         a=0
@@ -30,33 +19,28 @@ class tomoscan_13bm(tomoscan):
     def collectNormalFields(self):
         a=0
 
+
     def setTriggerMode(self, triggerMode, numImages):
         if (triggerMode == 'FreeRun'):
-            epicsPVs['CamImageMode'].put('Continuous')
-            epicsPVs['CamTriggerMode'].put('Off')
-            epicsPVs['CamExposureMode'].put('Timed')
+            self.epicsPVs['CamImageMode'].put('Continuous', wait=True)
+            self.epicsPVs['CamTriggerMode'].put('Off', wait=True)
+            self.epicsPVs['CamExposureMode'].put('Timed', wait=True)
         else: # set camera to external triggering
-            epicsPVs['CamImageMode'].put('Multiple')
-            epicsPVs['CamNumImages'].put(numImages)
-            epicsPVs['CamTriggerMode'].put('On')
-            epicsPVs['CamExposureMode'].put('Timed')
-            epicsPVs['CamTriggerOverlap'].put('Readout')
+            self.epicsPVs['CamImageMode'].put('Multiple', wait=True)
+            self.epicsPVs['CamNumImages'].put(numImages, wait=True)
+            self.epicsPVs['CamTriggerMode'].put('On', wait=True)
+            self.epicsPVs['CamExposureMode'].put('Timed', wait=True)
+            self.epicsPVs['CamTriggerOverlap'].put('ReadOut', wait=True)
             # Set number of MCS channels, NumImages, and NumCapture
-            epicsPVs['MCSStopAll'].put(1)
-            epicsPVs['MCSNuseAll'].put(numImages)
-            epicsPVs['HdfNumCapture'].put(numImages)
+            self.epicsPVs['MCSStopAll'].put(1, wait=True)
+            self.epicsPVs['MCSNuseAll'].put(numImages, wait=True)
+            self.epicsPVs['HdfNumCapture'].put(numImages, wait=True)
   
         if (triggerMode == 'MCSExternal'):
             # Put MCS in external trigger mode
-            epicsPVs['MCSStopAll'].put(1)
-            epicsPVs['MCSChannelAdvance'].put('External')
+            self.epicsPVs['MCSChannelAdvance'].put('External', wait=True)
   
-  if (triggerMode eq 'MCSInternal') then begin
-    t = caput(self.epics_pvs.sis_mcs+'StopAll', 1)
-    ; Put MCS in internal trigger mode
-    t = caput(self.epics_pvs.sis_mcs+'ChannelAdvance', 'Internal')
-    ; Set MCS dwell time to time per angle
-    t = caput(self.epics_pvs.sis_mcs+'Dwell', self->computeFrameTime())
-  endif
-  
-end
+        if (triggerMode == 'MCSInternal'):
+            self.epicsPVs['MCSChannelAdvance'].put('Internal', wait=True)
+            time = self.computeFrameTime()
+            self.epicsPVs['MCSDwell'].put(time, wait=True)
