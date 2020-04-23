@@ -1,7 +1,7 @@
 tomoscan
 ========
 
-:author: Mark Rivers (University of Chicago), 
+:author: Mark Rivers (University of Chicago)
 
 .. _2bm-tomo: https://github.com/xray-imaging/2bm-tomo
 
