@@ -5,7 +5,9 @@ API reference
 
 .. toctree::
 
-   api/sphere
+   api/tomoscan
+   api/tomoscan_13bm
+   api/test_parse
 
 .. automodule:: tomoscan
    :members:
