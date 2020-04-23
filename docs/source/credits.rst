@@ -2,14 +2,17 @@
 Credits
 =======
 
+:author: Mark Rivers (University of Chicago)
+
+
 Citations
 =========
-
-We kindly request that you cite the following article :cite:`AD:01` if you use project.
 
 .. bibliography:: bibtex/cite.bib
    :style: plain
    :labelprefix: A
+   :all: 
+
 
 References
 ==========
