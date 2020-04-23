@@ -101,7 +101,7 @@ Simulation driver specific parameters
 The simulation driver-specific parameters are the following:
 
 .. cssclass:: table-bordered table-striped table-hover
-.. flat-table::
+.. list-table::
   :header-rows: 2
   :widths: 40 20 20 20
 
