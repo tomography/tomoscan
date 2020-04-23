@@ -1,6 +1,7 @@
 from epics import PV
 import json
 import time
+from datetime import timedelta
 
 class tomoscan:
 
@@ -28,18 +29,19 @@ class tomoscan:
 
         prefix = self.pvPrefixes['Camera']
         camPrefix = prefix + 'cam1:'
-        self.controlPVs['CamManufacturer']    = PV(camPrefix + 'Manufacturer_RBV')
-        self.controlPVs['CamModel']           = PV(camPrefix + 'Model_RBV')
-        self.controlPVs['CamAcquire']         = PV(camPrefix + 'Acquire')
-        self.controlPVs['CamAcquireBusy']     = PV(camPrefix + 'AcquireBusy')
-        self.controlPVs['CamImageMode']       = PV(camPrefix + 'ImageMode')
-        self.controlPVs['CamTriggerMode']     = PV(camPrefix + 'TriggerMode')
-        self.controlPVs['CamNumImages']       = PV(camPrefix + 'NumImages')
-        self.controlPVs['CamAcquireTime']     = PV(camPrefix + 'AcquireTime')
-        self.controlPVs['CamAcquireTimeRBV']  = PV(camPrefix + 'AcquireTime_RBV')
-        self.controlPVs['CamBinX']            = PV(camPrefix + 'BinX')
-        self.controlPVs['CamBinY']            = PV(camPrefix + 'BinY')
-        self.controlPVs['CamWaitForPlugins']  = PV(camPrefix + 'WaitForPlugins')
+        self.controlPVs['CamManufacturer']      = PV(camPrefix + 'Manufacturer_RBV')
+        self.controlPVs['CamModel']             = PV(camPrefix + 'Model_RBV')
+        self.controlPVs['CamAcquire']           = PV(camPrefix + 'Acquire')
+        self.controlPVs['CamAcquireBusy']       = PV(camPrefix + 'AcquireBusy')
+        self.controlPVs['CamImageMode']         = PV(camPrefix + 'ImageMode')
+        self.controlPVs['CamTriggerMode']       = PV(camPrefix + 'TriggerMode')
+        self.controlPVs['CamNumImages']         = PV(camPrefix + 'NumImages')
+        self.controlPVs['CamNumImagesCounter']  = PV(camPrefix + 'NumImagesCounter_RBV')
+        self.controlPVs['CamAcquireTime']       = PV(camPrefix + 'AcquireTime')
+        self.controlPVs['CamAcquireTimeRBV']    = PV(camPrefix + 'AcquireTime_RBV')
+        self.controlPVs['CamBinX']              = PV(camPrefix + 'BinX')
+        self.controlPVs['CamBinY']              = PV(camPrefix + 'BinY')
+        self.controlPVs['CamWaitForPlugins']    = PV(camPrefix + 'WaitForPlugins')
         
         # If this is a Point Grey camera then assume we are running ADSpinnaker
         # and create some PVs specific to that driver
@@ -88,6 +90,9 @@ class tomoscan:
             self.controlPVs['MCSNuseAll']         = PV(prefix + 'NuseAll')
  
         self.epicsPVs = {**self.configPVs, **self.controlPVs}
+        # Wait 1 second for all PVs to connect
+        time.sleep(1)
+        self.checkPVsConnected()
 
     def showPVs(self):
         print("configPVS:")
@@ -103,6 +108,14 @@ class tomoscan:
         print("pvPrefixes:")
         for pv in self.pvPrefixes:
             print(pv, ":", self.pvPrefixes[pv])
+            
+    def checkPVsConnected(self):
+        allConnected = True
+        for pv in self.epicsPVs:
+            if (self.epicsPVs[pv].connected == False):
+                print('ERROR: PV', self.epicsPVs[pv].pvname, 'is not connected')
+                allConnected = False
+        return allConnected
 
     def readAutoSettingsFile(self, autoSettingsFile, macros):
         f = open(autoSettingsFile)
@@ -181,35 +194,39 @@ class tomoscan:
         numAngles = self.epicsPVs['NumAngles'].value
         rotationStop = rotationStart + (numAngles * rotationStep)
         numDarkFields = self.epicsPVs['NumDarkFields'].value
-        darkFieldMode = self.epicsPVs['DarkFieldMode'].value
+        darkFieldMode = self.epicsPVs['DarkFieldMode'].get(as_string=True)
+        numFlatFields = self.epicsPVs['NumFlatFields'].value
+        flatFieldMode = self.epicsPVs['FlatFieldMode'].get(as_string=True)
      
         self.epicsPVs['Rotation'].put(rotationStart, wait=True)
 
-        self.configureCamera()
+        self.beginScan()
 
         if (numDarkFields > 0) and ((darkFieldMode == 'Start') or (darkFieldMode == 'Both')):
             self.closeShutter()
-            self.collectDarkFields(numDarkFields)
+            self.collectDarkFields()
         
         self.openShutter()
     
         if (numFlatFields > 0) and ((flatFieldMode == 'Start') or (flatFieldMode == 'Both')):
             self.moveSampleOut()
-            self.collectFlatFields(numFlatFields)
+            self.collectFlatFields()
             
         self.moveSampleIn()
     
-        collectNormalFields(numAngles)
+        self.collectProjections()
         
         if (numFlatFields > 0) and ((flatFieldMode == 'End') or (flatFieldMode == 'Both')):
             self.moveSampleOut()
-            self.collectFlatFields(numDarkFields)
+            self.collectFlatFields()
             self.moveSampleIn()
     
         if (numDarkFields > 0) and ((darkFieldMode == 'End') or (darkFieldMode == 'Both')):
             self.closeShutter()
-            self.collectDarkFields(numDarkFields)
+            self.collectDarkFields()
             self.openShutter()
+            
+        self.endScan()
 
     def computeFrameTime(self):
         exposure = self.epicsPVs['ExposureTime'].value
@@ -248,10 +265,18 @@ class tomoscan:
         while(True):
             if (self.epicsPVs['CamAcquireBusy'].value == 0):
                 return True
-            time.sleep(0.01)
+            time.sleep(0.2)
+            numCollected = self.epicsPVs['CamNumImagesCounter'].value
+            numImages = self.epicsPVs['CamNumImages'].value
+            currentTime = time.time()
+            elapsedTime = currentTime - startTime
+            remainingTime = elapsedTime * (numImages - numCollected) / max(float(numCollected),1)
+            status = 'Collecting point ' + str(numCollected) + '/' + str(numImages)
+            print(status)
+            self.epicsPVs['ScanPoint'].put(status)
+            self.epicsPVs['ElapsedTime'].put(str(timedelta(seconds=int(elapsedTime))))
+            self.epicsPVs['RemainingTime'].put(str(timedelta(seconds=int(remainingTime))))
             if (timeout > 0):
-                currentTime = time.time()
-                diffTime = currentTime - startTime
-                if diffTime >= timeout:
+                if elapsedTime >= timeout:
                     print('ERROR: timeout waiting for camera to be done')
                     return False
