@@ -20,6 +20,7 @@ class tomoscan_13bm(tomoscan):
             self.epicsPVs['CamImageMode'].put('Continuous', wait=True)
             self.epicsPVs['CamTriggerMode'].put('Off', wait=True)
             self.epicsPVs['CamExposureMode'].put('Timed', wait=True)
+            self.epicsPVs['CamAcquire'].put('Acquire')
         else: # set camera to external triggering
             self.epicsPVs['CamImageMode'].put('Multiple', wait=True)
             self.epicsPVs['CamNumImages'].put(numImages, wait=True)
@@ -54,6 +55,7 @@ class tomoscan_13bm(tomoscan):
         self.waitCameraDone(collectionTime + 5.0)
        
     def beginScan(self):
+        self.epicsPVs['ScanStatus'].put('Beginning scan')
         # Stop the camera since it could be in free-run mode
         self.epicsPVs['CamAcquire'].put(0, wait=True)
         # Set the exposure time
@@ -71,19 +73,29 @@ class tomoscan_13bm(tomoscan):
 
     def endScan(self):
         # Save the configuration
-        filePath = self.epicsPVs['FilePath'].value
-        fileName = self.epicsPVs['FileName'].value
+        filePath = self.epicsPVs['FilePath'].get(as_string=True)
+        fileName = self.epicsPVs['FileName'].get(as_string=True)
         self.saveConfiguration(filePath + fileName + '.config')
-        # Put the camera back in FreeRun mode
+        # Put the camera back in FreeRun mode and acquiring
         self.setTriggerMode('FreeRun', 1)
+        # Set the rotation speed to maximum
+        maxSpeed = self.epicsPVs['RotationMaxSpeed'].value
+        self.epicsPVs['RotationSpeed'].put(maxSpeed)
+        returnRotation = self.epicsPVs['ReturnRotation'].get(as_string=True)
+        if (returnRotation == 'Yes'):
+            self.epicsPVs['Rotation'].put(self.epicsPVs['RotationStart'].value)
+        self.epicsPVs['ScanStatus'].put('Scan complete')
 
     def collectDarkFields(self):
+        self.epicsPVs['ScanStatus'].put('Collecting dark fields')
         self.collectNFrames(self.epicsPVs['NumDarkFields'].value)
 
     def collectFlatFields(self):
+        self.epicsPVs['ScanStatus'].put('Collecting flat fields')
         self.collectNFrames(self.epicsPVs['NumFlatFields'].value)
       
-    def collectNormalFields(self):
+    def collectProjections(self):
+        self.epicsPVs['ScanStatus'].put('Collecting projections')
         rotationStart = self.epicsPVs['RotationStart'].value
         rotationStep = self.epicsPVs['RotationStep'].value
         numAngles = self.epicsPVs['NumAngles'].value
@@ -96,7 +108,7 @@ class tomoscan_13bm(tomoscan):
         # Compute and set the motor speed
         timePerAngle = self.computeFrameTime()
         speed = rotationStep / timePerAngle
-        stepsPerDeg = abs(math.round(1./self.epicsPVs['RotationResolution'].value))
+        stepsPerDeg = abs(round(1./self.epicsPVs['RotationResolution'].value, 0))
         motorSpeed = math.floor((speed * stepsPerDeg)) / stepsPerDeg
         self.epicsPVs['RotationSpeed'].put(motorSpeed)
         # Set the external prescale according to the step size, use motor resolution steps per degree (user unit)
@@ -114,3 +126,5 @@ class tomoscan_13bm(tomoscan):
         time.sleep(0.5)
         # Start the rotation motor
         self.epicsPVs['Rotation'].put(rotationStop)
+        collectionTime = numAngles * timePerAngle
+        self.waitCameraDone(collectionTime + 10.)
