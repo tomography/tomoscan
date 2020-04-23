@@ -4,6 +4,9 @@ tomoscan
 :author: Mark Rivers (University of Chicago)
 
 .. _2bm-tomo: https://github.com/xray-imaging/2bm-tomo
+.. _TomoCollect.template: https://github.com/tomography/tomoscan/blob/master/tomoscan/exampleFiles/13bm/TomoCollect.template
+.. _TomoCollect_settings.req: https://github.com/tomography/tomoscan/blob/master/tomoscan/exampleFiles/13bm/TomoCollect_settings.req
+.. _TomoCollect.substitutions: https://github.com/tomography/tomoscan/blob/master/tomoscan/exampleFiles/13bm/TomoCollect.substitutions
 
 
 Table of Contents
@@ -14,15 +17,14 @@ Table of Contents
 Introduction
 ------------
 
-tomoscan is a Python class for collecting computed tomography data
-at the APS. tomoscan.py implements a base class with the code that
-should be beamline-independent.  Beamline-dependent code is implemented
-in classes that inherit from tomoscan.
+tomoscan is a Python class for collecting computed tomography data at the APS. 
+tomoscan.py implements a base class with the code that should be beamline-independent.  
+Beamline-dependent code is implemented in derived classes that inherit from tomoscan.
 
 Advantages compared to current APS tomography Python software
 -------------------------------------------------------------
 
-The following describe some of the advantages of ``tomoscan`` compared to the existing 
+The following describes some of the advantages of ``tomoscan`` compared to the existing 
 APS tomography Python software (e.g. `2bm-tomo`_).
 
 - tomoscan is object-oriented with a base class that implements things that
@@ -36,8 +38,8 @@ APS tomography Python software (e.g. `2bm-tomo`_).
 
 - tomoscan does not contain any PV prefixes in the Python code.  It reads the prefixes
   from a configuration file, which makes porting to a new beamline very easy.
-  The configuration file itself does not even need to be created, it will already exist
-  as the EPICS autosave request file for the tomography database.
+  The configuration file itself does not even need to be created, it is simply
+  the existing EPICS autosave request file for the tomography database.
 
   - The existing software hard-codes the PV prefixes in the Python code. This
     requires many changes in the code when porting to a new beamline.
@@ -48,16 +50,20 @@ APS tomography Python software (e.g. `2bm-tomo`_).
   There will be a status PV that indicates the scan status, indicating when the scan is complete.
   Thus, any EPICS client can be used to create complex scans, and this code does not need to be
   in the same Python process that is running tomoscan.  Possible clients include Python, IDL,
-  the EPICS sscan record, SPEC, etc.
+  the EPICS sscan record, SPEC, etc.  **NOTE: the server mode is a planned feature and does not
+  currently exist.**
 
   - The existing software requires that scans be run from within the same Python process that is running
     the tomography scan.
 
-- tomoscan is very compact code.  The existing code is less than 400 lines, including the base
-  tomoscan class (274 lines) and the derived class for 13-BM (124 lines).  This code collects
-  a complete tomography dataset, including dark-fields, flat-fields, projections, and saving a configuration
-  file in JSON format at the end of the scan.  The configuration file can be read back in to repeat the same
-  scan at a future time.
+- tomoscan is very compact code, less than 400 lines, including the base tomoscan class (274 lines) 
+  and the derived class for 13-BM (124 lines).  
+  This code collects a complete tomography dataset, including dark-fields, flat-fields, projections, 
+  and saves a configuration file in JSON format at the end of the scan.
+  The configuration file can be read back in to repeat the same scan at a future time.
+
+  - The existing software is over 2,000 lines.  However, it does have more functionality than tomoscan
+    currently has. 
 
 Usage
 -----
@@ -66,14 +72,16 @@ The following 3 Python commands are all that is required to collect a tomography
 
 >>> from tomoscan_13bm import tomoscan_13bm
 
-This line imports the code for class tomoscan_13bm.  tomoscan_13bm is a class that derives
-from tomoscan.  It implements the logic used for scanning at 13-BM-D, but does not hard-code any EPICS PVs
-for that specific beamline.  Currently at 13-BM-D the rotation stage is a stepper motor driven by 
-an OMS-58 motor controller.  The step pulses from the motor controller are sent to an SIS3820 multi-channel
-scaler (MCS). The MCS is using in external trigger mode to divide the pulse frequency by N, 
-where N is the number of stepper-motor pulses per rotation step. The speed of the rotation motor is
-set such that the exposure and readout will have just completed for image N when the trigger 
-for image N+1 arrives.
+This line imports the code for class tomoscan_13bm.  tomoscan_13bm is a class that derives from tomoscan.  
+It implements the logic used for scanning at 13-BM-D, but does not hard-code any EPICS PVs
+for that specific beamline.  
+
+Currently at 13-BM-D the rotation stage is a stepper motor driven by an OMS-58 motor controller.  
+The step pulses from the motor controller are sent to an SIS3820 multi-channel scaler (MCS). 
+The MCS is using in external trigger mode to divide the pulse frequency by N, 
+where N is the number of stepper-motor pulses per rotation step.
+The speed of the rotation motor is set such that the exposure and readout will have just completed
+for image N when the trigger  for image N+1 arrives.
 The MCS is also used to collect the dark-fields and the flat-fields, using its internal trigger mode and a
 dwell time that is equal to the exposure time plus the readout time.
 
@@ -84,9 +92,10 @@ dwell time that is equal to the exposure time plus the readout time.
 This line creates the tomoscan_13bm object.  It takes two arguments that are passed to the 
 tomoscan constructor:
 
-- The first argument is the path to the TomoCollect_settings.req autosave request file for the TomoCollect database described below.
-- The second argument is a dictionary of macro substitution values for that database file.  These define
-  the PV prefixes to use when parsing that file.
+- The first argument is the path to the TomoCollect_settings.req autosave request file for the 
+  TomoCollect database described below.
+- The second argument is a dictionary of macro substitution values for that database file.
+  These define the PV prefixes to use when parsing that file.
 
 When the TomoCollect_settings.req file is read it is used to construct all of the EPICS PV names that are used
 by tomoscan.  This allows tomoscan to avoid having any hard-coded PV names, and makes it easy to port to a new beamline.
@@ -109,8 +118,101 @@ required for a tomography dataset:
   These may include moving the rotation stage back to the start position, putting the camera in Continuous mode, etc.
 
 
-Simulation driver specific parameters
--------------------------------------
+Tomography data collection database
+-----------------------------------
+
+tomoscan includes an example `TomoCollect.template`_ file, and a corresponding `TomoCollect_settings.req`_ file.
+The database is loaded in the IOC with the example `TomoCollect.substitutions`_ file.
+
+The following table lists all of the records in the TomoCollect.template file, and which are required by tomoscan
+and which are optional. 
+
+.. cssclass:: table-bordered table-striped table-hover
+.. list-table::
+  :header-rows: 1
+  :widths: 40 20 20 20
+
+
+  * - Record name
+    - Record type
+    - Description
+    - Required/optional
+  * - $(P)$(R)CameraPVPrefix
+    - stringout
+    - Contains the prefix for the camera, e.g. 13BMDPG1:
+    - Required
+  * - $(P)$(R)FilePluginPVPrefix
+    - stringout
+    - Contains the prefix for the file plugin, e.g. 13BMDPG1:HDF1:
+    - Required
+  * - $(P)$(R)MCSPVPrefix
+    - stringout
+    - Contains the prefix for the SIS MCS, e.g. 13BMD:SIS1:
+    - Optional (only needed if MCS is used)
+
+
+
+record(stringout, "$(P)$(R)CameraPVPrefix")
+record(stringout, "$(P)$(R)FilePluginPVPrefix")
+record(stringout, "$(P)$(R)MCSPVPrefix")
+record(stringout, "$(P)$(R)CloseShutterPVName")
+record(stringout, "$(P)$(R)CloseShutterValue")
+record(stringout, "$(P)$(R)OpenShutterPVName")
+record(stringout, "$(P)$(R)OpenShutterValue")
+record(stringout, "$(P)$(R)CloseShutterValue")
+record(stringout, "$(P)$(R)OpenShutterPVName")
+record(stringout, "$(P)$(R)OpenShutterValue")
+record(stringout, "$(P)$(R)RotationPVName")
+record(stringout, "$(P)$(R)SampleXPVName")
+record(stringout, "$(P)$(R)SampleYPVName")
+record(stringout, "$(P)$(R)BeamReadyPVName")
+record(stringout, "$(P)$(R)BeamReadyValue")
+record(mbbo, "$(P)$(R)EnergyMode")
+record(stringout, "$(P)$(R)ScintillatorType")
+record(ao, "$(P)$(R)ScintillatorThickness")
+record(ao, "$(P)$(R)ImagePixelSize")
+record(ao, "$(P)$(R)DetectorPixelSize")
+record(stringout, "$(P)$(R)CameraObjective")
+record(ao, "$(P)$(R)CameraTubeLength")
+record(ao, "$(P)$(R)RotationStart")
+record(ao, "$(P)$(R)RotationStep")
+record(longout, "$(P)$(R)NumAngles")
+record(bo, "$(P)$(R)ReturnRotation")
+record(longout, "$(P)$(R)NumDarkFields")
+record(mbbo, "$(P)$(R)DarkFieldMode")
+record(ao, "$(P)$(R)DarkFieldValue")
+record(longout, "$(P)$(R)NumFlatFields")
+record(mbbo, "$(P)$(R)FlatFieldMode")
+record(mbbo, "$(P)$(R)FlatFieldAxis")
+record(ao, "$(P)$(R)FlatFieldValue")
+record(ao, "$(P)$(R)SampleInX")
+record(ao, "$(P)$(R)SampleOutX")
+record(ao, "$(P)$(R)SampleInY")
+record(ao, "$(P)$(R)SampleOutY")
+record(sseq, "$(P)$(R)MoveSampleIn")
+record(sseq, "$(P)$(R)MoveSampleOut")
+record(stringout, "$(P)$(R)SampleName")
+record(stringout, "$(P)$(R)SampleDescription1")
+record(stringout, "$(P)$(R)SampleDescription2")
+record(stringout, "$(P)$(R)SampleDescription3")
+record(stringout, "$(P)$(R)UserName")
+record(stringout, "$(P)$(R)UserInstitution")
+record(stringout, "$(P)$(R)UserBadge")
+record(stringout, "$(P)$(R)UserEmail")
+record(stringout, "$(P)$(R)ProposalNumber")
+record(stringout, "$(P)$(R)ProposalTitle")
+record(stringout, "$(P)$(R)ESAFNumber")
+record(longin,"$(P)$(R)OTFGroups") {
+record(ao, "$(P)$(R)ExposureTime")
+record(bi, "$(P)$(R)ScanReady") {
+record(busy,"$(P)$(R)StartScan")
+record(bo,"$(P)$(R)AbortScan")
+record(waveform, "$(P)$(R)FilePath")
+record(waveform, "$(P)$(R)FileName")
+record(waveform,"$(P)$(R)ScanStatus")
+record(stringout,"$(P)$(R)ScanPoint")
+record(stringout, "$(P)$(R)ElapsedTime")
+record(stringout, "$(P)$(R)RemainingTime")
 
 
 Screenshots
