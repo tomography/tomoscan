@@ -62,25 +62,25 @@ APS tomography Python software (e.g. `2bm-tomo`_).
 Usage
 -----
  
- The following 3 Python commands are all that is require to collect a tomography dataset:
+The following 3 Python commands are all that is require to collect a tomography dataset:
 
   >>> from tomoscan_13bm import tomoscan_13bm
   >>> ts = tomoscan_13bm("exampleFiles/13bm/TomoCollect_settings.req", {"$(P)":"13BMDPG1:", "$(R)":"TC:"})
   >>> ts.flyScan()
 
- The first line above imports the code for class tomoscan_13bm.  tomoscan_13bm is a class that derives
- from tomoscan.  It implements the logic used for scanning at 13-BM-D, but does not hard-code any EPICS PVs
- for that specific beamline.  Currently at 13-BM-D the rotation stage is a stepper motor driven by 
- an OMS-58 motor controller.  The step pulses from the motor controller are sent to an SIS3820 multi-channel
- scaler (MCS). The MCS is using in external trigger mode to divide the pulse frequency by N, 
- where N is the number of stepper-motor pulses per rotation step. The speed of the rotation motor is
- set such that the exposure and readout will have just completed for image N when the trigger 
- for image N+1 arrives.
- The MCS is also used to collect the dark-fields and the flat-fields, using its internal trigger mode and a
- dwell time that is equal to the exposure time plus the readout time.
+The first line above imports the code for class tomoscan_13bm.  tomoscan_13bm is a class that derives
+from tomoscan.  It implements the logic used for scanning at 13-BM-D, but does not hard-code any EPICS PVs
+for that specific beamline.  Currently at 13-BM-D the rotation stage is a stepper motor driven by 
+an OMS-58 motor controller.  The step pulses from the motor controller are sent to an SIS3820 multi-channel
+scaler (MCS). The MCS is using in external trigger mode to divide the pulse frequency by N, 
+where N is the number of stepper-motor pulses per rotation step. The speed of the rotation motor is
+set such that the exposure and readout will have just completed for image N when the trigger 
+for image N+1 arrives.
+The MCS is also used to collect the dark-fields and the flat-fields, using its internal trigger mode and a
+dwell time that is equal to the exposure time plus the readout time.
  
- The second line above creates the tomoscan_13bm object.  It takes two arguments that are passed to the 
- tomoscan constructor:
+The second line above creates the tomoscan_13bm object.  It takes two arguments that are passed to the 
+tomoscan constructor:
  - The first argument is the path to the TomoCollect_settings.req autosave request file for the TomoCollect database described below.
  - The second argument is a dictionary of macro substitution values for that database file.  These define
    the PV prefixes to use when parsing that file.
