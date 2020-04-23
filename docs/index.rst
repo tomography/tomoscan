@@ -18,7 +18,7 @@ Content
 
    source/about
    source/usage
-   source/database
+   source/demo
    source/screenshots
    source/api
    source/credits
