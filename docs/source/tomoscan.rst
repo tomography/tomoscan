@@ -107,8 +107,3 @@ simDetector.adl
 
 The following is the MEDM screen simDetector.adl for the simulation
 detector.
-
-.. image:: simDetector.png
-    :width: 75%
-    :align: center
-
