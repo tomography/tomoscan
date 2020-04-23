@@ -62,11 +62,11 @@ APS tomography Python software (e.g. `2bm-tomo`_).
 Usage
 -----
  
-The following 3 Python commands are all that is require to collect a tomography dataset:
+The following 3 Python commands are all that is require to collect a tomography dataset::
 
-  >>> from tomoscan_13bm import tomoscan_13bm
-  >>> ts = tomoscan_13bm("exampleFiles/13bm/TomoCollect_settings.req", {"$(P)":"13BMDPG1:", "$(R)":"TC:"})
-  >>> ts.flyScan()
+>>> from tomoscan_13bm import tomoscan_13bm
+>>> ts = tomoscan_13bm("exampleFiles/13bm/TomoCollect_settings.req", {"$(P)":"13BMDPG1:", "$(R)":"TC:"})
+>>> ts.flyScan()
 
 The first line above imports the code for class tomoscan_13bm.  tomoscan_13bm is a class that derives
 from tomoscan.  It implements the logic used for scanning at 13-BM-D, but does not hard-code any EPICS PVs
@@ -81,15 +81,17 @@ dwell time that is equal to the exposure time plus the readout time.
  
 The second line above creates the tomoscan_13bm object.  It takes two arguments that are passed to the 
 tomoscan constructor:
- - The first argument is the path to the TomoCollect_settings.req autosave request file for the TomoCollect database described below.
- - The second argument is a dictionary of macro substitution values for that database file.  These define
-   the PV prefixes to use when parsing that file.
+
+- The first argument is the path to the TomoCollect_settings.req autosave request file for the TomoCollect database described below.
+- The second argument is a dictionary of macro substitution values for that database file.  These define
+  the PV prefixes to use when parsing that file.
 
 When the TomoCollect_settings.req file is read it is used to construct all of the EPICS PV names that are used
 by tomoscan.  This allows tomoscan to avoid having any hard-coded PV names, and makes it easy to port to a new beamline.
 
 The third line above runs the tomoscan.flyScan() function.  The base class implementation of flyScan does the common operations
 required for a tomography dataset:
+
 - Calls the beginScan() method in the derived class.  This performs whatever operations are required before the scan.
 - Closes the shutter and collects the dark fields by calling the collectDarkFields() method in the derived class. 
   This can be done before the scan, after the scan, both before and after, or never.
