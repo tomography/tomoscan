@@ -5,12 +5,14 @@ from datetime import timedelta
 
 class tomoscan:
 
-    def __init__(self, autoSettingsFile, macros=[]):
+    def __init__(self, configPVFile, controlPVFile, macros=[]):
         self.configPVs = {}
         self.controlPVs = {}
         self.pvPrefixes = {}
-        if (autoSettingsFile != None):
-            self.readAutoSettingsFile(autoSettingsFile, macros)
+        if (configPVFile != None):
+            self.readPVFile(configPVFile, macros, True)
+        if (controlPVFile != None):
+            self.readPVFile(controlPVFile, macros, False)
 
         if (('Rotation' in self.controlPVs) == False):
             print("ERROR: RotationPVName must be present in autoSettingsFile")
@@ -21,7 +23,7 @@ class tomoscan:
         if (('FilePlugin' in self.pvPrefixes) == False):
             print("ERROR: FilePluginPVPrefix must be present in autoSettingsFile")
             quit()
-                        
+                
         rotationPVName = self.controlPVs['Rotation'].pvname
         self.controlPVs['RotationSpeed']      = PV(rotationPVName + '.VELO')
         self.controlPVs['RotationMaxSpeed']   = PV(rotationPVName + '.VMAX')
@@ -93,7 +95,22 @@ class tomoscan:
         # Wait 1 second for all PVs to connect
         time.sleep(1)
         self.checkPVsConnected()
+        
+        # Configure callbacks on a few PVs
+        self.epicsPVs['MoveSampleIn'].add_callback(self.pvCallback)
+        self.epicsPVs['MoveSampleOut'].add_callback(self.pvCallback)
+        self.epicsPVs['StartScan'].add_callback(self.pvCallback)
+        self.epicsPVs['AbortScan'].add_callback(self.pvCallback)
 
+    def pvCallback(self, pvname=None, value=None, char_value=None, **kw):
+        print("Got callback, pvname=", pvname, "value=", value, "char_value=", char_value)
+        if ((pvname.find('MoveSampleIn') != -1) and (value == 1)):
+            self.moveSampleIn()
+            self.epicsPVs['MoveSampleIn'].put(0)
+        if ((pvname.find('MoveSampleOut') != -1) and (value == 1)):
+            self.moveSampleOut()
+            self.epicsPVs['MoveSampleOut'].put(0)
+        
     def showPVs(self):
         print("configPVS:")
         for pv in self.configPVs:
@@ -117,8 +134,8 @@ class tomoscan:
                 allConnected = False
         return allConnected
 
-    def readAutoSettingsFile(self, autoSettingsFile, macros):
-        f = open(autoSettingsFile)
+    def readPVFile(self, pvFile, macros, configFile):
+        f = open(pvFile)
         lines = f.read()
         f.close()
         lines = lines.splitlines()
@@ -131,7 +148,10 @@ class tomoscan:
             for key in macros:
                  dictentry = dictentry.replace(key, "")
             pv = PV(pvname)
-            self.configPVs[dictentry] = pv
+            if (configFile == True):
+                self.configPVs[dictentry] = pv
+            else:
+                self.controlPVs[dictentry] = pv
             if (dictentry.find("PVName") != -1):
                 pvname = pv.value
                 de = dictentry.strip("PVName")
