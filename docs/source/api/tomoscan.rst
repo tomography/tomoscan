@@ -1,7 +1,7 @@
-:mod:`tomoscan.sphere`
-======================
+:mod:`tomoscan.tomoscan`
+========================
 
-.. automodule:: tomoscan.sphere
+.. automodule:: tomoscan.tomoscan
    :members:
    :show-inheritance:
    :undoc-members:
@@ -10,4 +10,4 @@
 
    .. autosummary::
    
-      adjust_focus
+      tomoscan

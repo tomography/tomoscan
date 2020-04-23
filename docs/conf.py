@@ -311,4 +311,7 @@ autodoc_mock_imports = [
     'configargparse',
     'scipy',
     'numexpr',
+    'epics',
+    'time',
+    'math',
 ]
