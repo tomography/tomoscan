@@ -1,4 +1,3 @@
-
 ===================================
 Tomography data collection database
 ===================================
@@ -7,9 +6,9 @@ tomoscan includes an example :download:`TomoCollect.template <../../docs/demo/13
 and a corresponding :download:`TomoCollect_settings.req <../../docs/demo/13bm/TomoCollect_settings.req>`.
 The database is loaded in the IOC with the example :download:`TomoCollect.substitutions <../../docs/demo/13bm/TomoCollect.substitutions>`.
 
-The following tables lists all of the records in the TomoCollect.template file. The first table lists the records
-that are required by tomoscan.  The second table lists the records that are using only by the tomoscan server mode.
-The third table lists the records that are optional, and are not used by the tomoscan base class.
+The following tables list all of the records in the TomoCollect.template file. The section lists the records
+that are required by tomoscan.  The second section lists the records that are using only by the tomoscan server mode.
+The third section lists the records that are optional, and are not used by the tomoscan base class.
 
 Required records
 ================
