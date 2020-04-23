@@ -9,6 +9,11 @@ record(stringout, "$(P)$(R)CameraPVPrefix")
    field(VAL,  "$(CAMERA)")
 }
 
+record(stringout, "$(P)$(R)FilePluginPVPrefix")
+{
+   field(VAL,  "$(FILE_PLUGIN)")
+}
+
 record(stringout, "$(P)$(R)MCSPVPrefix")
 {
    field(VAL,  "$(MCS)")

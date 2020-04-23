@@ -25,7 +25,6 @@ def test_parse(xmlFile, macros=[]):
         
     # Do macro substitution
     for key in macros:
-      print("Replacing", key, "with", macros[key])
       xml_lines = xml_lines.replace(key, macros[key])
     
     # parse xml file to dom object
@@ -63,5 +62,7 @@ def test_parse(xmlFile, macros=[]):
     # list of all nodes    
     for node in elements(elements(xml_root)[0]):
         handle_node(node)
+
+    # Print all names and values for debugging
     for key in TomoParams:
       print(key, ":", TomoParams[key].get())
