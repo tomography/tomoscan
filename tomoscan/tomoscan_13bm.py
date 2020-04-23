@@ -5,8 +5,8 @@ import math
 
 class tomoscan_13bm(tomoscan):
 
-    def __init__(self, autoSettingsFile, macros=[]):
-        tomoscan.__init__(self, autoSettingsFile, macros)
+    def __init__(self, configPVFile, controlPVFile, macros=[]):
+        tomoscan.__init__(self, configPVFile, controlPVFile, macros)
         
         # Set the detector running in FreeRun mode
         self.setTriggerMode('FreeRun', 1)
