@@ -28,16 +28,20 @@ APS tomography Python software (e.g. `2bm-tomo`_).
 - tomoscan is object-oriented with a base class that implements things that
   can be beamline-independent, and derived classes to implement the beamline-specific
   code.
+
   - The existing software is procedural, rather than object-oriented.  This means that it
     must pass information to each function (e.g. ``global_PVs``, ``params``).
     More importantly it cannot take advantage of inheritance to allow overriding
     functions in a transparent manner.
+
 - tomoscan does not contain any PV prefixes in the Python code.  It reads the prefixes
   from a configuration file, which makes porting to a new beamline very easy.
   The configuration file itself does not even need to be created, it will already exist
   as the EPICS autosave request file for the tomography database.
+
   - The existing software hard-codes the PV prefixes in the Python code. This
     requires many changes in the code when porting to a new beamline.
+
 - tomoscan will implement a **server mode**.  tomoscan itself only implements the code
   to collect a single tomography dataset, including dark-fields, flat-fields, and projections.
   The server mode will listen for EPICS PVs that command tomoscan to collect a new dataset.
@@ -45,16 +49,18 @@ APS tomography Python software (e.g. `2bm-tomo`_).
   Thus, any EPICS client can be used to create complex scans, and this code does not need to be
   in the same Python process that is running tomoscan.  Possible clients include Python, IDL,
   the EPICS sscan record, SPEC, etc.
+
   - The existing software requires that scans be run from within the same Python process that is running
     the tomography scan.
+
 - tomoscan is very compact code.  The existing code is less than 400 lines, including the base
   tomoscan class (274 lines) and the derived class for 13-BM (124 lines).  This code collects
   a complete tomography dataset, including dark-fields, flat-fields, projections, and saving a configuration
   file in JSON format at the end of the scan.  The configuration file can be read back in to repeat the same
   scan at a future time.
-  
- Usage
- -----
+
+Usage
+-----
  
  The following 3 Python commands are all that is require to collect a tomography dataset:
 
