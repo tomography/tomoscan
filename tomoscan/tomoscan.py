@@ -1,5 +1,6 @@
 from epics import PV
 import json
+import time
 
 class tomoscan:
 
@@ -10,49 +11,73 @@ class tomoscan:
         if (autoSettingsFile != None):
             self.readAutoSettingsFile(autoSettingsFile, macros)
 
+        if (('Rotation' in self.controlPVs) == False):
+            print("ERROR: RotationPVName must be present in autoSettingsFile")
+            quit()
+        if (('Camera' in self.pvPrefixes) == False):
+            print("ERROR: CameraPVPrefix must be present in autoSettingsFile")
+            quit()
+        if (('FilePlugin' in self.pvPrefixes) == False):
+            print("ERROR: FilePluginPVPrefix must be present in autoSettingsFile")
+            quit()
+                        
+        rotationPVName = self.controlPVs['Rotation'].pvname
+        self.controlPVs['RotationSpeed']      = PV(rotationPVName + '.VELO')
+        self.controlPVs['RotationMaxSpeed']   = PV(rotationPVName + '.VMAX')
+        self.controlPVs['RotationResolution'] = PV(rotationPVName + '.MRES')
+
         prefix = self.pvPrefixes['Camera']
-        if (prefix != None):
-            camPrefix = prefix + 'cam1:'
-            self.controlPVs['CamManufacturer']    = PV(camPrefix + 'Manufacturer_RBV')
-            self.controlPVs['CamModel']           = PV(camPrefix + 'Model_RBV')
-            self.controlPVs['CamAcquire']         = PV(camPrefix + 'Acquire')
-            self.controlPVs['CamImageMode']       = PV(camPrefix + 'ImageMode')
-            self.controlPVs['CamTriggerMode']     = PV(camPrefix + 'TriggerMode')
-            self.controlPVs['CamNumImages']       = PV(camPrefix + 'NumImages')
-            self.controlPVs['CamAcquireTime']     = PV(camPrefix + 'AcquireTime')
-            self.controlPVs['CamAcquireTimeRBV']  = PV(camPrefix + 'AcquireTime_RBV')
-            self.controlPVs['CamBinX']            = PV(camPrefix + 'BinX')
-            self.controlPVs['CamBinY']            = PV(camPrefix + 'BinY')
-            self.controlPVs['CamWaitForPlugins']  = PV(camPrefix + 'WaitForPlugins')
-            
-            # If this is a Point Grey camera then assume we are running ADSpinnaker
-            # and create some PVs specific to that driver
-            manufacturer = self.controlPVs['CamManufacturer'].char_value
-            model = self.controlPVs['CamModel'].char_value
-            if (manufacturer.find('Point Grey') != -1):
-                self.controlPVs['CamExposureMode']   = PV(camPrefix + 'ExposureMode')
-                self.controlPVs['CamTriggerOverlap'] = PV(camPrefix + 'TriggerOverlap')
-                self.controlPVs['CamPixelFormat']    = PV(camPrefix + 'PixelFormat')
-                if (model.find('Grasshopper3') != -1):
-                    self.controlPVs['CamVideoMode']  = PV(camPrefix + 'GC_VideoMode_RBV')
+        camPrefix = prefix + 'cam1:'
+        self.controlPVs['CamManufacturer']    = PV(camPrefix + 'Manufacturer_RBV')
+        self.controlPVs['CamModel']           = PV(camPrefix + 'Model_RBV')
+        self.controlPVs['CamAcquire']         = PV(camPrefix + 'Acquire')
+        self.controlPVs['CamAcquireBusy']     = PV(camPrefix + 'AcquireBusy')
+        self.controlPVs['CamImageMode']       = PV(camPrefix + 'ImageMode')
+        self.controlPVs['CamTriggerMode']     = PV(camPrefix + 'TriggerMode')
+        self.controlPVs['CamNumImages']       = PV(camPrefix + 'NumImages')
+        self.controlPVs['CamAcquireTime']     = PV(camPrefix + 'AcquireTime')
+        self.controlPVs['CamAcquireTimeRBV']  = PV(camPrefix + 'AcquireTime_RBV')
+        self.controlPVs['CamBinX']            = PV(camPrefix + 'BinX')
+        self.controlPVs['CamBinY']            = PV(camPrefix + 'BinY')
+        self.controlPVs['CamWaitForPlugins']  = PV(camPrefix + 'WaitForPlugins')
+        
+        # If this is a Point Grey camera then assume we are running ADSpinnaker
+        # and create some PVs specific to that driver
+        manufacturer = self.controlPVs['CamManufacturer'].char_value
+        model = self.controlPVs['CamModel'].char_value
+        if (manufacturer.find('Point Grey') != -1):
+            self.controlPVs['CamExposureMode']   = PV(camPrefix + 'ExposureMode')
+            self.controlPVs['CamTriggerOverlap'] = PV(camPrefix + 'TriggerOverlap')
+            self.controlPVs['CamPixelFormat']    = PV(camPrefix + 'PixelFormat')
+            if (model.find('Grasshopper3') != -1):
+                self.controlPVs['CamVideoMode']  = PV(camPrefix + 'GC_VideoMode_RBV')
+
+        # Set some initial PV values                
+        self.controlPVs['CamWaitForPlugins'].put('Yes')
  
-            hdfPrefix = prefix + 'HDF1:'
-            self.controlPVs['HdfFileWriteMode']   = PV(hdfPrefix + 'FileWriteMode')
-            self.controlPVs['HdfNumCapture']      = PV(hdfPrefix + 'NumCapture')
-            self.controlPVs['HdfCapture']         = PV(hdfPrefix + 'Capture')
-            self.controlPVs['HdfFilePath']        = PV(hdfPrefix + 'FilePath')
-            self.controlPVs['HdfFileName']        = PV(hdfPrefix + 'FileName')
-            self.controlPVs['HdfFullFileName']    = PV(hdfPrefix + 'FullFileName_RBV')
-            
-            # Set some initial PV values
-            self.controlPVs['CamWaitForPlugins'].put('Yes')
-            filePath = self.configPVs['FilePath'].char_value
-            self.controlPVs['HdfFilePath'].put(filePath)
-            fileName = self.configPVs['FileName'].char_value
-            self.controlPVs['HdfFileName'].put(filePath)
-             
-        prefix = self.pvPrefixes['MCS']
-        if (prefix != None):
+        prefix = self.pvPrefixes['FilePlugin']
+        self.controlPVs['FPFileWriteMode']   = PV(prefix + 'FileWriteMode')
+        self.controlPVs['FPNumCapture']      = PV(prefix + 'NumCapture')
+        self.controlPVs['FPCapture']         = PV(prefix + 'Capture')
+        self.controlPVs['FPFilePath']        = PV(prefix + 'FilePath')
+        self.controlPVs['FPFileName']        = PV(prefix + 'FileName')
+        self.controlPVs['FPFileNumber']      = PV(prefix + 'FileNumber')
+        self.controlPVs['FPAutoIncrement']   = PV(prefix + 'AutoIncrement')
+        self.controlPVs['FPFullFileName']    = PV(prefix + 'FullFileName_RBV')
+        self.controlPVs['FPAutoSave']        = PV(prefix + 'AutoSave')
+        self.controlPVs['FPEnableCallbacks'] = PV(prefix + 'EnableCallbacks')
+        
+        # Set some initial PV values
+        filePath = self.configPVs['FilePath'].char_value
+        self.controlPVs['FPFilePath'].put(filePath)
+        fileName = self.configPVs['FileName'].char_value
+        self.controlPVs['FPFileName'].put(fileName)
+        self.controlPVs['FPAutoSave'].put('No')
+        self.controlPVs['FPFileWriteMode'].put('Stream')
+        self.controlPVs['FPEnableCallbacks'].put('Enable')
+
+        if ('MCS' in self.pvPrefixes):             
+            prefix = self.pvPrefixes['MCS']
             self.controlPVs['MCSEraseStart']      = PV(prefix + 'EraseStart')
             self.controlPVs['MCSStopAll']         = PV(prefix + 'StopAll')
             self.controlPVs['MCSPrescale']        = PV(prefix + 'Prescale')
@@ -189,15 +214,12 @@ class tomoscan:
     def computeFrameTime(self):
         exposure = self.epicsPVs['ExposureTime'].value
         self.epicsPVs['CamAcquireTime'].put(exposure, wait=True)
-        biny = self.epicsPVs['CamBinY'].get(as_string = False)
-        # The readout time of the camera depends on the model, Format7Mode and the PixelFormat.
-        # These measurements were done with firmware 2.14.3 and Flycap2 8.3.1.
-        # The measured times in ms with 100 microsecond exposure time and 1000 frames without dropping any are:
+        # The readout time of the camera depends on the model, and things like the PixelFormat, VideoMode, etc.
+        # The measured times in ms with 100 microsecond exposure time and 1000 frames without dropping
         cameraModel = self.epicsPVs['CamModel'].get(as_string=True)
         pixelFormat = self.epicsPVs['CamPixelFormat'].get(as_string=True)
         if (cameraModel == 'Grasshopper3 GS3-U3-23S6M'): 
             videoMode   = self.epicsPVs['CamVideoMode'].get(as_string=True)
-            print(pixelFormat, videoMode)
             readoutTimes = {'Mono8':        {'Mode0': 6.2, 'Mode1': 6.2, 'Mode5': 6.2, 'Mode7': 7.9},
                             'Mono12Packed': {'Mode0': 9.2, 'Mode1': 6.2, 'Mode5': 6.2, 'Mode7': 11.5},
                             'Mono16':       {'Mode0': 12.2,'Mode1': 6.2, 'Mode5': 6.2, 'Mode7': 12.2}}       
@@ -220,3 +242,16 @@ class tomoscan:
         if (time < readout):
             time = readout
         return time
+
+    def waitCameraDone(self, timeout):
+        startTime = time.time()
+        while(True):
+            if (self.epicsPVs['CamAcquireBusy'].value == 0):
+                return True
+            time.sleep(0.01)
+            if (timeout > 0):
+                currentTime = time.time()
+                diffTime = currentTime - startTime
+                if diffTime >= timeout:
+                    print('ERROR: timeout waiting for camera to be done')
+                    return False
