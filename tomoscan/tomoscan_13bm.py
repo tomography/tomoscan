@@ -6,7 +6,7 @@ import math
 class tomoscan_13bm(tomoscan):
 
     def __init__(self, configPVFile, controlPVFile, macros=[]):
-        tomoscan.__init__(self, configPVFile, controlPVFile, macros)
+        super().__init__(configPVFile, controlPVFile, macros)
         
         # Set the detector running in FreeRun mode
         self.setTriggerMode('FreeRun', 1)
@@ -55,21 +55,13 @@ class tomoscan_13bm(tomoscan):
         self.waitCameraDone(collectionTime + 5.0)
        
     def beginScan(self):
-        self.epicsPVs['ScanStatus'].put('Beginning scan')
-        # Stop the camera since it could be in free-run mode
-        self.epicsPVs['CamAcquire'].put(0, wait=True)
-        # Set the exposure time
-        exposureTime = self.epicsPVs['ExposureTime'].value
-        self.setExposureTime(exposureTime)
-        # Set the file path, file name and file number
-        self.epicsPVs['FPFilePath'].put(self.epicsPVs['FilePath'].value)
-        self.epicsPVs['FPFileName'].put(self.epicsPVs['FileName'].value)
-        self.epicsPVs['FPFileNumber'].put(1)
+        # Call the base class method
+        super().beginScan()
         # Need to collect 3 dummy frames after changing camera to triggered mode
         self.collectNFrames(3, False)
         # The MCS LNE output stays low after stopping MCS for up to the exposure time = LNE output width
         # Need to wait for the exposure time
-        time.sleep(exposureTime)
+        time.sleep(self.epicsPVs['ExposureTime'].value)
 
     def endScan(self):
         # Save the configuration
@@ -81,10 +73,10 @@ class tomoscan_13bm(tomoscan):
         # Set the rotation speed to maximum
         maxSpeed = self.epicsPVs['RotationMaxSpeed'].value
         self.epicsPVs['RotationSpeed'].put(maxSpeed)
-        returnRotation = self.epicsPVs['ReturnRotation'].get(as_string=True)
-        if (returnRotation == 'Yes'):
-            self.epicsPVs['Rotation'].put(self.epicsPVs['RotationStart'].value)
-        self.epicsPVs['ScanStatus'].put('Scan complete')
+        # Move the sample in.  Could be out if scan was aborted while taking flat fields
+        self.moveSampleIn()
+        # Call the base class method
+        super().endScan()
 
     def collectDarkFields(self):
         self.epicsPVs['ScanStatus'].put('Collecting dark fields')
@@ -127,4 +119,4 @@ class tomoscan_13bm(tomoscan):
         # Start the rotation motor
         self.epicsPVs['Rotation'].put(rotationStop)
         collectionTime = numAngles * timePerAngle
-        self.waitCameraDone(collectionTime + 10.)
+        self.waitCameraDone(collectionTime + 60.)

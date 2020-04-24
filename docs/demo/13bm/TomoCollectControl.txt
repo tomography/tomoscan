@@ -1,5 +1,6 @@
 $(P)$(R)ScanStatus
-$(P)$(R)ScanPoint
+$(P)$(R)ImagesCollected
+$(P)$(R)ImagesSaved
 $(P)$(R)ElapsedTime
 $(P)$(R)RemainingTime
 $(P)$(R)MoveSampleIn
