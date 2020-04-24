@@ -46,7 +46,3 @@ $(P)$(R)ESAFNumber
 $(P)$(R)ExposureTime
 $(P)$(R)FilePath
 $(P)$(R)FileName
-$(P)$(R)ScanStatus
-$(P)$(R)ScanPoint
-$(P)$(R)ElapsedTime
-$(P)$(R)RemainingTime
