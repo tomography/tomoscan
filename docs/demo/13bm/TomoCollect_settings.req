@@ -47,6 +47,8 @@ $(P)$(R)ExposureTime
 $(P)$(R)FilePath
 $(P)$(R)FileName
 $(P)$(R)ScanStatus
+$(P)$(R)ScanReady
+$(P)$(R)ScanStart
 $(P)$(R)ScanPoint
 $(P)$(R)ElapsedTime
 $(P)$(R)RemainingTime
