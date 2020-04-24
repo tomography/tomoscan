@@ -15,8 +15,8 @@ Required records
 
 The following records are used by the tomoscan base class and so are required.
 
-Instrument
-----------
+Beamline
+--------
 
 .. cssclass:: table-bordered table-striped table-hover
 .. list-table::
