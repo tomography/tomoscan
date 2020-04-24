@@ -5,8 +5,8 @@ import math
 
 class tomoscan_13bm(tomoscan):
 
-    def __init__(self, autoSettingsFile, macros=[]):
-        tomoscan.__init__(self, autoSettingsFile, macros)
+    def __init__(self, configPVFile, controlPVFile, macros=[]):
+        tomoscan.__init__(self, configPVFile, controlPVFile, macros)
         
         # Set the detector running in FreeRun mode
         self.setTriggerMode('FreeRun', 1)
@@ -60,7 +60,7 @@ class tomoscan_13bm(tomoscan):
         self.epicsPVs['CamAcquire'].put(0, wait=True)
         # Set the exposure time
         exposureTime = self.epicsPVs['ExposureTime'].value
-        self.epicsPVs['CamAcquireTime'].put(exposureTime)
+        self.setExposureTime(exposureTime)
         # Set the file path, file name and file number
         self.epicsPVs['FPFilePath'].put(self.epicsPVs['FilePath'].value)
         self.epicsPVs['FPFileName'].put(self.epicsPVs['FileName'].value)

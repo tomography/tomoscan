@@ -2,7 +2,7 @@
 Screenshots
 ===========
 
-simDetector.adl
+TomoCollect.adl
 ===============
 
 The following is the MEDM screen TomoCollect.adl during a scan. The status information is updating.

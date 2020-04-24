@@ -1,16 +1,19 @@
 from epics import PV
 import json
 import time
+import threading
 from datetime import timedelta
 
 class tomoscan:
 
-    def __init__(self, autoSettingsFile, macros=[]):
+    def __init__(self, configPVFile, controlPVFile, macros=[]):
         self.configPVs = {}
         self.controlPVs = {}
         self.pvPrefixes = {}
-        if (autoSettingsFile != None):
-            self.readAutoSettingsFile(autoSettingsFile, macros)
+        if (configPVFile != None):
+            self.readPVFile(configPVFile, macros, True)
+        if (controlPVFile != None):
+            self.readPVFile(controlPVFile, macros, False)
 
         if (('Rotation' in self.controlPVs) == False):
             print("ERROR: RotationPVName must be present in autoSettingsFile")
@@ -21,7 +24,7 @@ class tomoscan:
         if (('FilePlugin' in self.pvPrefixes) == False):
             print("ERROR: FilePluginPVPrefix must be present in autoSettingsFile")
             quit()
-                        
+                
         rotationPVName = self.controlPVs['Rotation'].pvname
         self.controlPVs['RotationSpeed']      = PV(rotationPVName + '.VELO')
         self.controlPVs['RotationMaxSpeed']   = PV(rotationPVName + '.VMAX')
@@ -45,8 +48,8 @@ class tomoscan:
         
         # If this is a Point Grey camera then assume we are running ADSpinnaker
         # and create some PVs specific to that driver
-        manufacturer = self.controlPVs['CamManufacturer'].char_value
-        model = self.controlPVs['CamModel'].char_value
+        manufacturer = self.controlPVs['CamManufacturer'].get(as_string=True)
+        model = self.controlPVs['CamModel'].get(as_string=True)
         if (manufacturer.find('Point Grey') != -1):
             self.controlPVs['CamExposureMode']   = PV(camPrefix + 'ExposureMode')
             self.controlPVs['CamTriggerOverlap'] = PV(camPrefix + 'TriggerOverlap')
@@ -70,9 +73,9 @@ class tomoscan:
         self.controlPVs['FPEnableCallbacks'] = PV(prefix + 'EnableCallbacks')
         
         # Set some initial PV values
-        filePath = self.configPVs['FilePath'].char_value
+        filePath = self.configPVs['FilePath'].get(as_string=True)
         self.controlPVs['FPFilePath'].put(filePath)
-        fileName = self.configPVs['FileName'].char_value
+        fileName = self.configPVs['FileName'].get(as_string=True)
         self.controlPVs['FPFileName'].put(fileName)
         self.controlPVs['FPAutoSave'].put('No')
         self.controlPVs['FPFileWriteMode'].put('Stream')
@@ -93,6 +96,28 @@ class tomoscan:
         # Wait 1 second for all PVs to connect
         time.sleep(1)
         self.checkPVsConnected()
+        
+        # Configure callbacks on a few PVs
+        self.epicsPVs['MoveSampleIn'].add_callback(self.pvCallback)
+        self.epicsPVs['MoveSampleOut'].add_callback(self.pvCallback)
+        self.epicsPVs['StartScan'].add_callback(self.pvCallback)
+        self.epicsPVs['AbortScan'].add_callback(self.pvCallback)
+        self.epicsPVs['ExposureTime'].add_callback(self.pvCallback)
+
+    def pvCallback(self, pvname=None, value=None, char_value=None, **kw):
+        print('pvCallback pvName', pvname, 'value=', value, 'char_value=', char_value)
+        if ((pvname.find('MoveSampleIn') != -1) and (value == 1)):
+            thread = threading.Thread(target=self.moveSampleIn, args=())
+            thread.start()
+        if ((pvname.find('MoveSampleOut') != -1) and (value == 1)):
+            thread = threading.Thread(target=self.moveSampleOut, args=())
+            thread.start()        
+        if ((pvname.find('ExposureTime') != -1)):
+            thread = threading.Thread(target=self.setExposureTime, args=(value,))
+            thread.start()        
+        if ((pvname.find('StartScan') != -1) and (value == 1)):
+            thread = threading.Thread(target=self.flyScan, args=())
+            thread.start()        
 
     def showPVs(self):
         print("configPVS:")
@@ -117,8 +142,8 @@ class tomoscan:
                 allConnected = False
         return allConnected
 
-    def readAutoSettingsFile(self, autoSettingsFile, macros):
-        f = open(autoSettingsFile)
+    def readPVFile(self, pvFile, macros, configFile):
+        f = open(pvFile)
         lines = f.read()
         f.close()
         lines = lines.splitlines()
@@ -131,7 +156,10 @@ class tomoscan:
             for key in macros:
                  dictentry = dictentry.replace(key, "")
             pv = PV(pvname)
-            self.configPVs[dictentry] = pv
+            if (configFile == True):
+                self.configPVs[dictentry] = pv
+            else:
+                self.controlPVs[dictentry] = pv
             if (dictentry.find("PVName") != -1):
                 pvname = pv.value
                 de = dictentry.strip("PVName")
@@ -142,7 +170,7 @@ class tomoscan:
                 self.pvPrefixes[de] = pvprefix
 
     def moveSampleIn(self):
-        axis = self.epicsPVs["FlatFieldAxis"].char_value
+        axis = self.epicsPVs["FlatFieldAxis"].get(as_string=True)
         print("moveSampleIn axis:", axis)
         if (axis == "X") or (axis == "Both"):
             position = self.epicsPVs["SampleInX"].value
@@ -153,7 +181,7 @@ class tomoscan:
             self.epicsPVs["SampleY"].put(position, wait=True)
 
     def moveSampleOut(self):
-        axis = self.epicsPVs["FlatFieldAxis"].char_value
+        axis = self.epicsPVs["FlatFieldAxis"].get(as_string=True)
         print("moveSampleOut axis:", axis)
         if (axis == "X") or (axis == "Both"):
             position = self.epicsPVs["SampleOutX"].value
@@ -166,7 +194,7 @@ class tomoscan:
     def saveConfiguration(self, fileName):
         d = {}
         for pv in self.configPVs:
-            d[pv] = self.configPVs[pv].char_value
+            d[pv] = self.configPVs[pv].get(as_string=True)
         f = open(fileName, "w")
         json.dump(d, f, indent=2)
         f.close()
@@ -180,13 +208,18 @@ class tomoscan:
 
     def openShutter(self):
         if (self.epicsPVs['OpenShutter'] != None):
-            value = self.epicsPVs['OpenShutterValue'].char_value
+            value = self.epicsPVs['OpenShutterValue'].get(as_string=True)
             self.epicsPVs['OpenShutter'].put(value, wait=True)
 
     def closeShutter(self):
         if (self.epicsPVs['OpenShutter'] != None):
-            value = self.epicsPVs['OpenShutterValue'].char_value
+            value = self.epicsPVs['OpenShutterValue'].get(as_string=True)
             self.epicsPVs['OpenShutter'].put(value, wait=True)
+
+    def setExposureTime(self, exposureTime=None):
+        if (exposureTime == None):
+            exposureTime = self.epicsPVs['ExposureTime'].value
+        self.epicsPVs['CamAcquireTime'].put(exposureTime)
 
     def flyScan(self):
         rotationStart = self.epicsPVs['RotationStart'].value
@@ -229,8 +262,7 @@ class tomoscan:
         self.endScan()
 
     def computeFrameTime(self):
-        exposure = self.epicsPVs['ExposureTime'].value
-        self.epicsPVs['CamAcquireTime'].put(exposure, wait=True)
+        self.setExposureTime()
         # The readout time of the camera depends on the model, and things like the PixelFormat, VideoMode, etc.
         # The measured times in ms with 100 microsecond exposure time and 1000 frames without dropping
         cameraModel = self.epicsPVs['CamModel'].get(as_string=True)

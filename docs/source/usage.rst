@@ -22,18 +22,24 @@ dwell time that is equal to the exposure time plus the readout time.
 
 ::
 
->>> ts = tomoscan_13bm("exampleFiles/13bm/TomoCollect_settings.req", {"$(P)":"13BMDPG1:", "$(R)":"TC:"})
 
-This line creates the tomoscan_13bm object.  It takes two arguments that are passed to the 
+>>> ts = tomoscan_13bm("../docs/demo/13bm/TomoCollect_settings.req","../docs/demo/13bm/TomoCollectControl.txt", {"$(P)":"13BMDPG1:", "$(R)":"TC:"})
+
+This line creates the tomoscan_13bm object.  It takes three arguments that are passed to the 
 tomoscan constructor:
 
 - The first argument is the path to the TomoCollect_settings.req autosave request file for the 
-  TomoCollect database described below.
-- The second argument is a dictionary of macro substitution values for that database file.
-  These define the PV prefixes to use when parsing that file.
+  TomoCollect database described below.  This file contains PVs that can be written to.
+  These PVs will be saved in the configuration file with tomoscan.saveConfiguration().
+- The second argument is the path to a file that also contains PVs in the TomoCollect database. 
+  This file contains PVs that cannot be written to, but which tomoscan needs.
+  These PVs will be not be saved in the configuration file.
+- The third argument is a dictionary of macro substitution values for that database file.
+  These define the PV prefixes to use when parsing files described above.
 
-When the TomoCollect_settings.req file is read it is used to construct all of the EPICS PV names that are used
-by tomoscan.  This allows tomoscan to avoid having any hard-coded PV names, and makes it easy to port to a new beamline.
+When the TomoCollect_settings.req and TomoCollectControl.txt files are read they are used to construct all 
+of the EPICS PV names that are used by tomoscan.
+This allows tomoscan to avoid having any hard-coded PV names, and makes it easy to port to a new beamline.
 
 ::
 

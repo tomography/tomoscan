@@ -1,0 +1,8 @@
+$(P)$(R)ScanStatus
+$(P)$(R)ScanPoint
+$(P)$(R)ElapsedTime
+$(P)$(R)RemainingTime
+$(P)$(R)MoveSampleIn
+$(P)$(R)MoveSampleOut
+$(P)$(R)StartScan
+$(P)$(R)AbortScan

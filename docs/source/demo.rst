@@ -1,4 +1,3 @@
-
 ===================================
 Tomography data collection database
 ===================================
@@ -7,17 +6,17 @@ tomoscan includes an example :download:`TomoCollect.template <../../docs/demo/13
 and a corresponding :download:`TomoCollect_settings.req <../../docs/demo/13bm/TomoCollect_settings.req>`.
 The database is loaded in the IOC with the example :download:`TomoCollect.substitutions <../../docs/demo/13bm/TomoCollect.substitutions>`.
 
-The following tables lists all of the records in the TomoCollect.template file. The first table lists the records
-that are required by tomoscan.  The second table lists the records that are using only by the tomoscan server mode.
-The third table lists the records that are optional, and are not used by the tomoscan base class.
+The following tables list all of the records in the TomoCollect.template file. The section lists the records
+that are required by tomoscan.  The second section lists the records that are using only by the tomoscan server mode.
+The third section lists the records that are optional, and are not used by the tomoscan base class.
 
 Required records
 ================
 
 The following records are used by the tomoscan base class and so are required.
 
-Instrument
-----------
+Beamline
+--------
 
 .. cssclass:: table-bordered table-striped table-hover
 .. list-table::
@@ -50,8 +49,8 @@ Instrument
     - Contains the name of the sample Y translation PV, e.g. 13BMD:m90
 
 
-Areadetector
-------------
+areaDetector camera
+-------------------
 
 .. cssclass:: table-bordered table-striped table-hover
 .. list-table::
@@ -158,7 +157,7 @@ Scan
 Server mode records
 ===================
 
-These records are used by the server mode.  **NOTE: This is not yet implemented.**
+These records are used by the server mode.
 
 .. cssclass:: table-bordered table-striped table-hover
 .. list-table::
@@ -171,19 +170,22 @@ These records are used by the server mode.  **NOTE: This is not yet implemented.
     - Description
   * - $(P)$(R)MoveSampleIn
     - ao
-    - Writing 1 to this record will move the sample in.
+    - Setting this record to 1 moves the sample in.
   * - $(P)$(R)MoveSampleOut
     - ao
-    - Writing 1 to this record will move the sample out.
+    - Setting this record to 1 moves the sample out.
   * - $(P)$(R)ScanReady
     - bi
     - This record will be 1 when the server is ready to execute a scan.
   * - $(P)$(R)StartScan
     - busy
-    - Writing 1 to this record will start a scan.
+    - Setting this record to 1 starts a scan.
   * - $(P)$(R)AbortScan
     - bo
-    - Writing 1 to this record will abort a scan.
+    - Setting this record to 1 aborts a scan.
+  * - $(P)$(R)ExposureTime
+    - bo
+    - Values written to this record will be copied to the camera AcquireTime PV.
 
 Optional records
 ================
@@ -272,3 +274,4 @@ The following records are not used by the tomoscan base class and so are optiona
   * - $(P)$(R)ESAFNumber
     - stringout
     - Experiment Safety Approval Form number
+
