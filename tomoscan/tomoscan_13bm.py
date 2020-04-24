@@ -60,7 +60,7 @@ class tomoscan_13bm(tomoscan):
         self.epicsPVs['CamAcquire'].put(0, wait=True)
         # Set the exposure time
         exposureTime = self.epicsPVs['ExposureTime'].value
-        self.epicsPVs['CamAcquireTime'].put(exposureTime)
+        self.setExposureTime(exposureTime)
         # Set the file path, file name and file number
         self.epicsPVs['FPFilePath'].put(self.epicsPVs['FilePath'].value)
         self.epicsPVs['FPFileName'].put(self.epicsPVs['FileName'].value)
