@@ -34,14 +34,13 @@ APS tomography Python software (e.g. `2bm-tomo`_).
   - The existing software hard-codes the PV prefixes in the Python code. This
     requires many changes in the code when porting to a new beamline.
 
-- tomoscan will implement a **server mode**.  tomoscan itself only implements the code
+- tomoscan implements a **server mode**.  tomoscan itself only implements the code
   to collect a single tomography dataset, including dark-fields, flat-fields, and projections.
-  The server mode will listen for EPICS PVs that command tomoscan to collect a new dataset.
-  There will be a status PV that indicates the scan status, indicating when the scan is complete.
+  The server mode listens for EPICS PVs that command tomoscan to collect a new dataset.
+  There is a status PV that indicates the scan status, indicating when the scan is complete.
   Thus, any EPICS client can be used to create complex scans, and this code does not need to be
-  in the same Python process that is running tomoscan.  Possible clients include Python, IDL,
-  the EPICS sscan record, SPEC, etc.  **NOTE: the server mode is a planned feature and does not
-  currently exist.**
+  in the same Python process that is running tomoscan.  Possible clients include OPI displays
+  such as medm, Python, IDL, the EPICS sscan record, SPEC, etc.
 
   - The existing software requires that scans be run from within the same Python process that is running
     the tomography scan.
