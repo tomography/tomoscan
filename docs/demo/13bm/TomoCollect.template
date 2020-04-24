@@ -312,18 +312,12 @@ record(ao, "$(P)$(R)ExposureTime")
    field(PREC,  "3")
 }
 
-record(bi, "$(P)$(R)ScanReady") {
-   field(ZNAM,"Ready")
-   field(ZSV, "NO_ALARM")
-   field(ONAM,"Not ready")
-   field(OSV, "MAJOR")
-}
-
-
 record(busy,"$(P)$(R)StartScan")
 {
    field(ZNAM,"Done")
-   field(ONAM,"Start")
+   field(ZSV, "NO_ALARM")
+   field(ONAM,"Acquire")
+   field(OSV, "MINOR")
    field(VAL, "0")
 }
 
@@ -361,7 +355,11 @@ record(waveform,"$(P)$(R)ScanStatus")
    field(NELM, "256")
 }
 
-record(stringout,"$(P)$(R)ScanPoint")
+record(stringout,"$(P)$(R)ImagesCollected")
+{
+}
+
+record(stringout,"$(P)$(R)ImagesSaved")
 {
 }
 
