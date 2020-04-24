@@ -2,7 +2,18 @@ from epics import PV
 import json
 import time
 import threading
+import signal
 from datetime import timedelta
+
+class scanAbortError(Exception):
+    """Exception raised when user wants to abort a scan.
+    """
+    pass
+
+class cameraTimeoutError(Exception):
+    """Exception raised when the camera times out during a scan.
+    """
+    pass
 
 class tomoscan:
 
@@ -59,10 +70,12 @@ class tomoscan:
 
         # Set some initial PV values                
         self.controlPVs['CamWaitForPlugins'].put('Yes')
- 
+        self.controlPVs['StartScan'].put(0)
+  
         prefix = self.pvPrefixes['FilePlugin']
         self.controlPVs['FPFileWriteMode']   = PV(prefix + 'FileWriteMode')
         self.controlPVs['FPNumCapture']      = PV(prefix + 'NumCapture')
+        self.controlPVs['FPNumCaptured']     = PV(prefix + 'NumCaptured_RBV')
         self.controlPVs['FPCapture']         = PV(prefix + 'Capture')
         self.controlPVs['FPFilePath']        = PV(prefix + 'FilePath')
         self.controlPVs['FPFileName']        = PV(prefix + 'FileName')
@@ -103,6 +116,13 @@ class tomoscan:
         self.epicsPVs['StartScan'].add_callback(self.pvCallback)
         self.epicsPVs['AbortScan'].add_callback(self.pvCallback)
         self.epicsPVs['ExposureTime'].add_callback(self.pvCallback)
+        
+        # Set ^C interrupt to abort the scan
+        signal.signal(signal.SIGINT, self.signalHandler)
+
+    def signalHandler(self, sig, frame):
+        if (sig == signal.SIGINT):
+            self.abortScan();
 
     def pvCallback(self, pvname=None, value=None, char_value=None, **kw):
         print('pvCallback pvName', pvname, 'value=', value, 'char_value=', char_value)
@@ -116,8 +136,9 @@ class tomoscan:
             thread = threading.Thread(target=self.setExposureTime, args=(value,))
             thread.start()        
         if ((pvname.find('StartScan') != -1) and (value == 1)):
-            thread = threading.Thread(target=self.flyScan, args=())
-            thread.start()        
+            self.runFlyScan()
+        if ((pvname.find('AbortScan') != -1) and (value == 1)):
+            self.abortScan()
 
     def showPVs(self):
         print("configPVS:")
@@ -155,6 +176,7 @@ class tomoscan:
             dictentry = line
             for key in macros:
                  dictentry = dictentry.replace(key, "")
+            print('pvname=', pvname)
             pv = PV(pvname)
             if (configFile == True):
                 self.configPVs[dictentry] = pv
@@ -221,45 +243,77 @@ class tomoscan:
             exposureTime = self.epicsPVs['ExposureTime'].value
         self.epicsPVs['CamAcquireTime'].put(exposureTime)
 
+    def beginScan(self):
+        self.scanIsRunning = True
+        self.epicsPVs['ScanStatus'].put('Beginning scan')
+        # Stop the camera since it could be in free-run mode
+        self.epicsPVs['CamAcquire'].put(0, wait=True)
+        # Set the exposure time
+        self.setExposureTime(self.epicsPVs['ExposureTime'].value)
+        # Set the file path, file name and file number
+        self.epicsPVs['FPFilePath'].put(self.epicsPVs['FilePath'].value)
+        self.epicsPVs['FPFileName'].put(self.epicsPVs['FileName'].value)
+
+    def endScan(self):
+        returnRotation = self.epicsPVs['ReturnRotation'].get(as_string=True)
+        if (returnRotation == 'Yes'):
+            self.epicsPVs['Rotation'].put(self.epicsPVs['RotationStart'].value)
+        self.epicsPVs['ScanStatus'].put('Scan complete')
+        self.epicsPVs['StartScan'].put(0)
+        self.scanIsRunning = False
+
     def flyScan(self):
-        rotationStart = self.epicsPVs['RotationStart'].value
-        rotationStep = self.epicsPVs['RotationStart'].value
-        numAngles = self.epicsPVs['NumAngles'].value
-        rotationStop = rotationStart + (numAngles * rotationStep)
-        numDarkFields = self.epicsPVs['NumDarkFields'].value
-        darkFieldMode = self.epicsPVs['DarkFieldMode'].get(as_string=True)
-        numFlatFields = self.epicsPVs['NumFlatFields'].value
-        flatFieldMode = self.epicsPVs['FlatFieldMode'].get(as_string=True)
-     
-        self.epicsPVs['Rotation'].put(rotationStart, wait=True)
-
-        self.beginScan()
-
-        if (numDarkFields > 0) and ((darkFieldMode == 'Start') or (darkFieldMode == 'Both')):
-            self.closeShutter()
-            self.collectDarkFields()
-        
-        self.openShutter()
-    
-        if (numFlatFields > 0) and ((flatFieldMode == 'Start') or (flatFieldMode == 'Both')):
-            self.moveSampleOut()
-            self.collectFlatFields()
-            
-        self.moveSampleIn()
-    
-        self.collectProjections()
-        
-        if (numFlatFields > 0) and ((flatFieldMode == 'End') or (flatFieldMode == 'Both')):
-            self.moveSampleOut()
-            self.collectFlatFields()
-            self.moveSampleIn()
-    
-        if (numDarkFields > 0) and ((darkFieldMode == 'End') or (darkFieldMode == 'Both')):
-            self.closeShutter()
-            self.collectDarkFields()
+        try:
+            rotationStart = self.epicsPVs['RotationStart'].value
+            rotationStep = self.epicsPVs['RotationStart'].value
+            numAngles = self.epicsPVs['NumAngles'].value
+            rotationStop = rotationStart + (numAngles * rotationStep)
+            numDarkFields = self.epicsPVs['NumDarkFields'].value
+            darkFieldMode = self.epicsPVs['DarkFieldMode'].get(as_string=True)
+            numFlatFields = self.epicsPVs['NumFlatFields'].value
+            flatFieldMode = self.epicsPVs['FlatFieldMode'].get(as_string=True)
+            # Move the rotation to the start
+            self.epicsPVs['Rotation'].put(rotationStart, wait=True)
+            # Prepare for scan
+            self.beginScan()
+            # Collect the pre-scan dark fields if required
+            if (numDarkFields > 0) and ((darkFieldMode == 'Start') or (darkFieldMode == 'Both')):
+                self.closeShutter()
+                self.collectDarkFields()
+            # Open the shutter 
             self.openShutter()
-            
+            # Collect the pre-scan flat fields if required
+            if (numFlatFields > 0) and ((flatFieldMode == 'Start') or (flatFieldMode == 'Both')):
+                self.moveSampleOut()
+                self.collectFlatFields()
+            # Collect the projections
+            self.moveSampleIn()
+            self.collectProjections()
+            # Collect the post-scan flat fields if required
+            if (numFlatFields > 0) and ((flatFieldMode == 'End') or (flatFieldMode == 'Both')):
+                self.moveSampleOut()
+                self.collectFlatFields()
+                self.moveSampleIn()
+            # Collect the post-scan dark fields if required
+            if (numDarkFields > 0) and ((darkFieldMode == 'End') or (darkFieldMode == 'Both')):
+                self.closeShutter()
+                self.collectDarkFields()
+                self.openShutter()
+
+        except scanAbortError:
+            print('ERROR: scan aborted')
+        except cameraTimeoutError:
+            print('ERROR: camera timeout')
+
+        # Finish scan
         self.endScan()
+
+    def runFlyScan(self):
+        thread = threading.Thread(target=self.flyScan, args=())
+        thread.start()
+        
+    def abortScan(self):
+        self.scanIsRunning = False   
 
     def computeFrameTime(self):
         self.setExposureTime()
@@ -296,19 +350,25 @@ class tomoscan:
         startTime = time.time()
         while(True):
             if (self.epicsPVs['CamAcquireBusy'].value == 0):
-                return True
+                return
+            if (self.scanIsRunning == False):
+                raise scanAbortError
             time.sleep(0.2)
-            numCollected = self.epicsPVs['CamNumImagesCounter'].value
-            numImages = self.epicsPVs['CamNumImages'].value
+            numCollected  = self.epicsPVs['CamNumImagesCounter'].value
+            numImages     = self.epicsPVs['CamNumImages'].value
+            numSaved      = self.epicsPVs['FPNumCaptured'].value
+            numToSave     = self.epicsPVs['FPNumCapture'].value
             currentTime = time.time()
             elapsedTime = currentTime - startTime
             remainingTime = elapsedTime * (numImages - numCollected) / max(float(numCollected),1)
-            status = 'Collecting point ' + str(numCollected) + '/' + str(numImages)
-            print(status)
-            self.epicsPVs['ScanPoint'].put(status)
+            collectProgress = str(numCollected) + '/' + str(numImages)
+            print('Collected ' + collectProgress)
+            self.epicsPVs['ImagesCollected'].put(collectProgress)
+            saveProgress = str(numSaved) + '/' + str(numToSave)
+            print('Saved ' + saveProgress)
+            self.epicsPVs['ImagesSaved'].put(saveProgress)
             self.epicsPVs['ElapsedTime'].put(str(timedelta(seconds=int(elapsedTime))))
             self.epicsPVs['RemainingTime'].put(str(timedelta(seconds=int(remainingTime))))
             if (timeout > 0):
                 if elapsedTime >= timeout:
-                    print('ERROR: timeout waiting for camera to be done')
-                    return False
+                    raise cameraTimeoutError()
