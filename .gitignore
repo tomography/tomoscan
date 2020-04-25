@@ -140,7 +140,7 @@ script
 /DartConfiguration.tcl
 /Glob.cmake
 /Init.cmake
-/Makefile
+#/Makefile
 /MemCheck.cmake
 /Stages.cmake
 /Submit.cmake
