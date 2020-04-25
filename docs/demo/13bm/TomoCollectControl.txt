@@ -1,9 +1,0 @@
-$(P)$(R)ScanStatus
-$(P)$(R)ImagesCollected
-$(P)$(R)ImagesSaved
-$(P)$(R)ElapsedTime
-$(P)$(R)RemainingTime
-$(P)$(R)MoveSampleIn
-$(P)$(R)MoveSampleOut
-$(P)$(R)StartScan
-$(P)$(R)AbortScan
