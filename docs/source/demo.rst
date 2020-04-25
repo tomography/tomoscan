@@ -6,7 +6,7 @@ tomoscan includes a complete example EPICS application.  This includes an exampl
 :download:`tomoScan.template <../../tomoScanApp/Db/tomoScan.template>`,
 and a corresponding autosave request file, :download:`tomoScan_settings.req <../../tomoScanApp/Db/tomoScan_settings.req>`.
 The database is loaded in the IOC with the example substitutions file, 
-:download:`tomoScan.substitutions <../../iocBoot/iocTomoScan/tomoScan.substitutions>`/
+:download:`tomoScan.substitutions <../../iocBoot/iocTomoScan/tomoScan.substitutions>`.
 
 The following tables list all of the records in the tomoScan.template file. This section lists the records
 that are required by tomoscan.  The second section lists the records that are used only by the tomoscan server mode.
