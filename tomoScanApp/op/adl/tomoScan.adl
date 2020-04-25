@@ -1,6 +1,6 @@
 
 file {
-	name="/home/epics/support/CARS/CARSApp/op/adl/tomoScan.adl"
+	name="/home/epics/support/tomoscan/tomoScanApp/op/adl/tomoScan.adl"
 	version=030109
 }
 display {
@@ -281,7 +281,6 @@ text {
 		clr=14
 		bclr=51
 	}
-	format="string"
 	limits {
 	}
 }
@@ -297,7 +296,6 @@ text {
 		clr=14
 		bclr=51
 	}
-	format="string"
 	limits {
 	}
 }
@@ -360,7 +358,6 @@ text {
 		clr=14
 		bclr=51
 	}
-	format="string"
 	limits {
 	}
 }
@@ -376,7 +373,6 @@ text {
 		clr=14
 		bclr=51
 	}
-	format="string"
 	limits {
 	}
 }
@@ -473,7 +469,6 @@ text {
 		clr=14
 		bclr=51
 	}
-	format="string"
 	limits {
 	}
 }
@@ -489,7 +484,6 @@ text {
 		clr=14
 		bclr=51
 	}
-	format="string"
 	limits {
 	}
 }
@@ -581,15 +575,15 @@ rectangle {
 }
 text {
 	object {
-		x=250
+		x=260
 		y=375
-		width=200
+		width=180
 		height=20
 	}
 	"basic attribute" {
 		clr=54
 	}
-	textix="Dark Current Control"
+	textix="Dark Field Control"
 	align="horiz. centered"
 }
 rectangle {
@@ -994,7 +988,6 @@ text {
 		clr=14
 		bclr=51
 	}
-	format="string"
 	limits {
 	}
 }
