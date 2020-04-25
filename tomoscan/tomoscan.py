@@ -6,30 +6,24 @@ import signal
 import logging
 from datetime import timedelta
 
-import logging
-
-logging.basicConfig(level=logging.INFO)
-
 class scanAbortError(Exception):
-    """Exception raised when user wants to abort a scan.
-    """
+    '''Exception raised when user wants to abort a scan.
+    '''
     pass
 
 class cameraTimeoutError(Exception):
-    """Exception raised when the camera times out during a scan.
-    """
+    '''Exception raised when the camera times out during a scan.
+    '''
     pass
 
 class tomoscan:
 
-    def __init__(self, configPVFile, controlPVFile, macros=[]):
+    def __init__(self, pvFile, macros=[]):
+        logging.basicConfig(level=logging.INFO)
         self.configPVs = {}
         self.controlPVs = {}
         self.pvPrefixes = {}
-        if (configPVFile != None):
-            self.readPVFile(configPVFile, macros, True)
-        if (controlPVFile != None):
-            self.readPVFile(controlPVFile, macros, False)
+        self.readPVFile(pvFile, macros)
 
         if (('Rotation' in self.controlPVs) == False):
             logging.error('RotationPVName must be present in autoSettingsFile')
@@ -146,19 +140,19 @@ class tomoscan:
             self.abortScan()
 
     def showPVs(self):
-        print("configPVS:")
+        print('configPVS:')
         for pv in self.configPVs:
-            print(pv, ":", self.configPVs[pv].get(as_string=True))
+            print(pv, ':', self.configPVs[pv].get(as_string=True))
 
-        print("")
-        print("controlPVS:")
+        print('')
+        print('controlPVS:')
         for pv in self.controlPVs:
-            print(pv, ":", self.controlPVs[pv].get(as_string=True))
+            print(pv, ':', self.controlPVs[pv].get(as_string=True))
 
-        print("")
-        print("pvPrefixes:")
+        print('')
+        print('pvPrefixes:')
         for pv in self.pvPrefixes:
-            print(pv, ":", self.pvPrefixes[pv])
+            print(pv, ':', self.pvPrefixes[pv])
             
     def checkPVsConnected(self):
         allConnected = True
@@ -168,65 +162,77 @@ class tomoscan:
                 allConnected = False
         return allConnected
 
-    def readPVFile(self, pvFile, macros, configFile):
+    def readPVFile(self, pvFile, macros):
         f = open(pvFile)
         lines = f.read()
         f.close()
         lines = lines.splitlines()
         for line in lines:
+            isConfigPV = True
+            if (line.find('#controlPV') != -1):
+                line = line.replace('#controlPV', '')
+                isConfigPV = False
+            line = line.lstrip()
+            # Skip lines starting with #
+            if (line.startswith('#')):
+                continue
+            # Skip blank lines
+            if (line == ''):
+                continue
             pvname = line
-            # Do macro substitution
+            # Do macro substitution on the pvName
             for key in macros:
                  pvname = pvname.replace(key, macros[key])
+            # Replace macros in dictionary key with nothing
             dictentry = line
             for key in macros:
-                 dictentry = dictentry.replace(key, "")
+                 dictentry = dictentry.replace(key, '')
             pv = PV(pvname)
-            if (configFile == True):
+            if (isConfigPV == True):
                 self.configPVs[dictentry] = pv
             else:
                 self.controlPVs[dictentry] = pv
-            if (dictentry.find("PVName") != -1):
+            if (dictentry.find('PVName') != -1):
                 pvname = pv.value
-                de = dictentry.strip("PVName")
+                de = dictentry.replace('PVName', '')
                 self.controlPVs[de] = PV(pvname)
-            if (dictentry.find("PVPrefix") != -1):
+            if (dictentry.find('PVPrefix') != -1):
                 pvprefix = pv.value
-                de = dictentry.strip("PVPrefix")
+                de = dictentry.replace('PVPrefix', '')
                 self.pvPrefixes[de] = pvprefix
 
     def moveSampleIn(self):
-        axis = self.epicsPVs["FlatFieldAxis"].get(as_string=True)
+        axis = self.epicsPVs['FlatFieldAxis'].get(as_string=True)
         logging.info('moveSampleIn axis: %s', axis)
-        if (axis == "X") or (axis == "Both"):
-            position = self.epicsPVs["SampleInX"].value
-            self.epicsPVs["SampleX"].put(position, wait=True)
+        if (axis == 'X') or (axis == 'Both'):
+            position = self.epicsPVs['SampleInX'].value
+            self.epicsPVs['SampleX'].put(position, wait=True)
             
-        if (axis == "Y") or (axis == "Both"):
-            position = self.epicsPVs["SampleInY"].value
-            self.epicsPVs["SampleY"].put(position, wait=True)
+        if (axis == 'Y') or (axis == 'Both'):
+            position = self.epicsPVs['SampleInY'].value
+            self.epicsPVs['SampleY'].put(position, wait=True)
 
     def moveSampleOut(self):
-        axis = self.epicsPVs["FlatFieldAxis"].get(as_string=True)
+        axis = self.epicsPVs['FlatFieldAxis'].get(as_string=True)
         logging.info('moveSampleOut axis: %s', axis)
-        if (axis == "X") or (axis == "Both"):
-            position = self.epicsPVs["SampleOutX"].value
-            self.epicsPVs["SampleX"].put(position, wait=True)
+        if (axis == 'X') or (axis == 'Both'):
+            position = self.epicsPVs['SampleOutX'].value
+            self.epicsPVs['SampleX'].put(position, wait=True)
             
-        if (axis == "Y") or (axis == "Both"):
-            position = self.epicsPVs["SampleOutY"].value
-            self.epicsPVs["SampleY"].put(position, wait=True)
+        if (axis == 'Y') or (axis == 'Both'):
+            position = self.epicsPVs['SampleOutY'].value
+            self.epicsPVs['SampleY'].put(position, wait=True)
 
     def saveConfiguration(self, fileName):
         d = {}
         for pv in self.configPVs:
             d[pv] = self.configPVs[pv].get(as_string=True)
-        f = open(fileName, "w")
+        f = open(fileName, 'w')
         json.dump(d, f, indent=2)
         f.close()
     
     def loadConfiguration(self, fileName):
-        f = open(fileName, "r")
+        f = open(fileName, 'r')
         d = json.load(f)
         f.close()
         for pv in d:
@@ -333,8 +339,8 @@ class tomoscan:
             readout = readoutTimes[pixelFormat][videoMode]/1000.
         
         if (readout == None):
-            logging.error('Unsupported combination of camera model, pixel format and video mode: %s %s %s',
-                  % (cameraModel, pixelFormat, videoMode))
+            logging.error('Unsupported combination of camera model, pixel format and video mode: %s %s %s' 
+                          % (cameraModel, pixelFormat, videoMode))
             return 0
 
         # We need to use the actual exposure time that the camera is using, not the requested exposure time
