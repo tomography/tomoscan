@@ -2,47 +2,47 @@
 Screenshots
 ===========
 
-TomoCollect.adl
-===============
+tomoScan.adl
+============
 
-The following is the MEDM screen TomoCollect.adl during a scan. The status information is updating.
+The following is the MEDM screen tomoScan.adl during a scan. The status information is updating.
 
-.. image:: img/TomoCollect.png
+.. image:: img/tomoScan.png
     :width: 75%
     :align: center
 
-TomoCollect_EPICS_PVS.adl
-=========================
+tomoScanEPICS_PVS.adl
+=====================
 
-The following is the MEDM screen TomoCollect_EPICS_PVS.adl. If these PVs are changed tomoscan must be restarted.
+The following is the MEDM screen tomoScanEPICS_PVS.adl. If these PVs are changed tomoscan must be restarted.
 
-.. image:: img/TomoCollect_EPICS_PVS.png
+.. image:: img/tomoScanEPICS_PVS.png
     :width: 75%
     :align: center
 
-TomoCollectSampleInfo.adl
-=========================
+tomoScanSampleInfo.adl
+======================
 
-The following is the MEDM screen TomoCollectSampleInfo.adl.
+The following is the MEDM screen tomoScanSampleInfo.adl.
 
-.. image:: img/TomoCollectSampleInfo.png
+.. image:: img/tomoScanSampleInfo.png
     :width: 75%
     :align: center
 
-TomoCollectUserInfo.adl
-=======================
+tomoScanUserInfo.adl
+====================
 
-The following is the MEDM screen TomoCollectUserInfo.adl.
+The following is the MEDM screen tomoScanUserinfo.adl.
 
-.. image:: img/TomoCollectUserInfo.png
+.. image:: img/tomoScanUserInfo.png
     :width: 75%
     :align: center
 
-TomoCollectConfigInfo.adl
-=========================
+tomoScanConfigInfo.adl
+======================
 
-The following is the MEDM screen TomoCollectConfigInfo.adl.
+The following is the MEDM screen tomoScanConfigInfo.adl.
 
-.. image:: img/TomoCollectConfigInfo.png
+.. image:: img/tomoScanConfigInfo.png
     :width: 75%
     :align: center
