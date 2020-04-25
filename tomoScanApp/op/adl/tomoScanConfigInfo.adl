@@ -1,6 +1,6 @@
 
 file {
-	name="/home/epics/support/CARS/CARSApp/op/adl/TomoCollectConfigInfo.adl"
+	name="/home/epics/support/CARS/CARSApp/op/adl/tomoScanConfigInfo.adl"
 	version=030109
 }
 display {

@@ -1,6 +1,6 @@
 
 file {
-	name="/home/epics/support/CARS/CARSApp/op/adl/TomoCollect_EPICS_PVS.adl"
+	name="/home/epics/support/CARS/CARSApp/op/adl/tomoScan_EPICS_PVS.adl"
 	version=030109
 }
 display {

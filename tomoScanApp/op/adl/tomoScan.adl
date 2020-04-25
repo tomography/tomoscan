@@ -1,6 +1,6 @@
 
 file {
-	name="/home/epics/support/CARS/CARSApp/op/adl/TomoCollect.adl"
+	name="/home/epics/support/CARS/CARSApp/op/adl/tomoScan.adl"
 	version=030109
 }
 display {
@@ -142,17 +142,17 @@ text {
 	}
 	display[0] {
 		label="Sample information"
-		name="TomoCollectSampleInfo.adl"
+		name="tomoScanSampleInfo.adl"
 		args="P=$(P), R=$(R)"
 	}
 	display[1] {
 		label="User information"
-		name="TomoCollectUserInfo.adl"
+		name="tomoScanUserInfo.adl"
 		args="P=$(P), R=$(R)"
 	}
 	display[2] {
 		label="Configuration information"
-		name="TomoCollectConfigInfo.adl"
+		name="tomoScanConfigInfo.adl"
 		args="P=$(P), R=$(R)"
 	}
 	clr=14
@@ -167,7 +167,7 @@ text {
 	}
 	display[0] {
 		label="Epics PV Names"
-		name="TomoCollect_EPICS_PVS.adl"
+		name="tomoScan_EPICS_PVS.adl"
 		args="P=$(P), R=$(R)"
 	}
 	clr=14
