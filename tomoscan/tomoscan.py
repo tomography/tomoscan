@@ -3,7 +3,12 @@ import json
 import time
 import threading
 import signal
+import logging
 from datetime import timedelta
+
+import logging
+
+logging.basicConfig(level=logging.INFO)
 
 class scanAbortError(Exception):
     """Exception raised when user wants to abort a scan.
@@ -27,13 +32,13 @@ class tomoscan:
             self.readPVFile(controlPVFile, macros, False)
 
         if (('Rotation' in self.controlPVs) == False):
-            print("ERROR: RotationPVName must be present in autoSettingsFile")
+            logging.error('RotationPVName must be present in autoSettingsFile')
             quit()
         if (('Camera' in self.pvPrefixes) == False):
-            print("ERROR: CameraPVPrefix must be present in autoSettingsFile")
+            logging.error('CameraPVPrefix must be present in autoSettingsFile')
             quit()
         if (('FilePlugin' in self.pvPrefixes) == False):
-            print("ERROR: FilePluginPVPrefix must be present in autoSettingsFile")
+            logging.error('FilePluginPVPrefix must be present in autoSettingsFile')
             quit()
                 
         rotationPVName = self.controlPVs['Rotation'].pvname
@@ -116,8 +121,8 @@ class tomoscan:
         self.epicsPVs['StartScan'].add_callback(self.pvCallback)
         self.epicsPVs['AbortScan'].add_callback(self.pvCallback)
         self.epicsPVs['ExposureTime'].add_callback(self.pvCallback)
-        
-        # Set ^C interrupt to abort the scan
+                
+         # Set ^C interrupt to abort the scan
         signal.signal(signal.SIGINT, self.signalHandler)
 
     def signalHandler(self, sig, frame):
@@ -125,7 +130,7 @@ class tomoscan:
             self.abortScan();
 
     def pvCallback(self, pvname=None, value=None, char_value=None, **kw):
-        print('pvCallback pvName', pvname, 'value=', value, 'char_value=', char_value)
+        logging.info('pvCallback pvName=%s, value=%s, char_value=%s' % (pvname, value, char_value))
         if ((pvname.find('MoveSampleIn') != -1) and (value == 1)):
             thread = threading.Thread(target=self.moveSampleIn, args=())
             thread.start()
@@ -159,7 +164,7 @@ class tomoscan:
         allConnected = True
         for pv in self.epicsPVs:
             if (self.epicsPVs[pv].connected == False):
-                print('ERROR: PV', self.epicsPVs[pv].pvname, 'is not connected')
+                logging.error('PV %s is not connected' % self.epicsPVs[pv].pvname)
                 allConnected = False
         return allConnected
 
@@ -176,7 +181,6 @@ class tomoscan:
             dictentry = line
             for key in macros:
                  dictentry = dictentry.replace(key, "")
-            print('pvname=', pvname)
             pv = PV(pvname)
             if (configFile == True):
                 self.configPVs[dictentry] = pv
@@ -193,7 +197,7 @@ class tomoscan:
 
     def moveSampleIn(self):
         axis = self.epicsPVs["FlatFieldAxis"].get(as_string=True)
-        print("moveSampleIn axis:", axis)
+        logging.info('moveSampleIn axis: %s', axis)
         if (axis == "X") or (axis == "Both"):
             position = self.epicsPVs["SampleInX"].value
             self.epicsPVs["SampleX"].put(position, wait=True)
@@ -204,7 +208,7 @@ class tomoscan:
 
     def moveSampleOut(self):
         axis = self.epicsPVs["FlatFieldAxis"].get(as_string=True)
-        print("moveSampleOut axis:", axis)
+        logging.info('moveSampleOut axis: %s', axis)
         if (axis == "X") or (axis == "Both"):
             position = self.epicsPVs["SampleOutX"].value
             self.epicsPVs["SampleX"].put(position, wait=True)
@@ -301,9 +305,9 @@ class tomoscan:
                 self.openShutter()
 
         except scanAbortError:
-            print('ERROR: scan aborted')
+            logging.error('Scan aborted')
         except cameraTimeoutError:
-            print('ERROR: camera timeout')
+            logging.error('Camera timeout')
 
         # Finish scan
         self.endScan()
@@ -329,8 +333,8 @@ class tomoscan:
             readout = readoutTimes[pixelFormat][videoMode]/1000.
         
         if (readout == None):
-            print('Unsupported combination of camera model, pixel format and video mode: ',
-                  cameraModel, pixelFormat, videoMode)
+            logging.error('Unsupported combination of camera model, pixel format and video mode: %s %s %s',
+                  % (cameraModel, pixelFormat, videoMode))
             return 0
 
         # We need to use the actual exposure time that the camera is using, not the requested exposure time
@@ -362,10 +366,10 @@ class tomoscan:
             elapsedTime = currentTime - startTime
             remainingTime = elapsedTime * (numImages - numCollected) / max(float(numCollected),1)
             collectProgress = str(numCollected) + '/' + str(numImages)
-            print('Collected ' + collectProgress)
+            logging.info('Collected %s', collectProgress)
             self.epicsPVs['ImagesCollected'].put(collectProgress)
             saveProgress = str(numSaved) + '/' + str(numToSave)
-            print('Saved ' + saveProgress)
+            logging.info('Saved %s', saveProgress)
             self.epicsPVs['ImagesSaved'].put(saveProgress)
             self.epicsPVs['ElapsedTime'].put(str(timedelta(seconds=int(elapsedTime))))
             self.epicsPVs['RemainingTime'].put(str(timedelta(seconds=int(remainingTime))))
