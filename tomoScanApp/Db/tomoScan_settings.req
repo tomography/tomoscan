@@ -1,0 +1,139 @@
+# This file is used by autosave to determine what PVs to save
+# It is also used by tomoScan to determine what PVs to create
+# The following PVs are saved by autosaved and are also
+# saved by tomoScan in its configuration files.
+# The PVs at the end of this file, which start with #controlPV
+# are not used by autosave but are used by tomoScan
+#
+##########################################################
+# REQUIRED PVS: The following PVs are required by tomoScan
+##########################################################
+#
+####################################
+# Camera and File Plugin PV Prefixes
+####################################
+$(P)$(R)CameraPVPrefix
+$(P)$(R)FilePluginPVPrefix
+#################
+# Shutter control
+#################
+$(P)$(R)CloseShutterPVName
+$(P)$(R)CloseShutterValue
+$(P)$(R)OpenShutterPVName
+$(P)$(R)OpenShutterValue
+#############################################
+# Rotation, sample X and Y translation motors
+#############################################
+$(P)$(R)RotationPVName
+$(P)$(R)SampleXPVName
+$(P)$(R)SampleYPVName
+#
+#########################
+# Data collection control
+#########################
+#
+###############
+# Rotation axis
+###############
+$(P)$(R)RotationStart
+$(P)$(R)RotationStep
+$(P)$(R)NumAngles
+$(P)$(R)ReturnRotation
+#
+####################
+# Dark field control
+####################
+$(P)$(R)NumDarkFields
+$(P)$(R)DarkFieldMode
+$(P)$(R)DarkFieldValue
+#
+####################
+# Flat field control
+####################
+$(P)$(R)NumFlatFields
+$(P)$(R)FlatFieldMode
+$(P)$(R)FlatFieldAxis
+$(P)$(R)FlatFieldValue
+$(P)$(R)SampleInX
+$(P)$(R)SampleOutX
+$(P)$(R)SampleInY
+$(P)$(R)SampleOutY
+#
+#################
+# Exposure time
+#################
+$(P)$(R)ExposureTime
+#
+############################
+# File path and name control
+############################
+$(P)$(R)FilePath
+$(P)$(R)FileName
+#
+#################################
+# Scan control via Channel Access
+#################################
+#controlPV $(P)$(R)MoveSampleIn
+#controlPV $(P)$(R)MoveSampleOut
+#controlPV $(P)$(R)StartScan
+#controlPV $(P)$(R)AbortScan
+#
+################################
+# Scan status via Channel Access
+################################
+#controlPV $(P)$(R)ScanStatus
+#controlPV $(P)$(R)ImagesCollected
+#controlPV $(P)$(R)ImagesSaved
+#controlPV $(P)$(R)ElapsedTime
+#controlPV $(P)$(R)RemainingTime
+
+###########################################################
+# OPTIONAL PVS: The following PVs are not used by tomoScan.
+# They may be used by derived classes, or for metadata in
+# data files.
+###########################################################
+#
+################
+# SIS MCS Prefix
+################
+$(P)$(R)MCSPVPrefix
+#
+####################
+# Energy information
+####################
+$(P)$(R)EnergyMode
+#
+#########################
+# Beam status information
+#########################
+$(P)$(R)BeamReadyPVName
+$(P)$(R)BeamReadyValue
+#
+####################
+# Optics information
+####################
+$(P)$(R)ScintillatorType
+$(P)$(R)ScintillatorThickness
+$(P)$(R)ImagePixelSize
+$(P)$(R)DetectorPixelSize
+$(P)$(R)CameraObjective
+$(P)$(R)CameraTubeLength
+#
+####################
+# Sample information
+####################
+$(P)$(R)SampleName
+$(P)$(R)SampleDescription1
+$(P)$(R)SampleDescription2
+$(P)$(R)SampleDescription3
+#
+##################
+# User information
+##################
+$(P)$(R)UserName
+$(P)$(R)UserInstitution
+$(P)$(R)UserBadge
+$(P)$(R)UserEmail
+$(P)$(R)ProposalNumber
+$(P)$(R)ProposalTitle
+$(P)$(R)ESAFNumber
