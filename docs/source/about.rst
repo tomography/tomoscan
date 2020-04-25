@@ -9,6 +9,8 @@ About
 tomoscan is a Python class for collecting computed tomography data at the APS. 
 tomoscan.py implements a base class with the code that should be beamline-independent.  
 Beamline-dependent code is implemented in derived classes that inherit from tomoscan.
+tomoscan includes an example of such a derived class, tomoscan_13bm.py, which is 
+used at APS beamline 13-BM-D.
 
 
 Advantages compared to current APS tomography Python software
@@ -34,19 +36,23 @@ APS tomography Python software (e.g. `2bm-tomo`_).
   - The existing software hard-codes the PV prefixes in the Python code. This
     requires many changes in the code when porting to a new beamline.
 
-- tomoscan implements a **server mode**.  tomoscan itself only implements the code
-  to collect a single tomography dataset, including dark-fields, flat-fields, and projections.
-  The server mode listens for EPICS PVs that command tomoscan to collect a new dataset.
-  There is a status PV that indicates the scan status, indicating when the scan is complete.
-  Thus, any EPICS client can be used to create complex scans, and this code does not need to be
-  in the same Python process that is running tomoscan.  Possible clients include OPI displays
-  such as medm, Python, IDL, the EPICS sscan record, SPEC, etc.
+- tomoscan can collect a scan in 3 modes:
+
+  - In the main Python thread.  While the scan is running the Python prompt is not available.
+  - In a separate Python thread.  While the scan is running the Python prompt is available.
+  - In a **tomography scan server** mode.  tomoscan itself only implements the code
+    to collect a single tomography dataset, including dark-fields, flat-fields, and projections.
+    The server listens for EPICS PVs that command tomoscan to collect a new dataset.
+    There is a status PV that indicates the scan status, indicating when the scan is complete.
+    Thus, any EPICS client can be used to create complex scans, and this code does not need to be
+    in the same Python process that is running tomoscan.  Possible clients include OPI displays
+    such as medm, Python, IDL, the EPICS sscan record, SPEC, etc.
 
   - The existing software requires that scans be run from within the same Python process that is running
     the tomography scan.
 
-- tomoscan is very compact code, less than 400 lines, including the base tomoscan class (274 lines) 
-  and the derived class for 13-BM (124 lines).  
+- tomoscan is very compact code,  ~500 lines, including the base tomoscan class ~400 lines) 
+  and the derived class for 13-BM (~100 lines).  
   This code collects a complete tomography dataset, including dark-fields, flat-fields, projections, 
   and saves a configuration file in JSON format at the end of the scan.
   The configuration file can be read back in to repeat the same scan at a future time.
