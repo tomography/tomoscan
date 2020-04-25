@@ -63,17 +63,17 @@
     <name>related display #18</name>
     <actions>
       <action type="open_display">
-        <file>TomoCollectSampleInfo.opi</file>
+        <file>tomoScanSampleInfo.opi</file>
         <target>tab</target>
         <description>Sample information</description>
       </action>
       <action type="open_display">
-        <file>TomoCollectUserInfo.opi</file>
+        <file>tomoScanUserInfo.opi</file>
         <target>tab</target>
         <description>User information</description>
       </action>
       <action type="open_display">
-        <file>TomoCollectConfigInfo.opi</file>
+        <file>tomoScanConfigInfo.opi</file>
         <target>tab</target>
         <description>Configuration information</description>
       </action>
@@ -91,7 +91,7 @@
     <name>related display #23</name>
     <actions>
       <action type="open_display">
-        <file>TomoCollect_EPICS_PVS.opi</file>
+        <file>tomoScan_EPICS_PVS.opi</file>
         <target>tab</target>
         <description>Epics PV Names</description>
       </action>
@@ -230,7 +230,7 @@
       <color red="115" green="223" blue="255">
       </color>
     </background_color>
-    <format>6</format>
+    <format>1</format>
     <show_units>false</show_units>
     <border_alarm_sensitive>false</border_alarm_sensitive>
   </widget>
@@ -247,7 +247,7 @@
       <color red="115" green="223" blue="255">
       </color>
     </background_color>
-    <format>6</format>
+    <format>1</format>
     <show_units>false</show_units>
     <border_alarm_sensitive>false</border_alarm_sensitive>
   </widget>
@@ -323,7 +323,7 @@
       <color red="115" green="223" blue="255">
       </color>
     </background_color>
-    <format>6</format>
+    <format>1</format>
     <show_units>false</show_units>
     <border_alarm_sensitive>false</border_alarm_sensitive>
   </widget>
@@ -340,7 +340,7 @@
       <color red="115" green="223" blue="255">
       </color>
     </background_color>
-    <format>6</format>
+    <format>1</format>
     <show_units>false</show_units>
     <border_alarm_sensitive>false</border_alarm_sensitive>
   </widget>
@@ -453,7 +453,7 @@
       <color red="115" green="223" blue="255">
       </color>
     </background_color>
-    <format>6</format>
+    <format>1</format>
     <show_units>false</show_units>
     <border_alarm_sensitive>false</border_alarm_sensitive>
   </widget>
@@ -470,7 +470,7 @@
       <color red="115" green="223" blue="255">
       </color>
     </background_color>
-    <format>6</format>
+    <format>1</format>
     <show_units>false</show_units>
     <border_alarm_sensitive>false</border_alarm_sensitive>
   </widget>
@@ -579,10 +579,10 @@
   </widget>
   <widget type="label" version="2.0.0">
     <name>text #126</name>
-    <text>Dark Current Control</text>
-    <x>250</x>
+    <text>Dark Field Control</text>
+    <x>260</x>
     <y>375</y>
-    <width>200</width>
+    <width>180</width>
     <font>
       <font family="Liberation Sans" style="REGULAR" size="16.0">
       </font>
@@ -1045,7 +1045,7 @@
       <color red="115" green="223" blue="255">
       </color>
     </background_color>
-    <format>6</format>
+    <format>1</format>
     <show_units>false</show_units>
     <border_alarm_sensitive>false</border_alarm_sensitive>
   </widget>

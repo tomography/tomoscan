@@ -120,19 +120,6 @@ newPos
 objType "controls"
 endObjectProperties
 
-# (Group)
-object activeGroupClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 125
-y 100
-w 425
-h 245
-
-beginGroup
-
 # (Static Text)
 object activeXTextClass
 beginObjectProperties
@@ -178,19 +165,6 @@ fastUpdate
 newPos
 objType "controls"
 endObjectProperties
-
-# (Group)
-object activeGroupClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 135
-y 225
-w 415
-h 20
-
-beginGroup
 
 # (Static Text)
 object activeXTextClass
@@ -238,24 +212,6 @@ newPos
 objType "controls"
 endObjectProperties
 
-endGroup
-
-endObjectProperties
-
-
-# (Group)
-object activeGroupClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 155
-y 250
-w 395
-h 20
-
-beginGroup
-
 # (Text Control)
 object activeXTextDspClass
 beginObjectProperties
@@ -300,24 +256,6 @@ value {
   "Close shutter PV"
 }
 endObjectProperties
-
-endGroup
-
-endObjectProperties
-
-
-# (Group)
-object activeGroupClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 165
-y 200
-w 385
-h 20
-
-beginGroup
 
 # (Static Text)
 object activeXTextClass
@@ -364,24 +302,6 @@ newPos
 objType "controls"
 endObjectProperties
 
-endGroup
-
-endObjectProperties
-
-
-# (Group)
-object activeGroupClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 205
-y 125
-w 345
-h 20
-
-beginGroup
-
 # (Text Control)
 object activeXTextDspClass
 beginObjectProperties
@@ -426,24 +346,6 @@ value {
   "Rotation PV"
 }
 endObjectProperties
-
-endGroup
-
-endObjectProperties
-
-
-# (Group)
-object activeGroupClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 205
-y 150
-w 345
-h 20
-
-beginGroup
 
 # (Static Text)
 object activeXTextClass
@@ -490,24 +392,6 @@ newPos
 objType "controls"
 endObjectProperties
 
-endGroup
-
-endObjectProperties
-
-
-# (Group)
-object activeGroupClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 205
-y 175
-w 345
-h 20
-
-beginGroup
-
 # (Text Control)
 object activeXTextDspClass
 beginObjectProperties
@@ -552,24 +436,6 @@ value {
   "Sample Y PV"
 }
 endObjectProperties
-
-endGroup
-
-endObjectProperties
-
-
-# (Group)
-object activeGroupClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 125
-y 275
-w 425
-h 20
-
-beginGroup
 
 # (Static Text)
 object activeXTextClass
@@ -617,24 +483,6 @@ newPos
 objType "controls"
 endObjectProperties
 
-endGroup
-
-endObjectProperties
-
-
-# (Group)
-object activeGroupClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 185
-y 300
-w 365
-h 20
-
-beginGroup
-
 # (Text Control)
 object activeXTextDspClass
 beginObjectProperties
@@ -679,24 +527,6 @@ value {
   "Beam ready PV"
 }
 endObjectProperties
-
-endGroup
-
-endObjectProperties
-
-
-# (Group)
-object activeGroupClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 155
-y 325
-w 395
-h 20
-
-beginGroup
 
 # (Text Control)
 object activeXTextDspClass
@@ -743,16 +573,6 @@ value {
 }
 endObjectProperties
 
-endGroup
-
-endObjectProperties
-
-
-endGroup
-
-endObjectProperties
-
-
 # (Static Text)
 object activeXTextClass
 beginObjectProperties
@@ -798,174 +618,4 @@ fastUpdate
 newPos
 objType "controls"
 endObjectProperties
-# (Group)
-object activeGroupClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 125
-y 100
-w 425
-h 245
-
-beginGroup
-# (Group)
-object activeGroupClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 135
-y 225
-w 415
-h 20
-
-beginGroup
-
-endGroup
-
-endObjectProperties
-
-# (Group)
-object activeGroupClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 155
-y 250
-w 395
-h 20
-
-beginGroup
-
-endGroup
-
-endObjectProperties
-
-# (Group)
-object activeGroupClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 165
-y 200
-w 385
-h 20
-
-beginGroup
-
-endGroup
-
-endObjectProperties
-
-# (Group)
-object activeGroupClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 205
-y 125
-w 345
-h 20
-
-beginGroup
-
-endGroup
-
-endObjectProperties
-
-# (Group)
-object activeGroupClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 205
-y 150
-w 345
-h 20
-
-beginGroup
-
-endGroup
-
-endObjectProperties
-
-# (Group)
-object activeGroupClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 205
-y 175
-w 345
-h 20
-
-beginGroup
-
-endGroup
-
-endObjectProperties
-
-# (Group)
-object activeGroupClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 125
-y 275
-w 425
-h 20
-
-beginGroup
-
-endGroup
-
-endObjectProperties
-
-# (Group)
-object activeGroupClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 185
-y 300
-w 365
-h 20
-
-beginGroup
-
-endGroup
-
-endObjectProperties
-
-# (Group)
-object activeGroupClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 155
-y 325
-w 395
-h 20
-
-beginGroup
-
-endGroup
-
-endObjectProperties
-
-
-endGroup
-
-endObjectProperties
-
 

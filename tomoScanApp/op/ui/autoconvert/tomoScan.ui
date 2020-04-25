@@ -225,7 +225,7 @@ border-radius: 2px;
                 <string>Sample information;User information;Configuration information</string>
             </property>
             <property name="files">
-                <string>TomoCollectSampleInfo.adl;TomoCollectUserInfo.adl;TomoCollectConfigInfo.adl</string>
+                <string>tomoScanSampleInfo.adl;tomoScanUserInfo.adl;tomoScanConfigInfo.adl</string>
             </property>
             <property name="args">
                 <string>P=$(P), R=$(R);P=$(P), R=$(R);P=$(P), R=$(R)</string>
@@ -264,7 +264,7 @@ border-radius: 2px;
                 <string>Epics PV Names</string>
             </property>
             <property name="files">
-                <string>TomoCollect_EPICS_PVS.adl</string>
+                <string>tomoScan_EPICS_PVS.adl</string>
             </property>
             <property name="args">
                 <string>P=$(P), R=$(R)</string>
@@ -608,7 +608,7 @@ border-radius: 2px;
                 <enum>caLineEdit::Static</enum>
             </property>
             <property name="formatType">
-                <enum>string</enum>
+                <enum>decimal</enum>
             </property>
         </widget>
         <widget class="caTextEntry" name="caTextEntry_1">
@@ -659,7 +659,7 @@ border-radius: 2px;
                 <enum>caLineEdit::Static</enum>
             </property>
             <property name="formatType">
-                <enum>string</enum>
+                <enum>decimal</enum>
             </property>
         </widget>
         <widget class="caGraphics" name="caRectangle_4">
@@ -852,7 +852,7 @@ border-radius: 2px;
                 <enum>caLineEdit::Static</enum>
             </property>
             <property name="formatType">
-                <enum>string</enum>
+                <enum>decimal</enum>
             </property>
         </widget>
         <widget class="caTextEntry" name="caTextEntry_3">
@@ -903,7 +903,7 @@ border-radius: 2px;
                 <enum>caLineEdit::Static</enum>
             </property>
             <property name="formatType">
-                <enum>string</enum>
+                <enum>decimal</enum>
             </property>
         </widget>
         <widget class="caLabel" name="caLabel_8">
@@ -1176,7 +1176,7 @@ border-radius: 2px;
                 <enum>caLineEdit::Static</enum>
             </property>
             <property name="formatType">
-                <enum>string</enum>
+                <enum>decimal</enum>
             </property>
         </widget>
         <widget class="caTextEntry" name="caTextEntry_5">
@@ -1227,7 +1227,7 @@ border-radius: 2px;
                 <enum>caLineEdit::Static</enum>
             </property>
             <property name="formatType">
-                <enum>string</enum>
+                <enum>decimal</enum>
             </property>
         </widget>
         <widget class="caLabel" name="caLabel_11">
@@ -1511,7 +1511,7 @@ border-radius: 2px;
                 </color>
             </property>
             <property name="text">
-                <string>Dark Current Control</string>
+                <string>Dark Field Control</string>
             </property>
             <property name="fontScaleMode">
                 <enum>ESimpleLabel::WidthAndHeight</enum>
@@ -1521,9 +1521,9 @@ border-radius: 2px;
             </property>
             <property name="geometry">
                 <rect>
-                    <x>250</x>
+                    <x>260</x>
                     <y>375</y>
-                    <width>200</width>
+                    <width>180</width>
                     <height>20</height>
                 </rect>
             </property>
@@ -2707,7 +2707,7 @@ border-radius: 2px;
                 <enum>caLineEdit::Static</enum>
             </property>
             <property name="formatType">
-                <enum>string</enum>
+                <enum>decimal</enum>
             </property>
         </widget>
         <widget class="caLabel" name="caLabel_28">

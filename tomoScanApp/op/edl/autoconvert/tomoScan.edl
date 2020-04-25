@@ -249,7 +249,7 @@ y 185
 w 100
 h 20
 controlPv "$(P)$(R)RotationStep"
-format "string"
+format "decimal"
 font "helvetica-medium-r-12.0"
 fontAlign "left"
 fgColor rgb 0 0 0
@@ -275,7 +275,7 @@ y 160
 w 100
 h 20
 controlPv "$(P)$(R)RotationStart"
-format "string"
+format "decimal"
 font "helvetica-medium-r-12.0"
 fontAlign "left"
 fgColor rgb 0 0 0
@@ -370,7 +370,7 @@ y 260
 w 100
 h 20
 controlPv "$(P)$(R)SampleInX"
-format "string"
+format "decimal"
 font "helvetica-medium-r-12.0"
 fontAlign "left"
 fgColor rgb 0 0 0
@@ -396,7 +396,7 @@ y 285
 w 100
 h 20
 controlPv "$(P)$(R)SampleOutX"
-format "string"
+format "decimal"
 font "helvetica-medium-r-12.0"
 fontAlign "left"
 fgColor rgb 0 0 0
@@ -479,7 +479,7 @@ y 285
 w 100
 h 20
 controlPv "$(P)$(R)SampleOutY"
-format "string"
+format "decimal"
 font "helvetica-medium-r-12.0"
 fontAlign "left"
 fgColor rgb 0 0 0
@@ -505,7 +505,7 @@ y 260
 w 100
 h 20
 controlPv "$(P)$(R)SampleInY"
-format "string"
+format "decimal"
 font "helvetica-medium-r-12.0"
 fontAlign "left"
 fgColor rgb 0 0 0
@@ -657,9 +657,9 @@ beginObjectProperties
 major 4
 minor 1
 release 1
-x 250
+x 260
 y 375
-w 200
+w 180
 h 20
 font "helvetica-medium-r-14.0"
 fontAlign "center"
@@ -667,7 +667,7 @@ fgColor rgb 2560 0 47104
 bgColor index 3
 useDisplayBg
 value {
-  "Dark Current Control"
+  "Dark Field Control"
 }
 endObjectProperties
 
@@ -1182,7 +1182,7 @@ y 160
 w 100
 h 20
 controlPv "$(P)$(R)NumAngles"
-format "string"
+format "decimal"
 font "helvetica-medium-r-12.0"
 fontAlign "left"
 fgColor rgb 0 0 0
@@ -1524,9 +1524,9 @@ icon
 numPvs 6
 numDsps 3
 displayFileName {
-  0 "TomoCollectSampleInfo.edl"
-  1 "TomoCollectUserInfo.edl"
-  2 "TomoCollectConfigInfo.edl"
+  0 "tomoScanSampleInfo.edl"
+  1 "tomoScanUserInfo.edl"
+  2 "tomoScanConfigInfo.edl"
 }
 menuLabel {
   0 "Sample information"
@@ -1564,7 +1564,7 @@ icon
 numPvs 2
 numDsps 1
 displayFileName {
-  0 "TomoCollect_EPICS_PVS.edl"
+  0 "tomoScan_EPICS_PVS.edl"
 }
 menuLabel {
   0 "Epics PV Names"
