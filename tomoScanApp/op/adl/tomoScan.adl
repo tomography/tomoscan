@@ -167,7 +167,7 @@ text {
 	}
 	display[0] {
 		label="Epics PV Names"
-		name="tomoScan_EPICS_PVS.adl"
+		name="tomoScanEPICS_PVs.adl"
 		args="P=$(P), R=$(R)"
 	}
 	clr=14
