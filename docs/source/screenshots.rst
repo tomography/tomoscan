@@ -11,12 +11,12 @@ The following is the MEDM screen :download:`tomoScan.adl <../../tomoScanApp/op/a
     :width: 75%
     :align: center
 
-tomoScanEPICS_PVS.adl
+tomoScanEPICS_PVs.adl
 =====================
 
-The following is the MEDM screen :download:`tomoScanEPICS_PVS.adl <../../tomoScanApp/op/adl/tomoScanEPICS_PVS.adl>`. If these PVs are changed tomoscan must be restarted.
+The following is the MEDM screen :download:`tomoScanEPICS_PVs.adl <../../tomoScanApp/op/adl/tomoScanEPICS_PVs.adl>`. If these PVs are changed tomoscan must be restarted.
 
-.. image:: img/tomoScanEPICS_PVS.png
+.. image:: img/tomoScanEPICS_PVs.png
     :width: 75%
     :align: center
 
@@ -32,7 +32,7 @@ The following is the MEDM screen :download:`tomoScanSampleInfo.adl <../../tomoSc
 tomoScanUserInfo.adl
 ====================
 
-The following is the MEDM screen :download:`tomoScanUserinfo.adl <../../tomoScanApp/op/adl/tomoScanUserinfo.adl>`.
+The following is the MEDM screen :download:`tomoScanUserInfo.adl <../../tomoScanApp/op/adl/tomoScanUserInfo.adl>`.
 
 .. image:: img/tomoScanUserInfo.png
     :width: 75%
