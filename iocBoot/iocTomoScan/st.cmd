@@ -11,7 +11,7 @@ dbLoadTemplate("tomoScan.substitutions")
 
 < save_restore.cmd
 save_restoreSet_status_prefix($(P))
-dbLoadRecords("$(AUTOSAVE)/asApp/Db/save_restoreStatus.db")
+dbLoadRecords("$(AUTOSAVE)/asApp/Db/save_restoreStatus.db", "P=$(P)")
 
 iocInit
 
