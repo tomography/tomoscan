@@ -3,7 +3,7 @@ Screenshots
 ===========
 
 tomoScan.adl
-===============
+============
 
 The following is the MEDM screen tomoScan.adl during a scan. The status information is updating.
 
@@ -11,17 +11,17 @@ The following is the MEDM screen tomoScan.adl during a scan. The status informat
     :width: 75%
     :align: center
 
-tomoScanEPICS_PVs.adl
-=========================
+tomoScanEPICS_PVS.adl
+=====================
 
-The following is the MEDM screen tomoScanEPICS_PVs.adl. If these PVs are changed tomoscan must be restarted.
+The following is the MEDM screen tomoScanEPICS_PVS.adl. If these PVs are changed tomoscan must be restarted.
 
-.. image:: img/tomoScanEPICS_PVs.png
+.. image:: img/tomoScanEPICS_PVS.png
     :width: 75%
     :align: center
 
 tomoScanSampleInfo.adl
-=========================
+======================
 
 The following is the MEDM screen tomoScanSampleInfo.adl.
 
@@ -30,16 +30,16 @@ The following is the MEDM screen tomoScanSampleInfo.adl.
     :align: center
 
 tomoScanUserInfo.adl
-=======================
+====================
 
-The following is the MEDM screen tomoScanUserInfo.adl.
+The following is the MEDM screen tomoScanUserinfo.adl.
 
 .. image:: img/tomoScanUserInfo.png
     :width: 75%
     :align: center
 
 tomoScanConfigInfo.adl
-=========================
+======================
 
 The following is the MEDM screen tomoScanConfigInfo.adl.
 
