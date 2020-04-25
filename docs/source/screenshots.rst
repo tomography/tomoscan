@@ -5,14 +5,6 @@ Screenshots
 tomoScan.adl
 ============
 
-
-
-
-
-
-
-
-
 The following is the MEDM screen :download:`tomoScan.adl <../../tomoScanApp/op/adl/tomoScan.adl>` during a scan. The status information is updating.
 
 .. image:: img/tomoScan.png
