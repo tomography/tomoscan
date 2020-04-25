@@ -140,7 +140,7 @@ script
 /DartConfiguration.tcl
 /Glob.cmake
 /Init.cmake
-/Makefile
+#/Makefile
 /MemCheck.cmake
 /Stages.cmake
 /Submit.cmake
@@ -155,3 +155,20 @@ script
 /.coverage.xml
 /CMakeFiles
 /test_rotate.py
+
+# EPICS files #
+###############
+O.*
+*BAK.adl
+bin/
+db/
+dbd/
+html/
+include/
+lib/
+templates/
+cdCommands
+envPaths
+dllPath.bat
+auto_settings.sav*
+auto_positions.sav*
