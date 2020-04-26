@@ -317,7 +317,7 @@ class tomoscan:
 
         Parameters
         ----------
-        fileName str
+        fileName : str
             The name of the file to save to.
         """
 
@@ -333,7 +333,7 @@ class tomoscan:
         
         Parameters
         ----------
-        fileName str
+        fileName : str
             The name of the file to save to.
         """
 
@@ -369,7 +369,7 @@ class tomoscan:
 
         Parameters
         ----------
-        exposureTime float, optional
+        exposureTime : float, optional
             The exposure time to use. If None then the value of the ``ExposureTime`` PV is used.
         """
 
@@ -431,6 +431,41 @@ class tomoscan:
         self.scanIsRunning = False
 
     def flyScan(self):
+        """Performs the operations for a tomography fly scan, i.e. with continuous rotation.
+        
+        This base class method does the following:        
+
+        - Moves the rotation motor to position defined by the ``RotationStart`` PV.
+        
+        - Calls ``beginScan()``
+
+        - If the ``DarkFieldMode`` PV is ``Start`` or ``Both`` calls ``closeShutter()`` and ``collectDarkFields()``
+        
+        - Calls ``openShutter()``
+        
+        - If the ``FlatFieldMode`` PV is ``Start`` or ``Both`` calls ``moveSampleOut()`` and ``collectFlatFields()``
+        
+        - Calls ``moveSampleIn()``
+        
+        - Calls ``collectProjections()``
+
+        - If the ``FlatFieldMode`` PV is ``End`` or ``Both`` calls ``moveSampleOut()`` and ``collectFlatFields()``
+        
+        - Sets the ``StartScan`` PV to 0.  This PV is an EPICS ``busy`` record.  Normally EPICS clients
+          that start a scan with the ``StartScan`` PV will wait for ``StartScan`` to return to 0, often
+          using the ``ca_put_callback()`` mechanism.
+
+        - If the ``DarkFieldMode`` PV is ``End`` or ``Both`` calls ``closeShutter()`` and ``collectDarkFields()``
+       
+        - Calls ``endScan``
+
+        If there is either cameraTimeoutError exception or scanAbortError exception during the scan, 
+        it jumps immediate to calling ``endScan()`` and returns. 
+  
+        It is not expected that most derived classes will need to override this method, but they are
+        free to do so if required.
+        """
+
         try:
             rotationStart = self.epicsPVs['RotationStart'].value
             rotationStep = self.epicsPVs['RotationStart'].value
@@ -466,8 +501,7 @@ class tomoscan:
             if (numDarkFields > 0) and ((darkFieldMode == 'End') or (darkFieldMode == 'Both')):
                 self.closeShutter()
                 self.collectDarkFields()
-                self.openShutter()
-
+ 
         except scanAbortError:
             logging.error('Scan aborted')
         except cameraTimeoutError:
@@ -477,13 +511,43 @@ class tomoscan:
         self.endScan()
 
     def runFlyScan(self):
+        """Runs ``flyScan()`` in a new thread."""
+
         thread = threading.Thread(target=self.flyScan, args=())
         thread.start()
         
     def abortScan(self):
+        """Aborts a scan that is running.
+        
+        Sets a flag that is checked in ``waitCameraDone()``.
+        If ``waitCameraDone()`` finds the flag set then it raises a scanAbortError exception.
+        """
+
         self.scanIsRunning = False   
 
     def computeFrameTime(self):
+        """Computes the time to collect and readout an image from the camera.
+        
+        This method is used to compute the time between triggers to the camera.
+        This can be used, for example, to configure a trigger generator or to compute 
+        the speed of the rotation stage.
+        
+        The calculation is camera specific.  The result can depend on the actual exposure time
+        of the camera, and on a variety of camera configuration settings (pixel binning, pixel bit depth, 
+        video mode, etc.)
+        
+        The current version only supports the Point Grey Grasshopper3 GS3-U3-23S6M.
+        The logic for additional cameras should be added to this function in the future if the camera is
+        expected to be used at more than one beamline.  If the camera is only to be used at a single
+        beamline then the code should be added to this method in the derived class 
+
+        Returns
+        -------
+        float
+            The frame time, which is the minimum time allowed between triggers for the value of the 
+            ``ExposureTime`` PV.
+        """
+
         self.setExposureTime()
         # The readout time of the camera depends on the model, and things like the PixelFormat, VideoMode, etc.
         # The measured times in ms with 100 microsecond exposure time and 1000 frames without dropping
@@ -515,6 +579,24 @@ class tomoscan:
         return time
 
     def waitCameraDone(self, timeout):
+        """Waits for the camera acquisition to complete, or for ``abortScan()`` to be called.
+        
+        While waiting this method periodically updates the status PVs ``ImagesCollected``, ``ImagesSaved``,
+        ``ElapsedTime``, and ``RemainingTime``.
+        
+        Parameters
+        ----------
+        timeout : float
+            The maximum number of seconds to wait before raising a cameraTimeoutError exception.
+        
+        Raises
+        ------
+        scanAbortError 
+            If ``abortScan()`` is called
+        cameraTimeoutError
+            If acquisition has not completed within timeout value. 
+        """
+
         startTime = time.time()
         while(True):
             if (self.epicsPVs['CamAcquireBusy'].value == 0):
