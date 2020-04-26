@@ -17,13 +17,36 @@ class cameraTimeoutError(Exception):
     pass
 
 class tomoscan:
+    """ Base class used for tomography scanning with EPICS
 
-    def __init__(self, pvFile, macros=[]):
+    Constructor parameters
+    ----------------------
+    pvFiles : list of str
+        List of files containing EPICS pvNames to be used.
+    macros : dict
+        Dictionary of macro definitions to be substituted when
+        reading the pvFiles
+    """
+
+    def __init__(self, pvFiles, macros=[]):
+        """
+        Parameters
+        ----------
+        pvFiles : list of str
+            List of files containing EPICS pvNames to be used.
+        macros : dict
+            Dictionary of macro definitions to be substituted when
+            reading the pvFiles
+        """
+
         logging.basicConfig(level=logging.INFO)
         self.configPVs = {}
         self.controlPVs = {}
         self.pvPrefixes = {}
-        self.readPVFile(pvFile, macros)
+        if (isinstance(pvFiles, list) == False):
+            pvFiles = [pvFiles]
+        for pvFile in pvFiles:
+            self.readPVFile(pvFile, macros)
 
         if (('Rotation' in self.controlPVs) == False):
             logging.error('RotationPVName must be present in autoSettingsFile')
@@ -120,10 +143,27 @@ class tomoscan:
         signal.signal(signal.SIGINT, self.signalHandler)
 
     def signalHandler(self, sig, frame):
+        """Calls abortScan when ^C is typed"""
         if (sig == signal.SIGINT):
             self.abortScan();
 
     def pvCallback(self, pvname=None, value=None, char_value=None, **kw):
+        """Callback function that is called by pyEpics when certain EPICS PVs are changed
+
+        The PVs that are handled are:
+
+        - ``StartScan`` : Calls ``runFlyScan()``
+
+        - ``AbortScan`` : Calls ``abortScan()``
+        
+        - ``MoveSampleIn`` : Runs ``MoveSampleIn()`` in a new thread.
+
+        - ``MoveSampleOut`` : Runs ``MoveSampleOut()`` in a new thread.
+
+        - ``ExposureTime`` : Runs ``setExposureTime()`` in a new thread.
+
+        """
+
         logging.info('pvCallback pvName=%s, value=%s, char_value=%s' % (pvname, value, char_value))
         if ((pvname.find('MoveSampleIn') != -1) and (value == 1)):
             thread = threading.Thread(target=self.moveSampleIn, args=())
@@ -140,6 +180,17 @@ class tomoscan:
             self.abortScan()
 
     def showPVs(self):
+        """Prints the current values of all EPICS PVs in use.
+        
+        The values are printed in three sections:
+          
+        - configPVs : The PVs that are part of the scan configuration and are saved by saveConfiguration()
+        
+        - controlPVs : The PVs that are used for EPICS control and status, but are not saved by saveConfiguration()
+        
+        - pvPrefixes : The prefixes for PVs that are used for the areaDetector camera, file plugin, etc.
+        """
+
         print('configPVS:')
         for pv in self.configPVs:
             print(pv, ':', self.configPVs[pv].get(as_string=True))
@@ -155,6 +206,14 @@ class tomoscan:
             print(pv, ':', self.pvPrefixes[pv])
             
     def checkPVsConnected(self):
+        """Checks whether all EPICS PVs are connected.
+        
+        Returns
+        -------
+        bool 
+            True if all PVs are connected, otherwise False.
+        """
+
         allConnected = True
         for pv in self.epicsPVs:
             if (self.epicsPVs[pv].connected == False):
@@ -163,6 +222,17 @@ class tomoscan:
         return allConnected
 
     def readPVFile(self, pvFile, macros):
+        """Reads a file containing a list of EPICS PVs to be used by tomoscan.
+        
+        
+        Parameters
+        ----------
+        pvFile : str
+          Name of the file to read
+        macros: dict
+          Dictionary of macro substitution to perform when reading the file
+        """
+        
         f = open(pvFile)
         lines = f.read()
         f.close()
@@ -202,6 +272,14 @@ class tomoscan:
                 self.pvPrefixes[de] = pvprefix
 
     def moveSampleIn(self):
+        """Moves the sample to the in beam position for collecting projections.
+        
+        The in-beam position is defined by the ``SampleInX`` and ``SampleInY`` PVs.
+        
+        Which axis to move is defined by the ``FlatFieldAxis`` PV, 
+        which can be ``X``, ``Y``, or ``Both``.
+        """
+
         axis = self.epicsPVs['FlatFieldAxis'].get(as_string=True)
         logging.info('moveSampleIn axis: %s', axis)
         if (axis == 'X') or (axis == 'Both'):
@@ -213,6 +291,14 @@ class tomoscan:
             self.epicsPVs['SampleY'].put(position, wait=True)
 
     def moveSampleOut(self):
+        """Moves the sample to the out of beam position for collecting flat fields.
+        
+        The out of beam position is defined by the ``SampleOutX`` and ``SampleOutY`` PVs.
+        
+        Which axis to move is defined by the ``FlatFieldAxis`` PV,
+        which can be ``X``, ``Y``, or ``Both``.
+        """
+
         axis = self.epicsPVs['FlatFieldAxis'].get(as_string=True)
         logging.info('moveSampleOut axis: %s', axis)
         if (axis == 'X') or (axis == 'Both'):
@@ -224,6 +310,17 @@ class tomoscan:
             self.epicsPVs['SampleY'].put(position, wait=True)
 
     def saveConfiguration(self, fileName):
+        """Saves the current configuration PVs to a file.        
+        
+        A new dictionary is created, containing the key for each PV in the ``configPVs`` dictionary
+        and the current value of that PV.  This dictionary is written to the file in JSON format.
+
+        Parameters
+        ----------
+        fileName str
+            The name of the file to save to.
+        """
+
         d = {}
         for pv in self.configPVs:
             d[pv] = self.configPVs[pv].get(as_string=True)
@@ -232,6 +329,14 @@ class tomoscan:
         f.close()
     
     def loadConfiguration(self, fileName):
+        """Loads a configuration from a file into the EPICS PVs.        
+        
+        Parameters
+        ----------
+        fileName str
+            The name of the file to save to.
+        """
+
         f = open(fileName, 'r')
         d = json.load(f)
         f.close()
@@ -239,32 +344,85 @@ class tomoscan:
             self.configPVs[pv].put(d[pv])
 
     def openShutter(self):
+        """Opens the shutter to collect flat fields or projections.        
+        
+        The value in the ``OpenShutterValue`` PV is written to the ``OpenShutter`` PV.
+        """
+
         if (self.epicsPVs['OpenShutter'] != None):
             value = self.epicsPVs['OpenShutterValue'].get(as_string=True)
             self.epicsPVs['OpenShutter'].put(value, wait=True)
 
     def closeShutter(self):
-        if (self.epicsPVs['OpenShutter'] != None):
-            value = self.epicsPVs['OpenShutterValue'].get(as_string=True)
-            self.epicsPVs['OpenShutter'].put(value, wait=True)
+        """Closes the shutter to collect dark fields.        
+        
+        The value in the ``CloseShutterValue`` PV is written to the ``CloseShutter`` PV.
+        """
+        if (self.epicsPVs['CloseShutter'] != None):
+            value = self.epicsPVs['CloseShutterValue'].get(as_string=True)
+            self.epicsPVs['CloseShutter'].put(value, wait=True)
 
     def setExposureTime(self, exposureTime=None):
+        """Sets the camera exposure time.        
+        
+        The exposureTime is written to the camera's ``AcquireTime`` PV.
+
+        Parameters
+        ----------
+        exposureTime float, optional
+            The exposure time to use. If None then the value of the ``ExposureTime`` PV is used.
+        """
+
         if (exposureTime == None):
             exposureTime = self.epicsPVs['ExposureTime'].value
         self.epicsPVs['CamAcquireTime'].put(exposureTime)
 
     def beginScan(self):
+        """Performs the operations needed at the very start of a scan.
+        
+        This base class method does the following:        
+
+        - Sets the status string in the ``ScanStatus`` PV.
+        
+        - Stops the camera acquisition.
+        
+        - Calls ``setExposureTime()``
+        
+        - Copies the ``FilePath`` and ``FileName`` PVs to the areaDetector file plugin.
+        
+        It is expected that most derived classes will override this method.  In most cases they
+        should first call this base class method, and then perform any beamline-specific operations.
+        """
+
         self.scanIsRunning = True
         self.epicsPVs['ScanStatus'].put('Beginning scan')
         # Stop the camera since it could be in free-run mode
         self.epicsPVs['CamAcquire'].put(0, wait=True)
         # Set the exposure time
-        self.setExposureTime(self.epicsPVs['ExposureTime'].value)
+        self.setExposureTime()
         # Set the file path, file name and file number
         self.epicsPVs['FPFilePath'].put(self.epicsPVs['FilePath'].value)
         self.epicsPVs['FPFileName'].put(self.epicsPVs['FileName'].value)
 
     def endScan(self):
+        """Performs the operations needed at the very end of a scan.
+        
+        This base class method does the following:        
+
+        - Sets the status string in the ``ScanStatus`` PV.
+
+        - If the ``ReturnRotation`` PV is Yes then it moves the rotation motor back to the 
+          position defined by the ``RotationStart`` PV.  It does not wait for the move to complete.
+        
+        - Sets the ``StartScan`` PV to 0.  This PV is an EPICS ``busy`` record.  Normally EPICS clients
+          that start a scan with the ``StartScan`` PV will wait for ``StartScan`` to return to 0, often
+          using the ``ca_put_callback()`` mechanism.
+
+        It is expected that most derived classes will override this method.  In most cases they
+        should first perform any beamline-specific operations and then call this base class method.
+        This ensures that the scan is really complete before ``StartScan`` is set to 0. 
+        """
+
         returnRotation = self.epicsPVs['ReturnRotation'].get(as_string=True)
         if (returnRotation == 'Yes'):
             self.epicsPVs['Rotation'].put(self.epicsPVs['RotationStart'].value)
