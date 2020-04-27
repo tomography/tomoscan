@@ -91,7 +91,7 @@
     <name>related display #23</name>
     <actions>
       <action type="open_display">
-        <file>tomoScan_EPICS_PVS.opi</file>
+        <file>tomoScanEPICS_PVs.opi</file>
         <target>tab</target>
         <description>Epics PV Names</description>
       </action>

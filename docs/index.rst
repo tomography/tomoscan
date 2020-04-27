@@ -10,7 +10,6 @@ Content
 
    source/about
    source/usage
-   source/demo
-   source/screenshots
+   source/example_application
    source/api
    source/credits

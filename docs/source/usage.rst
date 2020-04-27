@@ -33,7 +33,7 @@ tomoscan constructor:
 - The second argument is a dictionary of macro substitution values for that database file.
   These define the PV prefixes to use when parsing files described above.
   
-The tomoSettings.req file contains 4 types of PVs:
+The tomoScan_settings.req file contains 4 types of PVs:
 
 1) Configuration PVs. These are PVs the control how tomography scans are collected, and provide metadata
    about the scan. An example is $(P)$(R)RotationStart.  These have the following properties:

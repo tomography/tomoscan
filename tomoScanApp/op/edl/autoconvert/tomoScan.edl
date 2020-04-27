@@ -1564,7 +1564,7 @@ icon
 numPvs 2
 numDsps 1
 displayFileName {
-  0 "tomoScan_EPICS_PVS.edl"
+  0 "tomoScanEPICS_PVs.edl"
 }
 menuLabel {
   0 "Epics PV Names"

@@ -264,7 +264,7 @@ border-radius: 2px;
                 <string>Epics PV Names</string>
             </property>
             <property name="files">
-                <string>tomoScan_EPICS_PVS.adl</string>
+                <string>tomoScanEPICS_PVs.adl</string>
             </property>
             <property name="args">
                 <string>P=$(P), R=$(R)</string>
