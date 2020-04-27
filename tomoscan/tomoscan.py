@@ -1,624 +1,649 @@
-from epics import PV
+"""Software for tomography scanning with EPICS
+
+   Classes
+   -------
+   TomoScan
+     Base class for tomography scanning with EPICS.
+"""
+
 import json
 import time
 import threading
 import signal
 import logging
+import sys
 from datetime import timedelta
+from epics import PV
 
-class scanAbortError(Exception):
+class ScanAbortError(Exception):
     '''Exception raised when user wants to abort a scan.
     '''
-    pass
 
-class cameraTimeoutError(Exception):
+
+class CameraTimeoutError(Exception):
     '''Exception raised when the camera times out during a scan.
     '''
-    pass
 
-class tomoscan:
+
+class TomoScan():
     """ Base class used for tomography scanning with EPICS
 
-    Constructor parameters
-    ----------------------
-    pvFiles : list of str
+    Parameters
+    ----------
+    pv_files : list of str
         List of files containing EPICS pvNames to be used.
     macros : dict
         Dictionary of macro definitions to be substituted when
-        reading the pvFiles
+        reading the pv_files
     """
 
-    def __init__(self, pvFiles, macros=[]):
-        """
-        Parameters
-        ----------
-        pvFiles : list of str
-            List of files containing EPICS pvNames to be used.
-        macros : dict
-            Dictionary of macro definitions to be substituted when
-            reading the pvFiles
-        """
-
+    def __init__(self, pv_files, macros):
         logging.basicConfig(level=logging.INFO)
-        self.configPVs = {}
-        self.controlPVs = {}
-        self.pvPrefixes = {}
-        if (isinstance(pvFiles, list) == False):
-            pvFiles = [pvFiles]
-        for pvFile in pvFiles:
-            self.readPVFile(pvFile, macros)
+        self.scan_is_running = False
+        self.config_pvs = {}
+        self.control_pvs = {}
+        self.pv_prefixes = {}
+        if not isinstance(pv_files, list):
+            pv_files = [pv_files]
+        for pv_file in pv_files:
+            self.read_pv_file(pv_file, macros)
 
-        if (('Rotation' in self.controlPVs) == False):
+        if 'Rotation' not in self.control_pvs:
             logging.error('RotationPVName must be present in autoSettingsFile')
-            quit()
-        if (('Camera' in self.pvPrefixes) == False):
+            sys.exit()
+        if 'Camera' not in self.pv_prefixes:
             logging.error('CameraPVPrefix must be present in autoSettingsFile')
-            quit()
-        if (('FilePlugin' in self.pvPrefixes) == False):
+            sys.exit()
+        if  'FilePlugin' not in self.pv_prefixes:
             logging.error('FilePluginPVPrefix must be present in autoSettingsFile')
-            quit()
-                
-        rotationPVName = self.controlPVs['Rotation'].pvname
-        self.controlPVs['RotationSpeed']      = PV(rotationPVName + '.VELO')
-        self.controlPVs['RotationMaxSpeed']   = PV(rotationPVName + '.VMAX')
-        self.controlPVs['RotationResolution'] = PV(rotationPVName + '.MRES')
+            sys.exit()
 
-        prefix = self.pvPrefixes['Camera']
-        camPrefix = prefix + 'cam1:'
-        self.controlPVs['CamManufacturer']      = PV(camPrefix + 'Manufacturer_RBV')
-        self.controlPVs['CamModel']             = PV(camPrefix + 'Model_RBV')
-        self.controlPVs['CamAcquire']           = PV(camPrefix + 'Acquire')
-        self.controlPVs['CamAcquireBusy']       = PV(camPrefix + 'AcquireBusy')
-        self.controlPVs['CamImageMode']         = PV(camPrefix + 'ImageMode')
-        self.controlPVs['CamTriggerMode']       = PV(camPrefix + 'TriggerMode')
-        self.controlPVs['CamNumImages']         = PV(camPrefix + 'NumImages')
-        self.controlPVs['CamNumImagesCounter']  = PV(camPrefix + 'NumImagesCounter_RBV')
-        self.controlPVs['CamAcquireTime']       = PV(camPrefix + 'AcquireTime')
-        self.controlPVs['CamAcquireTimeRBV']    = PV(camPrefix + 'AcquireTime_RBV')
-        self.controlPVs['CamBinX']              = PV(camPrefix + 'BinX')
-        self.controlPVs['CamBinY']              = PV(camPrefix + 'BinY')
-        self.controlPVs['CamWaitForPlugins']    = PV(camPrefix + 'WaitForPlugins')
-        
+        rotation_pv_name = self.control_pvs['Rotation'].pvname
+        self.control_pvs['RotationSpeed']      = PV(rotation_pv_name + '.VELO')
+        self.control_pvs['RotationMaxSpeed']   = PV(rotation_pv_name + '.VMAX')
+        self.control_pvs['RotationResolution'] = PV(rotation_pv_name + '.MRES')
+
+        prefix = self.pv_prefixes['Camera']
+        camera_prefix = prefix + 'cam1:'
+        self.control_pvs['CamManufacturer']      = PV(camera_prefix + 'Manufacturer_RBV')
+        self.control_pvs['CamModel']             = PV(camera_prefix + 'Model_RBV')
+        self.control_pvs['CamAcquire']           = PV(camera_prefix + 'Acquire')
+        self.control_pvs['CamAcquireBusy']       = PV(camera_prefix + 'AcquireBusy')
+        self.control_pvs['CamImageMode']         = PV(camera_prefix + 'ImageMode')
+        self.control_pvs['CamTriggerMode']       = PV(camera_prefix + 'TriggerMode')
+        self.control_pvs['CamNumImages']         = PV(camera_prefix + 'NumImages')
+        self.control_pvs['CamNumImagesCounter']  = PV(camera_prefix + 'NumImagesCounter_RBV')
+        self.control_pvs['CamAcquireTime']       = PV(camera_prefix + 'AcquireTime')
+        self.control_pvs['CamAcquireTimeRBV']    = PV(camera_prefix + 'AcquireTime_RBV')
+        self.control_pvs['CamBinX']              = PV(camera_prefix + 'BinX')
+        self.control_pvs['CamBinY']              = PV(camera_prefix + 'BinY')
+        self.control_pvs['CamWaitForPlugins']    = PV(camera_prefix + 'WaitForPlugins')
+
         # If this is a Point Grey camera then assume we are running ADSpinnaker
         # and create some PVs specific to that driver
-        manufacturer = self.controlPVs['CamManufacturer'].get(as_string=True)
-        model = self.controlPVs['CamModel'].get(as_string=True)
-        if (manufacturer.find('Point Grey') != -1):
-            self.controlPVs['CamExposureMode']   = PV(camPrefix + 'ExposureMode')
-            self.controlPVs['CamTriggerOverlap'] = PV(camPrefix + 'TriggerOverlap')
-            self.controlPVs['CamPixelFormat']    = PV(camPrefix + 'PixelFormat')
-            if (model.find('Grasshopper3') != -1):
-                self.controlPVs['CamVideoMode']  = PV(camPrefix + 'GC_VideoMode_RBV')
+        manufacturer = self.control_pvs['CamManufacturer'].get(as_string=True)
+        model = self.control_pvs['CamModel'].get(as_string=True)
+        if manufacturer.find('Point Grey') != -1:
+            self.control_pvs['CamExposureMode']   = PV(camera_prefix + 'ExposureMode')
+            self.control_pvs['CamTriggerOverlap'] = PV(camera_prefix + 'TriggerOverlap')
+            self.control_pvs['CamPixelFormat']    = PV(camera_prefix + 'PixelFormat')
+            if model.find('Grasshopper3') != -1:
+                self.control_pvs['CamVideoMode']  = PV(camera_prefix + 'GC_VideoMode_RBV')
 
-        # Set some initial PV values                
-        self.controlPVs['CamWaitForPlugins'].put('Yes')
-        self.controlPVs['StartScan'].put(0)
-  
-        prefix = self.pvPrefixes['FilePlugin']
-        self.controlPVs['FPFileWriteMode']   = PV(prefix + 'FileWriteMode')
-        self.controlPVs['FPNumCapture']      = PV(prefix + 'NumCapture')
-        self.controlPVs['FPNumCaptured']     = PV(prefix + 'NumCaptured_RBV')
-        self.controlPVs['FPCapture']         = PV(prefix + 'Capture')
-        self.controlPVs['FPFilePath']        = PV(prefix + 'FilePath')
-        self.controlPVs['FPFileName']        = PV(prefix + 'FileName')
-        self.controlPVs['FPFileNumber']      = PV(prefix + 'FileNumber')
-        self.controlPVs['FPAutoIncrement']   = PV(prefix + 'AutoIncrement')
-        self.controlPVs['FPFullFileName']    = PV(prefix + 'FullFileName_RBV')
-        self.controlPVs['FPAutoSave']        = PV(prefix + 'AutoSave')
-        self.controlPVs['FPEnableCallbacks'] = PV(prefix + 'EnableCallbacks')
-        
         # Set some initial PV values
-        filePath = self.configPVs['FilePath'].get(as_string=True)
-        self.controlPVs['FPFilePath'].put(filePath)
-        fileName = self.configPVs['FileName'].get(as_string=True)
-        self.controlPVs['FPFileName'].put(fileName)
-        self.controlPVs['FPAutoSave'].put('No')
-        self.controlPVs['FPFileWriteMode'].put('Stream')
-        self.controlPVs['FPEnableCallbacks'].put('Enable')
+        self.control_pvs['CamWaitForPlugins'].put('Yes')
+        self.control_pvs['StartScan'].put(0)
 
-        if ('MCS' in self.pvPrefixes):             
-            prefix = self.pvPrefixes['MCS']
-            self.controlPVs['MCSEraseStart']      = PV(prefix + 'EraseStart')
-            self.controlPVs['MCSStopAll']         = PV(prefix + 'StopAll')
-            self.controlPVs['MCSPrescale']        = PV(prefix + 'Prescale')
-            self.controlPVs['MCSDwell']           = PV(prefix + 'Dwell')
-            self.controlPVs['MCSLNEOutputWidth']  = PV(prefix + 'LNEOutputWidth')
-            self.controlPVs['MCSChannelAdvance']  = PV(prefix + 'ChannelAdvance')
-            self.controlPVs['MCSMaxChannels']     = PV(prefix + 'MaxChannels')
-            self.controlPVs['MCSNuseAll']         = PV(prefix + 'NuseAll')
- 
-        self.epicsPVs = {**self.configPVs, **self.controlPVs}
+        prefix = self.pv_prefixes['FilePlugin']
+        self.control_pvs['FPFileWriteMode']   = PV(prefix + 'FileWriteMode')
+        self.control_pvs['FPNumCapture']      = PV(prefix + 'NumCapture')
+        self.control_pvs['FPNumCaptured']     = PV(prefix + 'NumCaptured_RBV')
+        self.control_pvs['FPCapture']         = PV(prefix + 'Capture')
+        self.control_pvs['FPFilePath']        = PV(prefix + 'FilePath')
+        self.control_pvs['FPFileName']        = PV(prefix + 'FileName')
+        self.control_pvs['FPFileNumber']      = PV(prefix + 'FileNumber')
+        self.control_pvs['FPAutoIncrement']   = PV(prefix + 'AutoIncrement')
+        self.control_pvs['FPFullFileName']    = PV(prefix + 'FullFileName_RBV')
+        self.control_pvs['FPAutoSave']        = PV(prefix + 'AutoSave')
+        self.control_pvs['FPEnableCallbacks'] = PV(prefix + 'EnableCallbacks')
+
+        # Set some initial PV values
+        file_path = self.config_pvs['FilePath'].get(as_string=True)
+        self.control_pvs['FPFilePath'].put(file_path)
+        file_name = self.config_pvs['FileName'].get(as_string=True)
+        self.control_pvs['FPFileName'].put(file_name)
+        self.control_pvs['FPAutoSave'].put('No')
+        self.control_pvs['FPFileWriteMode'].put('Stream')
+        self.control_pvs['FPEnableCallbacks'].put('Enable')
+
+        if 'MCS' in self.pv_prefixes:
+            prefix = self.pv_prefixes['MCS']
+            self.control_pvs['MCSEraseStart']      = PV(prefix + 'EraseStart')
+            self.control_pvs['MCSStopAll']         = PV(prefix + 'StopAll')
+            self.control_pvs['MCSPrescale']        = PV(prefix + 'Prescale')
+            self.control_pvs['MCSDwell']           = PV(prefix + 'Dwell')
+            self.control_pvs['MCSLNEOutputWidth']  = PV(prefix + 'LNEOutputWidth')
+            self.control_pvs['MCSChannelAdvance']  = PV(prefix + 'ChannelAdvance')
+            self.control_pvs['MCSMaxChannels']     = PV(prefix + 'MaxChannels')
+            self.control_pvs['MCSNuseAll']         = PV(prefix + 'NuseAll')
+
+        self.epics_pvs = {**self.config_pvs, **self.control_pvs}
         # Wait 1 second for all PVs to connect
         time.sleep(1)
-        self.checkPVsConnected()
-        
+        self.check_pvs_connected()
+
         # Configure callbacks on a few PVs
-        self.epicsPVs['MoveSampleIn'].add_callback(self.pvCallback)
-        self.epicsPVs['MoveSampleOut'].add_callback(self.pvCallback)
-        self.epicsPVs['StartScan'].add_callback(self.pvCallback)
-        self.epicsPVs['AbortScan'].add_callback(self.pvCallback)
-        self.epicsPVs['ExposureTime'].add_callback(self.pvCallback)
-                
+        self.epics_pvs['MoveSampleIn'].add_callback(self.pv_callback)
+        self.epics_pvs['MoveSampleOut'].add_callback(self.pv_callback)
+        self.epics_pvs['StartScan'].add_callback(self.pv_callback)
+        self.epics_pvs['AbortScan'].add_callback(self.pv_callback)
+        self.epics_pvs['ExposureTime'].add_callback(self.pv_callback)
+
          # Set ^C interrupt to abort the scan
-        signal.signal(signal.SIGINT, self.signalHandler)
+        signal.signal(signal.SIGINT, self.signal_handler)
 
-    def signalHandler(self, sig, frame):
-        """Calls abortScan when ^C is typed"""
-        if (sig == signal.SIGINT):
-            self.abortScan();
+    def signal_handler(self, sig, frame):
+        """Calls abort_scan when ^C is typed"""
+        if sig == signal.SIGINT:
+            self.abort_scan()
 
-    def pvCallback(self, pvname=None, value=None, char_value=None, **kw):
+    def pv_callback(self, pvname=None, value=None, char_value=None, **kw):
         """Callback function that is called by pyEpics when certain EPICS PVs are changed
 
         The PVs that are handled are:
 
-        - ``StartScan`` : Calls ``runFlyScan()``
+        - ``StartScan`` : Calls ``run_fly_scan()``
 
-        - ``AbortScan`` : Calls ``abortScan()``
-        
+        - ``AbortScan`` : Calls ``abort_scan()``
+
         - ``MoveSampleIn`` : Runs ``MoveSampleIn()`` in a new thread.
 
         - ``MoveSampleOut`` : Runs ``MoveSampleOut()`` in a new thread.
 
-        - ``ExposureTime`` : Runs ``setExposureTime()`` in a new thread.
+        - ``ExposureTime`` : Runs ``set_exposure_time()`` in a new thread.
 
         """
 
-        logging.info('pvCallback pvName=%s, value=%s, char_value=%s' % (pvname, value, char_value))
-        if ((pvname.find('MoveSampleIn') != -1) and (value == 1)):
-            thread = threading.Thread(target=self.moveSampleIn, args=())
+        logging.info('pv_callback pvName=%s, value=%s, char_value=%s', pvname, value, char_value)
+        if (pvname.find('MoveSampleIn') != -1) and (value == 1):
+            thread = threading.Thread(target=self.move_sample_in, args=())
             thread.start()
-        if ((pvname.find('MoveSampleOut') != -1) and (value == 1)):
-            thread = threading.Thread(target=self.moveSampleOut, args=())
-            thread.start()        
-        if ((pvname.find('ExposureTime') != -1)):
-            thread = threading.Thread(target=self.setExposureTime, args=(value,))
-            thread.start()        
-        if ((pvname.find('StartScan') != -1) and (value == 1)):
-            self.runFlyScan()
-        if ((pvname.find('AbortScan') != -1) and (value == 1)):
-            self.abortScan()
+        if (pvname.find('MoveSampleOut') != -1) and (value == 1):
+            thread = threading.Thread(target=self.move_sample_out, args=())
+            thread.start()
+        if pvname.find('ExposureTime') != -1:
+            thread = threading.Thread(target=self.set_exposure_time, args=(value,))
+            thread.start()
+        if (pvname.find('StartScan') != -1) and (value == 1):
+            self.run_fly_scan()
+        if (pvname.find('AbortScan') != -1) and (value == 1):
+            self.abort_scan()
 
-    def showPVs(self):
+    def show_pvs(self):
         """Prints the current values of all EPICS PVs in use.
-        
+
         The values are printed in three sections:
-          
-        - configPVs : The PVs that are part of the scan configuration and are saved by saveConfiguration()
-        
-        - controlPVs : The PVs that are used for EPICS control and status, but are not saved by saveConfiguration()
-        
-        - pvPrefixes : The prefixes for PVs that are used for the areaDetector camera, file plugin, etc.
+
+        - config_pvs : The PVs that are part of the scan configuration and
+          are saved by save_configuration()
+
+        - control_pvs : The PVs that are used for EPICS control and status,
+          but are not saved by save_configuration()
+
+        - pv_prefixes : The prefixes for PVs that are used for the areaDetector camera,
+          file plugin, etc.
         """
 
         print('configPVS:')
-        for pv in self.configPVs:
-            print(pv, ':', self.configPVs[pv].get(as_string=True))
+        for config_pv in self.config_pvs:
+            print(config_pv, ':', self.config_pvs[config_pv].get(as_string=True))
 
         print('')
         print('controlPVS:')
-        for pv in self.controlPVs:
-            print(pv, ':', self.controlPVs[pv].get(as_string=True))
+        for control_pv in self.control_pvs:
+            print(control_pv, ':', self.control_pvs[control_pv].get(as_string=True))
 
         print('')
-        print('pvPrefixes:')
-        for pv in self.pvPrefixes:
-            print(pv, ':', self.pvPrefixes[pv])
-            
-    def checkPVsConnected(self):
+        print('pv_prefixes:')
+        for pv_prefix in self.pv_prefixes:
+            print(pv_prefix, ':', self.pv_prefixes[pv_prefix])
+
+    def check_pvs_connected(self):
         """Checks whether all EPICS PVs are connected.
-        
+
         Returns
         -------
-        bool 
+        bool
             True if all PVs are connected, otherwise False.
         """
 
-        allConnected = True
-        for pv in self.epicsPVs:
-            if (self.epicsPVs[pv].connected == False):
-                logging.error('PV %s is not connected' % self.epicsPVs[pv].pvname)
-                allConnected = False
-        return allConnected
+        all_connected = True
+        for key in self.epics_pvs:
+            if not self.epics_pvs[key].connected:
+                logging.error('PV %s is not connected', self.epics_pvs[key].pvname)
+                all_connected = False
+        return all_connected
 
-    def readPVFile(self, pvFile, macros):
-        """Reads a file containing a list of EPICS PVs to be used by tomoscan.
-        
-        
+    def read_pv_file(self, pv_file_name, macros):
+        """Reads a file containing a list of EPICS PVs to be used by TomoScan.
+
+
         Parameters
         ----------
-        pvFile : str
+        pv_file_name : str
           Name of the file to read
         macros: dict
           Dictionary of macro substitution to perform when reading the file
         """
-        
-        f = open(pvFile)
-        lines = f.read()
-        f.close()
+
+        pv_file = open(pv_file_name)
+        lines = pv_file.read()
+        pv_file.close()
         lines = lines.splitlines()
         for line in lines:
-            isConfigPV = True
-            if (line.find('#controlPV') != -1):
+            is_config_pv = True
+            if line.find('#controlPV') != -1:
                 line = line.replace('#controlPV', '')
-                isConfigPV = False
+                is_config_pv = False
             line = line.lstrip()
             # Skip lines starting with #
-            if (line.startswith('#')):
+            if line.startswith('#'):
                 continue
             # Skip blank lines
-            if (line == ''):
+            if line == '':
                 continue
             pvname = line
             # Do macro substitution on the pvName
             for key in macros:
-                 pvname = pvname.replace(key, macros[key])
+                pvname = pvname.replace(key, macros[key])
             # Replace macros in dictionary key with nothing
             dictentry = line
             for key in macros:
-                 dictentry = dictentry.replace(key, '')
-            pv = PV(pvname)
-            if (isConfigPV == True):
-                self.configPVs[dictentry] = pv
+                dictentry = dictentry.replace(key, '')
+            epics_pv = PV(pvname)
+            if is_config_pv:
+                self.config_pvs[dictentry] = epics_pv
             else:
-                self.controlPVs[dictentry] = pv
-            if (dictentry.find('PVName') != -1):
-                pvname = pv.value
-                de = dictentry.replace('PVName', '')
-                self.controlPVs[de] = PV(pvname)
-            if (dictentry.find('PVPrefix') != -1):
-                pvprefix = pv.value
-                de = dictentry.replace('PVPrefix', '')
-                self.pvPrefixes[de] = pvprefix
+                self.control_pvs[dictentry] = epics_pv
+            if dictentry.find('PVName') != -1:
+                pvname = epics_pv.value
+                key = dictentry.replace('PVName', '')
+                self.control_pvs[key] = PV(pvname)
+            if dictentry.find('PVPrefix') != -1:
+                pvprefix = epics_pv.value
+                key = dictentry.replace('PVPrefix', '')
+                self.pv_prefixes[key] = pvprefix
 
-    def moveSampleIn(self):
+    def move_sample_in(self):
         """Moves the sample to the in beam position for collecting projections.
-        
+
         The in-beam position is defined by the ``SampleInX`` and ``SampleInY`` PVs.
-        
-        Which axis to move is defined by the ``FlatFieldAxis`` PV, 
-        which can be ``X``, ``Y``, or ``Both``.
-        """
 
-        axis = self.epicsPVs['FlatFieldAxis'].get(as_string=True)
-        logging.info('moveSampleIn axis: %s', axis)
-        if (axis == 'X') or (axis == 'Both'):
-            position = self.epicsPVs['SampleInX'].value
-            self.epicsPVs['SampleX'].put(position, wait=True)
-            
-        if (axis == 'Y') or (axis == 'Both'):
-            position = self.epicsPVs['SampleInY'].value
-            self.epicsPVs['SampleY'].put(position, wait=True)
-
-    def moveSampleOut(self):
-        """Moves the sample to the out of beam position for collecting flat fields.
-        
-        The out of beam position is defined by the ``SampleOutX`` and ``SampleOutY`` PVs.
-        
         Which axis to move is defined by the ``FlatFieldAxis`` PV,
         which can be ``X``, ``Y``, or ``Both``.
         """
 
-        axis = self.epicsPVs['FlatFieldAxis'].get(as_string=True)
-        logging.info('moveSampleOut axis: %s', axis)
-        if (axis == 'X') or (axis == 'Both'):
-            position = self.epicsPVs['SampleOutX'].value
-            self.epicsPVs['SampleX'].put(position, wait=True)
-            
-        if (axis == 'Y') or (axis == 'Both'):
-            position = self.epicsPVs['SampleOutY'].value
-            self.epicsPVs['SampleY'].put(position, wait=True)
+        axis = self.epics_pvs['FlatFieldAxis'].get(as_string=True)
+        logging.info('move_sample_in axis: %s', axis)
+        if axis in ('X', 'Both'):
+            position = self.epics_pvs['SampleInX'].value
+            self.epics_pvs['SampleX'].put(position, wait=True)
 
-    def saveConfiguration(self, fileName):
-        """Saves the current configuration PVs to a file.        
-        
-        A new dictionary is created, containing the key for each PV in the ``configPVs`` dictionary
+        if axis in ('Y', 'Both'):
+            position = self.epics_pvs['SampleInY'].value
+            self.epics_pvs['SampleY'].put(position, wait=True)
+
+    def move_sample_out(self):
+        """Moves the sample to the out of beam position for collecting flat fields.
+
+        The out of beam position is defined by the ``SampleOutX`` and ``SampleOutY`` PVs.
+
+        Which axis to move is defined by the ``FlatFieldAxis`` PV,
+        which can be ``X``, ``Y``, or ``Both``.
+        """
+
+        axis = self.epics_pvs['FlatFieldAxis'].get(as_string=True)
+        logging.info('move_sample_out axis: %s', axis)
+        if axis in ('X', 'Both'):
+            position = self.epics_pvs['SampleOutX'].value
+            self.epics_pvs['SampleX'].put(position, wait=True)
+
+        if axis in ('Y', 'Both'):
+            position = self.epics_pvs['SampleOutY'].value
+            self.epics_pvs['SampleY'].put(position, wait=True)
+
+    def save_configuration(self, file_name):
+        """Saves the current configuration PVs to a file.
+
+        A new dictionary is created, containing the key for each PV in the ``config_pvs`` dictionary
         and the current value of that PV.  This dictionary is written to the file in JSON format.
 
         Parameters
         ----------
-        fileName : str
+        file_name : str
             The name of the file to save to.
         """
 
-        d = {}
-        for pv in self.configPVs:
-            d[pv] = self.configPVs[pv].get(as_string=True)
-        f = open(fileName, 'w')
-        json.dump(d, f, indent=2)
-        f.close()
-    
-    def loadConfiguration(self, fileName):
-        """Loads a configuration from a file into the EPICS PVs.        
-        
+        config = {}
+        for key in self.config_pvs:
+            config[key] = self.config_pvs[key].get(as_string=True)
+        out_file = open(file_name, 'w')
+        json.dump(config, out_file, indent=2)
+        out_file.close()
+
+    def load_configuration(self, file_name):
+        """Loads a configuration from a file into the EPICS PVs.
+
         Parameters
         ----------
-        fileName : str
+        file_name : str
             The name of the file to save to.
         """
 
-        f = open(fileName, 'r')
-        d = json.load(f)
-        f.close()
-        for pv in d:
-            self.configPVs[pv].put(d[pv])
+        in_file = open(file_name, 'r')
+        config = json.load(in_file)
+        in_file.close()
+        for key in config:
+            self.config_pvs[key].put(config[key])
 
-    def openShutter(self):
-        """Opens the shutter to collect flat fields or projections.        
-        
+    def open_shutter(self):
+        """Opens the shutter to collect flat fields or projections.
+
         The value in the ``OpenShutterValue`` PV is written to the ``OpenShutter`` PV.
         """
 
-        if (self.epicsPVs['OpenShutter'] != None):
-            value = self.epicsPVs['OpenShutterValue'].get(as_string=True)
-            self.epicsPVs['OpenShutter'].put(value, wait=True)
+        if not self.epics_pvs['OpenShutter'] is None:
+            value = self.epics_pvs['OpenShutterValue'].get(as_string=True)
+            self.epics_pvs['OpenShutter'].put(value, wait=True)
 
-    def closeShutter(self):
-        """Closes the shutter to collect dark fields.        
-        
+    def close_shutter(self):
+        """Closes the shutter to collect dark fields.
+
         The value in the ``CloseShutterValue`` PV is written to the ``CloseShutter`` PV.
         """
-        if (self.epicsPVs['CloseShutter'] != None):
-            value = self.epicsPVs['CloseShutterValue'].get(as_string=True)
-            self.epicsPVs['CloseShutter'].put(value, wait=True)
+        if not self.epics_pvs['CloseShutter'] is None:
+            value = self.epics_pvs['CloseShutterValue'].get(as_string=True)
+            self.epics_pvs['CloseShutter'].put(value, wait=True)
 
-    def setExposureTime(self, exposureTime=None):
-        """Sets the camera exposure time.        
-        
-        The exposureTime is written to the camera's ``AcquireTime`` PV.
+    def set_exposure_time(self, exposure_time=None):
+        """Sets the camera exposure time.
+
+        The exposure_time is written to the camera's ``AcquireTime`` PV.
 
         Parameters
         ----------
-        exposureTime : float, optional
+        exposure_time : float, optional
             The exposure time to use. If None then the value of the ``ExposureTime`` PV is used.
         """
 
-        if (exposureTime == None):
-            exposureTime = self.epicsPVs['ExposureTime'].value
-        self.epicsPVs['CamAcquireTime'].put(exposureTime)
+        if exposure_time is None:
+            exposure_time = self.epics_pvs['ExposureTime'].value
+        self.epics_pvs['CamAcquireTime'].put(exposure_time)
 
-    def beginScan(self):
+    def begin_scan(self):
         """Performs the operations needed at the very start of a scan.
-        
-        This base class method does the following:        
+
+        This base class method does the following:
 
         - Sets the status string in the ``ScanStatus`` PV.
-        
+
         - Stops the camera acquisition.
-        
-        - Calls ``setExposureTime()``
-        
+
+        - Calls ``set_exposure_time()``
+
         - Copies the ``FilePath`` and ``FileName`` PVs to the areaDetector file plugin.
-        
+
         It is expected that most derived classes will override this method.  In most cases they
         should first call this base class method, and then perform any beamline-specific operations.
         """
 
-        self.scanIsRunning = True
-        self.epicsPVs['ScanStatus'].put('Beginning scan')
+        self.scan_is_running = True
+        self.epics_pvs['ScanStatus'].put('Beginning scan')
         # Stop the camera since it could be in free-run mode
-        self.epicsPVs['CamAcquire'].put(0, wait=True)
+        self.epics_pvs['CamAcquire'].put(0, wait=True)
         # Set the exposure time
-        self.setExposureTime()
+        self.set_exposure_time()
         # Set the file path, file name and file number
-        self.epicsPVs['FPFilePath'].put(self.epicsPVs['FilePath'].value)
-        self.epicsPVs['FPFileName'].put(self.epicsPVs['FileName'].value)
+        self.epics_pvs['FPFilePath'].put(self.epics_pvs['FilePath'].value)
+        self.epics_pvs['FPFileName'].put(self.epics_pvs['FileName'].value)
 
-    def endScan(self):
+    def end_scan(self):
         """Performs the operations needed at the very end of a scan.
-        
-        This base class method does the following:        
+
+        This base class method does the following:
 
         - Sets the status string in the ``ScanStatus`` PV.
 
-        - If the ``ReturnRotation`` PV is Yes then it moves the rotation motor back to the 
+        - If the ``ReturnRotation`` PV is Yes then it moves the rotation motor back to the
           position defined by the ``RotationStart`` PV.  It does not wait for the move to complete.
-        
-        - Sets the ``StartScan`` PV to 0.  This PV is an EPICS ``busy`` record.  Normally EPICS clients
-          that start a scan with the ``StartScan`` PV will wait for ``StartScan`` to return to 0, often
-          using the ``ca_put_callback()`` mechanism.
+
+        - Sets the ``StartScan`` PV to 0.  This PV is an EPICS ``busy`` record.
+          Normally EPICS clients that start a scan with the ``StartScan`` PV will wait for
+          ``StartScan`` to return to 0, often using the ``ca_put_callback()`` mechanism.
 
         It is expected that most derived classes will override this method.  In most cases they
         should first perform any beamline-specific operations and then call this base class method.
-        This ensures that the scan is really complete before ``StartScan`` is set to 0. 
+        This ensures that the scan is really complete before ``StartScan`` is set to 0.
         """
 
-        returnRotation = self.epicsPVs['ReturnRotation'].get(as_string=True)
-        if (returnRotation == 'Yes'):
-            self.epicsPVs['Rotation'].put(self.epicsPVs['RotationStart'].value)
-        self.epicsPVs['ScanStatus'].put('Scan complete')
-        self.epicsPVs['StartScan'].put(0)
-        self.scanIsRunning = False
+        return_rotation = self.epics_pvs['ReturnRotation'].get(as_string=True)
+        if return_rotation == 'Yes':
+            self.epics_pvs['Rotation'].put(self.epics_pvs['RotationStart'].value)
+        self.epics_pvs['ScanStatus'].put('Scan complete')
+        self.epics_pvs['StartScan'].put(0)
+        self.scan_is_running = False
 
-    def flyScan(self):
+    def fly_scan(self):
         """Performs the operations for a tomography fly scan, i.e. with continuous rotation.
-        
-        This base class method does the following:        
+
+        This base class method does the following:
 
         - Moves the rotation motor to position defined by the ``RotationStart`` PV.
-        
-        - Calls ``beginScan()``
 
-        - If the ``DarkFieldMode`` PV is ``Start`` or ``Both`` calls ``closeShutter()`` and ``collectDarkFields()``
-        
-        - Calls ``openShutter()``
-        
-        - If the ``FlatFieldMode`` PV is ``Start`` or ``Both`` calls ``moveSampleOut()`` and ``collectFlatFields()``
-        
-        - Calls ``moveSampleIn()``
-        
-        - Calls ``collectProjections()``
+        - Calls ``begin_scan()``
 
-        - If the ``FlatFieldMode`` PV is ``End`` or ``Both`` calls ``moveSampleOut()`` and ``collectFlatFields()``
-        
-        - Sets the ``StartScan`` PV to 0.  This PV is an EPICS ``busy`` record.  Normally EPICS clients
-          that start a scan with the ``StartScan`` PV will wait for ``StartScan`` to return to 0, often
-          using the ``ca_put_callback()`` mechanism.
+        - If the ``DarkFieldMode`` PV is ``Start`` or ``Both`` calls ``close_shutter()``
+          and ``collect_dark_fields()``
 
-        - If the ``DarkFieldMode`` PV is ``End`` or ``Both`` calls ``closeShutter()`` and ``collectDarkFields()``
-       
-        - Calls ``endScan``
+        - Calls ``open_shutter()``
 
-        If there is either cameraTimeoutError exception or scanAbortError exception during the scan, 
-        it jumps immediate to calling ``endScan()`` and returns. 
-  
+        - If the ``FlatFieldMode`` PV is ``Start`` or ``Both`` calls ``move_sample_out()``
+          and ``collect_flat_fields()``
+
+        - Calls ``move_sample_in()``
+
+        - Calls ``collect_projections()``
+
+        - If the ``FlatFieldMode`` PV is ``End`` or ``Both`` calls ``move_sample_out()``
+          and ``collect_flat_fields()``
+
+        - Sets the ``StartScan`` PV to 0.  This PV is an EPICS ``busy`` record.
+          Normally EPICS clients that start a scan with the ``StartScan`` PV will wait for
+          ``StartScan`` to return to 0, often using the ``ca_put_callback()`` mechanism.
+
+        - If the ``DarkFieldMode`` PV is ``End`` or ``Both`` calls ``close_shutter()``
+          and ``collect_dark_fields()``
+
+        - Calls ``end_scan``
+
+        If there is either CameraTimeoutError exception or ScanAbortError exception during the scan,
+        it jumps immediate to calling ``end_scan()`` and returns.
+
         It is not expected that most derived classes will need to override this method, but they are
         free to do so if required.
         """
 
         try:
-            rotationStart = self.epicsPVs['RotationStart'].value
-            rotationStep = self.epicsPVs['RotationStart'].value
-            numAngles = self.epicsPVs['NumAngles'].value
-            rotationStop = rotationStart + (numAngles * rotationStep)
-            numDarkFields = self.epicsPVs['NumDarkFields'].value
-            darkFieldMode = self.epicsPVs['DarkFieldMode'].get(as_string=True)
-            numFlatFields = self.epicsPVs['NumFlatFields'].value
-            flatFieldMode = self.epicsPVs['FlatFieldMode'].get(as_string=True)
+            rotation_start = self.epics_pvs['RotationStart'].value
+            #rotation_step = self.epics_pvs['RotationStart'].value
+            #num_angles = self.epics_pvs['NumAngles'].value
+            #rotation_stop = rotation_start + (num_angles * rotation_step)
+            num_dark_fields = self.epics_pvs['NumDarkFields'].value
+            dark_field_mode = self.epics_pvs['DarkFieldMode'].get(as_string=True)
+            num_flat_fields = self.epics_pvs['NumFlatFields'].value
+            flat_field_mode = self.epics_pvs['FlatFieldMode'].get(as_string=True)
             # Move the rotation to the start
-            self.epicsPVs['Rotation'].put(rotationStart, wait=True)
+            self.epics_pvs['Rotation'].put(rotation_start, wait=True)
             # Prepare for scan
-            self.beginScan()
+            self.begin_scan()
             # Collect the pre-scan dark fields if required
-            if (numDarkFields > 0) and ((darkFieldMode == 'Start') or (darkFieldMode == 'Both')):
-                self.closeShutter()
-                self.collectDarkFields()
-            # Open the shutter 
-            self.openShutter()
+            if (num_dark_fields > 0) and (dark_field_mode in ('Start', 'Both')):
+                self.close_shutter()
+                self.collect_dark_fields()
+            # Open the shutter
+            self.open_shutter()
             # Collect the pre-scan flat fields if required
-            if (numFlatFields > 0) and ((flatFieldMode == 'Start') or (flatFieldMode == 'Both')):
-                self.moveSampleOut()
-                self.collectFlatFields()
+            if (num_flat_fields > 0) and (flat_field_mode in ('Start', 'Both')):
+                self.move_sample_out()
+                self.collect_flat_fields()
             # Collect the projections
-            self.moveSampleIn()
-            self.collectProjections()
+            self.move_sample_in()
+            self.collect_projections()
             # Collect the post-scan flat fields if required
-            if (numFlatFields > 0) and ((flatFieldMode == 'End') or (flatFieldMode == 'Both')):
-                self.moveSampleOut()
-                self.collectFlatFields()
-                self.moveSampleIn()
+            if (num_flat_fields > 0) and (flat_field_mode in ('End', 'Both')):
+                self.move_sample_out()
+                self.collect_flat_fields()
+                self.move_sample_in()
             # Collect the post-scan dark fields if required
-            if (numDarkFields > 0) and ((darkFieldMode == 'End') or (darkFieldMode == 'Both')):
-                self.closeShutter()
-                self.collectDarkFields()
- 
-        except scanAbortError:
+            if (num_dark_fields > 0) and (dark_field_mode in ('End', 'Both')):
+                self.close_shutter()
+                self.collect_dark_fields()
+
+        except ScanAbortError:
             logging.error('Scan aborted')
-        except cameraTimeoutError:
+        except CameraTimeoutError:
             logging.error('Camera timeout')
 
         # Finish scan
-        self.endScan()
+        self.end_scan()
 
-    def runFlyScan(self):
-        """Runs ``flyScan()`` in a new thread."""
+    def run_fly_scan(self):
+        """Runs ``fly_scan()`` in a new thread."""
 
-        thread = threading.Thread(target=self.flyScan, args=())
+        thread = threading.Thread(target=self.fly_scan, args=())
         thread.start()
-        
-    def abortScan(self):
+
+    def collect_dark_fields(self):
+        """Base class implementation of this function just prints an error"""
+        logging.error('collect_dark_fields is not implemented in %s', type(self).__name__)
+
+    def collect_flat_fields(self):
+        """Base class implementation of this function just prints an error"""
+        logging.error('collect_flat_fields is not implemented in %s', type(self).__name__)
+
+    def collect_projections(self):
+        """Base class implementation of this function just prints an error"""
+        logging.error('collect_projections is not implemented in %s', type(self).__name__)
+
+    def abort_scan(self):
         """Aborts a scan that is running.
-        
-        Sets a flag that is checked in ``waitCameraDone()``.
-        If ``waitCameraDone()`` finds the flag set then it raises a scanAbortError exception.
+
+        Sets a flag that is checked in ``wait_camera_done()``.
+        If ``wait_camera_done()`` finds the flag set then it raises a ScanAbortError exception.
         """
 
-        self.scanIsRunning = False   
+        self.scan_is_running = False
 
-    def computeFrameTime(self):
+    def compute_frame_time(self):
         """Computes the time to collect and readout an image from the camera.
-        
+
         This method is used to compute the time between triggers to the camera.
-        This can be used, for example, to configure a trigger generator or to compute 
+        This can be used, for example, to configure a trigger generator or to compute
         the speed of the rotation stage.
-        
+
         The calculation is camera specific.  The result can depend on the actual exposure time
-        of the camera, and on a variety of camera configuration settings (pixel binning, pixel bit depth, 
-        video mode, etc.)
-        
+        of the camera, and on a variety of camera configuration settings (pixel binning,
+        pixel bit depth, video mode, etc.)
+
         The current version only supports the Point Grey Grasshopper3 GS3-U3-23S6M.
-        The logic for additional cameras should be added to this function in the future if the camera is
-        expected to be used at more than one beamline.  If the camera is only to be used at a single
-        beamline then the code should be added to this method in the derived class 
+        The logic for additional cameras should be added to this function in the future
+        if the camera is expected to be used at more than one beamline.
+        If the camera is only to be used at a single beamline then the code should be added
+        to this method in the derived class
 
         Returns
         -------
         float
-            The frame time, which is the minimum time allowed between triggers for the value of the 
+            The frame time, which is the minimum time allowed between triggers for the value of the
             ``ExposureTime`` PV.
         """
 
-        self.setExposureTime()
-        # The readout time of the camera depends on the model, and things like the PixelFormat, VideoMode, etc.
-        # The measured times in ms with 100 microsecond exposure time and 1000 frames without dropping
-        cameraModel = self.epicsPVs['CamModel'].get(as_string=True)
-        pixelFormat = self.epicsPVs['CamPixelFormat'].get(as_string=True)
-        if (cameraModel == 'Grasshopper3 GS3-U3-23S6M'): 
-            videoMode   = self.epicsPVs['CamVideoMode'].get(as_string=True)
-            readoutTimes = {'Mono8':        {'Mode0': 6.2, 'Mode1': 6.2, 'Mode5': 6.2, 'Mode7': 7.9},
-                            'Mono12Packed': {'Mode0': 9.2, 'Mode1': 6.2, 'Mode5': 6.2, 'Mode7': 11.5},
-                            'Mono16':       {'Mode0': 12.2,'Mode1': 6.2, 'Mode5': 6.2, 'Mode7': 12.2}}       
-            readout = readoutTimes[pixelFormat][videoMode]/1000.
-        
-        if (readout == None):
-            logging.error('Unsupported combination of camera model, pixel format and video mode: %s %s %s' 
-                          % (cameraModel, pixelFormat, videoMode))
+        self.set_exposure_time()
+        # The readout time of the camera depends on the model, and things like the
+        # PixelFormat, VideoMode, etc.
+        # The measured times in ms with 100 microsecond exposure time and 1000 frames
+        # without dropping
+        camera_model = self.epics_pvs['CamModel'].get(as_string=True)
+        pixel_format = self.epics_pvs['CamPixelFormat'].get(as_string=True)
+        if camera_model == 'Grasshopper3 GS3-U3-23S6M':
+            video_mode   = self.epics_pvs['CamVideoMode'].get(as_string=True)
+            readout_times = {
+                'Mono8':        {'Mode0': 6.2,  'Mode1': 6.2, 'Mode5': 6.2, 'Mode7': 7.9},
+                'Mono12Packed': {'Mode0': 9.2,  'Mode1': 6.2, 'Mode5': 6.2, 'Mode7': 11.5},
+                'Mono16':       {'Mode0': 12.2, 'Mode1': 6.2, 'Mode5': 6.2, 'Mode7': 12.2}
+            }
+            readout = readout_times[pixel_format][video_mode]/1000.
+
+        if readout is None:
+            logging.error('Unsupported combination of camera model, pixel format and video mode: %s %s %s',
+                          camera_model, pixel_format, video_mode)
             return 0
 
-        # We need to use the actual exposure time that the camera is using, not the requested exposure time
-        exposure = self.epicsPVs['CamAcquireTimeRBV'].value
+        # We need to use the actual exposure time that the camera is using, not the requested time
+        exposure = self.epics_pvs['CamAcquireTimeRBV'].value
         # Add 1 or 5 ms to exposure time for margin
-        if (exposure > 2.3):
-            time = exposure + .005 
+        if exposure > 2.3:
+            frame_time = exposure + .005
         else:
-            time = exposure + .001
+            frame_time = exposure + .001
 
         # If the time is less than the readout time then use the readout time
-        if (time < readout):
-            time = readout
-        return time
+        if frame_time < readout:
+            frame_time = readout
+        return frame_time
 
-    def waitCameraDone(self, timeout):
-        """Waits for the camera acquisition to complete, or for ``abortScan()`` to be called.
-        
-        While waiting this method periodically updates the status PVs ``ImagesCollected``, ``ImagesSaved``,
-        ``ElapsedTime``, and ``RemainingTime``.
-        
+    def wait_camera_done(self, timeout):
+        """Waits for the camera acquisition to complete, or for ``abort_scan()`` to be called.
+
+        While waiting this method periodically updates the status PVs ``ImagesCollected``,
+        ``ImagesSaved``, ``ElapsedTime``, and ``RemainingTime``.
+
         Parameters
         ----------
         timeout : float
-            The maximum number of seconds to wait before raising a cameraTimeoutError exception.
-        
+            The maximum number of seconds to wait before raising a CameraTimeoutError exception.
+
         Raises
         ------
-        scanAbortError 
-            If ``abortScan()`` is called
-        cameraTimeoutError
-            If acquisition has not completed within timeout value. 
+        ScanAbortError
+            If ``abort_scan()`` is called
+        CameraTimeoutError
+            If acquisition has not completed within timeout value.
         """
 
-        startTime = time.time()
-        while(True):
-            if (self.epicsPVs['CamAcquireBusy'].value == 0):
+        start_time = time.time()
+        while True:
+            if self.epics_pvs['CamAcquireBusy'].value == 0:
                 return
-            if (self.scanIsRunning == False):
-                raise scanAbortError
+            if not self.scan_is_running:
+                raise ScanAbortError
             time.sleep(0.2)
-            numCollected  = self.epicsPVs['CamNumImagesCounter'].value
-            numImages     = self.epicsPVs['CamNumImages'].value
-            numSaved      = self.epicsPVs['FPNumCaptured'].value
-            numToSave     = self.epicsPVs['FPNumCapture'].value
-            currentTime = time.time()
-            elapsedTime = currentTime - startTime
-            remainingTime = elapsedTime * (numImages - numCollected) / max(float(numCollected),1)
-            collectProgress = str(numCollected) + '/' + str(numImages)
-            logging.info('Collected %s', collectProgress)
-            self.epicsPVs['ImagesCollected'].put(collectProgress)
-            saveProgress = str(numSaved) + '/' + str(numToSave)
-            logging.info('Saved %s', saveProgress)
-            self.epicsPVs['ImagesSaved'].put(saveProgress)
-            self.epicsPVs['ElapsedTime'].put(str(timedelta(seconds=int(elapsedTime))))
-            self.epicsPVs['RemainingTime'].put(str(timedelta(seconds=int(remainingTime))))
-            if (timeout > 0):
-                if elapsedTime >= timeout:
-                    raise cameraTimeoutError()
+            num_collected  = self.epics_pvs['CamNumImagesCounter'].value
+            num_images     = self.epics_pvs['CamNumImages'].value
+            num_saved      = self.epics_pvs['FPNumCaptured'].value
+            num_to_save     = self.epics_pvs['FPNumCapture'].value
+            current_time = time.time()
+            elapsed_time = current_time - start_time
+            remaining_time = (elapsed_time * (num_images - num_collected) /
+                              max(float(num_collected), 1))
+            collect_progress = str(num_collected) + '/' + str(num_images)
+            logging.info('Collected %s', collect_progress)
+            self.epics_pvs['ImagesCollected'].put(collect_progress)
+            save_progress = str(num_saved) + '/' + str(num_to_save)
+            logging.info('Saved %s', save_progress)
+            self.epics_pvs['ImagesSaved'].put(save_progress)
+            self.epics_pvs['ElapsedTime'].put(str(timedelta(seconds=int(elapsed_time))))
+            self.epics_pvs['RemainingTime'].put(str(timedelta(seconds=int(remaining_time))))
+            if timeout > 0:
+                if elapsed_time >= timeout:
+                    raise CameraTimeoutError()
