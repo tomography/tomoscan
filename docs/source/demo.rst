@@ -2,23 +2,29 @@
 tomoScanApp EPICS application
 =============================
 
-tomoscan includes a complete example EPICS application.  This includes an example database file,
-:download:`tomoScan.template <../../tomoScanApp/Db/tomoScan.template>`,
-and a corresponding autosave request file, :download:`tomoScan_settings.req <../../tomoScanApp/Db/tomoScan_settings.req>`.
-The database is loaded in the IOC with the example substitutions file, 
-:download:`tomoScan.substitutions <../../iocBoot/iocTomoScan/tomoScan.substitutions>`.
+tomoscan includes a complete example EPICS application, including:
 
-The following tables list all of the records in the tomoScan.template file. This section lists the records
-that are required by tomoscan.  The second section lists the records that are used only by the tomoscan server mode.
-The third section lists the records that are optional, and are not used by the tomoscan base class.
+- A database file that contains only the PVs required by the tomoscan.py base class
+  :download:`tomoScan.template <../../tomoScanApp/Db/tomoScan.template>`
+- A corresponding autosave request file
+  :download:`tomoScan_settings.req <../../tomoScanApp/Db/tomoScan_settings.req>`.
+- A database file that contains PVs used by the tomoscan_13bm derived class
+  :download:`tomoScan_13BM.template <../../tomoScanApp/Db/tomoScan_13BM.template>`
+- A corresponding autosave request file
+  :download:`tomoScan_13BM_settings.req <../../tomoScanApp/Db/tomoScan_13BM_settings.req>`.
+- OPI screens for medm, edm, caQtDM, CSS/Boy, and CSS/Phoebus
+- An example IOC application that can be used to run the above databases.
+  The databases are loaded in the IOC with the example substitutions file, 
+  :download:`tomoScan.substitutions <../../iocBoot/iocTomoScan/tomoScan.substitutions>`.
 
-Required records
-================
+The following tables list all of the records in the tomoScan.template file.
+These records are used by the tomoscan base class and so are required.
 
-The following records are used by the tomoscan base class and so are required.
+tomoScan.template
+-----------------
 
 Camera and File Plugin PV Prefixes
-----------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. cssclass:: table-bordered table-striped table-hover
 .. list-table::
@@ -36,7 +42,7 @@ Camera and File Plugin PV Prefixes
     - Contains the prefix for the file plugin, e.g. 13BMDPG1:HDF1: or 13BMDPG1:netCDF1:
 
 Shutter control
----------------
+~~~~~~~~~~~~~~~
 
 .. cssclass:: table-bordered table-striped table-hover
 .. list-table::
@@ -60,7 +66,7 @@ Shutter control
     - Contains the value to write to open the shutter
 
 Rotation, sample X and Y translation motors
--------------------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. cssclass:: table-bordered table-striped table-hover
 .. list-table::
@@ -81,7 +87,7 @@ Rotation, sample X and Y translation motors
     - Contains the name of the sample Y translation PV, e.g. 13BMD:m90
 
 Data collection control
------------------------
+~~~~~~~~~~~~~~~~~~~~~~~
 
 .. cssclass:: table-bordered table-striped table-hover
 .. list-table::
@@ -109,7 +115,7 @@ Data collection control
     - Flag controlling whether to return rotation to RotationStart at the end of collection. Choices are 'No' and 'Yes'.
 
 Dark field control
-------------------
+~~~~~~~~~~~~~~~~~~
 
 .. cssclass:: table-bordered table-striped table-hover
 .. list-table::
@@ -130,7 +136,7 @@ Dark field control
     - A constant dark field value for every pixel, typically used when DarkFieldMode=None.
 
 Flat field control
-------------------
+~~~~~~~~~~~~~~~~~~
 
 .. cssclass:: table-bordered table-striped table-hover
 .. list-table::
@@ -166,7 +172,7 @@ Flat field control
     - Position of the Y stage when the sample is out for collecting flat fields.
 
 Exposure time
--------------
+~~~~~~~~~~~~~
 
 .. cssclass:: table-bordered table-striped table-hover
 .. list-table::
@@ -181,7 +187,7 @@ Exposure time
     - The exposure time in seconds.  Currently the same time is used for dark fields, flat fields, and projections.
 
 File path and name control
---------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. cssclass:: table-bordered table-striped table-hover
 .. list-table::
@@ -199,7 +205,7 @@ File path and name control
     - The file name to save data.
 
 Scan control via Channel Access
--------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. cssclass:: table-bordered table-striped table-hover
 .. list-table::
@@ -226,7 +232,7 @@ Scan control via Channel Access
     - Setting this record to 1 aborts a scan.
 
 Scan status via Channel Access
-------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. cssclass:: table-bordered table-striped table-hover
 .. list-table::
@@ -252,14 +258,17 @@ Scan status via Channel Access
     - stringout
     - This record will be updated with the estimated time remaining while scanning.
 
-Optional records
-================
 
-The following PVs are not used by tomoScan. They may be used by derived classes, or for metadata in
-data files.
+tomoScan_13BM.template
+----------------------
+
+The following tables list all of the records in the tomoScan_13BM.template file.
+This file is used for records needed by the tomoscan_13bm derived class, and also
+for metadata PVs that should be saved in the tomoscan configuration file and files 
+written by the areaDetector file plugins.
 
 SIS MCS Prefix
---------------
+~~~~~~~~~~~~~~
 
 .. cssclass:: table-bordered table-striped table-hover
 .. list-table::
@@ -274,7 +283,7 @@ SIS MCS Prefix
     - Contains the prefix for the SIS MCS, e.g. 13BMD:SIS1:
 
 Energy information
-------------------
+~~~~~~~~~~~~~~~~~~
 
 .. cssclass:: table-bordered table-striped table-hover
 .. list-table::
@@ -289,7 +298,7 @@ Energy information
     - Contains the energy mode of the beamline, e.g. 'Mono', 'Pink', 'White'.
 
 Beam status information
------------------------
+~~~~~~~~~~~~~~~~~~~~~~~
 
 .. cssclass:: table-bordered table-striped table-hover
 .. list-table::
@@ -307,7 +316,7 @@ Beam status information
     - Contains the value of the beam ready PV when beam is ready.
 
 Optics information
-------------------
+~~~~~~~~~~~~~~~~~~
 
 .. cssclass:: table-bordered table-striped table-hover
 .. list-table::
@@ -337,7 +346,7 @@ Optics information
     - Description of the camera objective
 
 Sample information
-------------------
+~~~~~~~~~~~~~~~~~~
 
 .. cssclass:: table-bordered table-striped table-hover
 .. list-table::
@@ -361,7 +370,7 @@ Sample information
     - Description of the sample, part 3
 
 User information
-----------------
+~~~~~~~~~~~~~~~~
 
 .. cssclass:: table-bordered table-striped table-hover
 .. list-table::
@@ -393,5 +402,52 @@ User information
     - stringout
     - Experiment Safety Approval Form number
 
+medm files
+----------
+
+tomoScan.adl
+~~~~~~~~~~~~
+
+The following is the MEDM screen :download:`tomoScan.adl <../../tomoScanApp/op/adl/tomoScan.adl>` during a scan. The status information is updating.
+
+.. image:: img/tomoScan.png
+    :width: 75%
+    :align: center
+
+tomoScanEPICS_PVs.adl
+~~~~~~~~~~~~~~~~~~~~~
+
+The following is the MEDM screen :download:`tomoScanEPICS_PVs.adl <../../tomoScanApp/op/adl/tomoScanEPICS_PVs.adl>`. If these PVs are changed tomoscan must be restarted.
+
+.. image:: img/tomoScanEPICS_PVs.png
+    :width: 75%
+    :align: center
+
+tomoScanSampleInfo.adl
+~~~~~~~~~~~~~~~~~~~~~~
+
+The following is the MEDM screen :download:`tomoScanSampleInfo.adl <../../tomoScanApp/op/adl/tomoScanSampleInfo.adl>`.
+
+.. image:: img/tomoScanSampleInfo.png
+    :width: 75%
+    :align: center
+
+tomoScanUserInfo.adl
+~~~~~~~~~~~~~~~~~~~~
+
+The following is the MEDM screen :download:`tomoScanUserInfo.adl <../../tomoScanApp/op/adl/tomoScanUserInfo.adl>`.
+
+.. image:: img/tomoScanUserInfo.png
+    :width: 75%
+    :align: center
+
+tomoScanConfigInfo.adl
+~~~~~~~~~~~~~~~~~~~~~~
+
+The following is the MEDM screen :download:`tomoScanConfigInfo.adl <../../tomoScanApp/op/adl/tomoScanConfigInfo.adl>`.
+
+.. image:: img/tomoScanConfigInfo.png
+    :width: 75%
+    :align: center
 
 
