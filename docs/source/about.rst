@@ -6,11 +6,11 @@ About
 
 .. _2bm-tomo: https://github.com/xray-imaging/2bm-tomo
 
-tomoscan is a Python class for collecting computed tomography data at the APS. 
-tomoscan.py implements a base class with the code that should be beamline-independent.  
+tomoscan is a Python module for collecting computed tomography data at the APS. 
+tomoscan.py implements a base class (TomoScan) with the code that should be beamline-independent.  
 Beamline-dependent code is implemented in derived classes that inherit from tomoscan.
-tomoscan includes an example of such a derived class, tomoscan_13bm.py, which is 
-used at APS beamline 13-BM-D.
+tomoscan includes tomoscan_13bm.py which contains an example of such a derived class TomoScan13BM.
+This is used at APS beamline 13-BM-D.
 
 
 Advantages compared to current APS tomography Python software
