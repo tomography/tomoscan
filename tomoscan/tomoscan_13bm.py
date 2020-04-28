@@ -21,8 +21,8 @@ class TomoScan13BM(TomoScan):
         reading the pvFiles
     """
 
-    def __init__(self, pvFile, macros):
-        super().__init__(pvFile, macros)
+    def __init__(self, pv_files, macros):
+        super().__init__(pv_files, macros)
 
         # Set the detector running in FreeRun mode
         self.set_trigger_mode('FreeRun', 1)
