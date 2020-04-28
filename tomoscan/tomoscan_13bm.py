@@ -14,11 +14,11 @@ class TomoScan13BM(TomoScan):
 
     Parameters
     ----------
-    pvFiles : list of str
+    pv_files : list of str
         List of files containing EPICS pvNames to be used.
     macros : dict
         Dictionary of macro definitions to be substituted when
-        reading the pvFiles
+        reading the pv_files
     """
 
     def __init__(self, pv_files, macros):
