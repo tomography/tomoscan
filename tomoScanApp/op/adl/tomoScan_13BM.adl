@@ -5,10 +5,10 @@ file {
 }
 display {
 	object {
-		x=721
-		y=273
-		width=1115
-		height=360
+		x=562
+		y=124
+		width=565
+		height=680
 	}
 	clr=14
 	bclr=4
@@ -91,8 +91,880 @@ rectangle {
 	object {
 		x=0
 		y=5
-		width=1115
+		width=565
 		height=25
+	}
+	"basic attribute" {
+		clr=2
+	}
+}
+rectangle {
+	object {
+		x=5
+		y=470
+		width=555
+		height=205
+	}
+	"basic attribute" {
+		clr=14
+		fill="outline"
+	}
+}
+composite {
+	object {
+		x=10
+		y=475
+		width=545
+		height=20
+	}
+	"composite name"=""
+	children {
+		text {
+			object {
+				x=158
+				y=475
+				width=249
+				height=20
+			}
+			"basic attribute" {
+				clr=54
+			}
+			textix="User Information"
+			align="horiz. centered"
+		}
+		rectangle {
+			object {
+				x=10
+				y=475
+				width=545
+				height=20
+			}
+			"basic attribute" {
+				clr=2
+			}
+		}
+		text {
+			object {
+				x=158
+				y=475
+				width=249
+				height=20
+			}
+			"basic attribute" {
+				clr=54
+			}
+			textix="User Information"
+			align="horiz. centered"
+		}
+	}
+}
+composite {
+	object {
+		x=10
+		y=500
+		width=545
+		height=170
+	}
+	"composite name"=""
+	children {
+		composite {
+			object {
+				x=165
+				y=500
+				width=390
+				height=170
+			}
+			"composite name"=""
+			children {
+				"text entry" {
+					object {
+						x=165
+						y=525
+						width=390
+						height=20
+					}
+					control {
+						chan="$(P)$(R)UserInstitution"
+						clr=14
+						bclr=51
+					}
+					format="string"
+					limits {
+					}
+				}
+				"text entry" {
+					object {
+						x=165
+						y=500
+						width=390
+						height=20
+					}
+					control {
+						chan="$(P)$(R)UserName"
+						clr=14
+						bclr=51
+					}
+					format="string"
+					limits {
+					}
+				}
+				"text entry" {
+					object {
+						x=165
+						y=575
+						width=390
+						height=20
+					}
+					control {
+						chan="$(P)$(R)UserEmail"
+						clr=14
+						bclr=51
+					}
+					format="string"
+					limits {
+					}
+				}
+				"text entry" {
+					object {
+						x=165
+						y=600
+						width=390
+						height=20
+					}
+					control {
+						chan="$(P)$(R)ProposalNumber"
+						clr=14
+						bclr=51
+					}
+					format="string"
+					limits {
+					}
+				}
+				"text entry" {
+					object {
+						x=165
+						y=625
+						width=390
+						height=20
+					}
+					control {
+						chan="$(P)$(R)ProposalTitle"
+						clr=14
+						bclr=51
+					}
+					format="string"
+					limits {
+					}
+				}
+				"text entry" {
+					object {
+						x=165
+						y=650
+						width=390
+						height=20
+					}
+					control {
+						chan="$(P)$(R)ESAFNumber"
+						clr=14
+						bclr=51
+					}
+					format="string"
+					limits {
+					}
+				}
+				"text entry" {
+					object {
+						x=165
+						y=550
+						width=390
+						height=20
+					}
+					control {
+						chan="$(P)$(R)UserBadge"
+						clr=14
+						bclr=51
+					}
+					format="string"
+					limits {
+					}
+				}
+			}
+		}
+		composite {
+			object {
+				x=10
+				y=500
+				width=150
+				height=170
+			}
+			"composite name"=""
+			children {
+				text {
+					object {
+						x=70
+						y=500
+						width=90
+						height=20
+					}
+					"basic attribute" {
+						clr=14
+					}
+					textix="User name"
+				}
+				text {
+					object {
+						x=50
+						y=525
+						width=110
+						height=20
+					}
+					"basic attribute" {
+						clr=14
+					}
+					textix="Institution"
+				}
+				text {
+					object {
+						x=50
+						y=575
+						width=110
+						height=20
+					}
+					"basic attribute" {
+						clr=14
+					}
+					textix="User e-mail"
+				}
+				text {
+					object {
+						x=50
+						y=550
+						width=110
+						height=20
+					}
+					"basic attribute" {
+						clr=14
+					}
+					textix="ANL badge #"
+				}
+				text {
+					object {
+						x=20
+						y=600
+						width=140
+						height=20
+					}
+					"basic attribute" {
+						clr=14
+					}
+					textix="APS proposal #"
+				}
+				text {
+					object {
+						x=10
+						y=625
+						width=150
+						height=20
+					}
+					"basic attribute" {
+						clr=14
+					}
+					textix="APS prop. title"
+				}
+				text {
+					object {
+						x=60
+						y=650
+						width=100
+						height=20
+					}
+					"basic attribute" {
+						clr=14
+					}
+					textix="APS ESAF #"
+				}
+			}
+		}
+	}
+}
+rectangle {
+	object {
+		x=5
+		y=360
+		width=555
+		height=105
+	}
+	"basic attribute" {
+		clr=14
+		fill="outline"
+	}
+}
+composite {
+	object {
+		x=175
+		y=390
+		width=380
+		height=70
+	}
+	"composite name"=""
+	children {
+		"text entry" {
+			object {
+				x=175
+				y=440
+				width=380
+				height=20
+			}
+			control {
+				chan="$(P)$(R)BeamReadyValue"
+				clr=14
+				bclr=51
+			}
+			format="string"
+			limits {
+			}
+		}
+		"text entry" {
+			object {
+				x=175
+				y=415
+				width=380
+				height=20
+			}
+			control {
+				chan="$(P)$(R)BeamReadyPVName"
+				clr=14
+				bclr=51
+			}
+			format="string"
+			limits {
+			}
+		}
+		"text entry" {
+			object {
+				x=175
+				y=390
+				width=380
+				height=20
+			}
+			control {
+				chan="$(P)$(R)MCSPVPrefix"
+				clr=14
+				bclr=51
+			}
+			format="string"
+			limits {
+			}
+		}
+	}
+}
+composite {
+	object {
+		x=10
+		y=390
+		width=160
+		height=70
+	}
+	"composite name"=""
+	children {
+		text {
+			object {
+				x=30
+				y=390
+				width=140
+				height=20
+			}
+			"basic attribute" {
+				clr=14
+			}
+			textix="SIS MCS prefix"
+			align="horiz. right"
+		}
+		text {
+			object {
+				x=40
+				y=415
+				width=130
+				height=20
+			}
+			"basic attribute" {
+				clr=14
+			}
+			textix="Beam ready PV"
+		}
+		text {
+			object {
+				x=10
+				y=440
+				width=160
+				height=20
+			}
+			"basic attribute" {
+				clr=14
+			}
+			textix="Beam ready value"
+		}
+	}
+}
+composite {
+	object {
+		x=10
+		y=45
+		width=545
+		height=20
+	}
+	"composite name"=""
+	children {
+		rectangle {
+			object {
+				x=10
+				y=45
+				width=545
+				height=20
+			}
+			"basic attribute" {
+				clr=2
+			}
+		}
+		text {
+			object {
+				x=143
+				y=45
+				width=281
+				height=20
+			}
+			"basic attribute" {
+				clr=54
+			}
+			textix="Sample Information"
+			align="horiz. centered"
+		}
+	}
+}
+composite {
+	object {
+		x=20
+		y=70
+		width=535
+		height=95
+	}
+	"composite name"=""
+	children {
+		composite {
+			object {
+				x=20
+				y=70
+				width=140
+				height=95
+			}
+			"composite name"=""
+			children {
+				text {
+					object {
+						x=50
+						y=70
+						width=110
+						height=20
+					}
+					"basic attribute" {
+						clr=14
+					}
+					textix="Sample name"
+				}
+				text {
+					object {
+						x=20
+						y=95
+						width=140
+						height=20
+					}
+					"basic attribute" {
+						clr=14
+					}
+					textix="Description #1"
+				}
+				text {
+					object {
+						x=20
+						y=120
+						width=140
+						height=20
+					}
+					"basic attribute" {
+						clr=14
+					}
+					textix="Description #2"
+				}
+				text {
+					object {
+						x=20
+						y=145
+						width=140
+						height=20
+					}
+					"basic attribute" {
+						clr=14
+					}
+					textix="Description #3"
+				}
+			}
+		}
+		composite {
+			object {
+				x=165
+				y=70
+				width=390
+				height=95
+			}
+			"composite name"=""
+			children {
+				"text entry" {
+					object {
+						x=165
+						y=70
+						width=390
+						height=20
+					}
+					control {
+						chan="$(P)$(R)SampleName"
+						clr=14
+						bclr=51
+					}
+					format="string"
+					limits {
+					}
+				}
+				"text entry" {
+					object {
+						x=165
+						y=95
+						width=390
+						height=20
+					}
+					control {
+						chan="$(P)$(R)SampleDescription1"
+						clr=14
+						bclr=51
+					}
+					format="string"
+					limits {
+					}
+				}
+				"text entry" {
+					object {
+						x=165
+						y=120
+						width=390
+						height=20
+					}
+					control {
+						chan="$(P)$(R)SampleDescription2"
+						clr=14
+						bclr=51
+					}
+					format="string"
+					limits {
+					}
+				}
+				"text entry" {
+					object {
+						x=165
+						y=145
+						width=390
+						height=20
+					}
+					control {
+						chan="$(P)$(R)SampleDescription3"
+						clr=14
+						bclr=51
+					}
+					format="string"
+					limits {
+					}
+				}
+			}
+		}
+	}
+}
+rectangle {
+	object {
+		x=5
+		y=40
+		width=555
+		height=130
+	}
+	"basic attribute" {
+		clr=14
+		fill="outline"
+	}
+}
+composite {
+	object {
+		x=30
+		y=205
+		width=525
+		height=145
+	}
+	"composite name"=""
+	children {
+		composite {
+			object {
+				x=325
+				y=205
+				width=230
+				height=145
+			}
+			"composite name"=""
+			children {
+				"text entry" {
+					object {
+						x=325
+						y=230
+						width=230
+						height=20
+					}
+					control {
+						chan="$(P)$(R)ScintillatorThickness"
+						clr=14
+						bclr=51
+					}
+					format="string"
+					limits {
+					}
+				}
+				"text entry" {
+					object {
+						x=325
+						y=205
+						width=230
+						height=20
+					}
+					control {
+						chan="$(P)$(R)ScintillatorType"
+						clr=14
+						bclr=51
+					}
+					format="string"
+					limits {
+					}
+				}
+				"text entry" {
+					object {
+						x=325
+						y=280
+						width=230
+						height=20
+					}
+					control {
+						chan="$(P)$(R)DetectorPixelSize"
+						clr=14
+						bclr=51
+					}
+					format="string"
+					limits {
+					}
+				}
+				"text entry" {
+					object {
+						x=325
+						y=305
+						width=230
+						height=20
+					}
+					control {
+						chan="$(P)$(R)CameraObjective"
+						clr=14
+						bclr=51
+					}
+					format="string"
+					limits {
+					}
+				}
+				"text entry" {
+					object {
+						x=325
+						y=330
+						width=230
+						height=20
+					}
+					control {
+						chan="$(P)$(R)CameraTubeLength"
+						clr=14
+						bclr=51
+					}
+					format="string"
+					limits {
+					}
+				}
+				"text entry" {
+					object {
+						x=325
+						y=255
+						width=230
+						height=20
+					}
+					control {
+						chan="$(P)$(R)ImagePixelSize"
+						clr=14
+						bclr=51
+					}
+					format="string"
+					limits {
+					}
+				}
+			}
+		}
+		composite {
+			object {
+				x=30
+				y=205
+				width=290
+				height=145
+			}
+			"composite name"=""
+			children {
+				text {
+					object {
+						x=150
+						y=205
+						width=170
+						height=20
+					}
+					"basic attribute" {
+						clr=14
+					}
+					textix="Scintillator type"
+				}
+				text {
+					object {
+						x=60
+						y=230
+						width=260
+						height=20
+					}
+					"basic attribute" {
+						clr=14
+					}
+					textix="Scint. thickness (microns)"
+				}
+				text {
+					object {
+						x=30
+						y=280
+						width=290
+						height=20
+					}
+					"basic attribute" {
+						clr=14
+					}
+					textix="Detector pixel size (microns)"
+				}
+				text {
+					object {
+						x=60
+						y=255
+						width=260
+						height=20
+					}
+					"basic attribute" {
+						clr=14
+					}
+					textix="Image pixel size (microns)"
+				}
+				text {
+					object {
+						x=160
+						y=305
+						width=160
+						height=20
+					}
+					"basic attribute" {
+						clr=14
+					}
+					textix="Camera objective"
+				}
+				text {
+					object {
+						x=160
+						y=330
+						width=160
+						height=20
+					}
+					"basic attribute" {
+						clr=14
+					}
+					textix="Tube length (mm)"
+				}
+			}
+		}
+	}
+}
+composite {
+	object {
+		x=10
+		y=180
+		width=545
+		height=20
+	}
+	"composite name"=""
+	children {
+		rectangle {
+			object {
+				x=10
+				y=180
+				width=545
+				height=20
+			}
+			"basic attribute" {
+				clr=2
+			}
+		}
+		text {
+			object {
+				x=88
+				y=180
+				width=390
+				height=20
+			}
+			"basic attribute" {
+				clr=54
+			}
+			textix="Configuration Information"
+			align="horiz. centered"
+		}
+	}
+}
+rectangle {
+	object {
+		x=5
+		y=175
+		width=555
+		height=180
+	}
+	"basic attribute" {
+		clr=14
+		fill="outline"
+	}
+}
+text {
+	object {
+		x=0
+		y=5
+		width=565
+		height=25
+	}
+	"basic attribute" {
+		clr=54
+	}
+	textix="13-BM Tomography   $(P)$(R)"
+	align="horiz. centered"
+}
+rectangle {
+	object {
+		x=10
+		y=365
+		width=545
+		height=20
 	}
 	"basic attribute" {
 		clr=2
@@ -100,973 +972,13 @@ rectangle {
 }
 text {
 	object {
-		x=0
-		y=5
-		width=1115
-		height=25
+		x=167
+		y=365
+		width=230
+		height=20
 	}
 	"basic attribute" {
 		clr=54
 	}
-	textix="Tomography Data Collection   $(P)$(R)"
-	align="horiz. centered"
-}
-composite {
-	object {
-		x=555
-		y=150
-		width=555
-		height=205
-	}
-	"composite name"=""
-	children {
-		rectangle {
-			object {
-				x=555
-				y=150
-				width=555
-				height=205
-			}
-			"basic attribute" {
-				clr=14
-				fill="outline"
-			}
-		}
-		composite {
-			object {
-				x=560
-				y=155
-				width=545
-				height=195
-			}
-			"composite name"=""
-			children {
-				composite {
-					object {
-						x=715
-						y=155
-						width=390
-						height=20
-					}
-					"composite name"=""
-					children {
-						text {
-							object {
-								x=821
-								y=155
-								width=178
-								height=20
-							}
-							"basic attribute" {
-								clr=54
-							}
-							textix="User Information"
-							align="horiz. centered"
-						}
-						rectangle {
-							object {
-								x=715
-								y=155
-								width=390
-								height=20
-							}
-							"basic attribute" {
-								clr=2
-							}
-						}
-						text {
-							object {
-								x=821
-								y=155
-								width=178
-								height=20
-							}
-							"basic attribute" {
-								clr=54
-							}
-							textix="User Information"
-							align="horiz. centered"
-						}
-					}
-				}
-				composite {
-					object {
-						x=560
-						y=180
-						width=545
-						height=170
-					}
-					"composite name"=""
-					children {
-						composite {
-							object {
-								x=715
-								y=180
-								width=390
-								height=170
-							}
-							"composite name"=""
-							children {
-								"text entry" {
-									object {
-										x=715
-										y=205
-										width=390
-										height=20
-									}
-									control {
-										chan="$(P)$(R)UserInstitution"
-										clr=14
-										bclr=51
-									}
-									format="string"
-									limits {
-									}
-								}
-								"text entry" {
-									object {
-										x=715
-										y=180
-										width=390
-										height=20
-									}
-									control {
-										chan="$(P)$(R)UserName"
-										clr=14
-										bclr=51
-									}
-									format="string"
-									limits {
-									}
-								}
-								"text entry" {
-									object {
-										x=715
-										y=255
-										width=390
-										height=20
-									}
-									control {
-										chan="$(P)$(R)UserEmail"
-										clr=14
-										bclr=51
-									}
-									format="string"
-									limits {
-									}
-								}
-								"text entry" {
-									object {
-										x=715
-										y=280
-										width=390
-										height=20
-									}
-									control {
-										chan="$(P)$(R)ProposalNumber"
-										clr=14
-										bclr=51
-									}
-									format="string"
-									limits {
-									}
-								}
-								"text entry" {
-									object {
-										x=715
-										y=305
-										width=390
-										height=20
-									}
-									control {
-										chan="$(P)$(R)ProposalTitle"
-										clr=14
-										bclr=51
-									}
-									format="string"
-									limits {
-									}
-								}
-								"text entry" {
-									object {
-										x=715
-										y=330
-										width=390
-										height=20
-									}
-									control {
-										chan="$(P)$(R)ESAFNumber"
-										clr=14
-										bclr=51
-									}
-									format="string"
-									limits {
-									}
-								}
-								"text entry" {
-									object {
-										x=715
-										y=230
-										width=390
-										height=20
-									}
-									control {
-										chan="$(P)$(R)UserBadge"
-										clr=14
-										bclr=51
-									}
-									format="string"
-									limits {
-									}
-								}
-							}
-						}
-						composite {
-							object {
-								x=560
-								y=180
-								width=150
-								height=170
-							}
-							"composite name"=""
-							children {
-								text {
-									object {
-										x=620
-										y=180
-										width=90
-										height=20
-									}
-									"basic attribute" {
-										clr=14
-									}
-									textix="User name"
-								}
-								text {
-									object {
-										x=600
-										y=205
-										width=110
-										height=20
-									}
-									"basic attribute" {
-										clr=14
-									}
-									textix="Institution"
-								}
-								text {
-									object {
-										x=600
-										y=255
-										width=110
-										height=20
-									}
-									"basic attribute" {
-										clr=14
-									}
-									textix="User e-mail"
-								}
-								text {
-									object {
-										x=600
-										y=230
-										width=110
-										height=20
-									}
-									"basic attribute" {
-										clr=14
-									}
-									textix="ANL badge #"
-								}
-								text {
-									object {
-										x=570
-										y=280
-										width=140
-										height=20
-									}
-									"basic attribute" {
-										clr=14
-									}
-									textix="APS proposal #"
-								}
-								text {
-									object {
-										x=560
-										y=305
-										width=150
-										height=20
-									}
-									"basic attribute" {
-										clr=14
-									}
-									textix="APS prop. title"
-								}
-								text {
-									object {
-										x=610
-										y=330
-										width=100
-										height=20
-									}
-									"basic attribute" {
-										clr=14
-									}
-									textix="APS ESAF #"
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-}
-composite {
-	object {
-		x=555
-		y=40
-		width=555
-		height=105
-	}
-	"composite name"=""
-	children {
-		rectangle {
-			object {
-				x=555
-				y=40
-				width=555
-				height=105
-			}
-			"basic attribute" {
-				clr=14
-				fill="outline"
-			}
-		}
-		composite {
-			object {
-				x=560
-				y=45
-				width=545
-				height=95
-			}
-			"composite name"=""
-			children {
-				rectangle {
-					object {
-						x=715
-						y=45
-						width=390
-						height=20
-					}
-					"basic attribute" {
-						clr=2
-					}
-				}
-				composite {
-					object {
-						x=725
-						y=70
-						width=380
-						height=70
-					}
-					"composite name"=""
-					children {
-						"text entry" {
-							object {
-								x=725
-								y=120
-								width=380
-								height=20
-							}
-							control {
-								chan="$(P)$(R)BeamReadyValue"
-								clr=14
-								bclr=51
-							}
-							format="string"
-							limits {
-							}
-						}
-						"text entry" {
-							object {
-								x=725
-								y=95
-								width=380
-								height=20
-							}
-							control {
-								chan="$(P)$(R)BeamReadyPVName"
-								clr=14
-								bclr=51
-							}
-							format="string"
-							limits {
-							}
-						}
-						"text entry" {
-							object {
-								x=725
-								y=70
-								width=380
-								height=20
-							}
-							control {
-								chan="$(P)$(R)MCSPVPrefix"
-								clr=14
-								bclr=51
-							}
-							format="string"
-							limits {
-							}
-						}
-					}
-				}
-				composite {
-					object {
-						x=560
-						y=70
-						width=160
-						height=70
-					}
-					"composite name"=""
-					children {
-						text {
-							object {
-								x=580
-								y=70
-								width=140
-								height=20
-							}
-							"basic attribute" {
-								clr=14
-							}
-							textix="SIS MCS prefix"
-							align="horiz. right"
-						}
-						text {
-							object {
-								x=590
-								y=95
-								width=130
-								height=20
-							}
-							"basic attribute" {
-								clr=14
-							}
-							textix="Beam ready PV"
-						}
-						text {
-							object {
-								x=560
-								y=120
-								width=160
-								height=20
-							}
-							"basic attribute" {
-								clr=14
-							}
-							textix="Beam ready value"
-						}
-					}
-				}
-				text {
-					object {
-						x=776
-						y=45
-						width=268
-						height=20
-					}
-					"basic attribute" {
-						clr=54
-					}
-					textix="Epics Process Variables"
-				}
-			}
-		}
-	}
-}
-composite {
-	object {
-		x=5
-		y=40
-		width=545
-		height=130
-	}
-	"composite name"=""
-	children {
-		composite {
-			object {
-				x=10
-				y=45
-				width=535
-				height=120
-			}
-			"composite name"=""
-			children {
-				composite {
-					object {
-						x=155
-						y=45
-						width=390
-						height=20
-					}
-					"composite name"=""
-					children {
-						rectangle {
-							object {
-								x=155
-								y=45
-								width=390
-								height=20
-							}
-							"basic attribute" {
-								clr=2
-							}
-						}
-						text {
-							object {
-								x=250
-								y=45
-								width=201
-								height=20
-							}
-							"basic attribute" {
-								clr=54
-							}
-							textix="Sample Information"
-							align="horiz. centered"
-						}
-					}
-				}
-				composite {
-					object {
-						x=10
-						y=70
-						width=535
-						height=95
-					}
-					"composite name"=""
-					children {
-						composite {
-							object {
-								x=10
-								y=70
-								width=140
-								height=95
-							}
-							"composite name"=""
-							children {
-								text {
-									object {
-										x=40
-										y=70
-										width=110
-										height=20
-									}
-									"basic attribute" {
-										clr=14
-									}
-									textix="Sample name"
-								}
-								text {
-									object {
-										x=10
-										y=95
-										width=140
-										height=20
-									}
-									"basic attribute" {
-										clr=14
-									}
-									textix="Description #1"
-								}
-								text {
-									object {
-										x=10
-										y=120
-										width=140
-										height=20
-									}
-									"basic attribute" {
-										clr=14
-									}
-									textix="Description #2"
-								}
-								text {
-									object {
-										x=10
-										y=145
-										width=140
-										height=20
-									}
-									"basic attribute" {
-										clr=14
-									}
-									textix="Description #3"
-								}
-							}
-						}
-						composite {
-							object {
-								x=155
-								y=70
-								width=390
-								height=95
-							}
-							"composite name"=""
-							children {
-								"text entry" {
-									object {
-										x=155
-										y=70
-										width=390
-										height=20
-									}
-									control {
-										chan="$(P)$(R)SampleName"
-										clr=14
-										bclr=51
-									}
-									format="string"
-									limits {
-									}
-								}
-								"text entry" {
-									object {
-										x=155
-										y=95
-										width=390
-										height=20
-									}
-									control {
-										chan="$(P)$(R)SampleDescription1"
-										clr=14
-										bclr=51
-									}
-									format="string"
-									limits {
-									}
-								}
-								"text entry" {
-									object {
-										x=155
-										y=120
-										width=390
-										height=20
-									}
-									control {
-										chan="$(P)$(R)SampleDescription2"
-										clr=14
-										bclr=51
-									}
-									format="string"
-									limits {
-									}
-								}
-								"text entry" {
-									object {
-										x=155
-										y=145
-										width=390
-										height=20
-									}
-									control {
-										chan="$(P)$(R)SampleDescription3"
-										clr=14
-										bclr=51
-									}
-									format="string"
-									limits {
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-		rectangle {
-			object {
-				x=5
-				y=40
-				width=545
-				height=130
-			}
-			"basic attribute" {
-				clr=14
-				fill="outline"
-			}
-		}
-	}
-}
-composite {
-	object {
-		x=5
-		y=175
-		width=545
-		height=180
-	}
-	"composite name"=""
-	children {
-		composite {
-			object {
-				x=20
-				y=180
-				width=525
-				height=170
-			}
-			"composite name"=""
-			children {
-				composite {
-					object {
-						x=20
-						y=205
-						width=525
-						height=145
-					}
-					"composite name"=""
-					children {
-						composite {
-							object {
-								x=315
-								y=205
-								width=230
-								height=145
-							}
-							"composite name"=""
-							children {
-								"text entry" {
-									object {
-										x=315
-										y=230
-										width=230
-										height=20
-									}
-									control {
-										chan="$(P)$(R)ScintillatorThickness"
-										clr=14
-										bclr=51
-									}
-									format="string"
-									limits {
-									}
-								}
-								"text entry" {
-									object {
-										x=315
-										y=205
-										width=230
-										height=20
-									}
-									control {
-										chan="$(P)$(R)ScintillatorType"
-										clr=14
-										bclr=51
-									}
-									format="string"
-									limits {
-									}
-								}
-								"text entry" {
-									object {
-										x=315
-										y=280
-										width=230
-										height=20
-									}
-									control {
-										chan="$(P)$(R)DetectorPixelSize"
-										clr=14
-										bclr=51
-									}
-									format="string"
-									limits {
-									}
-								}
-								"text entry" {
-									object {
-										x=315
-										y=305
-										width=230
-										height=20
-									}
-									control {
-										chan="$(P)$(R)CameraObjective"
-										clr=14
-										bclr=51
-									}
-									format="string"
-									limits {
-									}
-								}
-								"text entry" {
-									object {
-										x=315
-										y=330
-										width=230
-										height=20
-									}
-									control {
-										chan="$(P)$(R)CameraTubeLength"
-										clr=14
-										bclr=51
-									}
-									format="string"
-									limits {
-									}
-								}
-								"text entry" {
-									object {
-										x=315
-										y=255
-										width=230
-										height=20
-									}
-									control {
-										chan="$(P)$(R)ImagePixelSize"
-										clr=14
-										bclr=51
-									}
-									format="string"
-									limits {
-									}
-								}
-							}
-						}
-						composite {
-							object {
-								x=20
-								y=205
-								width=290
-								height=145
-							}
-							"composite name"=""
-							children {
-								text {
-									object {
-										x=140
-										y=205
-										width=170
-										height=20
-									}
-									"basic attribute" {
-										clr=14
-									}
-									textix="Scintillator type"
-								}
-								text {
-									object {
-										x=50
-										y=230
-										width=260
-										height=20
-									}
-									"basic attribute" {
-										clr=14
-									}
-									textix="Scint. thickness (microns)"
-								}
-								text {
-									object {
-										x=20
-										y=280
-										width=290
-										height=20
-									}
-									"basic attribute" {
-										clr=14
-									}
-									textix="Detector pixel size (microns)"
-								}
-								text {
-									object {
-										x=50
-										y=255
-										width=260
-										height=20
-									}
-									"basic attribute" {
-										clr=14
-									}
-									textix="Image pixel size (microns)"
-								}
-								text {
-									object {
-										x=150
-										y=305
-										width=160
-										height=20
-									}
-									"basic attribute" {
-										clr=14
-									}
-									textix="Camera objective"
-								}
-								text {
-									object {
-										x=150
-										y=330
-										width=160
-										height=20
-									}
-									"basic attribute" {
-										clr=14
-									}
-									textix="Tube length (mm)"
-								}
-							}
-						}
-					}
-				}
-				composite {
-					object {
-						x=155
-						y=180
-						width=390
-						height=20
-					}
-					"composite name"=""
-					children {
-						rectangle {
-							object {
-								x=155
-								y=180
-								width=390
-								height=20
-							}
-							"basic attribute" {
-								clr=2
-							}
-						}
-						text {
-							object {
-								x=211
-								y=180
-								width=279
-								height=20
-							}
-							"basic attribute" {
-								clr=54
-							}
-							textix="Configuration Information"
-							align="horiz. centered"
-						}
-					}
-				}
-			}
-		}
-		rectangle {
-			object {
-				x=5
-				y=175
-				width=545
-				height=180
-			}
-			"basic attribute" {
-				clr=14
-				fill="outline"
-			}
-		}
-	}
+	textix="Epics Process Variables"
 }
