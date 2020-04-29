@@ -106,26 +106,6 @@ border-radius: 2px;
 </string>
     </property>
     <widget class="QWidget" name="centralWidget">
-        <widget class="caFrame" name="caFrame_0">
-            <property name="geometry">
-                <rect>
-                    <x>-2147483624</x>
-                    <y>-2147483604</y>
-                    <width>3</width>
-                    <height>3</height>
-                </rect>
-            </property>
-        </widget>
-        <widget class="caFrame" name="caFrame_1">
-            <property name="geometry">
-                <rect>
-                    <x>-2147483624</x>
-                    <y>-2147483604</y>
-                    <width>3</width>
-                    <height>3</height>
-                </rect>
-            </property>
-        </widget>
         <widget class="caGraphics" name="caRectangle_0">
             <property name="form">
                 <enum>caGraphics::Rectangle</enum>
@@ -195,10 +175,30 @@ border-radius: 2px;
                 </rect>
             </property>
         </widget>
+        <widget class="caFrame" name="caFrame_0">
+            <property name="geometry">
+                <rect>
+                    <x>-2147483624</x>
+                    <y>-2147483604</y>
+                    <width>3</width>
+                    <height>3</height>
+                </rect>
+            </property>
+        </widget>
+        <widget class="caFrame" name="caFrame_1">
+            <property name="geometry">
+                <rect>
+                    <x>-2147483624</x>
+                    <y>-2147483604</y>
+                    <width>3</width>
+                    <height>3</height>
+                </rect>
+            </property>
+        </widget>
         <widget class="caRelatedDisplay" name="caRelatedDisplay_0">
             <property name="geometry">
                 <rect>
-                    <x>510</x>
+                    <x>508</x>
                     <y>90</y>
                     <width>100</width>
                     <height>20</height>
@@ -222,16 +222,16 @@ border-radius: 2px;
                 <enum>Menu</enum>
             </property>
             <property name="labels">
-                <string>Sample information;User information;Configuration information</string>
+                <string>Beamline-specific display</string>
             </property>
             <property name="files">
-                <string>tomoScanSampleInfo.adl;tomoScanUserInfo.adl;tomoScanConfigInfo.adl</string>
+                <string>$(BEAMLINE).adl</string>
             </property>
             <property name="args">
-                <string>P=$(P), R=$(R);P=$(P), R=$(R);P=$(P), R=$(R)</string>
+                <string>P=$(P), R=$(R)</string>
             </property>
             <property name="removeParent">
-                <string>false;false;false</string>
+                <string>false</string>
             </property>
         </widget>
         <widget class="caRelatedDisplay" name="caRelatedDisplay_1">
@@ -328,16 +328,16 @@ border-radius: 2px;
                 </color>
             </property>
             <property name="text">
-                <string>Other information</string>
+                <string>Beamline-specific display</string>
             </property>
             <property name="fontScaleMode">
                 <enum>ESimpleLabel::WidthAndHeight</enum>
             </property>
             <property name="geometry">
                 <rect>
-                    <x>335</x>
+                    <x>253</x>
                     <y>91</y>
-                    <width>170</width>
+                    <width>250</width>
                     <height>20</height>
                 </rect>
             </property>
@@ -3287,10 +3287,10 @@ border-radius: 2px;
                 <set>Qt::AlignAbsolute|Qt::AlignLeft|Qt::AlignVCenter</set>
             </property>
         </widget>
-        <zorder>caFrame_0</zorder>
-        <zorder>caFrame_1</zorder>
         <zorder>caRectangle_0</zorder>
         <zorder>caLabel_0</zorder>
+        <zorder>caFrame_0</zorder>
+        <zorder>caFrame_1</zorder>
         <zorder>caLabel_1</zorder>
         <zorder>caLabel_2</zorder>
         <zorder>caRectangle_1</zorder>

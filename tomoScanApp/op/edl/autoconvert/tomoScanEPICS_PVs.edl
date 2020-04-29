@@ -5,8 +5,8 @@ minor 0
 release 1
 x 932
 y 212
-w 560
-h 360
+w 455
+h 280
 font "helvetica-medium-r-18.0"
 ctlFont "helvetica-bold-r-10.0"
 btnFont "helvetica-medium-r-18.0"
@@ -30,7 +30,7 @@ beginObjectProperties
 major 4
 minor 0
 release 0
-x 113
+x 60
 y 9
 w 334
 h 23
@@ -46,7 +46,7 @@ beginObjectProperties
 major 4
 minor 1
 release 1
-x 142
+x 89
 y 10
 w 276
 h 25
@@ -67,8 +67,8 @@ minor 0
 release 0
 x 5
 y 40
-w 550
-h 310
+w 445
+h 235
 lineColor rgb 0 0 0
 fillColor rgb 0 0 0
 lineWidth 0
@@ -80,7 +80,7 @@ beginObjectProperties
 major 4
 minor 1
 release 1
-x 185
+x 80
 y 50
 w 130
 h 20
@@ -100,7 +100,7 @@ beginObjectProperties
 major 4
 minor 7
 release 0
-x 325
+x 220
 y 50
 w 225
 h 20
@@ -126,9 +126,9 @@ beginObjectProperties
 major 4
 minor 1
 release 1
-x 175
-y 100
-w 140
+x 30
+y 75
+w 180
 h 20
 font "helvetica-medium-r-14.0"
 fontAlign "right"
@@ -136,7 +136,7 @@ fgColor rgb 0 0 0
 bgColor index 3
 useDisplayBg
 value {
-  "SIS MCS prefix"
+  "File plugin prefix"
 }
 endObjectProperties
 
@@ -146,11 +146,11 @@ beginObjectProperties
 major 4
 minor 7
 release 0
-x 325
-y 100
+x 220
+y 75
 w 225
 h 20
-controlPv "$(P)$(R)MCSPVPrefix"
+controlPv "$(P)$(R)FilePluginPVPrefix"
 format "string"
 font "helvetica-medium-r-12.0"
 fontAlign "left"
@@ -172,8 +172,8 @@ beginObjectProperties
 major 4
 minor 1
 release 1
-x 135
-y 225
+x 30
+y 200
 w 180
 h 20
 font "helvetica-medium-r-14.0"
@@ -192,8 +192,8 @@ beginObjectProperties
 major 4
 minor 7
 release 0
-x 325
-y 225
+x 220
+y 200
 w 225
 h 20
 controlPv "$(P)$(R)OpenShutterValue"
@@ -218,8 +218,8 @@ beginObjectProperties
 major 4
 minor 7
 release 0
-x 325
-y 250
+x 220
+y 225
 w 225
 h 20
 controlPv "$(P)$(R)CloseShutterPVName"
@@ -244,8 +244,8 @@ beginObjectProperties
 major 4
 minor 1
 release 1
-x 155
-y 250
+x 50
+y 225
 w 160
 h 20
 font "helvetica-medium-r-14.0"
@@ -263,8 +263,8 @@ beginObjectProperties
 major 4
 minor 1
 release 1
-x 165
-y 200
+x 60
+y 175
 w 150
 h 20
 font "helvetica-medium-r-14.0"
@@ -282,8 +282,8 @@ beginObjectProperties
 major 4
 minor 7
 release 0
-x 325
-y 200
+x 220
+y 175
 w 225
 h 20
 controlPv "$(P)$(R)OpenShutterPVName"
@@ -308,8 +308,8 @@ beginObjectProperties
 major 4
 minor 7
 release 0
-x 325
-y 125
+x 220
+y 100
 w 225
 h 20
 controlPv "$(P)$(R)RotationPVName"
@@ -334,8 +334,8 @@ beginObjectProperties
 major 4
 minor 1
 release 1
-x 205
-y 125
+x 100
+y 100
 w 110
 h 20
 font "helvetica-medium-r-14.0"
@@ -353,8 +353,8 @@ beginObjectProperties
 major 4
 minor 1
 release 1
-x 205
-y 150
+x 100
+y 125
 w 110
 h 20
 font "helvetica-medium-r-14.0"
@@ -372,8 +372,8 @@ beginObjectProperties
 major 4
 minor 7
 release 0
-x 325
-y 150
+x 220
+y 125
 w 225
 h 20
 controlPv "$(P)$(R)SampleXPVName"
@@ -398,8 +398,8 @@ beginObjectProperties
 major 4
 minor 7
 release 0
-x 325
-y 175
+x 220
+y 150
 w 225
 h 20
 controlPv "$(P)$(R)SampleYPVName"
@@ -424,8 +424,8 @@ beginObjectProperties
 major 4
 minor 1
 release 1
-x 205
-y 175
+x 100
+y 150
 w 110
 h 20
 font "helvetica-medium-r-14.0"
@@ -443,8 +443,8 @@ beginObjectProperties
 major 4
 minor 1
 release 1
-x 125
-y 275
+x 20
+y 250
 w 190
 h 20
 font "helvetica-medium-r-14.0"
@@ -463,147 +463,11 @@ beginObjectProperties
 major 4
 minor 7
 release 0
-x 325
-y 275
+x 220
+y 250
 w 225
 h 20
 controlPv "$(P)$(R)CloseShutterValue"
-format "string"
-font "helvetica-medium-r-12.0"
-fontAlign "left"
-fgColor rgb 0 0 0
-bgColor rgb 29440 57088 65280
-editable
-motifWidget
-limitsFromDb
-nullColor rgb 60928 46592 11008
-smartRefresh
-fastUpdate
-newPos
-objType "controls"
-endObjectProperties
-
-# (Text Control)
-object activeXTextDspClass
-beginObjectProperties
-major 4
-minor 7
-release 0
-x 325
-y 300
-w 225
-h 20
-controlPv "$(P)$(R)BeamReadyPVName"
-format "string"
-font "helvetica-medium-r-12.0"
-fontAlign "left"
-fgColor rgb 0 0 0
-bgColor rgb 29440 57088 65280
-editable
-motifWidget
-limitsFromDb
-nullColor rgb 60928 46592 11008
-smartRefresh
-fastUpdate
-newPos
-objType "controls"
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 1
-x 185
-y 300
-w 130
-h 20
-font "helvetica-medium-r-14.0"
-fgColor rgb 0 0 0
-bgColor index 3
-useDisplayBg
-value {
-  "Beam ready PV"
-}
-endObjectProperties
-
-# (Text Control)
-object activeXTextDspClass
-beginObjectProperties
-major 4
-minor 7
-release 0
-x 325
-y 325
-w 225
-h 20
-controlPv "$(P)$(R)BeamReadyValue"
-format "string"
-font "helvetica-medium-r-12.0"
-fontAlign "left"
-fgColor rgb 0 0 0
-bgColor rgb 29440 57088 65280
-editable
-motifWidget
-limitsFromDb
-nullColor rgb 60928 46592 11008
-smartRefresh
-fastUpdate
-newPos
-objType "controls"
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 1
-x 155
-y 325
-w 160
-h 20
-font "helvetica-medium-r-14.0"
-fgColor rgb 0 0 0
-bgColor index 3
-useDisplayBg
-value {
-  "Beam ready value"
-}
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 1
-x 135
-y 75
-w 180
-h 20
-font "helvetica-medium-r-14.0"
-fontAlign "right"
-fgColor rgb 0 0 0
-bgColor index 3
-useDisplayBg
-value {
-  "File plugin prefix"
-}
-endObjectProperties
-
-# (Text Control)
-object activeXTextDspClass
-beginObjectProperties
-major 4
-minor 7
-release 0
-x 325
-y 75
-w 225
-h 20
-controlPv "$(P)$(R)FilePluginPVPrefix"
 format "string"
 font "helvetica-medium-r-12.0"
 fontAlign "left"

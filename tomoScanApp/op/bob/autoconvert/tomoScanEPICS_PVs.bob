@@ -3,8 +3,8 @@
   <name>tomoScanEPICS_PVs</name>
   <x>932</x>
   <y>212</y>
-  <width>560</width>
-  <height>360</height>
+  <width>455</width>
+  <height>280</height>
   <background_color>
     <color red="187" green="187" blue="187">
     </color>
@@ -13,7 +13,7 @@
   <grid_step_x>5</grid_step_x>
   <widget type="rectangle" version="2.0.0">
     <name>rectangle #6</name>
-    <x>113</x>
+    <x>60</x>
     <y>9</y>
     <width>335</width>
     <height>24</height>
@@ -29,7 +29,7 @@
   <widget type="label" version="2.0.0">
     <name>text #9</name>
     <text>Epics Process Variables</text>
-    <x>142</x>
+    <x>89</x>
     <y>10</y>
     <width>276</width>
     <height>25</height>
@@ -47,8 +47,8 @@
     <name>rectangle #12</name>
     <x>5</x>
     <y>40</y>
-    <width>550</width>
-    <height>310</height>
+    <width>445</width>
+    <height>235</height>
     <line_width>1</line_width>
     <line_color>
       <color red="0" green="0" blue="0">
@@ -63,7 +63,7 @@
   <widget type="label" version="2.0.0">
     <name>text #15</name>
     <text>Camera prefix</text>
-    <x>185</x>
+    <x>80</x>
     <y>50</y>
     <width>130</width>
     <font>
@@ -75,7 +75,7 @@
   <widget type="textentry" version="3.0.0">
     <name>text entry #18</name>
     <pv_name>$(P)$(R)CameraPVPrefix</pv_name>
-    <x>325</x>
+    <x>220</x>
     <y>50</y>
     <width>225</width>
     <font>
@@ -92,10 +92,10 @@
   </widget>
   <widget type="label" version="2.0.0">
     <name>text #22</name>
-    <text>SIS MCS prefix</text>
-    <x>175</x>
-    <y>100</y>
-    <width>140</width>
+    <text>File plugin prefix</text>
+    <x>30</x>
+    <y>75</y>
+    <width>180</width>
     <font>
       <font family="Liberation Sans" style="REGULAR" size="16.0">
       </font>
@@ -104,9 +104,9 @@
   </widget>
   <widget type="textentry" version="3.0.0">
     <name>text entry #25</name>
-    <pv_name>$(P)$(R)MCSPVPrefix</pv_name>
-    <x>325</x>
-    <y>100</y>
+    <pv_name>$(P)$(R)FilePluginPVPrefix</pv_name>
+    <x>220</x>
+    <y>75</y>
     <width>225</width>
     <font>
       <font family="Liberation Sans" style="REGULAR" size="16.0">
@@ -123,8 +123,8 @@
   <widget type="label" version="2.0.0">
     <name>text #29</name>
     <text>Open shutter value</text>
-    <x>135</x>
-    <y>225</y>
+    <x>30</x>
+    <y>200</y>
     <width>180</width>
     <font>
       <font family="Liberation Sans" style="REGULAR" size="16.0">
@@ -135,8 +135,8 @@
   <widget type="textentry" version="3.0.0">
     <name>text entry #32</name>
     <pv_name>$(P)$(R)OpenShutterValue</pv_name>
-    <x>325</x>
-    <y>225</y>
+    <x>220</x>
+    <y>200</y>
     <width>225</width>
     <font>
       <font family="Liberation Sans" style="REGULAR" size="16.0">
@@ -153,8 +153,8 @@
   <widget type="textentry" version="3.0.0">
     <name>text entry #36</name>
     <pv_name>$(P)$(R)CloseShutterPVName</pv_name>
-    <x>325</x>
-    <y>250</y>
+    <x>220</x>
+    <y>225</y>
     <width>225</width>
     <font>
       <font family="Liberation Sans" style="REGULAR" size="16.0">
@@ -171,8 +171,8 @@
   <widget type="label" version="2.0.0">
     <name>text #40</name>
     <text>Close shutter PV</text>
-    <x>155</x>
-    <y>250</y>
+    <x>50</x>
+    <y>225</y>
     <width>160</width>
     <font>
       <font family="Liberation Sans" style="REGULAR" size="16.0">
@@ -183,8 +183,8 @@
   <widget type="label" version="2.0.0">
     <name>text #43</name>
     <text>Open shutter PV</text>
-    <x>165</x>
-    <y>200</y>
+    <x>60</x>
+    <y>175</y>
     <width>150</width>
     <font>
       <font family="Liberation Sans" style="REGULAR" size="16.0">
@@ -195,8 +195,8 @@
   <widget type="textentry" version="3.0.0">
     <name>text entry #46</name>
     <pv_name>$(P)$(R)OpenShutterPVName</pv_name>
-    <x>325</x>
-    <y>200</y>
+    <x>220</x>
+    <y>175</y>
     <width>225</width>
     <font>
       <font family="Liberation Sans" style="REGULAR" size="16.0">
@@ -213,8 +213,8 @@
   <widget type="textentry" version="3.0.0">
     <name>text entry #50</name>
     <pv_name>$(P)$(R)RotationPVName</pv_name>
-    <x>325</x>
-    <y>125</y>
+    <x>220</x>
+    <y>100</y>
     <width>225</width>
     <font>
       <font family="Liberation Sans" style="REGULAR" size="16.0">
@@ -231,8 +231,8 @@
   <widget type="label" version="2.0.0">
     <name>text #54</name>
     <text>Rotation PV</text>
-    <x>205</x>
-    <y>125</y>
+    <x>100</x>
+    <y>100</y>
     <width>110</width>
     <font>
       <font family="Liberation Sans" style="REGULAR" size="16.0">
@@ -243,8 +243,8 @@
   <widget type="label" version="2.0.0">
     <name>text #57</name>
     <text>Sample X PV</text>
-    <x>205</x>
-    <y>150</y>
+    <x>100</x>
+    <y>125</y>
     <width>110</width>
     <font>
       <font family="Liberation Sans" style="REGULAR" size="16.0">
@@ -255,8 +255,8 @@
   <widget type="textentry" version="3.0.0">
     <name>text entry #60</name>
     <pv_name>$(P)$(R)SampleXPVName</pv_name>
-    <x>325</x>
-    <y>150</y>
+    <x>220</x>
+    <y>125</y>
     <width>225</width>
     <font>
       <font family="Liberation Sans" style="REGULAR" size="16.0">
@@ -273,8 +273,8 @@
   <widget type="textentry" version="3.0.0">
     <name>text entry #64</name>
     <pv_name>$(P)$(R)SampleYPVName</pv_name>
-    <x>325</x>
-    <y>175</y>
+    <x>220</x>
+    <y>150</y>
     <width>225</width>
     <font>
       <font family="Liberation Sans" style="REGULAR" size="16.0">
@@ -291,8 +291,8 @@
   <widget type="label" version="2.0.0">
     <name>text #68</name>
     <text>Sample Y PV</text>
-    <x>205</x>
-    <y>175</y>
+    <x>100</x>
+    <y>150</y>
     <width>110</width>
     <font>
       <font family="Liberation Sans" style="REGULAR" size="16.0">
@@ -303,8 +303,8 @@
   <widget type="label" version="2.0.0">
     <name>text #71</name>
     <text>Close shutter value</text>
-    <x>125</x>
-    <y>275</y>
+    <x>20</x>
+    <y>250</y>
     <width>190</width>
     <font>
       <font family="Liberation Sans" style="REGULAR" size="16.0">
@@ -315,98 +315,8 @@
   <widget type="textentry" version="3.0.0">
     <name>text entry #74</name>
     <pv_name>$(P)$(R)CloseShutterValue</pv_name>
-    <x>325</x>
-    <y>275</y>
-    <width>225</width>
-    <font>
-      <font family="Liberation Sans" style="REGULAR" size="16.0">
-      </font>
-    </font>
-    <background_color>
-      <color red="115" green="223" blue="255">
-      </color>
-    </background_color>
-    <format>6</format>
-    <show_units>false</show_units>
-    <border_alarm_sensitive>false</border_alarm_sensitive>
-  </widget>
-  <widget type="textentry" version="3.0.0">
-    <name>text entry #78</name>
-    <pv_name>$(P)$(R)BeamReadyPVName</pv_name>
-    <x>325</x>
-    <y>300</y>
-    <width>225</width>
-    <font>
-      <font family="Liberation Sans" style="REGULAR" size="16.0">
-      </font>
-    </font>
-    <background_color>
-      <color red="115" green="223" blue="255">
-      </color>
-    </background_color>
-    <format>6</format>
-    <show_units>false</show_units>
-    <border_alarm_sensitive>false</border_alarm_sensitive>
-  </widget>
-  <widget type="label" version="2.0.0">
-    <name>text #82</name>
-    <text>Beam ready PV</text>
-    <x>185</x>
-    <y>300</y>
-    <width>130</width>
-    <font>
-      <font family="Liberation Sans" style="REGULAR" size="16.0">
-      </font>
-    </font>
-    <auto_size>true</auto_size>
-  </widget>
-  <widget type="textentry" version="3.0.0">
-    <name>text entry #85</name>
-    <pv_name>$(P)$(R)BeamReadyValue</pv_name>
-    <x>325</x>
-    <y>325</y>
-    <width>225</width>
-    <font>
-      <font family="Liberation Sans" style="REGULAR" size="16.0">
-      </font>
-    </font>
-    <background_color>
-      <color red="115" green="223" blue="255">
-      </color>
-    </background_color>
-    <format>6</format>
-    <show_units>false</show_units>
-    <border_alarm_sensitive>false</border_alarm_sensitive>
-  </widget>
-  <widget type="label" version="2.0.0">
-    <name>text #89</name>
-    <text>Beam ready value</text>
-    <x>155</x>
-    <y>325</y>
-    <width>160</width>
-    <font>
-      <font family="Liberation Sans" style="REGULAR" size="16.0">
-      </font>
-    </font>
-    <auto_size>true</auto_size>
-  </widget>
-  <widget type="label" version="2.0.0">
-    <name>text #92</name>
-    <text>File plugin prefix</text>
-    <x>135</x>
-    <y>75</y>
-    <width>180</width>
-    <font>
-      <font family="Liberation Sans" style="REGULAR" size="16.0">
-      </font>
-    </font>
-    <horizontal_alignment>2</horizontal_alignment>
-  </widget>
-  <widget type="textentry" version="3.0.0">
-    <name>text entry #95</name>
-    <pv_name>$(P)$(R)FilePluginPVPrefix</pv_name>
-    <x>325</x>
-    <y>75</y>
+    <x>220</x>
+    <y>250</y>
     <width>225</width>
     <font>
       <font family="Liberation Sans" style="REGULAR" size="16.0">
