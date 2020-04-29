@@ -11,5 +11,6 @@ Content
    source/about
    source/usage
    source/example_application
+   source/demo
    source/api
    source/credits
