@@ -425,13 +425,13 @@ If these PVs are changed tomoscan must be restarted.
     :width: 75%
     :align: center
 
-tomoScan13BM.adl
+tomoScan_13BM.adl
 ~~~~~~~~~~~~~~~~~~~~~~
 
-The following is the MEDM screen :download:`tomoScan13BM.adl <../../tomoScanApp/op/adl/tomoScan13BM.adl>`.  
-This screen contains the PVs for the TomoScan13BM derived class.  If the MCSPrefix or BeamReadyPV are changed then tomoscan must be restarted.
+The following is the MEDM screen :download:`tomoScan_13BM.adl <../../tomoScanApp/op/adl/tomoScan_13BM.adl>`.  
+This screen contains the PVs for the TomoScan_13BM derived class.  If the MCSPrefix or BeamReadyPV are changed then tomoscan must be restarted.
 
-.. image:: img/tomoScan13BM.png
+.. image:: img/tomoScan_13BM.png
     :width: 75%
     :align: center
 
