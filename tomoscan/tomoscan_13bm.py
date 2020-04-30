@@ -103,6 +103,9 @@ class TomoScan13BM(TomoScan):
         - Collects 3 dummy images with ``collect_static_frames``.
           This is required when switching from "FreeRun" to triggered mode
           on the Point Grey camera.
+          
+        - Sets the FileNumber back to 1 because we collect dark-fields, flat-fields, 
+          and projections into separate files with successive file numbers starting at 1.
 
         - Waits for 1 exposure time because the MCS LNE output stays low for
           up to the exposure time.
@@ -111,6 +114,9 @@ class TomoScan13BM(TomoScan):
 
         # Call the base class method
         super().begin_scan()
+        # We save flats, darks, and projections in separate files.
+        # Set FileNumber back to 1.
+        self.epics_pvs['FPFileNumber'].put(1)
         # Need to collect 3 dummy frames after changing camera to triggered mode
         self.collect_static_frames(3, False)
         # The MCS LNE output stays low after stopping MCS for up to the
