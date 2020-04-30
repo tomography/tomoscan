@@ -603,15 +603,17 @@ class TomoScan():
             }
             readout = readout_times[pixel_format][video_mode]/1000.
         if camera_model == 'Oryx ORX-10G-51S5M':
-            print(camera_model)
-            video_mode   = self.epics_pvs['CamVideoMode'].get(as_string=True)
+            # video_mode   = self.epics_pvs['CamVideoMode'].get(as_string=True)
             readout_times = {
-                'Mono8':        {'Mode0': 6.2,  'Mode1': 6.2, 'Mode5': 6.2, 'Mode7': 7.9},
-                'Mono12Packed': {'Mode0': 9.2,  'Mode1': 6.2, 'Mode5': 6.2, 'Mode7': 11.5},
-                'Mono16':       {'Mode0': 12.2, 'Mode1': 6.2, 'Mode5': 6.2, 'Mode7': 12.2}
+                'Mono8': 6.18,
+                'Mono12Packed': 8.20,
+                'Mono16': 12.34
             }
-            readout = readout_times[pixel_format][video_mode]/1000.
+            readout = readout_times[pixel_format]/1000.
 
+            print('********************')
+            print(readout, pixel_format)
+            print('********************')
         if readout is None:
             logging.error('Unsupported combination of camera model, pixel format and video mode: %s %s %s',
                           camera_model, pixel_format, video_mode)
