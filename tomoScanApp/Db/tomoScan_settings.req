@@ -87,3 +87,4 @@ $(P)$(R)FileName
 #controlPV $(P)$(R)ImagesSaved
 #controlPV $(P)$(R)ElapsedTime
 #controlPV $(P)$(R)RemainingTime
+#controlPV $(P)$(R)Watchdog
