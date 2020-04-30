@@ -49,7 +49,7 @@ class TomoScan2BM(TomoScan):
         Parameters
         ----------
         trigger_mode : str
-            Choices are: "FreeRun", "MCSInternal", or "PSOExternal"
+            Choices are: "FreeRun", "Internal", or "PSOExternal"
 
         num_images : int
             Number of images to collect.  Ignored if trigger_mode="FreeRun".
@@ -67,14 +67,35 @@ class TomoScan2BM(TomoScan):
             self.epics_pvs['CamTriggerMode'].put('Off', wait=True)
             self.epics_pvs['CamAcquire'].put('Acquire')                      
         else: # set camera to external triggering
-            self.epics_pvs['CamImageMode'].put('Multiple', wait=True)
-            self.epics_pvs['CamNumImages'].put(num_images, wait=True)
+            self.epics_pvs['CamAcquire'].put(0)
+            pv.wait_pv(global_PVs['CamAcquire'], 0, 2)
+
+
+
+            self.epics_pvs['CamTriggerMode'].put('Off', wait=True)
+            self.epics_pvs['CamTriggerSource'].put('Line2', wait=True)
+            self.epics_pvs['CamTriggerOverlap'].put('ReadOut', wait=True)
+            self.epics_pvs['CamExposureMode'].put('Timed', wait=True)
+            self.epics_pvs['CamTriggerSelector'].put('FrameStart', wait=True)
+            self.epics_pvs['CamTriggerActivation'].put('RisingEdge', wait=True)
+
+            self.epics_pvs['CamImageMode'].put('Multiple')
+            self.epics_pvs['CamArrayCallbacks'].put('Enable')
+            self.epics_pvs['CamFrameRateOnOff'].put(0)
+            self.epics_pvs['CamAcquireTimeAuto'].put('Off')
+
+            #self.epics_pvs['CamAcquireTime'].put(float(params.exposure_time))
+
+            print("some issue here ... ")
+            print(self.epics_pvs['CamTriggerMode'].value)
             self.epics_pvs['CamTriggerMode'].put('On', wait=True)
+            print(self.epics_pvs['CamTriggerMode'].value)
+            print("DONE")
+            return
             self.epics_pvs['CamTriggerOverlap'].put('ReadOut', wait=True)
             self.epics_pvs['CamTriggerSource'].put('Line2', wait=True)
             # Set NumCapture
             self.epics_pvs['FPNumCapture'].put(num_images, wait=True)
-
 
     def collect_static_frames(self, num_frames, frame_type, save=True):
         """Collects num_frames images in "Internal" trigger mode for dark fields and flat fields.
@@ -220,28 +241,59 @@ class TomoScan2BM(TomoScan):
         time_per_angle = self.compute_frame_time()
         motor_speed = rotation_step / time_per_angle
 
-        self.epics_pvs['PSOStartPos'].put(rotation_start)
-        self.epics_pvs['PSOEndPos'].put(rotation_stop)
-        self.epics_pvs['PSOSlewSpeed'].put(motor_speed)
-        self.epics_pvs['PSOScanDelta'].put(rotation_step)
+        self.epics_pvs['PSOstartPos'].put(rotation_start)
+        self.epics_pvs['PSOendPos'].put(rotation_stop)
+        self.epics_pvs['PSOslewSpeed'].put(motor_speed)
+        self.epics_pvs['PSOscanDelta'].put(rotation_step)
 
-        calc_num_proj = self.epics_pvs['PSOCalcProjections'].value
+        calc_num_proj = self.epics_pvs['PSOcalcProjections'].value
         
         if calc_num_proj != num_angles:
             # log.warning('  *** *** Changing number of projections from: %s to: %s' % (params.num_angles, int(calc_num_proj)))
             num_angles = calc_num_proj
-        self.epics_pvs['PSOScanControl'].put('Standard')
+        self.epics_pvs['PSOscanControl'].put('Standard')
 
         # Taxi before starting capture
-        self.epics_pvs['PSOTaxi'].put(1)
+        self.epics_pvs['PSOtaxi'].put(1)
+        wait_pv(epics_pvs['FlyTaxi'], 0)
+
         self.set_trigger_mode('PSOExternal', num_angles)
+
         # Start capturing in file plugin
         self.epics_pvs['FPCapture'].put('Capture')
         # Start the camera
         self.epics_pvs['CamAcquire'].put('Acquire')
         # Start fly scan
-        self.epics_pvs['PSORun'].put(1)
+        self.epics_pvs['PSOrun'].put(1)
         # wait for acquire to finish 
-        time_per_angle = self.compute_frame_time()
-        collection_time = num_angles * time_per_angle
-        self.wait_camera_done(collection_time + 60.)
+        # time_per_angle = self.compute_frame_time()
+        # collection_time = num_angles * time_per_angle
+        # self.wait_camera_done(collection_time + 60.)
+        wait_pv(global_PVs['FlyRun'], 0)
+
+    def wait_pv(self, pv, wait_val, timeout=-1):
+        """Wait on a pv to be a value until max_timeout (default forever)
+           delay for pv to change   
+        """
+
+        time.sleep(.01)
+        startTime = time.time()
+        while(True):
+            pv_val = pv.get()
+            if type(pv_val) == float:
+                if abs(pv_val - wait_val) < EPSILON:
+                    return True
+            if (pv_val != wait_val):
+                if timeout > -1:
+                    curTime = time.time()
+                    diffTime = curTime - startTime
+                    if diffTime >= timeout:
+                        logging.error('  *** ERROR: DROPPED IMAGES ***')
+                        logging.error('  *** wait_pv(%s, %d, %5.2f reached max timeout. Return False' % (pv.pvname, wait_val, timeout))
+
+
+                        return False
+                time.sleep(.01)
+            else:
+                return True
+
