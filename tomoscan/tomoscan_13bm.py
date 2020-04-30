@@ -103,8 +103,8 @@ class TomoScan13BM(TomoScan):
         - Collects 3 dummy images with ``collect_static_frames``.
           This is required when switching from "FreeRun" to triggered mode
           on the Point Grey camera.
-          
-        - Sets the FileNumber back to 1 because we collect dark-fields, flat-fields, 
+
+        - Sets the FileNumber back to 1 because we collect dark-fields, flat-fields,
           and projections into separate files with successive file numbers starting at 1.
 
         - Waits for 1 exposure time because the MCS LNE output stays low for
