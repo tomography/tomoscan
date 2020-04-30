@@ -93,6 +93,9 @@ class TomoScan():
                 self.control_pvs['CamTriggerSource']      = PV(camera_prefix + 'TriggerSource')
                 self.control_pvs['CamTriggerSelector']    = PV(camera_prefix + 'TriggerSelector')
                 self.control_pvs['CamTriggerActivation']  = PV(camera_prefix + 'TriggerActivation')
+                self.control_pvs['CamArrayCallbacks']     = PV(camera_prefix + 'ArrayCallbacks')
+                self.control_pvs['CamFrameRateEnable']    = PV(camera_prefix + 'FrameRateEnable')
+                self.control_pvs['CamAcquireTimeAuto']    = PV(camera_prefix + 'AcquireTimeAuto')
 
         # Set frame type
         self.control_pvs['CamFrameType']     = PV(camera_prefix + 'FrameType')
@@ -144,7 +147,7 @@ class TomoScan():
             self.control_pvs['PSOendPos']          = PV(prefix + 'endPos')
             self.control_pvs['PSOslewSpeed']       = PV(prefix + 'slewSpeed')
             self.control_pvs['PSOtaxi']            = PV(prefix + 'taxi')
-            self.control_pvs['PSOrun']             = PV(prefix + 'fly')
+            self.control_pvs['PSOfly']             = PV(prefix + 'fly')
             self.control_pvs['PSOscanControl']     = PV(prefix + 'scanControl')
             self.control_pvs['PSOcalcProjections'] = PV(prefix + 'numTriggers')
 

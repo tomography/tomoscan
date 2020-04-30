@@ -68,7 +68,7 @@ class TomoScan2BM(TomoScan):
             self.epics_pvs['CamAcquire'].put('Acquire')                      
         else: # set camera to external triggering
             self.epics_pvs['CamAcquire'].put(0)
-            pv.wait_pv(global_PVs['CamAcquire'], 0, 2)
+            self.wait_pv(self.epics_pvs['CamAcquire'], 0, 2)
 
 
 
@@ -81,7 +81,7 @@ class TomoScan2BM(TomoScan):
 
             self.epics_pvs['CamImageMode'].put('Multiple')
             self.epics_pvs['CamArrayCallbacks'].put('Enable')
-            self.epics_pvs['CamFrameRateOnOff'].put(0)
+            self.epics_pvs['CamFrameRateEnable'].put(0)
             self.epics_pvs['CamAcquireTimeAuto'].put('Off')
 
             #self.epics_pvs['CamAcquireTime'].put(float(params.exposure_time))
@@ -198,6 +198,32 @@ class TomoScan2BM(TomoScan):
         self.epics_pvs['ScanStatus'].put('Collecting flat fields')
         self.collect_static_frames(self.epics_pvs['NumFlatFields'].value, FrameTypeFlat)
 
+    def wait_pv(self, pv, wait_val, timeout=-1):
+        """Wait on a pv to be a value until max_timeout (default forever)
+           delay for pv to change   
+        """
+
+        time.sleep(.01)
+        startTime = time.time()
+        while(True):
+            pv_val = pv.get()
+            if type(pv_val) == float:
+                if abs(pv_val - wait_val) < EPSILON:
+                    return True
+            if (pv_val != wait_val):
+                if timeout > -1:
+                    curTime = time.time()
+                    diffTime = curTime - startTime
+                    if diffTime >= timeout:
+                        logging.error('  *** ERROR: DROPPED IMAGES ***')
+                        logging.error('  *** wait_pv(%s, %d, %5.2f reached max timeout. Return False' % (pv.pvname, wait_val, timeout))
+
+
+                        return False
+                time.sleep(.01)
+            else:
+                return True
+
     def collect_projections(self):
         """Collects projections in fly scan mode.
 
@@ -255,7 +281,7 @@ class TomoScan2BM(TomoScan):
 
         # Taxi before starting capture
         self.epics_pvs['PSOtaxi'].put(1)
-        wait_pv(epics_pvs['FlyTaxi'], 0)
+        self.wait_pv(self.epics_pvs['PSOtaxi'], 0)
 
         self.set_trigger_mode('PSOExternal', num_angles)
 
@@ -264,36 +290,10 @@ class TomoScan2BM(TomoScan):
         # Start the camera
         self.epics_pvs['CamAcquire'].put('Acquire')
         # Start fly scan
-        self.epics_pvs['PSOrun'].put(1)
+        self.epics_pvs['PSOfly'].put(1)
         # wait for acquire to finish 
         # time_per_angle = self.compute_frame_time()
         # collection_time = num_angles * time_per_angle
         # self.wait_camera_done(collection_time + 60.)
-        wait_pv(global_PVs['FlyRun'], 0)
-
-    def wait_pv(self, pv, wait_val, timeout=-1):
-        """Wait on a pv to be a value until max_timeout (default forever)
-           delay for pv to change   
-        """
-
-        time.sleep(.01)
-        startTime = time.time()
-        while(True):
-            pv_val = pv.get()
-            if type(pv_val) == float:
-                if abs(pv_val - wait_val) < EPSILON:
-                    return True
-            if (pv_val != wait_val):
-                if timeout > -1:
-                    curTime = time.time()
-                    diffTime = curTime - startTime
-                    if diffTime >= timeout:
-                        logging.error('  *** ERROR: DROPPED IMAGES ***')
-                        logging.error('  *** wait_pv(%s, %d, %5.2f reached max timeout. Return False' % (pv.pvname, wait_val, timeout))
-
-
-                        return False
-                time.sleep(.01)
-            else:
-                return True
+        self.wait_pv(self.epics_pvs['PSOfly'], 0)
 
