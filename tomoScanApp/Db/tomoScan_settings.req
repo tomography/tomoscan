@@ -69,6 +69,7 @@ $(P)$(R)ExposureTime
 ############################
 $(P)$(R)FilePath
 $(P)$(R)FileName
+#controlPV $(P)$(R)FilePathExists
 
 #################################
 # Scan control via Channel Access
