@@ -258,6 +258,54 @@ Scan status via Channel Access
     - stringout
     - This record will be updated with the estimated time remaining while scanning.
 
+tomoScan_settings.req
+---------------------
+
+This is the autosave request file for tomoScan.template. This file serves 2 purposes:
+1) It is used by autosave to determine which PVs to save in the ``auto_settings.sav`` file.
+
+2) It is read in the constructor of the TomoScan class to determine what PVs to read and write.
+
+It contains 4 types of PVs:
+
+1) Configuration PVs. These are PVs the control how tomography scans are collected, and provide metadata
+   about the scan. An example is $(P)$(R)RotationStart.  These have the following properties:
+
+  - They are saved by autosave in the auto_settings.sav file.
+  - They are saved by TomoScan in configuration files. 
+  - They do **not** contain the string "PVName" or "PVPrefix" in their PV names.
+  - They appear as normal lines in the file, not in comment lines.
+
+2) PVs that contain the name of another PV.  These are used to configure TomoScan to control a particular motor
+   for the rotation axis, sample X axis, etc.  An example is $(P)$(R)RotationPVName.  
+   These have the following properties:
+
+  - They contain the string "PVName" in their PV names.
+  - They are saved by autosave in the auto_settings.sav file.
+  - They are **not** saved by TomoScan in configuration files. 
+  - They appear as normal lines in the file, not in comment lines.
+
+3) PVs that contain the PV prefix for a set of other PVs.  These are used to configure TomoScan to control a particular 
+   areaDetector camera, etc.  Examples are (P)$(R)CameraPVPrefix and $(P)$(R)FilePluginPVPrefix.  
+   These have the following properties:
+
+  - They contain the string "PVPrefix" in their PV names.
+  - They are saved by autosave in the auto_settings.sav file.
+  - They are **not** saved by TomoScan in configuration files. 
+  - They appear as normal lines in the file, not in comment lines.
+
+4) PVs that are required by TomoScan, but which should not be saved and restored by autosave, either because
+   they are read-only, or because writing to them when the IOC starts might have unwanted consequences.
+   These have the following properties:
+
+  - They appear in comment lines in the file.  The comment line must start with the string #controlPV followed by the PV name.
+  - They do **not** contain the string "PVName" or "PVPrefix" in their PV names.
+  - They are **not** saved by autosave in the auto_settings.sav file.
+  - They are **not** saved by TomoScan in configuration files. 
+
+When the request file is read it is used to construct all of the EPICS PV names that are used by TomoScan.
+This allows TomoScan to avoid having any hard-coded PV names, and makes it easy to port to a new beamline.
+
 
 tomoScan_13BM.template
 ----------------------
@@ -402,13 +450,20 @@ User information
     - stringout
     - Experiment Safety Approval Form number
 
+tomoScan_13BM_settings.req
+--------------------------
+
+This is the autosave request file for tomoScan_13BM.template. It has the same usage and type of content 
+as tomoScan_settings.req described above, except that it contains the PVs for the derived class TomoScan13BM.
+
 medm files
 ----------
 
 tomoScan.adl
 ~~~~~~~~~~~~
 
-The following is the MEDM screen :download:`tomoScan.adl <../../tomoScanApp/op/adl/tomoScan.adl>` during a scan. The status information is updating.
+The following is the MEDM screen :download:`tomoScan.adl <../../tomoScanApp/op/adl/tomoScan.adl>` during a scan. 
+The status information is updating.
 
 .. image:: img/tomoScan.png
     :width: 75%
@@ -417,37 +472,20 @@ The following is the MEDM screen :download:`tomoScan.adl <../../tomoScanApp/op/a
 tomoScanEPICS_PVs.adl
 ~~~~~~~~~~~~~~~~~~~~~
 
-The following is the MEDM screen :download:`tomoScanEPICS_PVs.adl <../../tomoScanApp/op/adl/tomoScanEPICS_PVs.adl>`. If these PVs are changed tomoscan must be restarted.
+The following is the MEDM screen :download:`tomoScanEPICS_PVs.adl <../../tomoScanApp/op/adl/tomoScanEPICS_PVs.adl>`. 
+If these PVs are changed tomoscan must be restarted.
 
 .. image:: img/tomoScanEPICS_PVs.png
     :width: 75%
     :align: center
 
-tomoScanSampleInfo.adl
+tomoScan_13BM.adl
 ~~~~~~~~~~~~~~~~~~~~~~
 
-The following is the MEDM screen :download:`tomoScanSampleInfo.adl <../../tomoScanApp/op/adl/tomoScanSampleInfo.adl>`.
+The following is the MEDM screen :download:`tomoScan_13BM.adl <../../tomoScanApp/op/adl/tomoScan_13BM.adl>`.  
+This screen contains the PVs for the TomoScan_13BM derived class.  If the MCSPrefix or BeamReadyPV are changed then tomoscan must be restarted.
 
-.. image:: img/tomoScanSampleInfo.png
+.. image:: img/tomoScan_13BM.png
     :width: 75%
     :align: center
-
-tomoScanUserInfo.adl
-~~~~~~~~~~~~~~~~~~~~
-
-The following is the MEDM screen :download:`tomoScanUserInfo.adl <../../tomoScanApp/op/adl/tomoScanUserInfo.adl>`.
-
-.. image:: img/tomoScanUserInfo.png
-    :width: 75%
-    :align: center
-
-tomoScanConfigInfo.adl
-~~~~~~~~~~~~~~~~~~~~~~
-
-The following is the MEDM screen :download:`tomoScanConfigInfo.adl <../../tomoScanApp/op/adl/tomoScanConfigInfo.adl>`.
-
-.. image:: img/tomoScanConfigInfo.png
-    :width: 75%
-    :align: center
-
 

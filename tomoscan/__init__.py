@@ -1,3 +1,5 @@
-__version__ = '0.2'
+__version__ = '0.1'
 
 from tomoscan.tomoscan import *
+from tomoscan.tomoscan_13bm import *
+

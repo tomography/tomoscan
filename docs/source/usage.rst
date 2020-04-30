@@ -27,49 +27,10 @@ dwell time that is equal to the exposure time plus the readout time.
 This line creates the TomoScan13BM object.  It takes two arguments that are passed to the 
 TomoScan constructor:
 
-- The first argument is a list of paths to the autosave request files for the databases described below.  
+- The first argument is a list of paths to the autosave request files for the databases.
+  These are described in the :doc:`example_application` documentation.
 - The second argument is a dictionary of macro substitution values for those request files.
   These define the PV prefixes to use when parsing the files.
-  
-The tomoScan_settings.req and tomoScan_13BM_settings.req files contains 4 types of PVs:
-
-1) Configuration PVs. These are PVs the control how tomography scans are collected, and provide metadata
-   about the scan. An example is $(P)$(R)RotationStart.  These have the following properties:
-
-  - They are saved by autosave in the auto_settings.sav file.
-  - They are saved by TomoScan in configuration files. 
-  - They do **not** contain the string "PVName" or "PVPrefix" in their PV names.
-  - They appear as normal lines in the file, not in comment lines.
-
-2) PVs that contain the name of another PV.  These are used to configure TomoScan to control a particular motor
-   for the rotation axis, sample X axis, etc.  An example is $(P)$(R)RotationPVName.  
-   These have the following properties:
-
-  - They contain the string "PVName" in their PV names.
-  - They are saved by autosave in the auto_settings.sav file.
-  - They are **not** saved by TomoScan in configuration files. 
-  - They appear as normal lines in the file, not in comment lines.
-
-3) PVs that contain the PV prefix for a set of other PVs.  These are used to configure TomoScan to control a particular 
-   areaDetector camera, etc.  Examples are (P)$(R)CameraPVPrefix and $(P)$(R)FilePluginPVPrefix.  
-   These have the following properties:
-
-  - They contain the string "PVPrefix" in their PV names.
-  - They are saved by autosave in the auto_settings.sav file.
-  - They are **not** saved by TomoScan in configuration files. 
-  - They appear as normal lines in the file, not in comment lines.
-
-4) PVs that are required by TomoScan, but which should not be saved and restored by autosave, either because
-   they are read-only, or because writing to them when the IOC starts might have unwanted consequences.
-   These have the following properties:
-
-  - They appear in comment lines in the file.  The comment line must start with the string #controlPV followed by the PV name.
-  - They do **not** contain the string "PVName" or "PVPrefix" in their PV names.
-  - They are **not** saved by autosave in the auto_settings.sav file.
-  - They are **not** saved by TomoScan in configuration files. 
-
-When the request files above are read they are used to construct all of the EPICS PV names that are used by TomoScan.
-This allows TomoScan to avoid having any hard-coded PV names, and makes it easy to port to a new beamline.
 
 After creating the TomoScan13BM object in the line shown above it is ready to perform scans that are 
 initiated by the $(P)$(R)StartScan PV from any Channel Access client.

@@ -11,26 +11,8 @@
   </background_color>
   <grid_visible>false</grid_visible>
   <grid_step_x>5</grid_step_x>
-  <widget type="group" version="2.0.0">
-    <name>composite #6</name>
-    <x>4000</x>
-    <y>4000</y>
-    <width>1</width>
-    <height>1</height>
-    <style>3</style>
-    <transparent>true</transparent>
-  </widget>
-  <widget type="group" version="2.0.0">
-    <name>composite #9</name>
-    <x>4000</x>
-    <y>4000</y>
-    <width>1</width>
-    <height>1</height>
-    <style>3</style>
-    <transparent>true</transparent>
-  </widget>
   <widget type="rectangle" version="2.0.0">
-    <name>rectangle #12</name>
+    <name>rectangle #6</name>
     <y>10</y>
     <width>700</width>
     <height>25</height>
@@ -44,7 +26,7 @@
     </background_color>
   </widget>
   <widget type="label" version="2.0.0">
-    <name>text #15</name>
+    <name>text #9</name>
     <text>Tomography Data Collection   $(P)$(R)</text>
     <y>10</y>
     <width>700</width>
@@ -59,27 +41,35 @@
     </foreground_color>
     <horizontal_alignment>1</horizontal_alignment>
   </widget>
+  <widget type="group" version="2.0.0">
+    <name>composite #12</name>
+    <x>4000</x>
+    <y>4000</y>
+    <width>1</width>
+    <height>1</height>
+    <style>3</style>
+    <transparent>true</transparent>
+  </widget>
+  <widget type="group" version="2.0.0">
+    <name>composite #15</name>
+    <x>4000</x>
+    <y>4000</y>
+    <width>1</width>
+    <height>1</height>
+    <style>3</style>
+    <transparent>true</transparent>
+  </widget>
   <widget type="action_button" version="3.0.0">
     <name>related display #18</name>
     <actions>
       <action type="open_display">
-        <file>tomoScanSampleInfo.opi</file>
+        <file>$(BEAMLINE).opi</file>
         <target>tab</target>
-        <description>Sample information</description>
-      </action>
-      <action type="open_display">
-        <file>tomoScanUserInfo.opi</file>
-        <target>tab</target>
-        <description>User information</description>
-      </action>
-      <action type="open_display">
-        <file>tomoScanConfigInfo.opi</file>
-        <target>tab</target>
-        <description>Configuration information</description>
+        <description>Beamline-specific display</description>
       </action>
     </actions>
     <text></text>
-    <x>510</x>
+    <x>508</x>
     <y>90</y>
     <height>20</height>
     <background_color>
@@ -88,7 +78,7 @@
     </background_color>
   </widget>
   <widget type="action_button" version="3.0.0">
-    <name>related display #23</name>
+    <name>related display #21</name>
     <actions>
       <action type="open_display">
         <file>tomoScanEPICS_PVs.opi</file>
@@ -107,7 +97,7 @@
     </background_color>
   </widget>
   <widget type="label" version="2.0.0">
-    <name>text #26</name>
+    <name>text #24</name>
     <text>Epics PV names</text>
     <x>15</x>
     <y>92</y>
@@ -119,11 +109,11 @@
     <auto_size>true</auto_size>
   </widget>
   <widget type="label" version="2.0.0">
-    <name>text #29</name>
-    <text>Other information</text>
-    <x>335</x>
+    <name>text #27</name>
+    <text>Beamline-specific display</text>
+    <x>253</x>
     <y>91</y>
-    <width>170</width>
+    <width>250</width>
     <font>
       <font family="Liberation Sans" style="REGULAR" size="16.0">
       </font>
@@ -131,7 +121,7 @@
     <auto_size>true</auto_size>
   </widget>
   <widget type="rectangle" version="2.0.0">
-    <name>rectangle #32</name>
+    <name>rectangle #30</name>
     <x>5</x>
     <y>50</y>
     <width>690</width>
@@ -148,7 +138,7 @@
     <transparent>true</transparent>
   </widget>
   <widget type="rectangle" version="2.0.0">
-    <name>rectangle #35</name>
+    <name>rectangle #33</name>
     <x>290</x>
     <y>55</y>
     <width>120</width>
@@ -162,7 +152,7 @@
     </background_color>
   </widget>
   <widget type="label" version="2.0.0">
-    <name>text #38</name>
+    <name>text #36</name>
     <text>Setup</text>
     <x>325</x>
     <y>55</y>
@@ -178,7 +168,7 @@
     <horizontal_alignment>1</horizontal_alignment>
   </widget>
   <widget type="rectangle" version="2.0.0">
-    <name>rectangle #41</name>
+    <name>rectangle #39</name>
     <x>5</x>
     <y>120</y>
     <width>690</width>
@@ -195,7 +185,7 @@
     <transparent>true</transparent>
   </widget>
   <widget type="label" version="2.0.0">
-    <name>text #44</name>
+    <name>text #42</name>
     <text>Angle step</text>
     <x>25</x>
     <y>185</y>
@@ -206,7 +196,7 @@
     <auto_size>true</auto_size>
   </widget>
   <widget type="label" version="2.0.0">
-    <name>text #47</name>
+    <name>text #45</name>
     <text>Start angle</text>
     <x>15</x>
     <y>160</y>
@@ -218,7 +208,7 @@
     <auto_size>true</auto_size>
   </widget>
   <widget type="textentry" version="3.0.0">
-    <name>text entry #50</name>
+    <name>text entry #48</name>
     <pv_name>$(P)$(R)RotationStep</pv_name>
     <x>130</x>
     <y>185</y>
@@ -235,7 +225,7 @@
     <border_alarm_sensitive>false</border_alarm_sensitive>
   </widget>
   <widget type="textentry" version="3.0.0">
-    <name>text entry #54</name>
+    <name>text entry #52</name>
     <pv_name>$(P)$(R)RotationStart</pv_name>
     <x>130</x>
     <y>160</y>
@@ -252,7 +242,7 @@
     <border_alarm_sensitive>false</border_alarm_sensitive>
   </widget>
   <widget type="rectangle" version="2.0.0">
-    <name>rectangle #58</name>
+    <name>rectangle #56</name>
     <x>275</x>
     <y>125</y>
     <width>150</width>
@@ -266,7 +256,7 @@
     </background_color>
   </widget>
   <widget type="label" version="2.0.0">
-    <name>text #61</name>
+    <name>text #59</name>
     <text>Rotation</text>
     <x>303</x>
     <y>124</y>
@@ -282,7 +272,7 @@
     <auto_size>true</auto_size>
   </widget>
   <widget type="rectangle" version="2.0.0">
-    <name>rectangle #64</name>
+    <name>rectangle #62</name>
     <x>5</x>
     <y>220</y>
     <width>690</width>
@@ -299,7 +289,7 @@
     <transparent>true</transparent>
   </widget>
   <widget type="label" version="2.0.0">
-    <name>text #67</name>
+    <name>text #65</name>
     <text>X in position</text>
     <x>75</x>
     <y>260</y>
@@ -311,7 +301,7 @@
     <auto_size>true</auto_size>
   </widget>
   <widget type="textentry" version="3.0.0">
-    <name>text entry #70</name>
+    <name>text entry #68</name>
     <pv_name>$(P)$(R)SampleInX</pv_name>
     <x>215</x>
     <y>260</y>
@@ -328,7 +318,7 @@
     <border_alarm_sensitive>false</border_alarm_sensitive>
   </widget>
   <widget type="textentry" version="3.0.0">
-    <name>text entry #74</name>
+    <name>text entry #72</name>
     <pv_name>$(P)$(R)SampleOutX</pv_name>
     <x>215</x>
     <y>285</y>
@@ -345,7 +335,7 @@
     <border_alarm_sensitive>false</border_alarm_sensitive>
   </widget>
   <widget type="label" version="2.0.0">
-    <name>text #78</name>
+    <name>text #76</name>
     <text>X out position</text>
     <x>65</x>
     <y>285</y>
@@ -357,7 +347,7 @@
     <auto_size>true</auto_size>
   </widget>
   <widget type="combo" version="2.0.0">
-    <name>menu #81</name>
+    <name>menu #79</name>
     <pv_name>$(P)$(R)FlatFieldAxis</pv_name>
     <x>215</x>
     <y>310</y>
@@ -369,7 +359,7 @@
     <border_alarm_sensitive>false</border_alarm_sensitive>
   </widget>
   <widget type="label" version="2.0.0">
-    <name>text #84</name>
+    <name>text #82</name>
     <text>Flat field axis</text>
     <x>55</x>
     <y>310</y>
@@ -381,7 +371,7 @@
     <auto_size>true</auto_size>
   </widget>
   <widget type="bool_button" version="2.0.0">
-    <name>message button #87</name>
+    <name>message button #85</name>
     <pv_name>$(P)$(R)MoveSampleOut</pv_name>
     <x>190</x>
     <y>335</y>
@@ -405,7 +395,7 @@
     <mode>1</mode>
   </widget>
   <widget type="bool_button" version="2.0.0">
-    <name>message button #90</name>
+    <name>message button #88</name>
     <pv_name>$(P)$(R)MoveSampleIn</pv_name>
     <x>40</x>
     <y>335</y>
@@ -429,7 +419,7 @@
     <mode>1</mode>
   </widget>
   <widget type="label" version="2.0.0">
-    <name>text #93</name>
+    <name>text #91</name>
     <text>Y out position</text>
     <x>410</x>
     <y>285</y>
@@ -441,7 +431,7 @@
     <auto_size>true</auto_size>
   </widget>
   <widget type="textentry" version="3.0.0">
-    <name>text entry #96</name>
+    <name>text entry #94</name>
     <pv_name>$(P)$(R)SampleOutY</pv_name>
     <x>555</x>
     <y>285</y>
@@ -458,7 +448,7 @@
     <border_alarm_sensitive>false</border_alarm_sensitive>
   </widget>
   <widget type="textentry" version="3.0.0">
-    <name>text entry #100</name>
+    <name>text entry #98</name>
     <pv_name>$(P)$(R)SampleInY</pv_name>
     <x>555</x>
     <y>260</y>
@@ -475,7 +465,7 @@
     <border_alarm_sensitive>false</border_alarm_sensitive>
   </widget>
   <widget type="label" version="2.0.0">
-    <name>text #104</name>
+    <name>text #102</name>
     <text>Y in position</text>
     <x>420</x>
     <y>260</y>
@@ -487,7 +477,7 @@
     <auto_size>true</auto_size>
   </widget>
   <widget type="textentry" version="3.0.0">
-    <name>text entry #107</name>
+    <name>text entry #105</name>
     <pv_name>$(P)$(R)NumFlatFields</pv_name>
     <x>615</x>
     <y>335</y>
@@ -505,7 +495,7 @@
     <border_alarm_sensitive>false</border_alarm_sensitive>
   </widget>
   <widget type="label" version="2.0.0">
-    <name>text #111</name>
+    <name>text #109</name>
     <text># Images per flat field</text>
     <x>380</x>
     <y>335</y>
@@ -517,7 +507,7 @@
     <auto_size>true</auto_size>
   </widget>
   <widget type="rectangle" version="2.0.0">
-    <name>rectangle #114</name>
+    <name>rectangle #112</name>
     <x>220</x>
     <y>225</y>
     <width>260</width>
@@ -531,7 +521,7 @@
     </background_color>
   </widget>
   <widget type="label" version="2.0.0">
-    <name>text #117</name>
+    <name>text #115</name>
     <text>Flat Field Control</text>
     <x>260</x>
     <y>225</y>
@@ -547,7 +537,7 @@
     <horizontal_alignment>1</horizontal_alignment>
   </widget>
   <widget type="rectangle" version="2.0.0">
-    <name>rectangle #120</name>
+    <name>rectangle #118</name>
     <x>5</x>
     <y>370</y>
     <width>690</width>
@@ -564,7 +554,7 @@
     <transparent>true</transparent>
   </widget>
   <widget type="rectangle" version="2.0.0">
-    <name>rectangle #123</name>
+    <name>rectangle #121</name>
     <x>220</x>
     <y>375</y>
     <width>260</width>
@@ -578,7 +568,7 @@
     </background_color>
   </widget>
   <widget type="label" version="2.0.0">
-    <name>text #126</name>
+    <name>text #124</name>
     <text>Dark Field Control</text>
     <x>260</x>
     <y>375</y>
@@ -594,7 +584,7 @@
     <horizontal_alignment>1</horizontal_alignment>
   </widget>
   <widget type="rectangle" version="2.0.0">
-    <name>rectangle #129</name>
+    <name>rectangle #127</name>
     <x>5</x>
     <y>545</y>
     <width>690</width>
@@ -611,7 +601,7 @@
     <transparent>true</transparent>
   </widget>
   <widget type="rectangle" version="2.0.0">
-    <name>rectangle #132</name>
+    <name>rectangle #130</name>
     <x>250</x>
     <y>551</y>
     <width>200</width>
@@ -625,7 +615,7 @@
     </background_color>
   </widget>
   <widget type="label" version="2.0.0">
-    <name>text #135</name>
+    <name>text #133</name>
     <text>Data Collection</text>
     <x>275</x>
     <y>551</y>
@@ -641,7 +631,7 @@
     <horizontal_alignment>1</horizontal_alignment>
   </widget>
   <widget type="rectangle" version="2.0.0">
-    <name>rectangle #138</name>
+    <name>rectangle #136</name>
     <x>305</x>
     <y>625</y>
     <width>90</width>
@@ -655,7 +645,7 @@
     </background_color>
   </widget>
   <widget type="label" version="2.0.0">
-    <name>text #141</name>
+    <name>text #139</name>
     <text>Status</text>
     <x>314</x>
     <y>625</y>
@@ -671,7 +661,7 @@
     <horizontal_alignment>1</horizontal_alignment>
   </widget>
   <widget type="action_button" version="3.0.0">
-    <name>message button #144</name>
+    <name>message button #142</name>
     <actions>
       <action type="write_pv">
         <pv_name>$(P)$(R)StartScan</pv_name>
@@ -691,7 +681,7 @@
     </background_color>
   </widget>
   <widget type="bool_button" version="2.0.0">
-    <name>message button #147</name>
+    <name>message button #145</name>
     <pv_name>$(P)$(R)AbortScan</pv_name>
     <x>375</x>
     <y>585</y>
@@ -715,7 +705,7 @@
     <mode>1</mode>
   </widget>
   <widget type="label" version="2.0.0">
-    <name>text #150</name>
+    <name>text #148</name>
     <text>Exposure time</text>
     <x>15</x>
     <y>585</y>
@@ -727,7 +717,7 @@
     <auto_size>true</auto_size>
   </widget>
   <widget type="textentry" version="3.0.0">
-    <name>text entry #153</name>
+    <name>text entry #151</name>
     <pv_name>$(P)$(R)ExposureTime</pv_name>
     <x>150</x>
     <y>585</y>
@@ -745,7 +735,7 @@
     <border_alarm_sensitive>false</border_alarm_sensitive>
   </widget>
   <widget type="label" version="2.0.0">
-    <name>text #157</name>
+    <name>text #155</name>
     <text>File directory</text>
     <x>15</x>
     <y>485</y>
@@ -757,7 +747,7 @@
     <auto_size>true</auto_size>
   </widget>
   <widget type="textentry" version="3.0.0">
-    <name>text entry #160</name>
+    <name>text entry #158</name>
     <pv_name>$(P)$(R)FilePath</pv_name>
     <x>160</x>
     <y>485</y>
@@ -775,7 +765,7 @@
     <border_alarm_sensitive>false</border_alarm_sensitive>
   </widget>
   <widget type="label" version="2.0.0">
-    <name>text #164</name>
+    <name>text #162</name>
     <text>Base file name</text>
     <x>15</x>
     <y>510</y>
@@ -787,7 +777,7 @@
     <auto_size>true</auto_size>
   </widget>
   <widget type="textentry" version="3.0.0">
-    <name>text entry #167</name>
+    <name>text entry #165</name>
     <pv_name>$(P)$(R)FileName</pv_name>
     <x>160</x>
     <y>510</y>
@@ -805,7 +795,7 @@
     <border_alarm_sensitive>false</border_alarm_sensitive>
   </widget>
   <widget type="rectangle" version="2.0.0">
-    <name>rectangle #171</name>
+    <name>rectangle #169</name>
     <x>5</x>
     <y>445</y>
     <width>690</width>
@@ -822,7 +812,7 @@
     <transparent>true</transparent>
   </widget>
   <widget type="rectangle" version="2.0.0">
-    <name>rectangle #174</name>
+    <name>rectangle #172</name>
     <x>250</x>
     <y>450</y>
     <width>200</width>
@@ -836,7 +826,7 @@
     </background_color>
   </widget>
   <widget type="label" version="2.0.0">
-    <name>text #177</name>
+    <name>text #175</name>
     <text>File Control</text>
     <x>290</x>
     <y>450</y>
@@ -852,7 +842,7 @@
     <horizontal_alignment>1</horizontal_alignment>
   </widget>
   <widget type="label" version="2.0.0">
-    <name>text #180</name>
+    <name>text #178</name>
     <text># Dark fields</text>
     <x>10</x>
     <y>410</y>
@@ -864,7 +854,7 @@
     <auto_size>true</auto_size>
   </widget>
   <widget type="textentry" version="3.0.0">
-    <name>text entry #183</name>
+    <name>text entry #181</name>
     <pv_name>$(P)$(R)NumDarkFields</pv_name>
     <x>145</x>
     <y>410</y>
@@ -882,7 +872,7 @@
     <border_alarm_sensitive>false</border_alarm_sensitive>
   </widget>
   <widget type="label" version="2.0.0">
-    <name>text #187</name>
+    <name>text #185</name>
     <text>Dark value</text>
     <x>226</x>
     <y>410</y>
@@ -893,7 +883,7 @@
     <auto_size>true</auto_size>
   </widget>
   <widget type="textentry" version="3.0.0">
-    <name>text entry #190</name>
+    <name>text entry #188</name>
     <pv_name>$(P)$(R)DarkFieldValue</pv_name>
     <x>331</x>
     <y>410</y>
@@ -911,7 +901,7 @@
     <border_alarm_sensitive>false</border_alarm_sensitive>
   </widget>
   <widget type="group" version="2.0.0">
-    <name>composite #194</name>
+    <name>composite #192</name>
     <x>360</x>
     <y>310</y>
     <width>295</width>
@@ -919,7 +909,7 @@
     <style>3</style>
     <transparent>true</transparent>
     <widget type="label" version="2.0.0">
-      <name>text #197</name>
+      <name>text #195</name>
       <text>Collect flat fields</text>
       <width>190</width>
       <font>
@@ -929,7 +919,7 @@
       <auto_size>true</auto_size>
     </widget>
     <widget type="combo" version="2.0.0">
-      <name>menu #200</name>
+      <name>menu #198</name>
       <pv_name>$(P)$(R)FlatFieldMode</pv_name>
       <x>195</x>
       <height>20</height>
@@ -941,7 +931,7 @@
     </widget>
   </widget>
   <widget type="label" version="2.0.0">
-    <name>text #203</name>
+    <name>text #201</name>
     <text>Collect dark fields</text>
     <x>415</x>
     <y>410</y>
@@ -953,7 +943,7 @@
     <auto_size>true</auto_size>
   </widget>
   <widget type="combo" version="2.0.0">
-    <name>menu #206</name>
+    <name>menu #204</name>
     <pv_name>$(P)$(R)DarkFieldMode</pv_name>
     <x>610</x>
     <y>410</y>
@@ -966,7 +956,7 @@
     <border_alarm_sensitive>false</border_alarm_sensitive>
   </widget>
   <widget type="label" version="2.0.0">
-    <name>text #209</name>
+    <name>text #207</name>
     <text>Scan status</text>
     <x>85</x>
     <y>655</y>
@@ -978,7 +968,7 @@
     <auto_size>true</auto_size>
   </widget>
   <widget type="textupdate" version="2.0.0">
-    <name>text update #212</name>
+    <name>text update #210</name>
     <pv_name>$(P)$(R)ScanStatus</pv_name>
     <x>201</x>
     <y>655</y>
@@ -996,7 +986,7 @@
     <border_alarm_sensitive>false</border_alarm_sensitive>
   </widget>
   <widget type="label" version="2.0.0">
-    <name>text #216</name>
+    <name>text #214</name>
     <text>Return to start</text>
     <x>495</x>
     <y>160</y>
@@ -1008,7 +998,7 @@
     <auto_size>true</auto_size>
   </widget>
   <widget type="combo" version="2.0.0">
-    <name>menu #219</name>
+    <name>menu #217</name>
     <pv_name>$(P)$(R)ReturnRotation</pv_name>
     <x>525</x>
     <y>185</y>
@@ -1021,7 +1011,7 @@
     <border_alarm_sensitive>false</border_alarm_sensitive>
   </widget>
   <widget type="label" version="2.0.0">
-    <name>text #222</name>
+    <name>text #220</name>
     <text># of angles</text>
     <x>245</x>
     <y>160</y>
@@ -1033,7 +1023,7 @@
     <auto_size>true</auto_size>
   </widget>
   <widget type="textentry" version="3.0.0">
-    <name>text entry #225</name>
+    <name>text entry #223</name>
     <pv_name>$(P)$(R)NumAngles</pv_name>
     <x>360</x>
     <y>160</y>
@@ -1050,7 +1040,7 @@
     <border_alarm_sensitive>false</border_alarm_sensitive>
   </widget>
   <widget type="label" version="2.0.0">
-    <name>text #229</name>
+    <name>text #227</name>
     <text>Stop angle</text>
     <x>255</x>
     <y>185</y>
@@ -1061,7 +1051,7 @@
     <auto_size>true</auto_size>
   </widget>
   <widget type="textupdate" version="2.0.0">
-    <name>text update #232</name>
+    <name>text update #230</name>
     <pv_name>$(P)$(R)RotationStop</pv_name>
     <x>360</x>
     <y>187</y>
@@ -1079,7 +1069,7 @@
     <border_alarm_sensitive>false</border_alarm_sensitive>
   </widget>
   <widget type="label" version="2.0.0">
-    <name>text #236</name>
+    <name>text #234</name>
     <text>Remaining time</text>
     <x>55</x>
     <y>753</y>
@@ -1091,7 +1081,7 @@
     <auto_size>true</auto_size>
   </widget>
   <widget type="label" version="2.0.0">
-    <name>text #239</name>
+    <name>text #237</name>
     <text>Elapsed time</text>
     <x>75</x>
     <y>730</y>
@@ -1103,7 +1093,7 @@
     <auto_size>true</auto_size>
   </widget>
   <widget type="textupdate" version="2.0.0">
-    <name>text update #242</name>
+    <name>text update #240</name>
     <pv_name>$(P)$(R)ElapsedTime</pv_name>
     <x>201</x>
     <y>730</y>
@@ -1120,7 +1110,7 @@
     <border_alarm_sensitive>false</border_alarm_sensitive>
   </widget>
   <widget type="textupdate" version="2.0.0">
-    <name>text update #246</name>
+    <name>text update #244</name>
     <pv_name>$(P)$(R)RemainingTime</pv_name>
     <x>200</x>
     <y>755</y>
@@ -1137,7 +1127,7 @@
     <border_alarm_sensitive>false</border_alarm_sensitive>
   </widget>
   <widget type="rectangle" version="2.0.0">
-    <name>rectangle #250</name>
+    <name>rectangle #248</name>
     <x>5</x>
     <y>620</y>
     <width>690</width>
@@ -1154,7 +1144,7 @@
     <transparent>true</transparent>
   </widget>
   <widget type="label" version="2.0.0">
-    <name>text #253</name>
+    <name>text #251</name>
     <text>Images collected</text>
     <x>35</x>
     <y>680</y>
@@ -1166,7 +1156,7 @@
     <auto_size>true</auto_size>
   </widget>
   <widget type="textupdate" version="2.0.0">
-    <name>text update #256</name>
+    <name>text update #254</name>
     <pv_name>$(P)$(R)ImagesCollected</pv_name>
     <x>201</x>
     <y>680</y>
@@ -1183,7 +1173,7 @@
     <border_alarm_sensitive>false</border_alarm_sensitive>
   </widget>
   <widget type="label" version="2.0.0">
-    <name>text #260</name>
+    <name>text #258</name>
     <text>Images saved</text>
     <x>75</x>
     <y>705</y>
@@ -1195,7 +1185,7 @@
     <auto_size>true</auto_size>
   </widget>
   <widget type="textupdate" version="2.0.0">
-    <name>text update #263</name>
+    <name>text update #261</name>
     <pv_name>$(P)$(R)ImagesSaved</pv_name>
     <x>201</x>
     <y>705</y>
@@ -1212,7 +1202,7 @@
     <border_alarm_sensitive>false</border_alarm_sensitive>
   </widget>
   <widget type="textupdate" version="2.0.0">
-    <name>text update #267</name>
+    <name>text update #265</name>
     <pv_name>$(P)$(R)StartScan</pv_name>
     <x>580</x>
     <y>585</y>
@@ -1228,7 +1218,7 @@
     <show_units>false</show_units>
   </widget>
   <widget type="label" version="2.0.0">
-    <name>text #271</name>
+    <name>text #269</name>
     <text>Status</text>
     <x>515</x>
     <y>585</y>

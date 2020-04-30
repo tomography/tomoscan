@@ -24,42 +24,6 @@ snapToGrid
 gridSize 4
 endScreenProperties
 
-# (Group)
-object activeGroupClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x -2147483624
-y -2147483604
-w 1
-h 1
-
-beginGroup
-
-endGroup
-
-endObjectProperties
-
-
-# (Group)
-object activeGroupClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x -2147483624
-y -2147483604
-w 1
-h 1
-
-beginGroup
-
-endGroup
-
-endObjectProperties
-
-
 # (Rectangle)
 object activeRectangleClass
 beginObjectProperties
@@ -96,6 +60,42 @@ value {
 }
 endObjectProperties
 
+# (Group)
+object activeGroupClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x -2147483624
+y -2147483604
+w 1
+h 1
+
+beginGroup
+
+endGroup
+
+endObjectProperties
+
+
+# (Group)
+object activeGroupClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x -2147483624
+y -2147483604
+w 1
+h 1
+
+beginGroup
+
+endGroup
+
+endObjectProperties
+
+
 # (Static Text)
 object activeXTextClass
 beginObjectProperties
@@ -121,16 +121,16 @@ beginObjectProperties
 major 4
 minor 1
 release 1
-x 335
+x 253
 y 91
-w 170
+w 250
 h 20
 font "helvetica-medium-r-14.0"
 fgColor rgb 0 0 0
 bgColor index 3
 useDisplayBg
 value {
-  "Other information"
+  "Beamline-specific display"
 }
 endObjectProperties
 
@@ -1511,7 +1511,7 @@ beginObjectProperties
 major 4
 minor 0
 release 0
-x 510
+x 508
 y 90
 w 100
 h 20
@@ -1521,27 +1521,19 @@ topShadowColor rgb 55808 55808 55808
 botShadowColor rgb 17920 17920 17920
 font "helvetica-medium-r-8.0"
 icon
-numPvs 6
-numDsps 3
+numPvs 2
+numDsps 1
 displayFileName {
-  0 "tomoScanSampleInfo.edl"
-  1 "tomoScanUserInfo.edl"
-  2 "tomoScanConfigInfo.edl"
+  0 "$(BEAMLINE).edl"
 }
 menuLabel {
-  0 "Sample information"
-  1 "User information"
-  2 "Configuration information"
+  0 "Beamline-specific display"
 }
 symbols {
   0 "P=$(P),R=$(R)"
-  1 "P=$(P),R=$(R)"
-  2 "P=$(P),R=$(R)"
 }
 replaceSymbols {
   0 1
-  1 1
-  2 1
 }
 endObjectProperties
 
