@@ -201,6 +201,14 @@ record(waveform, "$(P)$(R)FileName")
    field(NELM, "256")
 }
 
+record(bi, "$(P)$(R)FilePathExists")
+{
+    field(ZNAM, "No")
+    field(ZSV,  "MAJOR")
+    field(ONAM, "Yes")
+    field(OSV,  "NO_ALARM")
+}
+
 #################################
 # Scan control via Channel Access
 #################################
