@@ -830,7 +830,7 @@ minor 7
 release 0
 x 160
 y 485
-w 500
+w 530
 h 20
 controlPv "$(P)$(R)FilePath"
 format "string"
@@ -875,7 +875,7 @@ minor 7
 release 0
 x 160
 y 510
-w 500
+w 530
 h 20
 controlPv "$(P)$(R)FileName"
 format "string"
@@ -1469,6 +1469,50 @@ useDisplayBg
 value {
   "Status"
 }
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 570
+y 460
+w 70
+h 20
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor index 3
+useDisplayBg
+value {
+  "Exists:"
+}
+endObjectProperties
+
+# (Text Monitor)
+object activeXTextDspClass:noedit
+beginObjectProperties
+major 4
+minor 7
+release 0
+x 645
+y 460
+w 40
+h 20
+controlPv "$(P)$(R)FilePathExists"
+format "string"
+font "helvetica-medium-r-14.0"
+fontAlign "left"
+fgColor rgb 0 65535 0
+fgAlarm
+bgColor rgb 55808 55808 55808
+limitsFromDb
+nullColor rgb 60928 46592 11008
+smartRefresh
+fastUpdate
+newPos
+objType "controls"
 endObjectProperties
 # (Group)
 object activeGroupClass

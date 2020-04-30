@@ -751,7 +751,7 @@
     <pv_name>$(P)$(R)FilePath</pv_name>
     <x>160</x>
     <y>485</y>
-    <width>500</width>
+    <width>530</width>
     <font>
       <font family="Liberation Sans" style="REGULAR" size="16.0">
       </font>
@@ -781,7 +781,7 @@
     <pv_name>$(P)$(R)FileName</pv_name>
     <x>160</x>
     <y>510</y>
-    <width>500</width>
+    <width>530</width>
     <font>
       <font family="Liberation Sans" style="REGULAR" size="16.0">
       </font>
@@ -1228,5 +1228,34 @@
       </font>
     </font>
     <auto_size>true</auto_size>
+  </widget>
+  <widget type="label" version="2.0.0">
+    <name>text #272</name>
+    <text>Exists:</text>
+    <x>570</x>
+    <y>460</y>
+    <width>70</width>
+    <font>
+      <font family="Liberation Sans" style="REGULAR" size="16.0">
+      </font>
+    </font>
+    <auto_size>true</auto_size>
+  </widget>
+  <widget type="textupdate" version="2.0.0">
+    <name>text update #275</name>
+    <pv_name>$(P)$(R)FilePathExists</pv_name>
+    <x>645</x>
+    <y>460</y>
+    <width>40</width>
+    <font>
+      <font family="Liberation Sans" style="REGULAR" size="16.0">
+      </font>
+    </font>
+    <background_color>
+      <color red="218" green="218" blue="218">
+      </color>
+    </background_color>
+    <format>6</format>
+    <show_units>false</show_units>
   </widget>
 </display>

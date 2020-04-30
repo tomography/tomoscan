@@ -710,7 +710,7 @@ text {
 	object {
 		x=160
 		y=485
-		width=500
+		width=530
 		height=20
 	}
 	control {
@@ -738,7 +738,7 @@ text {
 	object {
 		x=160
 		y=510
-		width=500
+		width=530
 		height=20
 	}
 	control {
@@ -1160,4 +1160,33 @@ text {
 		clr=14
 	}
 	textix="Status"
+}
+text {
+	object {
+		x=570
+		y=460
+		width=70
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Exists:"
+}
+"text update" {
+	object {
+		x=645
+		y=460
+		width=40
+		height=20
+	}
+	monitor {
+		chan="$(P)$(R)FilePathExists"
+		clr=14
+		bclr=2
+	}
+	clrmod="alarm"
+	format="string"
+	limits {
+	}
 }
