@@ -60,19 +60,16 @@ class TomoScan2BM(TomoScan):
         if trigger_mode == 'FreeRun':
             self.epics_pvs['CamImageMode'].put('Continuous', wait=True)
             self.epics_pvs['CamTriggerMode'].put('Off', wait=True)
-            self.epics_pvs['CamExposureMode'].put('Timed', wait=True)
             self.epics_pvs['CamAcquire'].put('Acquire')
         elif (trigger_mode == 'Internal'):
             self.epics_pvs['CamImageMode'].put('Multiple')
             self.epics_pvs['CamNumImages'].put(num_images, wait=True)
             self.epics_pvs['CamTriggerMode'].put('Off', wait=True)
-            self.epics_pvs['CamExposureMode'].put('Timed', wait=True)
             self.epics_pvs['CamAcquire'].put('Acquire')                      
         else: # set camera to external triggering
             self.epics_pvs['CamImageMode'].put('Multiple', wait=True)
             self.epics_pvs['CamNumImages'].put(num_images, wait=True)
             self.epics_pvs['CamTriggerMode'].put('On', wait=True)
-            self.epics_pvs['CamExposureMode'].put('Timed', wait=True)
             self.epics_pvs['CamTriggerOverlap'].put('ReadOut', wait=True)
             self.epics_pvs['CamTriggerSource'].put('Line2', wait=True)
             # Set NumCapture
@@ -215,7 +212,7 @@ class TomoScan2BM(TomoScan):
         self.epics_pvs['CamFrameType'].put(FrameTypeData)
         
         rotation_start = self.epics_pvs['RotationStart'].value
-        rotation_step = = self.epics_pvs['RotationStep'].value
+        rotation_step = self.epics_pvs['RotationStep'].value
         num_angles = self.epics_pvs['NumAngles'].value
         rotation_stop = rotation_start + (rotation_step * num_angles)
         max_speed = self.epics_pvs['RotationMaxSpeed'].value

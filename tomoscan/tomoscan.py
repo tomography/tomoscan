@@ -83,7 +83,7 @@ class TomoScan():
         # and create some PVs specific to that driver
         manufacturer = self.control_pvs['CamManufacturer'].get(as_string=True)
         model = self.control_pvs['CamModel'].get(as_string=True)
-        if manufacturer.find('Point Grey') != -1:
+        if manufacturer.find('Point Grey') or manufacturer.find('FLIR'):
             self.control_pvs['CamExposureMode']   = PV(camera_prefix + 'ExposureMode')
             self.control_pvs['CamTriggerOverlap'] = PV(camera_prefix + 'TriggerOverlap')
             self.control_pvs['CamPixelFormat']    = PV(camera_prefix + 'PixelFormat')
@@ -91,6 +91,7 @@ class TomoScan():
                 self.control_pvs['CamVideoMode']  = PV(camera_prefix + 'GC_VideoMode_RBV')
 
         # Set frame type
+        self.control_pvs['CamFrameType']     = PV(camera_prefix + 'FrameType')
         self.control_pvs['CamFrameTypeZRST'] = PV(camera_prefix + 'FrameType.ZRST')
         self.control_pvs['CamFrameTypeONST'] = PV(camera_prefix + 'FrameType.ONST')
         self.control_pvs['CamFrameTypeTWST'] = PV(camera_prefix + 'FrameType.TWST')
@@ -133,6 +134,7 @@ class TomoScan():
             self.control_pvs['MCSNuseAll']         = PV(prefix + 'NuseAll')
 
         if 'PSO' in self.pv_prefixes:
+            prefix = self.pv_prefixes['PSO']
             self.control_pvs['PSOScanDelta']       = PV(prefix + 'scanDelta')
             self.control_pvs['PSOStartPos']        = PV(prefix + 'startPos')
             self.control_pvs['PSOEndPos']          = PV(prefix + 'endPos')
@@ -591,7 +593,17 @@ class TomoScan():
         # without dropping
         camera_model = self.epics_pvs['CamModel'].get(as_string=True)
         pixel_format = self.epics_pvs['CamPixelFormat'].get(as_string=True)
+        readout = None
         if camera_model == 'Grasshopper3 GS3-U3-23S6M':
+            video_mode   = self.epics_pvs['CamVideoMode'].get(as_string=True)
+            readout_times = {
+                'Mono8':        {'Mode0': 6.2,  'Mode1': 6.2, 'Mode5': 6.2, 'Mode7': 7.9},
+                'Mono12Packed': {'Mode0': 9.2,  'Mode1': 6.2, 'Mode5': 6.2, 'Mode7': 11.5},
+                'Mono16':       {'Mode0': 12.2, 'Mode1': 6.2, 'Mode5': 6.2, 'Mode7': 12.2}
+            }
+            readout = readout_times[pixel_format][video_mode]/1000.
+        if camera_model == 'Oryx ORX-10G-51S5M':
+            print(camera_model)
             video_mode   = self.epics_pvs['CamVideoMode'].get(as_string=True)
             readout_times = {
                 'Mono8':        {'Mode0': 6.2,  'Mode1': 6.2, 'Mode5': 6.2, 'Mode7': 7.9},
