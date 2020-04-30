@@ -144,10 +144,20 @@ class TomoScan():
          # Set ^C interrupt to abort the scan
         signal.signal(signal.SIGINT, self.signal_handler)
 
+        # Start the watchdog timer thread
+        thread = threading.Thread(target=self.reset_watchdog, args=(), daemon=True)
+        thread.start()
+
     def signal_handler(self, sig, frame):
         """Calls abort_scan when ^C is typed"""
         if sig == signal.SIGINT:
             self.abort_scan()
+
+    def reset_watchdog(self):
+        """Sets the watchdog timer to 5 every 3 seconds"""
+        while True:
+            self.epics_pvs['Watchdog'].put(5)
+            time.sleep(3)
 
     def copy_file_path(self):
         """Copies the FilePath PV to file plugin FilePath"""
