@@ -265,3 +265,23 @@ record(stringout, "$(P)$(R)ElapsedTime")
 record(stringout, "$(P)$(R)RemainingTime")
 {
 }
+
+record(calcout, "$(P)$(R)Watchdog")
+{
+   field(SCAN, "1 second")
+   field(INPA, "$(P)$(R)Watchdog.VAL NPP")
+   field(CALC, "A-1")
+   field(OCAL, "A>0?1:0")
+   field(OOPT, "On Change")
+   field(DOPT, "Use OCAL")
+   field(OUT,  "$(P)$(R)ServerRunning PP")
+}
+
+record(bi, "$(P)$(R)ServerRunning")
+{
+   field(ZNAM, "Stopped")
+   field(ZSV,  "MAJOR")
+   field(ONAM, "Running")
+   field(OSV,  "NO_ALARM")
+}
+
