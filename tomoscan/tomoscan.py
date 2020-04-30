@@ -90,6 +90,11 @@ class TomoScan():
             if model.find('Grasshopper3') != -1:
                 self.control_pvs['CamVideoMode']  = PV(camera_prefix + 'GC_VideoMode_RBV')
 
+        # Set frame type
+        self.control_pvs['CamFrameTypeZRST'] = PV(camera_prefix + 'FrameType.ZRST')
+        self.control_pvs['CamFrameTypeONST'] = PV(camera_prefix + 'FrameType.ONST')
+        self.control_pvs['CamFrameTypeTWST'] = PV(camera_prefix + 'FrameType.TWST')
+
         # Set some initial PV values
         self.control_pvs['CamWaitForPlugins'].put('Yes')
         self.control_pvs['StartScan'].put(0)
@@ -126,6 +131,17 @@ class TomoScan():
             self.control_pvs['MCSChannelAdvance']  = PV(prefix + 'ChannelAdvance')
             self.control_pvs['MCSMaxChannels']     = PV(prefix + 'MaxChannels')
             self.control_pvs['MCSNuseAll']         = PV(prefix + 'NuseAll')
+
+        if 'PSO' in self.pv_prefixes:
+            self.control_pvs['PSOScanDelta']       = PV(prefix + 'scanDelta')
+            self.control_pvs['PSOStartPos']        = PV(prefix + 'startPos')
+            self.control_pvs['PSOEndPos']          = PV(prefix + 'endPos')
+            self.control_pvs['PSOSlewSpeed']       = PV(prefix + 'slewSpeed')
+            self.control_pvs['PSOTaxi']            = PV(prefix + 'taxi')
+            self.control_pvs['PSORun']             = PV(prefix + 'fly')
+            self.control_pvs['PSOScanControl']     = PV(prefix + 'scanControl')
+            self.control_pvs['PSOCalcProjections'] = PV(prefix + 'numTriggers')
+
 
         self.epics_pvs = {**self.config_pvs, **self.control_pvs}
         # Wait 1 second for all PVs to connect
