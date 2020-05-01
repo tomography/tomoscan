@@ -100,8 +100,10 @@ class TomoScan():
         self.control_pvs['FPNumCaptured']     = PV(prefix + 'NumCaptured_RBV')
         self.control_pvs['FPCapture']         = PV(prefix + 'Capture')
         self.control_pvs['FPFilePath']        = PV(prefix + 'FilePath')
+        self.control_pvs['FPFilePathRBV']     = PV(prefix + 'FilePath_RBV')
         self.control_pvs['FPFilePathExists']  = PV(prefix + 'FilePathExists_RBV')
         self.control_pvs['FPFileName']        = PV(prefix + 'FileName')
+        self.control_pvs['FPFileNameRBV']     = PV(prefix + 'FileName_RBV')
         self.control_pvs['FPFileNumber']      = PV(prefix + 'FileNumber')
         self.control_pvs['FPAutoIncrement']   = PV(prefix + 'AutoIncrement')
         self.control_pvs['FPFullFileName']    = PV(prefix + 'FullFileName_RBV')
@@ -521,26 +523,18 @@ class TomoScan():
             self.begin_scan()
             # Collect the pre-scan dark fields if required
             if (num_dark_fields > 0) and (dark_field_mode in ('Start', 'Both')):
-                self.close_shutter()
-                self.collect_dark_fields()
-            # Open the shutter
-            self.open_shutter()
+               self.collect_dark_fields()
             # Collect the pre-scan flat fields if required
             if (num_flat_fields > 0) and (flat_field_mode in ('Start', 'Both')):
-                self.move_sample_out()
-                self.collect_flat_fields()
+               self.collect_flat_fields()
             # Collect the projections
-            self.move_sample_in()
             self.collect_projections()
             # Collect the post-scan flat fields if required
             if (num_flat_fields > 0) and (flat_field_mode in ('End', 'Both')):
-                self.move_sample_out()
                 self.collect_flat_fields()
-                self.move_sample_in()
             # Collect the post-scan dark fields if required
             if (num_dark_fields > 0) and (dark_field_mode in ('End', 'Both')):
-                self.close_shutter()
-                self.collect_dark_fields()
+               self.collect_dark_fields()
 
         except ScanAbortError:
             logging.error('Scan aborted')
@@ -557,16 +551,67 @@ class TomoScan():
         thread.start()
 
     def collect_dark_fields(self):
-        """Base class implementation of this function just prints an error"""
-        logging.error('collect_dark_fields is not implemented in %s', type(self).__name__)
+        """Collects dark field data
+
+        This base class method does the following:
+
+          - Sets the scan status message
+
+          - Calls close_shutter()
+
+          - Sets the HDF5 data location for dark fields
+
+        Derived classes must override this method to actually collect the dark fields.
+        In most cases they should call this base class method first and then perform
+        the beamline-specific operations.
+        """
+        self.epics_pvs['ScanStatus'].put('Collecting dark fields')
+        self.close_shutter()
+        self.epics_pvs['HDF5Location'].put(self.epics_pvs['HDF5DarkLocation'].value)
 
     def collect_flat_fields(self):
-        """Base class implementation of this function just prints an error"""
-        logging.error('collect_flat_fields is not implemented in %s', type(self).__name__)
+        """Collects flat field data
+
+        This base class method does the following:
+
+          - Sets the scan status message
+
+          - Calls open_shutter()
+
+          - Calls move_sample_out()
+
+          - Sets the HDF5 data location for flat fields
+
+        Derived classes must override this method to actually collect the flat fields.
+        In most cases they should call this base class method first and then perform
+        the beamline-specific operations.
+        """
+        self.epics_pvs['ScanStatus'].put('Collecting flat fields')
+        self.open_shutter()
+        self.move_sample_out()
+        self.epics_pvs['HDF5Location'].put(self.epics_pvs['HDF5FlatLocation'].value)
 
     def collect_projections(self):
-        """Base class implementation of this function just prints an error"""
-        logging.error('collect_projections is not implemented in %s', type(self).__name__)
+        """Collects projection data
+
+        This base class method does the following:
+
+          - Sets the scan status message
+
+          - Calls open_shutter()
+
+          - Calls move_sample_in()
+
+          - Sets the HDF5 data location for projection data
+
+        Derived classes must override this method to actually collect the projections.
+        In most cases they should call this base class method first and then perform
+        the beamline-specific operations.
+        """
+        self.epics_pvs['ScanStatus'].put('Collecting projections')
+        self.open_shutter()
+        self.move_sample_in()
+        self.epics_pvs['HDF5Location'].put(self.epics_pvs['HDF5ProjectionLocation'].value)
 
     def abort_scan(self):
         """Aborts a scan that is running.

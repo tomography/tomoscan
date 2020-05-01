@@ -209,6 +209,23 @@ record(bi, "$(P)$(R)FilePathExists")
     field(OSV,  "NO_ALARM")
 }
 
+record(stringout, "$(P)$(R)HDF5ProjectionLocation")
+{
+   field(VAL, "/exchange/data")
+}
+record(stringout, "$(P)$(R)HDF5DarkLocation")
+{
+   field(VAL, "/exchange/data_dark")
+}
+record(stringout, "$(P)$(R)HDF5FlatLocation")
+{
+   field(VAL, "/exchange/data_white")
+}
+record(stringout, "$(P)$(R)HDF5Location")
+{
+}
+
+
 #################################
 # Scan control via Channel Access
 #################################
