@@ -9,12 +9,6 @@ import time
 import math
 from tomoscan import TomoScan
 
-
-FrameTypeData = 0
-FrameTypeDark = 1
-FrameTypeFlat = 2
-
-
 class TomoScan2BM(TomoScan):
     """Derived class used for tomography scanning with EPICS at APS beamline 2-BM-A
 
@@ -31,17 +25,13 @@ class TomoScan2BM(TomoScan):
         super().__init__(pv_files, macros)
 
         # Set the detector running in FreeRun mode
-        self.set_trigger_mode('FreeRun', 1)
+        # self.set_trigger_mode('FreeRun', 1)
         # Enable auto-increment on file writer
         self.epics_pvs['FPAutoIncrement'].put('Yes')
-        # Set frame type label
-        self.epics_pvs['CamFrameTypeZRST'].put('/exchange/data')
-        self.epics_pvs['CamFrameTypeONST'].put('/exchange/data_dark')
-        self.epics_pvs['CamFrameTypeTWST'].put('/exchange/data_white')
 
+        # Set some initial PV values
+        self.control_pvs['FPAutoSave'].put('Yes')
 
-        # # Set the SIS output pulse width to 100 us
-        # self.epics_pvs['MCSLNEOutputWidth'].put(0.0001)
 
     def set_trigger_mode(self, trigger_mode, num_images):
         """Sets the trigger mode SIS3820 and the camera.
@@ -53,50 +43,39 @@ class TomoScan2BM(TomoScan):
 
         num_images : int
             Number of images to collect.  Ignored if trigger_mode="FreeRun".
-            This is used to set the ``NuseAll`` PV of the SIS MCS,
-            the ``NumImages`` PV of the camera, and the ``NumCapture``
-            PV of the file plugin.
+            This is used to set the ``NumImages`` PV of the camera, 
+            and the ``NumCapture`` PV of the file plugin.
         """
         if trigger_mode == 'FreeRun':
             self.epics_pvs['CamImageMode'].put('Continuous', wait=True)
             self.epics_pvs['CamTriggerMode'].put('Off', wait=True)
             self.epics_pvs['CamAcquire'].put('Acquire')
         elif (trigger_mode == 'Internal'):
+            self.epics_pvs['CamTriggerMode'].put('Off', wait=True)
             self.epics_pvs['CamImageMode'].put('Multiple')
             self.epics_pvs['CamNumImages'].put(num_images, wait=True)
-            self.epics_pvs['CamTriggerMode'].put('Off', wait=True)
-            self.epics_pvs['CamAcquire'].put('Acquire')                      
+            self.epics_pvs['FPNumCapture'].put(num_images, wait=True)
         else: # set camera to external triggering
-            self.epics_pvs['CamAcquire'].put(0)
+            self.epics_pvs['CamAcquire'].put("Done")
             self.wait_pv(self.epics_pvs['CamAcquire'], 0, 2)
-
-
-
+            # Set camera to external trigger off before making changes
             self.epics_pvs['CamTriggerMode'].put('Off', wait=True)
             self.epics_pvs['CamTriggerSource'].put('Line2', wait=True)
             self.epics_pvs['CamTriggerOverlap'].put('ReadOut', wait=True)
             self.epics_pvs['CamExposureMode'].put('Timed', wait=True)
-            # self.epics_pvs['CamTriggerSelector'].put('FrameStart', wait=True)
-            # self.epics_pvs['CamTriggerActivation'].put('RisingEdge', wait=True)
 
             self.epics_pvs['CamImageMode'].put('Multiple')
             self.epics_pvs['CamArrayCallbacks'].put('Enable')
             self.epics_pvs['CamFrameRateEnable'].put(0)
-            # self.epics_pvs['CamAcquireTimeAuto'].put('Off')
 
-            #self.epics_pvs['CamAcquireTime'].put(float(params.exposure_time))
-            # Set frame type
-            self.epics_pvs['CamFrameType'].put(FrameTypeData)
             num_angles = self.epics_pvs['NumAngles'].value
             self.epics_pvs['CamNumImages'].put(num_angles, wait=True)
 
-            print("some issue here ... ")
-            print(self.epics_pvs['CamTriggerMode'].value)
             self.epics_pvs['CamTriggerMode'].put('On', wait=True)
-            print(self.epics_pvs['CamTriggerMode'].value)
-            print("DONE")
+            self.wait_pv(self.epics_pvs['CamTriggerMode'], 1)
+            self.epics_pvs['FPNumCapture'].put(num_images, wait=True)
 
-    def collect_static_frames(self, num_frames, frame_type, save=True):
+    def collect_static_frames(self, num_frames, save=True):
         """Collects num_frames images in "Internal" trigger mode for dark fields and flat fields.
 
         Parameters
@@ -109,17 +88,16 @@ class TomoScan2BM(TomoScan):
         """
         # This is called when collecting dark fields or flat fields
 
-        # Set frame type
-        self.epics_pvs['CamFrameType'].put(frame_type)             
         self.set_trigger_mode('Internal', num_frames)
         if save:
             self.epics_pvs['FPCapture'].put('Capture')
+            self.wait_pv(self.epics_pvs['FPCapture'], 1)
         self.epics_pvs['CamAcquire'].put('Acquire')
         # Wait for detector and file plugin to be ready
-        time.sleep(0.5)
-        # Start the MCS
+        self.wait_pv(self.epics_pvs['CamAcquire'], 1)
         frame_time = self.compute_frame_time()
         collection_time = frame_time * num_frames
+        print(collection_time)
         self.wait_camera_done(collection_time + 5.0)
 
     def begin_scan(self):
@@ -129,23 +107,10 @@ class TomoScan2BM(TomoScan):
 
         - Calls the base class method.
 
-        - Collects 3 dummy images with ``collect_static_frames``.
-          This is required when switching from "FreeRun" to triggered mode
-          on the Point Grey camera.
-
-        - Waits for 1 exposure time because the MCS LNE output stays low for
-          up to the exposure time.
-
         """
 
         # Call the base class method
         super().begin_scan()
-        # Need to collect 3 dummy frames after changing camera to triggered mode
-        self.collect_static_frames(3, FrameTypeData, False)
-        # The MCS LNE output stays low after stopping MCS for up to the
-        # exposure time = LNE output width.
-        # Need to wait for the exposure time
-        time.sleep(self.epics_pvs['ExposureTime'].value)
 
     def end_scan(self):
         """Performs the operations needed at the very end of a scan.
@@ -179,23 +144,20 @@ class TomoScan2BM(TomoScan):
 
     def collect_dark_fields(self):
         """Collects dark field images.
-
         Calls ``collect_static_frames()`` with the number of images specified
         by the ``NumDarkFields`` PV.
         """
 
-        self.epics_pvs['ScanStatus'].put('Collecting dark fields')
-        self.collect_static_frames(self.epics_pvs['NumDarkFields'].value, FrameTypeDark)
+        super().collect_dark_fields()
+        self.collect_static_frames(self.epics_pvs['NumDarkFields'].value)
 
     def collect_flat_fields(self):
         """Collects flat field images.
-
         Calls ``collect_static_frames()`` with the number of images specified
         by the ``NumFlatFields`` PV.
         """
-
-        self.epics_pvs['ScanStatus'].put('Collecting flat fields')
-        self.collect_static_frames(self.epics_pvs['NumFlatFields'].value, FrameTypeFlat)
+        super().collect_flat_fields()
+        self.collect_static_frames(self.epics_pvs['NumFlatFields'].value)
 
     def wait_pv(self, pv, wait_val, timeout=-1):
         """Wait on a pv to be a value until max_timeout (default forever)
@@ -227,33 +189,24 @@ class TomoScan2BM(TomoScan):
         """Collects projections in fly scan mode.
 
         This does the following:
-        - Sets the ``ScanStatus`` PV.
-
-        - Moves the rotation motor to the position specified by the ``RotationStart`` PV
-          minus a delta angle so that the first projection is centered on that position,
-          and also compensates for the behavior of the SIS MCS.
+        - Set the rotation motor position specified by the ``RotationStart`` PV in the 
+          PSOstartPos. 
 
         - Computes and sets the speed of the rotation motor so that it reaches the next projection
           angle just after the current exposure and readout are complete.
 
-        - Sets the prescale factor of the MCS to be the number of motor pulses per rotation angle.
-          The MCS is set to external trigger mode and is triggered by the stepper motor pulses
-          for the rotation stage.
+        - These will be used by the PSO to calculate the Taxi distance and rotary stage acceleration.
 
         - Starts the file plugin capturing in stream mode.
 
         - Starts the camera acquiring in external trigger mode.
 
-        - Starts the MCS acquiring.
+        - Starts the PSOfly.
 
-        - Moves the rotation motor to the position specified by the ``RotationStop`` PV.
-          This triggers the acquisition of the camera.
-
-        - Calls ``wait_camera_done()``.
+        - Wait on the PSO done.
         """
 
-        self.epics_pvs['ScanStatus'].put('Collecting projections')
-        
+        super().collect_projections()        
         rotation_start = self.epics_pvs['RotationStart'].value
         rotation_step = self.epics_pvs['RotationStep'].value
         num_angles = self.epics_pvs['NumAngles'].value
@@ -286,12 +239,8 @@ class TomoScan2BM(TomoScan):
         # Start the camera
         self.epics_pvs['CamAcquire'].put('Acquire')
         self.wait_pv(self.epics_pvs['CamAcquire'], 1)
-
         # Start fly scan
         self.epics_pvs['PSOfly'].put(1)
         # wait for acquire to finish 
-        # time_per_angle = self.compute_frame_time()
-        # collection_time = num_angles * time_per_angle
-        # self.wait_camera_done(collection_time + 60.)
         self.wait_pv(self.epics_pvs['PSOfly'], 0)
 

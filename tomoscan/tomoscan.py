@@ -89,19 +89,10 @@ class TomoScan():
             self.control_pvs['CamPixelFormat']    = PV(camera_prefix + 'PixelFormat')
             self.control_pvs['CamArrayCallbacks']     = PV(camera_prefix + 'ArrayCallbacks')
             self.control_pvs['CamFrameRateEnable']    = PV(camera_prefix + 'FrameRateEnable')
-            # self.control_pvs['CamAcquireTimeAuto']    = PV(camera_prefix + 'AcquireTimeAuto')
             if model.find('Grasshopper3') != -1:
                 self.control_pvs['CamVideoMode']  = PV(camera_prefix + 'GC_VideoMode_RBV')
             if model.find('Oryx ORX-10G-51S5M') != -1:
                 self.control_pvs['CamTriggerSource']      = PV(camera_prefix + 'TriggerSource')
-                # self.control_pvs['CamTriggerSelector']    = PV(camera_prefix + 'TriggerSelector')
-                # self.control_pvs['CamTriggerActivation']  = PV(camera_prefix + 'TriggerActivation')
-
-        # Set frame type
-        self.control_pvs['CamFrameType']     = PV(camera_prefix + 'FrameType')
-        self.control_pvs['CamFrameTypeZRST'] = PV(camera_prefix + 'FrameType.ZRST')
-        self.control_pvs['CamFrameTypeONST'] = PV(camera_prefix + 'FrameType.ONST')
-        self.control_pvs['CamFrameTypeTWST'] = PV(camera_prefix + 'FrameType.TWST')
 
         # Set some initial PV values
         self.control_pvs['CamWaitForPlugins'].put('Yes')
@@ -535,9 +526,6 @@ class TomoScan():
 
         try:
             rotation_start = self.epics_pvs['RotationStart'].value
-            #rotation_step = self.epics_pvs['RotationStart'].value
-            #num_angles = self.epics_pvs['NumAngles'].value
-            #rotation_stop = rotation_start + (num_angles * rotation_step)
             num_dark_fields = self.epics_pvs['NumDarkFields'].value
             dark_field_mode = self.epics_pvs['DarkFieldMode'].get(as_string=True)
             num_flat_fields = self.epics_pvs['NumFlatFields'].value
