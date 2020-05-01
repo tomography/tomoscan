@@ -59,6 +59,11 @@ $(P)$(R)SampleOutX
 $(P)$(R)SampleInY
 $(P)$(R)SampleOutY
 
+############
+# Frame type
+############
+#controlPV $(P)$(R)FrameType
+
 #################
 # Exposure time
 #################
@@ -70,6 +75,10 @@ $(P)$(R)ExposureTime
 $(P)$(R)FilePath
 $(P)$(R)FileName
 #controlPV $(P)$(R)FilePathExists
+
+################################
+# Location for data in HDF5 file
+################################
 #controlPV $(P)$(R)HDF5ProjectionLocation
 #controlPV $(P)$(R)HDF5DarkLocation
 #controlPV $(P)$(R)HDF5FlatLocation
