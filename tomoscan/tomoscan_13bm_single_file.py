@@ -59,7 +59,6 @@ class TomoScan13BM(TomoScan):
             # Set number of MCS channels, NumImages, and NumCapture
             self.epics_pvs['MCSStopAll'].put(1, wait=True)
             self.epics_pvs['MCSNuseAll'].put(num_images, wait=True)
-            #self.epics_pvs['FPNumCapture'].put(num_images, wait=True)
 
         if trigger_mode == 'MCSExternal':
             # Put MCS in external trigger mode
@@ -83,8 +82,6 @@ class TomoScan13BM(TomoScan):
         """
         # This is called when collecting dark fields or flat fields
         self.set_trigger_mode('MCSInternal', num_frames)
-        #if save:
-        #    self.epics_pvs['FPCapture'].put('Capture')
         self.epics_pvs['CamAcquire'].put('Acquire')
         # Wait for detector and file plugin to be ready
         time.sleep(0.5)
@@ -123,23 +120,8 @@ class TomoScan13BM(TomoScan):
         # exposure time = LNE output width.
         # Need to wait for the exposure time
         time.sleep(self.epics_pvs['ExposureTime'].value)
-        
-        # Compute total number of frames to capture
-        num_dark_fields = self.epics_pvs['NumDarkFields'].value
-        dark_field_mode = self.epics_pvs['DarkFieldMode'].get(as_string=True)
-        num_flat_fields = self.epics_pvs['NumFlatFields'].value
-        flat_field_mode = self.epics_pvs['FlatFieldMode'].get(as_string=True)
-        num_angles = self.epics_pvs['NumAngles'].value
-        num_images = num_angles
-        if dark_field_mode not in ('None'):
-            num_images += num_dark_fields;
-        if dark_field_mode == 'Both':
-            num_images += num_dark_fields;
-        if flat_field_mode not in ('None'):
-            num_images += num_flat_fields;
-        if flat_field_mode == 'Both':
-            num_images += num_flat_fields;
-        self.epics_pvs['FPNumCapture'].put(num_images, wait=True)
+        # Set the total number of frames to capture and start capture on file plugin
+        self.epics_pvs['FPNumCapture'].put(self.total_images, wait=True)
         self.epics_pvs['FPCapture'].put('Capture')
 
     def end_scan(self):
@@ -243,8 +225,6 @@ class TomoScan13BM(TomoScan):
         prescale = math.floor(abs(rotation_step  * steps_per_deg))
         self.epics_pvs['MCSPrescale'].put(prescale, wait=True)
         self.set_trigger_mode('MCSExternal', num_angles)
-        # Start capturing in file plugin
-        #self.epics_pvs['FPCapture'].put('Capture')
         # Start the camera
         self.epics_pvs['CamAcquire'].put('Acquire')
         # Start the MCS
