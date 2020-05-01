@@ -203,6 +203,10 @@ File path and name control
   * - $(P)$(R)FileName
     - waveform
     - The file name to save data.
+  * - $(P)$(R)FilePathExists
+    - bi
+    - Flag indicating whether the specified FilePath exists.
+      This is a mirror of the FilePathExists_RBV record in the file plugin.
 
 Scan control via Channel Access
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -221,9 +225,6 @@ Scan control via Channel Access
   * - $(P)$(R)MoveSampleOut
     - ao
     - Setting this record to 1 moves the sample out.
-  * - $(P)$(R)ScanReady
-    - bi
-    - This record will be 1 when the server is ready to execute a scan.
   * - $(P)$(R)StartScan
     - busy
     - Setting this record to 1 starts a scan.
@@ -257,14 +258,20 @@ Scan status via Channel Access
   * - $(P)$(R)RemainingTime
     - stringout
     - This record will be updated with the estimated time remaining while scanning.
+  * - $(P)$(R)ServerRunning
+    - bi
+    - This record will be ``Running`` if the Python server is running and ``Stopped`` if not.
+      It is controlled by a watchdog timer, and will change from ``Running`` to ``Stopped``
+      within 5 seconds if the Python server exits.
 
 tomoScan_settings.req
 ---------------------
 
 This is the autosave request file for tomoScan.template. This file serves 2 purposes:
-1) It is used by autosave to determine which PVs to save in the ``auto_settings.sav`` file.
 
-2) It is read in the constructor of the TomoScan class to determine what PVs to read and write.
+- It is used by autosave to determine which PVs to save in the ``auto_settings.sav`` file.
+
+- It is read in the constructor of the TomoScan class to determine what PVs to read and write.
 
 It contains 4 types of PVs:
 
