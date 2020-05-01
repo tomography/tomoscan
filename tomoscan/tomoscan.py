@@ -477,27 +477,15 @@ class TomoScan():
 
         - Calls ``begin_scan()``
 
-        - If the ``DarkFieldMode`` PV is ``Start`` or ``Both`` calls ``close_shutter()``
-          and ``collect_dark_fields()``
+        - If the ``DarkFieldMode`` PV is 'Start' or 'Both' calls ``collect_dark_fields()``
 
-        - Calls ``open_shutter()``
-
-        - If the ``FlatFieldMode`` PV is ``Start`` or ``Both`` calls ``move_sample_out()``
-          and ``collect_flat_fields()``
-
-        - Calls ``move_sample_in()``
+        - If the ``FlatFieldMode`` PV is 'Start' or 'Both' calls ``collect_flat_fields()``
 
         - Calls ``collect_projections()``
 
-        - If the ``FlatFieldMode`` PV is ``End`` or ``Both`` calls ``move_sample_out()``
-          and ``collect_flat_fields()``
+        - If the ``FlatFieldMode`` PV is 'End' or 'Both' calls ``collect_flat_fields()``
 
-        - Sets the ``StartScan`` PV to 0.  This PV is an EPICS ``busy`` record.
-          Normally EPICS clients that start a scan with the ``StartScan`` PV will wait for
-          ``StartScan`` to return to 0, often using the ``ca_put_callback()`` mechanism.
-
-        - If the ``DarkFieldMode`` PV is ``End`` or ``Both`` calls ``close_shutter()``
-          and ``collect_dark_fields()``
+        - If the ``DarkFieldMode`` PV is 'End' or 'Both' calls ``collect_dark_fields()``
 
         - Calls ``end_scan``
 
@@ -560,6 +548,8 @@ class TomoScan():
           - Calls close_shutter()
 
           - Sets the HDF5 data location for dark fields
+          
+          - Sets the FrameType to "DarkField"
 
         Derived classes must override this method to actually collect the dark fields.
         In most cases they should call this base class method first and then perform
@@ -568,6 +558,7 @@ class TomoScan():
         self.epics_pvs['ScanStatus'].put('Collecting dark fields')
         self.close_shutter()
         self.epics_pvs['HDF5Location'].put(self.epics_pvs['HDF5DarkLocation'].value)
+        self.epics_pvs['FrameType'].put('DarkField')
 
     def collect_flat_fields(self):
         """Collects flat field data
@@ -582,6 +573,8 @@ class TomoScan():
 
           - Sets the HDF5 data location for flat fields
 
+          - Sets the FrameType to "FlatField"
+
         Derived classes must override this method to actually collect the flat fields.
         In most cases they should call this base class method first and then perform
         the beamline-specific operations.
@@ -590,6 +583,7 @@ class TomoScan():
         self.open_shutter()
         self.move_sample_out()
         self.epics_pvs['HDF5Location'].put(self.epics_pvs['HDF5FlatLocation'].value)
+        self.epics_pvs['FrameType'].put('FlatField')
 
     def collect_projections(self):
         """Collects projection data
@@ -604,6 +598,8 @@ class TomoScan():
 
           - Sets the HDF5 data location for projection data
 
+          - Sets the FrameType to "Projection"
+
         Derived classes must override this method to actually collect the projections.
         In most cases they should call this base class method first and then perform
         the beamline-specific operations.
@@ -612,6 +608,7 @@ class TomoScan():
         self.open_shutter()
         self.move_sample_in()
         self.epics_pvs['HDF5Location'].put(self.epics_pvs['HDF5ProjectionLocation'].value)
+        self.epics_pvs['FrameType'].put('Projection')
 
     def abort_scan(self):
         """Aborts a scan that is running.
