@@ -219,7 +219,7 @@ record(stringout, "$(P)$(R)HDF5DarkLocation")
 }
 record(stringout, "$(P)$(R)HDF5FlatLocation")
 {
-   field(VAL, "/exchange/data_flat")
+   field(VAL, "/exchange/data_white")
 }
 record(stringout, "$(P)$(R)HDF5Location")
 {
