@@ -207,6 +207,26 @@ File path and name control
     - bi
     - Flag indicating whether the specified FilePath exists.
       This is a mirror of the FilePathExists_RBV record in the file plugin.
+  * - $(P)$(R)HDF5ProjectionLocation
+    - stringout
+    - String defining the location in the HDF5 file to write projection frames.
+      The default is ``/exchange/data``.
+  * - $(P)$(R)HDF5DarkLocation
+    - stringout
+    - String defining the location in the HDF5 file to write dark field frames.
+      The default is ``/exchange/data_dark``.
+  * - $(P)$(R)HDF5FlatLocation
+    - stringout
+    - String defining the location in the HDF5 file to write flat field frames.
+      The default is ``/exchange/data_white``.
+  * - $(P)$(R)HDF5Location
+    - stringout
+    - String defining the location in the HDF5 file to write the current frame.
+      This is updated by TomoScan depending on which type of frame is currently
+      being collected.  This PV should be used to define the HDF5FrameLocation
+      attribute in the detector attributes XML file.  The HDF5 layout XML file
+      should use the HDF5FrameLocation attribute to control where the frame is
+      written in the HDF5 file.
 
 Scan control via Channel Access
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
