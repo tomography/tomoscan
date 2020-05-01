@@ -76,26 +76,25 @@ class TomoScan2BM(TomoScan):
             self.epics_pvs['CamTriggerSource'].put('Line2', wait=True)
             self.epics_pvs['CamTriggerOverlap'].put('ReadOut', wait=True)
             self.epics_pvs['CamExposureMode'].put('Timed', wait=True)
-            self.epics_pvs['CamTriggerSelector'].put('FrameStart', wait=True)
-            self.epics_pvs['CamTriggerActivation'].put('RisingEdge', wait=True)
+            # self.epics_pvs['CamTriggerSelector'].put('FrameStart', wait=True)
+            # self.epics_pvs['CamTriggerActivation'].put('RisingEdge', wait=True)
 
             self.epics_pvs['CamImageMode'].put('Multiple')
             self.epics_pvs['CamArrayCallbacks'].put('Enable')
             self.epics_pvs['CamFrameRateEnable'].put(0)
-            self.epics_pvs['CamAcquireTimeAuto'].put('Off')
+            # self.epics_pvs['CamAcquireTimeAuto'].put('Off')
 
             #self.epics_pvs['CamAcquireTime'].put(float(params.exposure_time))
+            # Set frame type
+            self.epics_pvs['CamFrameType'].put(FrameTypeData)
+            num_angles = self.epics_pvs['NumAngles'].value
+            self.epics_pvs['CamNumImages'].put(num_angles, wait=True)
 
             print("some issue here ... ")
             print(self.epics_pvs['CamTriggerMode'].value)
             self.epics_pvs['CamTriggerMode'].put('On', wait=True)
             print(self.epics_pvs['CamTriggerMode'].value)
             print("DONE")
-            return
-            self.epics_pvs['CamTriggerOverlap'].put('ReadOut', wait=True)
-            self.epics_pvs['CamTriggerSource'].put('Line2', wait=True)
-            # Set NumCapture
-            self.epics_pvs['FPNumCapture'].put(num_images, wait=True)
 
     def collect_static_frames(self, num_frames, frame_type, save=True):
         """Collects num_frames images in "Internal" trigger mode for dark fields and flat fields.
@@ -254,9 +253,6 @@ class TomoScan2BM(TomoScan):
         """
 
         self.epics_pvs['ScanStatus'].put('Collecting projections')
-
-        # Set frame type
-        self.epics_pvs['CamFrameType'].put(FrameTypeData)
         
         rotation_start = self.epics_pvs['RotationStart'].value
         rotation_step = self.epics_pvs['RotationStep'].value
@@ -289,6 +285,8 @@ class TomoScan2BM(TomoScan):
         self.epics_pvs['FPCapture'].put('Capture')
         # Start the camera
         self.epics_pvs['CamAcquire'].put('Acquire')
+        self.wait_pv(self.epics_pvs['CamAcquire'], 1)
+
         # Start fly scan
         self.epics_pvs['PSOfly'].put(1)
         # wait for acquire to finish 
