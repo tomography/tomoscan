@@ -141,8 +141,8 @@ class TomoScan13BM(TomoScan):
         """
 
         # Save the configuration
-        file_path = self.epics_pvs['FilePath'].get(as_string=True)
-        file_name = self.epics_pvs['FileName'].get(as_string=True)
+        file_path = self.epics_pvs['FPFilePathRBV'].get(as_string=True)
+        file_name = self.epics_pvs['FPFileNameRBV'].get(as_string=True)
         self.save_configuration(file_path + file_name + '.config')
         # Put the camera back in FreeRun mode and acquiring
         self.set_trigger_mode('FreeRun', 1)
@@ -161,7 +161,7 @@ class TomoScan13BM(TomoScan):
         by the ``NumDarkFields`` PV.
         """
 
-        self.epics_pvs['ScanStatus'].put('Collecting dark fields')
+        super().collect_dark_fields()
         self.collect_static_frames(self.epics_pvs['NumDarkFields'].value)
 
     def collect_flat_fields(self):
@@ -170,8 +170,7 @@ class TomoScan13BM(TomoScan):
         Calls ``collect_static_frames()`` with the number of images specified
         by the ``NumFlatFields`` PV.
         """
-
-        self.epics_pvs['ScanStatus'].put('Collecting flat fields')
+        super().collect_flat_fields()
         self.collect_static_frames(self.epics_pvs['NumFlatFields'].value)
 
     def collect_projections(self):
@@ -203,7 +202,7 @@ class TomoScan13BM(TomoScan):
         - Calls ``wait_camera_done()``.
         """
 
-        self.epics_pvs['ScanStatus'].put('Collecting projections')
+        super().collect_projections()
         rotation_start = self.epics_pvs['RotationStart'].value
         rotation_step = self.epics_pvs['RotationStep'].value
         num_angles = self.epics_pvs['NumAngles'].value
