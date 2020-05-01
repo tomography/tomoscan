@@ -29,7 +29,7 @@ Camera and File Plugin PV Prefixes
 .. cssclass:: table-bordered table-striped table-hover
 .. list-table::
   :header-rows: 1
-  :widths: 30 10 60
+  :widths: 5 5 90
 
   * - Record name
     - Record type
@@ -47,7 +47,7 @@ Shutter control
 .. cssclass:: table-bordered table-striped table-hover
 .. list-table::
   :header-rows: 1
-  :widths: 30 10 60
+  :widths: 5 5 90
 
   * - Record name
     - Record type
@@ -71,7 +71,7 @@ Rotation, sample X and Y translation motors
 .. cssclass:: table-bordered table-striped table-hover
 .. list-table::
   :header-rows: 1
-  :widths: 30 10 60
+  :widths: 5 5 90
 
   * - Record name
     - Record type
@@ -92,7 +92,7 @@ Data collection control
 .. cssclass:: table-bordered table-striped table-hover
 .. list-table::
   :header-rows: 1
-  :widths: 30 10 60
+  :widths: 5 5 90
 
   * - Record name
     - Record type
@@ -120,7 +120,7 @@ Dark field control
 .. cssclass:: table-bordered table-striped table-hover
 .. list-table::
   :header-rows: 1
-  :widths: 30 10 60
+  :widths: 5 5 90
 
   * - Record name
     - Record type
@@ -141,7 +141,7 @@ Flat field control
 .. cssclass:: table-bordered table-striped table-hover
 .. list-table::
   :header-rows: 1
-  :widths: 30 10 60
+  :widths: 5 5 90
 
   * - Record name
     - Record type
@@ -151,7 +151,7 @@ Flat field control
     - Number of flat fields to collect
   * - $(P)$(R)FlatFieldMode
     - mbbo
-    - When to collect flat fields.  Choices are 'Start', 'End', 'Both', 'None'.
+    - When to collect flat fields.  Choices are 'Start', 'End', 'Both', 'NoneChoices'.
   * - $(P)$(R)FlatFieldAxis
     - mbbo
     - Axis to move when collecting flat fields.  Choices are 'X', 'Y', and 'Both'.
@@ -171,13 +171,30 @@ Flat field control
     - ao
     - Position of the Y stage when the sample is out for collecting flat fields.
 
+Frame type
+~~~~~~~~~~
+
+.. cssclass:: table-bordered table-striped table-hover
+.. list-table::
+  :header-rows: 1
+  :widths: 5 5 90
+
+  * - Record name
+    - Record type
+    - Description
+  * - $(P)$(R)FrameType
+    - mbbi
+    - Type of the current frame. Choices are 'DarkField', 'FlatField', 'Projection'.
+      If each frame type is stored in a separate file this record can be used as
+      a detector attribute to indicate what type of data is in that file.
+
 Exposure time
 ~~~~~~~~~~~~~
 
 .. cssclass:: table-bordered table-striped table-hover
 .. list-table::
   :header-rows: 1
-  :widths: 30 10 60
+  :widths: 5 5 90
 
   * - Record name
     - Record type
@@ -192,7 +209,7 @@ File path and name control
 .. cssclass:: table-bordered table-striped table-hover
 .. list-table::
   :header-rows: 1
-  :widths: 30 10 60
+  :widths: 5 5 90
 
   * - Record name
     - Record type
@@ -234,7 +251,7 @@ Scan control via Channel Access
 .. cssclass:: table-bordered table-striped table-hover
 .. list-table::
   :header-rows: 1
-  :widths: 30 10 60
+  :widths: 5 5 90
 
   * - Record name
     - Record type
@@ -258,7 +275,7 @@ Scan status via Channel Access
 .. cssclass:: table-bordered table-striped table-hover
 .. list-table::
   :header-rows: 1
-  :widths: 30 10 60
+  :widths: 5 5 90
 
   * - Record name
     - Record type
@@ -348,7 +365,7 @@ SIS MCS Prefix
 .. cssclass:: table-bordered table-striped table-hover
 .. list-table::
   :header-rows: 1
-  :widths: 30 10 60
+  :widths: 5 5 90
 
   * - Record name
     - Record type
@@ -363,7 +380,7 @@ Energy information
 .. cssclass:: table-bordered table-striped table-hover
 .. list-table::
   :header-rows: 1
-  :widths: 30 10 60
+  :widths: 5 5 90
 
   * - Record name
     - Record type
@@ -378,7 +395,7 @@ Beam status information
 .. cssclass:: table-bordered table-striped table-hover
 .. list-table::
   :header-rows: 1
-  :widths: 30 10 60
+  :widths: 5 5 90
 
   * - Record name
     - Record type
@@ -396,7 +413,7 @@ Optics information
 .. cssclass:: table-bordered table-striped table-hover
 .. list-table::
   :header-rows: 1
-  :widths: 30 10 60
+  :widths: 5 5 90
 
   * - Record name
     - Record type
@@ -426,7 +443,7 @@ Sample information
 .. cssclass:: table-bordered table-striped table-hover
 .. list-table::
   :header-rows: 1
-  :widths: 30 10 60
+  :widths: 5 5 90
 
   * - Record name
     - Record type
@@ -450,7 +467,7 @@ User information
 .. cssclass:: table-bordered table-striped table-hover
 .. list-table::
   :header-rows: 1
-  :widths: 30 10 60
+  :widths: 5 5 90
 
   * - Record name
     - Record type
