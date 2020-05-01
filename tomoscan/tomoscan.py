@@ -611,7 +611,7 @@ class TomoScan():
         self.epics_pvs['ScanStatus'].put('Collecting projections')
         self.open_shutter()
         self.move_sample_in()
-        self.epics_pvs['HDF5Location'].put(self.epics_pvs['HDF5DataLocation'].value)
+        self.epics_pvs['HDF5Location'].put(self.epics_pvs['HDF5ProjectionLocation'].value)
 
     def abort_scan(self):
         """Aborts a scan that is running.

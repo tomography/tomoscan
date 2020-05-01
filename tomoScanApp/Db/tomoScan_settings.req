@@ -70,7 +70,7 @@ $(P)$(R)ExposureTime
 $(P)$(R)FilePath
 $(P)$(R)FileName
 #controlPV $(P)$(R)FilePathExists
-#controlPV $(P)$(R)HDF5DataLocation
+#controlPV $(P)$(R)HDF5ProjectionLocation
 #controlPV $(P)$(R)HDF5DarkLocation
 #controlPV $(P)$(R)HDF5FlatLocation
 #controlPV $(P)$(R)HDF5Location

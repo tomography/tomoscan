@@ -209,7 +209,7 @@ record(bi, "$(P)$(R)FilePathExists")
     field(OSV,  "NO_ALARM")
 }
 
-record(stringout, "$(P)$(R)HDF5DataLocation")
+record(stringout, "$(P)$(R)HDF5ProjectionLocation")
 {
    field(VAL, "/exchange/data")
 }
