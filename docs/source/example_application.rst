@@ -29,7 +29,7 @@ Camera and File Plugin PV Prefixes
 .. cssclass:: table-bordered table-striped table-hover
 .. list-table::
   :header-rows: 1
-  :widths: 30 10 60
+  :widths: 5 5 90
 
   * - Record name
     - Record type
@@ -47,7 +47,7 @@ Shutter control
 .. cssclass:: table-bordered table-striped table-hover
 .. list-table::
   :header-rows: 1
-  :widths: 30 10 60
+  :widths: 5 5 90
 
   * - Record name
     - Record type
@@ -71,7 +71,7 @@ Rotation, sample X and Y translation motors
 .. cssclass:: table-bordered table-striped table-hover
 .. list-table::
   :header-rows: 1
-  :widths: 30 10 60
+  :widths: 5 5 90
 
   * - Record name
     - Record type
@@ -92,7 +92,7 @@ Data collection control
 .. cssclass:: table-bordered table-striped table-hover
 .. list-table::
   :header-rows: 1
-  :widths: 30 10 60
+  :widths: 5 5 90
 
   * - Record name
     - Record type
@@ -120,7 +120,7 @@ Dark field control
 .. cssclass:: table-bordered table-striped table-hover
 .. list-table::
   :header-rows: 1
-  :widths: 30 10 60
+  :widths: 5 5 90
 
   * - Record name
     - Record type
@@ -141,7 +141,7 @@ Flat field control
 .. cssclass:: table-bordered table-striped table-hover
 .. list-table::
   :header-rows: 1
-  :widths: 30 10 60
+  :widths: 5 5 90
 
   * - Record name
     - Record type
@@ -151,7 +151,7 @@ Flat field control
     - Number of flat fields to collect
   * - $(P)$(R)FlatFieldMode
     - mbbo
-    - When to collect flat fields.  Choices are 'Start', 'End', 'Both', 'None'.
+    - When to collect flat fields.  Choices are 'Start', 'End', 'Both', 'NoneChoices'.
   * - $(P)$(R)FlatFieldAxis
     - mbbo
     - Axis to move when collecting flat fields.  Choices are 'X', 'Y', and 'Both'.
@@ -171,13 +171,30 @@ Flat field control
     - ao
     - Position of the Y stage when the sample is out for collecting flat fields.
 
+Frame type
+~~~~~~~~~~
+
+.. cssclass:: table-bordered table-striped table-hover
+.. list-table::
+  :header-rows: 1
+  :widths: 5 5 90
+
+  * - Record name
+    - Record type
+    - Description
+  * - $(P)$(R)FrameType
+    - mbbi
+    - Type of the current frame. Choices are 'DarkField', 'FlatField', 'Projection'.
+      If each frame type is stored in a separate file this record can be used as
+      a detector attribute to indicate what type of data is in that file.
+
 Exposure time
 ~~~~~~~~~~~~~
 
 .. cssclass:: table-bordered table-striped table-hover
 .. list-table::
   :header-rows: 1
-  :widths: 30 10 60
+  :widths: 5 5 90
 
   * - Record name
     - Record type
@@ -192,7 +209,7 @@ File path and name control
 .. cssclass:: table-bordered table-striped table-hover
 .. list-table::
   :header-rows: 1
-  :widths: 30 10 60
+  :widths: 5 5 90
 
   * - Record name
     - Record type
@@ -207,6 +224,26 @@ File path and name control
     - bi
     - Flag indicating whether the specified FilePath exists.
       This is a mirror of the FilePathExists_RBV record in the file plugin.
+  * - $(P)$(R)HDF5ProjectionLocation
+    - stringout
+    - String defining the location in the HDF5 file to write projection frames.
+      The default is ``/exchange/data``.
+  * - $(P)$(R)HDF5DarkLocation
+    - stringout
+    - String defining the location in the HDF5 file to write dark field frames.
+      The default is ``/exchange/data_dark``.
+  * - $(P)$(R)HDF5FlatLocation
+    - stringout
+    - String defining the location in the HDF5 file to write flat field frames.
+      The default is ``/exchange/data_white``.
+  * - $(P)$(R)HDF5Location
+    - stringout
+    - String defining the location in the HDF5 file to write the current frame.
+      This is updated by TomoScan depending on which type of frame is currently
+      being collected.  This PV should be used to define the HDF5FrameLocation
+      attribute in the detector attributes XML file.  The HDF5 layout XML file
+      should use the HDF5FrameLocation attribute to control where the frame is
+      written in the HDF5 file.
 
 Scan control via Channel Access
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -214,7 +251,7 @@ Scan control via Channel Access
 .. cssclass:: table-bordered table-striped table-hover
 .. list-table::
   :header-rows: 1
-  :widths: 30 10 60
+  :widths: 5 5 90
 
   * - Record name
     - Record type
@@ -238,7 +275,7 @@ Scan status via Channel Access
 .. cssclass:: table-bordered table-striped table-hover
 .. list-table::
   :header-rows: 1
-  :widths: 30 10 60
+  :widths: 5 5 90
 
   * - Record name
     - Record type
@@ -328,7 +365,7 @@ SIS MCS Prefix
 .. cssclass:: table-bordered table-striped table-hover
 .. list-table::
   :header-rows: 1
-  :widths: 30 10 60
+  :widths: 5 5 90
 
   * - Record name
     - Record type
@@ -343,7 +380,7 @@ Energy information
 .. cssclass:: table-bordered table-striped table-hover
 .. list-table::
   :header-rows: 1
-  :widths: 30 10 60
+  :widths: 5 5 90
 
   * - Record name
     - Record type
@@ -358,7 +395,7 @@ Beam status information
 .. cssclass:: table-bordered table-striped table-hover
 .. list-table::
   :header-rows: 1
-  :widths: 30 10 60
+  :widths: 5 5 90
 
   * - Record name
     - Record type
@@ -376,7 +413,7 @@ Optics information
 .. cssclass:: table-bordered table-striped table-hover
 .. list-table::
   :header-rows: 1
-  :widths: 30 10 60
+  :widths: 5 5 90
 
   * - Record name
     - Record type
@@ -406,7 +443,7 @@ Sample information
 .. cssclass:: table-bordered table-striped table-hover
 .. list-table::
   :header-rows: 1
-  :widths: 30 10 60
+  :widths: 5 5 90
 
   * - Record name
     - Record type
@@ -430,7 +467,7 @@ User information
 .. cssclass:: table-bordered table-striped table-hover
 .. list-table::
   :header-rows: 1
-  :widths: 30 10 60
+  :widths: 5 5 90
 
   * - Record name
     - Record type
