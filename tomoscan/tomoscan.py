@@ -87,15 +87,15 @@ class TomoScan():
             self.control_pvs['CamExposureMode']   = PV(camera_prefix + 'ExposureMode')
             self.control_pvs['CamTriggerOverlap'] = PV(camera_prefix + 'TriggerOverlap')
             self.control_pvs['CamPixelFormat']    = PV(camera_prefix + 'PixelFormat')
+            self.control_pvs['CamArrayCallbacks']     = PV(camera_prefix + 'ArrayCallbacks')
+            self.control_pvs['CamFrameRateEnable']    = PV(camera_prefix + 'FrameRateEnable')
+            self.control_pvs['CamAcquireTimeAuto']    = PV(camera_prefix + 'AcquireTimeAuto')
             if model.find('Grasshopper3') != -1:
                 self.control_pvs['CamVideoMode']  = PV(camera_prefix + 'GC_VideoMode_RBV')
             if model.find('Oryx ORX-10G-51S5M') != -1:
                 self.control_pvs['CamTriggerSource']      = PV(camera_prefix + 'TriggerSource')
                 self.control_pvs['CamTriggerSelector']    = PV(camera_prefix + 'TriggerSelector')
                 self.control_pvs['CamTriggerActivation']  = PV(camera_prefix + 'TriggerActivation')
-                self.control_pvs['CamArrayCallbacks']     = PV(camera_prefix + 'ArrayCallbacks')
-                self.control_pvs['CamFrameRateEnable']    = PV(camera_prefix + 'FrameRateEnable')
-                self.control_pvs['CamAcquireTimeAuto']    = PV(camera_prefix + 'AcquireTimeAuto')
 
         # Set frame type
         self.control_pvs['CamFrameType']     = PV(camera_prefix + 'FrameType')
