@@ -32,6 +32,31 @@ class TomoScan2BM(TomoScan):
         # Set some initial PV values
         self.control_pvs['FPAutoSave'].put('Yes')
 
+    def open_shutter(self):
+        """Opens the shutter to collect flat fields or projections.
+
+        This does the following:
+
+        - Calls the base class method.
+
+        - Opens the 2-BM-A fast shutter.
+        """
+
+        # Call the base class method
+        super().open_shutter()
+
+    def close_shutter(self):
+        """Closes the shutter to collect dark fields.
+        This does the following:
+
+        - Calls the base class method.
+
+        - Closes the 2-BM-A fast shutter.
+
+       """
+         # Call the base class method
+        super().close_shutter()
+
 
     def set_trigger_mode(self, trigger_mode, num_images):
         """Sets the trigger mode SIS3820 and the camera.
@@ -56,8 +81,8 @@ class TomoScan2BM(TomoScan):
             self.epics_pvs['CamNumImages'].put(num_images, wait=True)
             self.epics_pvs['FPNumCapture'].put(num_images, wait=True)
         else: # set camera to external triggering
-            self.epics_pvs['CamAcquire'].put("Done")
-            self.wait_pv(self.epics_pvs['CamAcquire'], 0, 2)
+            # self.epics_pvs['CamAcquire'].put("Done")
+            # self.wait_pv(self.epics_pvs['CamAcquire'], 0, 2)
             # Set camera to external trigger off before making changes
             self.epics_pvs['CamTriggerMode'].put('Off', wait=True)
             self.epics_pvs['CamTriggerSource'].put('Line2', wait=True)
@@ -89,15 +114,16 @@ class TomoScan2BM(TomoScan):
         # This is called when collecting dark fields or flat fields
 
         self.set_trigger_mode('Internal', num_frames)
-        if save:
-            self.epics_pvs['FPCapture'].put('Capture')
-            self.wait_pv(self.epics_pvs['FPCapture'], 1)
+        # if save:
+        #     self.epics_pvs['FPCapture'].put('Capture')
+        #     self.wait_pv(self.epics_pvs['FPCapture'], 1)
         self.epics_pvs['CamAcquire'].put('Acquire')
-        # Wait for detector and file plugin to be ready
         self.wait_pv(self.epics_pvs['CamAcquire'], 1)
+        # Wait for detector and file plugin to be ready
+        print("wait")
+        time.sleep(10)
         frame_time = self.compute_frame_time()
         collection_time = frame_time * num_frames
-        print(collection_time)
         self.wait_camera_done(collection_time + 5.0)
 
     def begin_scan(self):
@@ -107,11 +133,48 @@ class TomoScan2BM(TomoScan):
 
         - Calls the base class method.
 
+        - Collects 3 dummy images with ``collect_static_frames``.
+          This is required when switching from "FreeRun" to triggered mode
+          on the Point Grey camera.
+
+        - Sets the FileNumber back to 1 because we collect dark-fields, flat-fields,
+          and projections into separate files with successive file numbers starting at 1.
+
+        - Waits for 1 exposure time because the MCS LNE output stays low for
+          up to the exposure time.
+
         """
 
         # Call the base class method
         super().begin_scan()
-
+        # We save flats, darks, and projections in separate files.
+        # Set FileNumber back to 1.
+        self.epics_pvs['FPFileNumber'].put(1)
+        # Need to collect 3 dummy frames after changing camera to triggered mode
+        self.collect_static_frames(3, False)
+        # The MCS LNE output stays low after stopping MCS for up to the
+        # exposure time = LNE output width.
+        # Need to wait for the exposure time
+        time.sleep(self.epics_pvs['ExposureTime'].value)
+        
+        # Compute total number of frames to capture
+        num_dark_fields = self.epics_pvs['NumDarkFields'].value
+        dark_field_mode = self.epics_pvs['DarkFieldMode'].get(as_string=True)
+        num_flat_fields = self.epics_pvs['NumFlatFields'].value
+        flat_field_mode = self.epics_pvs['FlatFieldMode'].get(as_string=True)
+        num_angles = self.epics_pvs['NumAngles'].value
+        num_images = num_angles
+        if dark_field_mode not in ('None'):
+            num_images += num_dark_fields;
+        if dark_field_mode == 'Both':
+            num_images += num_dark_fields;
+        if flat_field_mode not in ('None'):
+            num_images += num_flat_fields;
+        if flat_field_mode == 'Both':
+            num_images += num_flat_fields;
+        self.epics_pvs['FPNumCapture'].put(num_images, wait=True)
+        self.epics_pvs['FPCapture'].put('Capture')
+        
     def end_scan(self):
         """Performs the operations needed at the very end of a scan.
 
@@ -235,7 +298,7 @@ class TomoScan2BM(TomoScan):
         self.set_trigger_mode('PSOExternal', num_angles)
 
         # Start capturing in file plugin
-        self.epics_pvs['FPCapture'].put('Capture')
+        # self.epics_pvs['FPCapture'].put('Capture')
         # Start the camera
         self.epics_pvs['CamAcquire'].put('Acquire')
         self.wait_pv(self.epics_pvs['CamAcquire'], 1)
