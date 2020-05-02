@@ -185,6 +185,7 @@ class TomoScan2BM(TomoScan):
         """Collects projections in fly scan mode.
 
         This does the following:
+
         - Set the rotation motor position specified by the ``RotationStart`` PV in the
           PSOstartPos.
 
