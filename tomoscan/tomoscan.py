@@ -494,7 +494,6 @@ class TomoScan():
         self.flat_field_mode      = self.epics_pvs['FlatFieldMode'].get(as_string=True)
         self.file_path_rbv        = self.epics_pvs['FPFilePathRBV'].get(as_string=True)
         self.file_name_rbv        = self.epics_pvs['FPFileNameRBV'].get(as_string=True)
-        print('num_angles: %d, rotation_stop: %f, max_rotation_speed: %f' % (self.num_angles, self.rotation_stop, self.max_rotation_speed))
         self.total_images = self.num_angles
         if self.dark_field_mode != 'None':
             self.total_images += self.num_dark_fields;
