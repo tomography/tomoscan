@@ -95,15 +95,14 @@ class TomoScan():
         manufacturer = self.control_pvs['CamManufacturer'].get(as_string=True)
         model = self.control_pvs['CamModel'].get(as_string=True)
         if (manufacturer.find('Point Grey') != -1) or (manufacturer.find('FLIR') != -1):
-            self.control_pvs['CamExposureMode']   = PV(camera_prefix + 'ExposureMode')
-            self.control_pvs['CamTriggerOverlap'] = PV(camera_prefix + 'TriggerOverlap')
-            self.control_pvs['CamPixelFormat']    = PV(camera_prefix + 'PixelFormat')
-            self.control_pvs['CamArrayCallbacks']     = PV(camera_prefix + 'ArrayCallbacks')
-            self.control_pvs['CamFrameRateEnable']    = PV(camera_prefix + 'FrameRateEnable')
+            self.control_pvs['CamExposureMode']     = PV(camera_prefix + 'ExposureMode')
+            self.control_pvs['CamTriggerOverlap']   = PV(camera_prefix + 'TriggerOverlap')
+            self.control_pvs['CamPixelFormat']      = PV(camera_prefix + 'PixelFormat')
+            self.control_pvs['CamArrayCallbacks']   = PV(camera_prefix + 'ArrayCallbacks')
+            self.control_pvs['CamFrameRateEnable']  = PV(camera_prefix + 'FrameRateEnable')
+            self.control_pvs['CamTriggerSource']    = PV(camera_prefix + 'TriggerSource')
             if model.find('Grasshopper3') != -1:
-                self.control_pvs['CamVideoMode']  = PV(camera_prefix + 'GC_VideoMode_RBV')
-            if model.find('Oryx ORX-10G-51S5M') != -1:
-                self.control_pvs['CamTriggerSource']      = PV(camera_prefix + 'TriggerSource')
+                self.control_pvs['CamVideoMode']    = PV(camera_prefix + 'GC_VideoMode_RBV')
 
         # Set some initial PV values
         self.control_pvs['CamWaitForPlugins'].put('Yes')
