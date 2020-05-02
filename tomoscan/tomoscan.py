@@ -89,7 +89,8 @@ class TomoScan():
         self.control_pvs['CamBinX']              = PV(camera_prefix + 'BinX')
         self.control_pvs['CamBinY']              = PV(camera_prefix + 'BinY')
         self.control_pvs['CamWaitForPlugins']    = PV(camera_prefix + 'WaitForPlugins')
-
+        self.control_pvs['FrameType']            = PV(camera_prefix + 'FrameType')
+         
         # If this is a Point Grey camera then assume we are running ADSpinnaker
         # and create some PVs specific to that driver
         manufacturer = self.control_pvs['CamManufacturer'].get(as_string=True)
