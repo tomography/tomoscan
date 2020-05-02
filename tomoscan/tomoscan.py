@@ -43,16 +43,25 @@ class TomoScan():
         self.config_pvs = {}
         self.control_pvs = {}
         self.pv_prefixes = {}
+
+        # These variables are set in begin_scan().
+        # They are used to prevent reading PVs repeatedly, and so that if the users changes
+        # a PV during the scan it won't mess things up.
+        self.exposure_time = None
         self.rotation_start = None
         self.rotation_step = None
-        self.num_angles = None
         self.rotation_stop = None
+        self.rotation_resolution = None
+        self.max_rotation_speed = None
+        self.return_rotation = None
+        self.num_angles = None
         self.num_dark_fields = None
         self.dark_field_mode = None
         self.num_flat_fields = None
         self.flat_field_mode = None
         self.total_images = None
-        self.return_rotation = None
+        self.file_path_rbv = None
+        self.file_name_rbv = None
 
         if not isinstance(pv_files, list):
             pv_files = [pv_files]
@@ -445,8 +454,6 @@ class TomoScan():
         """Performs the operations needed at the very start of a scan.
 
         This base class method does the following:
-          
-        - Sets class variables with the important scan parameters
 
         - Sets the status string in the ``ScanStatus`` PV.
 
@@ -456,28 +463,11 @@ class TomoScan():
 
         - Copies the ``FilePath`` and ``FileName`` PVs to the areaDetector file plugin.
 
+        - Sets class variables with the important scan parameters
+
         It is expected that most derived classes will override this method.  In most cases they
         should first call this base class method, and then perform any beamline-specific operations.
         """
-
-        self.rotation_start = self.epics_pvs['RotationStart'].value
-        self.rotation_step = self.epics_pvs['RotationStart'].value
-        self.num_angles = self.epics_pvs['NumAngles'].value
-        self.rotation_stop = self.rotation_start + (self.num_angles * self.rotation_step)
-        self.num_dark_fields = self.epics_pvs['NumDarkFields'].value
-        self.dark_field_mode = self.epics_pvs['DarkFieldMode'].get(as_string=True)
-        self.num_flat_fields = self.epics_pvs['NumFlatFields'].value
-        self.flat_field_mode = self.epics_pvs['FlatFieldMode'].get(as_string=True)
-        self.return_rotation = self.epics_pvs['ReturnRotation'].get(as_string=True)
-        self.total_images = self.num_angles
-        if self.dark_field_mode not in ('None'):
-            self.total_images += self.num_dark_fields;
-        if self.dark_field_mode == 'Both':
-            self.total_images += self.num_dark_fields;
-        if self.flat_field_mode not in ('None'):
-            self.total_images += self.num_flat_fields;
-        if self.flat_field_mode == 'Both':
-            self.total_images += self.num_flat_fields;
 
         self.scan_is_running = True
         self.epics_pvs['ScanStatus'].put('Beginning scan')
@@ -488,6 +478,32 @@ class TomoScan():
         # Set the file path, file name and file number
         self.epics_pvs['FPFilePath'].put(self.epics_pvs['FilePath'].value)
         self.epics_pvs['FPFileName'].put(self.epics_pvs['FileName'].value)
+
+        # Copy the current values of scan parameters into class variables
+        self.exposure_time        = self.epics_pvs['ExposureTime'].value
+        self.rotation_start       = self.epics_pvs['RotationStart'].value
+        self.rotation_step        = self.epics_pvs['RotationStep'].value
+        self.num_angles           = self.epics_pvs['NumAngles'].value
+        self.rotation_stop        = self.rotation_start + (self.num_angles * self.rotation_step)
+        self.rotation_resolution  = self.epics_pvs['RotationResolution'].value
+        self.max_rotation_speed   = self.epics_pvs['RotationMaxSpeed'].value
+        self.return_rotation      = self.epics_pvs['ReturnRotation'].get(as_string=True)
+        self.num_dark_fields      = self.epics_pvs['NumDarkFields'].value
+        self.dark_field_mode      = self.epics_pvs['DarkFieldMode'].get(as_string=True)
+        self.num_flat_fields      = self.epics_pvs['NumFlatFields'].value
+        self.flat_field_mode      = self.epics_pvs['FlatFieldMode'].get(as_string=True)
+        self.file_path_rbv        = self.epics_pvs['FPFilePathRBV'].get(as_string=True)
+        self.file_name_rbv        = self.epics_pvs['FPFileNameRBV'].get(as_string=True)
+        print('num_angles: %d, rotation_stop: %f, max_rotation_speed: %f' % (self.num_angles, self.rotation_stop, self.max_rotation_speed))
+        self.total_images = self.num_angles
+        if self.dark_field_mode != 'None':
+            self.total_images += self.num_dark_fields;
+        if self.dark_field_mode == 'Both':
+            self.total_images += self.num_dark_fields;
+        if self.flat_field_mode != 'None':
+            self.total_images += self.num_flat_fields;
+        if self.flat_field_mode == 'Both':
+            self.total_images += self.num_flat_fields;
 
     def end_scan(self):
         """Performs the operations needed at the very end of a scan.
@@ -586,7 +602,7 @@ class TomoScan():
           - Calls close_shutter()
 
           - Sets the HDF5 data location for dark fields
-          
+
           - Sets the FrameType to "DarkField"
 
         Derived classes must override this method to actually collect the dark fields.
