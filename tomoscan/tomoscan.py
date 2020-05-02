@@ -94,12 +94,16 @@ class TomoScan():
         # and create some PVs specific to that driver
         manufacturer = self.control_pvs['CamManufacturer'].get(as_string=True)
         model = self.control_pvs['CamModel'].get(as_string=True)
-        if manufacturer.find('Point Grey') != -1:
+        if (manufacturer.find('Point Grey') != -1) or (manufacturer.find('FLIR') != -1):
             self.control_pvs['CamExposureMode']   = PV(camera_prefix + 'ExposureMode')
             self.control_pvs['CamTriggerOverlap'] = PV(camera_prefix + 'TriggerOverlap')
             self.control_pvs['CamPixelFormat']    = PV(camera_prefix + 'PixelFormat')
+            self.control_pvs['CamArrayCallbacks']     = PV(camera_prefix + 'ArrayCallbacks')
+            self.control_pvs['CamFrameRateEnable']    = PV(camera_prefix + 'FrameRateEnable')
             if model.find('Grasshopper3') != -1:
                 self.control_pvs['CamVideoMode']  = PV(camera_prefix + 'GC_VideoMode_RBV')
+            if model.find('Oryx ORX-10G-51S5M') != -1:
+                self.control_pvs['CamTriggerSource']      = PV(camera_prefix + 'TriggerSource')
 
         # Set some initial PV values
         self.control_pvs['CamWaitForPlugins'].put('Yes')
@@ -140,6 +144,18 @@ class TomoScan():
             self.control_pvs['MCSChannelAdvance']  = PV(prefix + 'ChannelAdvance')
             self.control_pvs['MCSMaxChannels']     = PV(prefix + 'MaxChannels')
             self.control_pvs['MCSNuseAll']         = PV(prefix + 'NuseAll')
+
+        if 'PSO' in self.pv_prefixes:
+            prefix = self.pv_prefixes['PSO']
+            self.control_pvs['PSOscanDelta']       = PV(prefix + 'scanDelta')
+            self.control_pvs['PSOstartPos']        = PV(prefix + 'startPos')
+            self.control_pvs['PSOendPos']          = PV(prefix + 'endPos')
+            self.control_pvs['PSOslewSpeed']       = PV(prefix + 'slewSpeed')
+            self.control_pvs['PSOtaxi']            = PV(prefix + 'taxi')
+            self.control_pvs['PSOfly']             = PV(prefix + 'fly')
+            self.control_pvs['PSOscanControl']     = PV(prefix + 'scanControl')
+            self.control_pvs['PSOcalcProjections'] = PV(prefix + 'numTriggers')
+
 
         self.epics_pvs = {**self.config_pvs, **self.control_pvs}
         # Wait 1 second for all PVs to connect
@@ -673,6 +689,7 @@ class TomoScan():
         # without dropping
         camera_model = self.epics_pvs['CamModel'].get(as_string=True)
         pixel_format = self.epics_pvs['CamPixelFormat'].get(as_string=True)
+        readout = None
         if camera_model == 'Grasshopper3 GS3-U3-23S6M':
             video_mode   = self.epics_pvs['CamVideoMode'].get(as_string=True)
             readout_times = {
@@ -681,7 +698,14 @@ class TomoScan():
                 'Mono16':       {'Mode0': 12.2, 'Mode1': 6.2, 'Mode5': 6.2, 'Mode7': 12.2}
             }
             readout = readout_times[pixel_format][video_mode]/1000.
-
+        if camera_model == 'Oryx ORX-10G-51S5M':
+            # video_mode   = self.epics_pvs['CamVideoMode'].get(as_string=True)
+            readout_times = {
+                'Mono8': 6.18,
+                'Mono12Packed': 8.20,
+                'Mono16': 12.34
+            }
+            readout = readout_times[pixel_format]/1000.
         if readout is None:
             logging.error('Unsupported combination of camera model, pixel format and video mode: %s %s %s',
                           camera_model, pixel_format, video_mode)
