@@ -44,6 +44,7 @@ class TomoScan2BM(TomoScan):
 
         # Call the base class method
         super().open_shutter()
+        # to complete need to add new PVs
 
     def close_shutter(self):
         """Closes the shutter to collect dark fields.
@@ -56,7 +57,7 @@ class TomoScan2BM(TomoScan):
        """
          # Call the base class method
         super().close_shutter()
-
+        # to complete need to add new PVs
 
     def set_trigger_mode(self, trigger_mode, num_images):
         """Sets the trigger mode SIS3820 and the camera.
@@ -120,8 +121,7 @@ class TomoScan2BM(TomoScan):
         self.epics_pvs['CamAcquire'].put('Acquire')
         self.wait_pv(self.epics_pvs['CamAcquire'], 1)
         # Wait for detector and file plugin to be ready
-        print("wait")
-        time.sleep(10)
+        time.sleep(0.5)
         frame_time = self.compute_frame_time()
         collection_time = frame_time * num_frames
         self.wait_camera_done(collection_time + 5.0)
@@ -174,7 +174,7 @@ class TomoScan2BM(TomoScan):
             num_images += num_flat_fields;
         self.epics_pvs['FPNumCapture'].put(num_images, wait=True)
         self.epics_pvs['FPCapture'].put('Capture')
-        
+
     def end_scan(self):
         """Performs the operations needed at the very end of a scan.
 
