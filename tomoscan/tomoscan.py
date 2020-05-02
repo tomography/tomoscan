@@ -496,13 +496,13 @@ class TomoScan():
         self.file_name_rbv        = self.epics_pvs['FPFileNameRBV'].get(as_string=True)
         self.total_images = self.num_angles
         if self.dark_field_mode != 'None':
-            self.total_images += self.num_dark_fields;
+            self.total_images += self.num_dark_fields
         if self.dark_field_mode == 'Both':
-            self.total_images += self.num_dark_fields;
+            self.total_images += self.num_dark_fields
         if self.flat_field_mode != 'None':
-            self.total_images += self.num_flat_fields;
+            self.total_images += self.num_flat_fields
         if self.flat_field_mode == 'Both':
-            self.total_images += self.num_flat_fields;
+            self.total_images += self.num_flat_fields
 
     def end_scan(self):
         """Performs the operations needed at the very end of a scan.
@@ -564,10 +564,10 @@ class TomoScan():
             self.epics_pvs['Rotation'].put(self.rotation_start, wait=True)
             # Collect the pre-scan dark fields if required
             if (self.num_dark_fields > 0) and (self.dark_field_mode in ('Start', 'Both')):
-               self.collect_dark_fields()
+                self.collect_dark_fields()
             # Collect the pre-scan flat fields if required
             if (self.num_flat_fields > 0) and (self.flat_field_mode in ('Start', 'Both')):
-               self.collect_flat_fields()
+                self.collect_flat_fields()
             # Collect the projections
             self.collect_projections()
             # Collect the post-scan flat fields if required
@@ -575,7 +575,7 @@ class TomoScan():
                 self.collect_flat_fields()
             # Collect the post-scan dark fields if required
             if (self.num_dark_fields > 0) and (self.dark_field_mode in ('End', 'Both')):
-               self.collect_dark_fields()
+                self.collect_dark_fields()
 
         except ScanAbortError:
             logging.error('Scan aborted')
