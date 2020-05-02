@@ -6,6 +6,7 @@
      Derived class for tomography scanning with EPICS at APS beamline 13-BM-D
 """
 import time
+import logging
 import math
 from tomoscan import TomoScan
 
@@ -84,9 +85,10 @@ class TomoScan13BM(TomoScan):
         """
         # This is called when collecting dark fields or flat fields
         self.set_trigger_mode('MCSInternal', num_frames)
-        # Uncomment these 2 lines to collect flat fields and dark fields in separate files
-        #if save:
-        #    self.epics_pvs['FPCapture'].put('Capture')
+        if save:
+            logging.debug('This is to prevent pylint warning')
+            # Uncomment this line to collect flat fields and dark fields in separate files
+            # self.epics_pvs['FPCapture'].put('Capture')
         self.epics_pvs['CamAcquire'].put('Acquire')
         # Wait for detector and file plugin to be ready
         time.sleep(0.5)
@@ -126,7 +128,8 @@ class TomoScan13BM(TomoScan):
         # Need to wait for the exposure time
         time.sleep(self.exposure_time)
         # Set the total number of frames to capture and start capture on file plugin
-        # Comment out the following two lines to collect flat fields and dark fields in separate files
+        # Comment out the following two lines to collect flat fields and dark fields
+        # in separate files
         self.epics_pvs['FPNumCapture'].put(self.total_images, wait=True)
         self.epics_pvs['FPCapture'].put('Capture')
 
