@@ -43,6 +43,17 @@ class TomoScan():
         self.config_pvs = {}
         self.control_pvs = {}
         self.pv_prefixes = {}
+        self.rotation_start = None
+        self.rotation_step = None
+        self.num_angles = None
+        self.rotation_stop = None
+        self.num_dark_fields = None
+        self.dark_field_mode = None
+        self.num_flat_fields = None
+        self.flat_field_mode = None
+        self.total_images = None
+        self.return_rotation = None
+
         if not isinstance(pv_files, list):
             pv_files = [pv_files]
         for pv_file in pv_files:
@@ -78,8 +89,7 @@ class TomoScan():
         self.control_pvs['CamBinX']              = PV(camera_prefix + 'BinX')
         self.control_pvs['CamBinY']              = PV(camera_prefix + 'BinY')
         self.control_pvs['CamWaitForPlugins']    = PV(camera_prefix + 'WaitForPlugins')
-        self.control_pvs['FrameType']            = PV(camera_prefix + 'FrameType')
-         
+
         # If this is a Point Grey camera then assume we are running ADSpinnaker
         # and create some PVs specific to that driver
         manufacturer = self.control_pvs['CamManufacturer'].get(as_string=True)
@@ -436,6 +446,8 @@ class TomoScan():
         """Performs the operations needed at the very start of a scan.
 
         This base class method does the following:
+          
+        - Sets class variables with the important scan parameters
 
         - Sets the status string in the ``ScanStatus`` PV.
 
@@ -448,6 +460,25 @@ class TomoScan():
         It is expected that most derived classes will override this method.  In most cases they
         should first call this base class method, and then perform any beamline-specific operations.
         """
+
+        self.rotation_start = self.epics_pvs['RotationStart'].value
+        self.rotation_step = self.epics_pvs['RotationStart'].value
+        self.num_angles = self.epics_pvs['NumAngles'].value
+        self.rotation_stop = self.rotation_start + (self.num_angles * self.rotation_step)
+        self.num_dark_fields = self.epics_pvs['NumDarkFields'].value
+        self.dark_field_mode = self.epics_pvs['DarkFieldMode'].get(as_string=True)
+        self.num_flat_fields = self.epics_pvs['NumFlatFields'].value
+        self.flat_field_mode = self.epics_pvs['FlatFieldMode'].get(as_string=True)
+        self.return_rotation = self.epics_pvs['ReturnRotation'].get(as_string=True)
+        self.total_images = self.num_angles
+        if self.dark_field_mode not in ('None'):
+            self.total_images += self.num_dark_fields;
+        if self.dark_field_mode == 'Both':
+            self.total_images += self.num_dark_fields;
+        if self.flat_field_mode not in ('None'):
+            self.total_images += self.num_flat_fields;
+        if self.flat_field_mode == 'Both':
+            self.total_images += self.num_flat_fields;
 
         self.scan_is_running = True
         self.epics_pvs['ScanStatus'].put('Beginning scan')
@@ -478,9 +509,8 @@ class TomoScan():
         This ensures that the scan is really complete before ``StartScan`` is set to 0.
         """
 
-        return_rotation = self.epics_pvs['ReturnRotation'].get(as_string=True)
-        if return_rotation == 'Yes':
-            self.epics_pvs['Rotation'].put(self.epics_pvs['RotationStart'].value)
+        if self.return_rotation == 'Yes':
+            self.epics_pvs['Rotation'].put(self.rotation_start)
         self.epics_pvs['ScanStatus'].put('Scan complete')
         self.epics_pvs['StartScan'].put(0)
         self.scan_is_running = False
@@ -514,28 +544,23 @@ class TomoScan():
         """
 
         try:
-            rotation_start = self.epics_pvs['RotationStart'].value
-            num_dark_fields = self.epics_pvs['NumDarkFields'].value
-            dark_field_mode = self.epics_pvs['DarkFieldMode'].get(as_string=True)
-            num_flat_fields = self.epics_pvs['NumFlatFields'].value
-            flat_field_mode = self.epics_pvs['FlatFieldMode'].get(as_string=True)
-            # Move the rotation to the start
-            self.epics_pvs['Rotation'].put(rotation_start, wait=True)
             # Prepare for scan
             self.begin_scan()
+            # Move the rotation to the start
+            self.epics_pvs['Rotation'].put(self.rotation_start, wait=True)
             # Collect the pre-scan dark fields if required
-            if (num_dark_fields > 0) and (dark_field_mode in ('Start', 'Both')):
+            if (self.num_dark_fields > 0) and (self.dark_field_mode in ('Start', 'Both')):
                self.collect_dark_fields()
             # Collect the pre-scan flat fields if required
-            if (num_flat_fields > 0) and (flat_field_mode in ('Start', 'Both')):
+            if (self.num_flat_fields > 0) and (self.flat_field_mode in ('Start', 'Both')):
                self.collect_flat_fields()
             # Collect the projections
             self.collect_projections()
             # Collect the post-scan flat fields if required
-            if (num_flat_fields > 0) and (flat_field_mode in ('End', 'Both')):
+            if (self.num_flat_fields > 0) and (self.flat_field_mode in ('End', 'Both')):
                 self.collect_flat_fields()
             # Collect the post-scan dark fields if required
-            if (num_dark_fields > 0) and (dark_field_mode in ('End', 'Both')):
+            if (self.num_dark_fields > 0) and (self.dark_field_mode in ('End', 'Both')):
                self.collect_dark_fields()
 
         except ScanAbortError:
