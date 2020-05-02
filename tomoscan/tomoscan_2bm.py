@@ -5,9 +5,11 @@
    TomoScan2BM
      Derived class for tomography scanning with EPICS at APS beamline 2-BM-A
 """
+import logging
 import time
-import math
 from tomoscan import TomoScan
+
+EPSILON = .001
 
 class TomoScan2BM(TomoScan):
     """Derived class used for tomography scanning with EPICS at APS beamline 2-BM-A
@@ -30,7 +32,7 @@ class TomoScan2BM(TomoScan):
         self.epics_pvs['FPAutoIncrement'].put('Yes')
 
         # Set some initial PV values
-        self.control_pvs['FPAutoSave'].put('Yes')
+        self.control_pvs['FPAutoSave'].put('No')
 
 
     def set_trigger_mode(self, trigger_mode, num_images):
@@ -43,18 +45,17 @@ class TomoScan2BM(TomoScan):
 
         num_images : int
             Number of images to collect.  Ignored if trigger_mode="FreeRun".
-            This is used to set the ``NumImages`` PV of the camera, 
+            This is used to set the ``NumImages`` PV of the camera,
             and the ``NumCapture`` PV of the file plugin.
         """
         if trigger_mode == 'FreeRun':
             self.epics_pvs['CamImageMode'].put('Continuous', wait=True)
             self.epics_pvs['CamTriggerMode'].put('Off', wait=True)
             self.epics_pvs['CamAcquire'].put('Acquire')
-        elif (trigger_mode == 'Internal'):
+        elif trigger_mode == 'Internal':
             self.epics_pvs['CamTriggerMode'].put('Off', wait=True)
             self.epics_pvs['CamImageMode'].put('Multiple')
             self.epics_pvs['CamNumImages'].put(num_images, wait=True)
-            self.epics_pvs['FPNumCapture'].put(num_images, wait=True)
         else: # set camera to external triggering
             self.epics_pvs['CamAcquire'].put("Done")
             self.wait_pv(self.epics_pvs['CamAcquire'], 0, 2)
@@ -68,14 +69,12 @@ class TomoScan2BM(TomoScan):
             self.epics_pvs['CamArrayCallbacks'].put('Enable')
             self.epics_pvs['CamFrameRateEnable'].put(0)
 
-            num_angles = self.epics_pvs['NumAngles'].value
-            self.epics_pvs['CamNumImages'].put(num_angles, wait=True)
+            self.epics_pvs['CamNumImages'].put(self.num_angles, wait=True)
 
             self.epics_pvs['CamTriggerMode'].put('On', wait=True)
             self.wait_pv(self.epics_pvs['CamTriggerMode'], 1)
-            self.epics_pvs['FPNumCapture'].put(num_images, wait=True)
 
-    def collect_static_frames(self, num_frames, save=True):
+    def collect_static_frames(self, num_frames):
         """Collects num_frames images in "Internal" trigger mode for dark fields and flat fields.
 
         Parameters
@@ -89,9 +88,6 @@ class TomoScan2BM(TomoScan):
         # This is called when collecting dark fields or flat fields
 
         self.set_trigger_mode('Internal', num_frames)
-        if save:
-            self.epics_pvs['FPCapture'].put('Capture')
-            self.wait_pv(self.epics_pvs['FPCapture'], 1)
         self.epics_pvs['CamAcquire'].put('Acquire')
         # Wait for detector and file plugin to be ready
         self.wait_pv(self.epics_pvs['CamAcquire'], 1)
@@ -112,6 +108,10 @@ class TomoScan2BM(TomoScan):
         # Call the base class method
         super().begin_scan()
 
+        # Set the total number of frames to capture and start capture on file plugin
+        self.epics_pvs['FPNumCapture'].put(self.total_images, wait=True)
+        self.epics_pvs['FPCapture'].put('Capture')
+
     def end_scan(self):
         """Performs the operations needed at the very end of a scan.
 
@@ -129,14 +129,11 @@ class TomoScan2BM(TomoScan):
         """
 
         # Save the configuration
-        file_path = self.epics_pvs['FilePath'].get(as_string=True)
-        file_name = self.epics_pvs['FileName'].get(as_string=True)
-        self.save_configuration(file_path + file_name + '.config')
+        self.save_configuration(self.file_path_rbv + self.file_name_rbv + '.config')
         # Put the camera back in FreeRun mode and acquiring
         self.set_trigger_mode('FreeRun', 1)
         # Set the rotation speed to maximum
-        max_speed = self.epics_pvs['RotationMaxSpeed'].value
-        self.epics_pvs['RotationSpeed'].put(max_speed)
+        self.epics_pvs['RotationSpeed'].put(self.max_rotation_speed)
         # Move the sample in.  Could be out if scan was aborted while taking flat fields
         self.move_sample_in()
         # Call the base class method
@@ -149,7 +146,7 @@ class TomoScan2BM(TomoScan):
         """
 
         super().collect_dark_fields()
-        self.collect_static_frames(self.epics_pvs['NumDarkFields'].value)
+        self.collect_static_frames(self.num_dark_fields)
 
     def collect_flat_fields(self):
         """Collects flat field images.
@@ -157,29 +154,28 @@ class TomoScan2BM(TomoScan):
         by the ``NumFlatFields`` PV.
         """
         super().collect_flat_fields()
-        self.collect_static_frames(self.epics_pvs['NumFlatFields'].value)
+        self.collect_static_frames(self.num_flat_fields)
 
-    def wait_pv(self, pv, wait_val, timeout=-1):
+    def wait_pv(self, epics_pv, wait_val, timeout=-1):
         """Wait on a pv to be a value until max_timeout (default forever)
-           delay for pv to change   
+           delay for pv to change
         """
 
         time.sleep(.01)
-        startTime = time.time()
-        while(True):
-            pv_val = pv.get()
-            if type(pv_val) == float:
+        start_time = time.time()
+        while True:
+            pv_val = epics_pv.get()
+            if isinstance(pv_val, float):
                 if abs(pv_val - wait_val) < EPSILON:
                     return True
-            if (pv_val != wait_val):
+            if pv_val != wait_val:
                 if timeout > -1:
-                    curTime = time.time()
-                    diffTime = curTime - startTime
-                    if diffTime >= timeout:
+                    current_time = time.time()
+                    diff_time = current_time - start_time
+                    if diff_time >= timeout:
                         logging.error('  *** ERROR: DROPPED IMAGES ***')
-                        logging.error('  *** wait_pv(%s, %d, %5.2f reached max timeout. Return False' % (pv.pvname, wait_val, timeout))
-
-
+                        logging.error('  *** wait_pv(%s, %d, %5.2f reached max timeout. Return False',
+                                      epics_pv.pvname, wait_val, timeout)
                         return False
                 time.sleep(.01)
             else:
@@ -189,8 +185,8 @@ class TomoScan2BM(TomoScan):
         """Collects projections in fly scan mode.
 
         This does the following:
-        - Set the rotation motor position specified by the ``RotationStart`` PV in the 
-          PSOstartPos. 
+        - Set the rotation motor position specified by the ``RotationStart`` PV in the
+          PSOstartPos.
 
         - Computes and sets the speed of the rotation motor so that it reaches the next projection
           angle just after the current exposure and readout are complete.
@@ -206,25 +202,21 @@ class TomoScan2BM(TomoScan):
         - Wait on the PSO done.
         """
 
-        super().collect_projections()        
-        rotation_start = self.epics_pvs['RotationStart'].value
-        rotation_step = self.epics_pvs['RotationStep'].value
-        num_angles = self.epics_pvs['NumAngles'].value
-        rotation_stop = rotation_start + (rotation_step * num_angles)
-        max_speed = self.epics_pvs['RotationMaxSpeed'].value
+        super().collect_projections()
         # Compute and set the motor speed
         time_per_angle = self.compute_frame_time()
-        motor_speed = rotation_step / time_per_angle
+        motor_speed = self.rotation_step / time_per_angle
 
-        self.epics_pvs['PSOstartPos'].put(rotation_start)
-        self.epics_pvs['PSOendPos'].put(rotation_stop)
+        self.epics_pvs['PSOstartPos'].put(self.rotation_start)
+        self.epics_pvs['PSOendPos'].put(self.rotation_stop)
         self.epics_pvs['PSOslewSpeed'].put(motor_speed)
-        self.epics_pvs['PSOscanDelta'].put(rotation_step)
+        self.epics_pvs['PSOscanDelta'].put(self.rotation_step)
 
         calc_num_proj = self.epics_pvs['PSOcalcProjections'].value
-        
+
         if calc_num_proj != num_angles:
-            # log.warning('  *** *** Changing number of projections from: %s to: %s' % (params.num_angles, int(calc_num_proj)))
+            #logging.warning('  *** *** Changing number of projections from: %s to: %s',
+            #                self.num_angles, int(calc_num_proj))
             num_angles = calc_num_proj
         self.epics_pvs['PSOscanControl'].put('Standard')
 
@@ -234,13 +226,10 @@ class TomoScan2BM(TomoScan):
 
         self.set_trigger_mode('PSOExternal', num_angles)
 
-        # Start capturing in file plugin
-        self.epics_pvs['FPCapture'].put('Capture')
         # Start the camera
         self.epics_pvs['CamAcquire'].put('Acquire')
         self.wait_pv(self.epics_pvs['CamAcquire'], 1)
         # Start fly scan
         self.epics_pvs['PSOfly'].put(1)
-        # wait for acquire to finish 
+        # wait for acquire to finish
         self.wait_pv(self.epics_pvs['PSOfly'], 0)
-
