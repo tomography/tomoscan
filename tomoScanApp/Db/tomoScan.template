@@ -223,6 +223,14 @@ record(bi, "$(P)$(R)FilePathExists")
     field(OSV,  "NO_ALARM")
 }
 
+record(bi, "$(P)$(R)OverwriteWarning")
+{
+    field(ZNAM, "No")
+    field(ZSV,  "MAJOR")
+    field(ONAM, "Yes")
+    field(OSV,  "NO_ALARM")
+}
+
 ################################
 # Location for data in HDF5 file
 ################################

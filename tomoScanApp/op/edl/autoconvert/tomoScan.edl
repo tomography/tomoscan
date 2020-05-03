@@ -6,7 +6,7 @@ release 1
 x 252
 y 72
 w 700
-h 815
+h 825
 font "helvetica-medium-r-18.0"
 ctlFont "helvetica-bold-r-10.0"
 btnFont "helvetica-medium-r-18.0"
@@ -678,231 +678,9 @@ major 4
 minor 0
 release 0
 x 5
-y 545
-w 690
-h 70
-lineColor rgb 0 0 0
-fillColor rgb 0 0 0
-lineWidth 0
-endObjectProperties
-
-# (Rectangle)
-object activeRectangleClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 250
-y 551
-w 199
-h 19
-lineColor rgb 55808 55808 55808
-fill
-fillColor rgb 55808 55808 55808
-lineWidth 0
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 1
-x 275
-y 551
-w 150
-h 20
-font "helvetica-medium-r-14.0"
-fontAlign "center"
-fgColor rgb 2560 0 47104
-bgColor index 3
-useDisplayBg
-value {
-  "Data Collection"
-}
-endObjectProperties
-
-# (Rectangle)
-object activeRectangleClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 305
-y 625
-w 89
-h 19
-lineColor rgb 55808 55808 55808
-fill
-fillColor rgb 55808 55808 55808
-lineWidth 0
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 1
-x 314
-y 625
-w 72
-h 20
-font "helvetica-medium-r-14.0"
-fontAlign "center"
-fgColor rgb 2560 0 47104
-bgColor index 3
-useDisplayBg
-value {
-  "Status"
-}
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 1
-x 15
-y 585
-w 130
-h 20
-font "helvetica-medium-r-14.0"
-fgColor rgb 0 0 0
-bgColor index 3
-useDisplayBg
-value {
-  "Exposure time"
-}
-endObjectProperties
-
-# (Text Control)
-object activeXTextDspClass
-beginObjectProperties
-major 4
-minor 7
-release 0
-x 150
-y 585
-w 70
-h 20
-controlPv "$(P)$(R)ExposureTime"
-format "decimal"
-font "helvetica-medium-r-12.0"
-fontAlign "left"
-fgColor rgb 0 0 0
-bgColor rgb 29440 57088 65280
-editable
-motifWidget
-limitsFromDb
-nullColor rgb 60928 46592 11008
-smartRefresh
-fastUpdate
-newPos
-objType "controls"
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 1
-x 15
-y 485
-w 140
-h 20
-font "helvetica-medium-r-14.0"
-fgColor rgb 0 0 0
-bgColor index 3
-useDisplayBg
-value {
-  "File directory"
-}
-endObjectProperties
-
-# (Text Control)
-object activeXTextDspClass
-beginObjectProperties
-major 4
-minor 7
-release 0
-x 160
-y 485
-w 530
-h 20
-controlPv "$(P)$(R)FilePath"
-format "string"
-font "helvetica-medium-r-12.0"
-fontAlign "left"
-fgColor rgb 0 0 0
-bgColor rgb 29440 57088 65280
-editable
-motifWidget
-limitsFromDb
-nullColor rgb 60928 46592 11008
-smartRefresh
-fastUpdate
-newPos
-objType "controls"
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 1
-x 15
-y 510
-w 140
-h 20
-font "helvetica-medium-r-14.0"
-fgColor rgb 0 0 0
-bgColor index 3
-useDisplayBg
-value {
-  "Base file name"
-}
-endObjectProperties
-
-# (Text Control)
-object activeXTextDspClass
-beginObjectProperties
-major 4
-minor 7
-release 0
-x 160
-y 510
-w 530
-h 20
-controlPv "$(P)$(R)FileName"
-format "string"
-font "helvetica-medium-r-12.0"
-fontAlign "left"
-fgColor rgb 0 0 0
-bgColor rgb 29440 57088 65280
-editable
-motifWidget
-limitsFromDb
-nullColor rgb 60928 46592 11008
-smartRefresh
-fastUpdate
-newPos
-objType "controls"
-endObjectProperties
-
-# (Rectangle)
-object activeRectangleClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 5
 y 445
 w 690
-h 95
+h 105
 lineColor rgb 0 0 0
 fillColor rgb 0 0 0
 lineWidth 0
@@ -1197,6 +975,19 @@ newPos
 objType "controls"
 endObjectProperties
 
+# (Group)
+object activeGroupClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 5
+y 555
+w 690
+h 265
+
+beginGroup
+
 # (Rectangle)
 object activeRectangleClass
 beginObjectProperties
@@ -1204,7 +995,139 @@ major 4
 minor 0
 release 0
 x 5
-y 620
+y 555
+w 690
+h 70
+lineColor rgb 0 0 0
+fillColor rgb 0 0 0
+lineWidth 0
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 250
+y 561
+w 199
+h 19
+lineColor rgb 55808 55808 55808
+fill
+fillColor rgb 55808 55808 55808
+lineWidth 0
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 275
+y 561
+w 150
+h 20
+font "helvetica-medium-r-14.0"
+fontAlign "center"
+fgColor rgb 2560 0 47104
+bgColor index 3
+useDisplayBg
+value {
+  "Data Collection"
+}
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 305
+y 635
+w 89
+h 19
+lineColor rgb 55808 55808 55808
+fill
+fillColor rgb 55808 55808 55808
+lineWidth 0
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 314
+y 635
+w 72
+h 20
+font "helvetica-medium-r-14.0"
+fontAlign "center"
+fgColor rgb 2560 0 47104
+bgColor index 3
+useDisplayBg
+value {
+  "Status"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 15
+y 595
+w 130
+h 20
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor index 3
+useDisplayBg
+value {
+  "Exposure time"
+}
+endObjectProperties
+
+# (Text Control)
+object activeXTextDspClass
+beginObjectProperties
+major 4
+minor 7
+release 0
+x 150
+y 595
+w 70
+h 20
+controlPv "$(P)$(R)ExposureTime"
+format "decimal"
+font "helvetica-medium-r-12.0"
+fontAlign "left"
+fgColor rgb 0 0 0
+bgColor rgb 29440 57088 65280
+editable
+motifWidget
+limitsFromDb
+nullColor rgb 60928 46592 11008
+smartRefresh
+fastUpdate
+newPos
+objType "controls"
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 5
+y 630
 w 690
 h 190
 lineColor rgb 0 0 0
@@ -1219,7 +1142,7 @@ major 4
 minor 7
 release 0
 x 580
-y 585
+y 595
 w 100
 h 20
 controlPv "$(P)$(R)StartScan"
@@ -1244,7 +1167,7 @@ major 4
 minor 1
 release 1
 x 515
-y 585
+y 595
 w 60
 h 20
 font "helvetica-medium-r-14.0"
@@ -1262,52 +1185,8 @@ beginObjectProperties
 major 4
 minor 1
 release 1
-x 570
-y 460
-w 70
-h 20
-font "helvetica-medium-r-14.0"
-fgColor rgb 0 0 0
-bgColor index 3
-useDisplayBg
-value {
-  "Exists:"
-}
-endObjectProperties
-
-# (Text Monitor)
-object activeXTextDspClass:noedit
-beginObjectProperties
-major 4
-minor 7
-release 0
-x 645
-y 460
-w 40
-h 20
-controlPv "$(P)$(R)FilePathExists"
-format "string"
-font "helvetica-medium-r-14.0"
-fontAlign "left"
-fgColor rgb 0 65535 0
-fgAlarm
-bgColor rgb 55808 55808 55808
-limitsFromDb
-nullColor rgb 60928 46592 11008
-smartRefresh
-fastUpdate
-newPos
-objType "controls"
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 1
 x 65
-y 780
+y 790
 w 130
 h 20
 font "helvetica-medium-r-14.0"
@@ -1326,7 +1205,7 @@ major 4
 minor 1
 release 1
 x 85
-y 655
+y 665
 w 110
 h 20
 font "helvetica-medium-r-14.0"
@@ -1345,7 +1224,7 @@ major 4
 minor 7
 release 0
 x 201
-y 655
+y 665
 w 400
 h 20
 controlPv "$(P)$(R)ScanStatus"
@@ -1369,7 +1248,7 @@ major 4
 minor 1
 release 1
 x 55
-y 755
+y 765
 w 140
 h 20
 font "helvetica-medium-r-14.0"
@@ -1388,7 +1267,7 @@ major 4
 minor 1
 release 1
 x 75
-y 730
+y 740
 w 120
 h 20
 font "helvetica-medium-r-14.0"
@@ -1407,7 +1286,7 @@ major 4
 minor 7
 release 0
 x 201
-y 730
+y 740
 w 100
 h 20
 controlPv "$(P)$(R)ElapsedTime"
@@ -1431,7 +1310,7 @@ major 4
 minor 7
 release 0
 x 200
-y 755
+y 765
 w 100
 h 20
 controlPv "$(P)$(R)RemainingTime"
@@ -1455,7 +1334,7 @@ major 4
 minor 1
 release 1
 x 35
-y 680
+y 690
 w 160
 h 20
 font "helvetica-medium-r-14.0"
@@ -1474,7 +1353,7 @@ major 4
 minor 7
 release 0
 x 201
-y 680
+y 690
 w 100
 h 20
 controlPv "$(P)$(R)ImagesCollected"
@@ -1498,7 +1377,7 @@ major 4
 minor 1
 release 1
 x 75
-y 705
+y 715
 w 120
 h 20
 font "helvetica-medium-r-14.0"
@@ -1517,7 +1396,7 @@ major 4
 minor 7
 release 0
 x 201
-y 705
+y 715
 w 100
 h 20
 controlPv "$(P)$(R)ImagesSaved"
@@ -1541,7 +1420,7 @@ major 4
 minor 7
 release 0
 x 199
-y 780
+y 790
 w 100
 h 20
 controlPv "$(P)$(R)ServerRunning"
@@ -1557,6 +1436,164 @@ smartRefresh
 fastUpdate
 newPos
 objType "controls"
+endObjectProperties
+
+endGroup
+
+endObjectProperties
+
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 15
+y 500
+w 140
+h 20
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor index 3
+useDisplayBg
+value {
+  "File directory"
+}
+endObjectProperties
+
+# (Text Control)
+object activeXTextDspClass
+beginObjectProperties
+major 4
+minor 7
+release 0
+x 160
+y 500
+w 530
+h 20
+controlPv "$(P)$(R)FilePath"
+format "string"
+font "helvetica-medium-r-12.0"
+fontAlign "left"
+fgColor rgb 0 0 0
+bgColor rgb 29440 57088 65280
+editable
+motifWidget
+limitsFromDb
+nullColor rgb 60928 46592 11008
+smartRefresh
+fastUpdate
+newPos
+objType "controls"
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 15
+y 525
+w 140
+h 20
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor index 3
+useDisplayBg
+value {
+  "Base file name"
+}
+endObjectProperties
+
+# (Text Control)
+object activeXTextDspClass
+beginObjectProperties
+major 4
+minor 7
+release 0
+x 160
+y 525
+w 530
+h 20
+controlPv "$(P)$(R)FileName"
+format "string"
+font "helvetica-medium-r-12.0"
+fontAlign "left"
+fgColor rgb 0 0 0
+bgColor rgb 29440 57088 65280
+editable
+motifWidget
+limitsFromDb
+nullColor rgb 60928 46592 11008
+smartRefresh
+fastUpdate
+newPos
+objType "controls"
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 570
+y 475
+w 70
+h 20
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor index 3
+useDisplayBg
+value {
+  "Exists:"
+}
+endObjectProperties
+
+# (Text Monitor)
+object activeXTextDspClass:noedit
+beginObjectProperties
+major 4
+minor 7
+release 0
+x 645
+y 475
+w 40
+h 20
+controlPv "$(P)$(R)FilePathExists"
+format "string"
+font "helvetica-medium-r-14.0"
+fontAlign "left"
+fgColor rgb 0 65535 0
+fgAlarm
+bgColor rgb 55808 55808 55808
+limitsFromDb
+nullColor rgb 60928 46592 11008
+smartRefresh
+fastUpdate
+newPos
+objType "controls"
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 15
+y 475
+w 180
+h 20
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor index 3
+useDisplayBg
+value {
+  "Overwrite warning:"
+}
 endObjectProperties
 # (Group)
 object activeGroupClass
@@ -1726,56 +1763,6 @@ offLabel "Move Sample In"
 useEnumNumeric
 font "helvetica-medium-r-12.0"
 endObjectProperties
-
-# (Message Button)
-object activeMessageButtonClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 250
-y 585
-w 120
-h 20
-fgColor rgb 0 0 0
-onColor rgb 0 55296 0
-offColor rgb 0 55296 0
-topShadowColor rgb 65280 65280 65280
-botShadowColor rgb 0 0 0
-controlPv "$(P)$(R)StartScan"
-pressValue "1"
-releaseValue 
-onLabel "Start Scan"
-offLabel "Start Scan"
-3d
-useEnumNumeric
-font "helvetica-medium-r-12.0"
-endObjectProperties
-
-# (Message Button)
-object activeMessageButtonClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 375
-y 585
-w 120
-h 20
-fgColor rgb 0 0 0
-onColor rgb 64768 0 0
-offColor rgb 64768 0 0
-topShadowColor rgb 65280 65280 65280
-botShadowColor rgb 0 0 0
-controlPv "$(P)$(R)AbortScan"
-pressValue "1"
-releaseValue "0"
-onLabel "Abort Scan"
-offLabel "Abort Scan"
-3d
-useEnumNumeric
-font "helvetica-medium-r-12.0"
-endObjectProperties
 # (Group)
 object activeGroupClass
 beginObjectProperties
@@ -1851,6 +1838,93 @@ topShadowColor rgb 55808 55808 55808
 botShadowColor rgb 17920 17920 17920
 controlPv "$(P)$(R)ReturnRotation"
 indicatorPv "$(P)$(R)ReturnRotation"
+font "helvetica-medium-r-12.0"
+endObjectProperties
+# (Group)
+object activeGroupClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 5
+y 555
+w 690
+h 265
+
+beginGroup
+
+# (Message Button)
+object activeMessageButtonClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 250
+y 595
+w 120
+h 20
+fgColor rgb 0 0 0
+onColor rgb 0 55296 0
+offColor rgb 0 55296 0
+topShadowColor rgb 65280 65280 65280
+botShadowColor rgb 0 0 0
+controlPv "$(P)$(R)StartScan"
+pressValue "1"
+releaseValue 
+onLabel "Start Scan"
+offLabel "Start Scan"
+3d
+useEnumNumeric
+font "helvetica-medium-r-12.0"
+endObjectProperties
+
+# (Message Button)
+object activeMessageButtonClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 375
+y 595
+w 120
+h 20
+fgColor rgb 0 0 0
+onColor rgb 64768 0 0
+offColor rgb 64768 0 0
+topShadowColor rgb 65280 65280 65280
+botShadowColor rgb 0 0 0
+controlPv "$(P)$(R)AbortScan"
+pressValue "1"
+releaseValue "0"
+onLabel "Abort Scan"
+offLabel "Abort Scan"
+3d
+useEnumNumeric
+font "helvetica-medium-r-12.0"
+endObjectProperties
+
+endGroup
+
+endObjectProperties
+
+
+# (Menu Button)
+object activeMenuButtonClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 200
+y 475
+w 80
+h 20
+fgColor rgb 0 0 0
+bgColor rgb 29440 57088 65280
+inconsistentColor rgb 17920 17920 17920
+topShadowColor rgb 55808 55808 55808
+botShadowColor rgb 17920 17920 17920
+controlPv "$(P)$(R)OverwriteWarning"
+indicatorPv "$(P)$(R)OverwriteWarning"
 font "helvetica-medium-r-12.0"
 endObjectProperties
 
