@@ -12,7 +12,9 @@ import threading
 import signal
 import logging
 import sys
+import os
 from datetime import timedelta
+import pymsgbox
 from epics import PV
 
 class ScanAbortError(Exception):
@@ -22,6 +24,10 @@ class ScanAbortError(Exception):
 
 class CameraTimeoutError(Exception):
     '''Exception raised when the camera times out during a scan.
+    '''
+
+class FileOverwriteError(Exception):
+    '''Exception raised when a file would be overwritten.
     '''
 
 
@@ -62,6 +68,8 @@ class TomoScan():
         self.total_images = None
         self.file_path_rbv = None
         self.file_name_rbv = None
+        self.file_number = None
+        self.file_template = None
 
         if not isinstance(pv_files, list):
             pv_files = [pv_files]
@@ -129,6 +137,7 @@ class TomoScan():
         self.control_pvs['FPFileNameRBV']     = PV(prefix + 'FileName_RBV')
         self.control_pvs['FPFileNumber']      = PV(prefix + 'FileNumber')
         self.control_pvs['FPAutoIncrement']   = PV(prefix + 'AutoIncrement')
+        self.control_pvs['FPFileTemplate']    = PV(prefix + 'FileTemplate')
         self.control_pvs['FPFullFileName']    = PV(prefix + 'FullFileName_RBV')
         self.control_pvs['FPAutoSave']        = PV(prefix + 'AutoSave')
         self.control_pvs['FPEnableCallbacks'] = PV(prefix + 'EnableCallbacks')
@@ -494,6 +503,8 @@ class TomoScan():
         self.flat_field_mode      = self.epics_pvs['FlatFieldMode'].get(as_string=True)
         self.file_path_rbv        = self.epics_pvs['FPFilePathRBV'].get(as_string=True)
         self.file_name_rbv        = self.epics_pvs['FPFileNameRBV'].get(as_string=True)
+        self.file_number          = self.epics_pvs['FPFileNumber'].value
+        self.file_template        = self.epics_pvs['FPFileTemplate'].get(as_string=True)
         self.total_images = self.num_angles
         if self.dark_field_mode != 'None':
             self.total_images += self.num_dark_fields
@@ -503,6 +514,15 @@ class TomoScan():
             self.total_images += self.num_flat_fields
         if self.flat_field_mode == 'Both':
             self.total_images += self.num_flat_fields
+
+        if self.epics_pvs['OverwriteWarning'].get(as_string=True) == 'Yes':
+            # Make sure there is not already a file by this name
+            file_name = self.file_template % (self.file_path_rbv, self.file_name_rbv, self.file_number)
+            if os.path.exists(file_name):
+                reply = pymsgbox.confirm('File ' + file_name + ' exists.  Overwrite?',
+                                        'Overwrite file', ['Yes', 'No'])
+                if reply == 'No':
+                    raise FileOverwriteError
 
     def end_scan(self):
         """Performs the operations needed at the very end of a scan.
@@ -581,6 +601,8 @@ class TomoScan():
             logging.error('Scan aborted')
         except CameraTimeoutError:
             logging.error('Camera timeout')
+        except FileOverwriteError:
+            logging.error('File overwrite aborted')
 
         # Finish scan
         self.end_scan()
