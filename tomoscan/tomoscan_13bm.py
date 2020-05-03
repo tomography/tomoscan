@@ -6,8 +6,8 @@
      Derived class for tomography scanning with EPICS at APS beamline 13-BM-D
 """
 import time
-import logging
 import math
+import os
 from tomoscan import TomoScan
 
 class TomoScan13BM(TomoScan):
@@ -27,8 +27,6 @@ class TomoScan13BM(TomoScan):
 
         # Set the detector running in FreeRun mode
         self.set_trigger_mode('FreeRun', 1)
-        # Enable auto-increment on file writer
-        self.epics_pvs['FPAutoIncrement'].put('Yes')
         # Set the SIS output pulse width to 100 us
         self.epics_pvs['MCSLNEOutputWidth'].put(0.0001)
 
@@ -72,25 +70,19 @@ class TomoScan13BM(TomoScan):
             frame_time = self.compute_frame_time()
             self.epics_pvs['MCSDwell'].put(frame_time, wait=True)
 
-    def collect_static_frames(self, num_frames, save=True):
+    def collect_static_frames(self, num_frames):
         """Collects num_frames images in "MCSInternal" trigger mode for dark fields and flat fields.
 
         Parameters
         ----------
         num_frames : int
             Number of frames to collect.
-
-        save : bool, optional
-            False to disable saving frames with the file plugin.
         """
+
         # This is called when collecting dark fields or flat fields
         self.set_trigger_mode('MCSInternal', num_frames)
-        if save:
-            logging.debug('This is to prevent pylint warning')
-            # Uncomment this line to collect flat fields and dark fields in separate files
-            # self.epics_pvs['FPCapture'].put('Capture')
         self.epics_pvs['CamAcquire'].put('Acquire')
-        # Wait for detector and file plugin to be ready
+        # Wait for detector to be ready
         time.sleep(0.5)
         # Start the MCS
         self.epics_pvs['MCSEraseStart'].put(1)
@@ -108,9 +100,6 @@ class TomoScan13BM(TomoScan):
           This is required when switching from "FreeRun" to triggered mode
           on the Point Grey camera.
 
-        - Sets the FileNumber back to 1 because we collect dark-fields, flat-fields,
-          and projections into separate files with successive file numbers starting at 1.
-
         - Waits for 1 exposure time because the MCS LNE output stays low for
           up to the exposure time.
 
@@ -118,11 +107,8 @@ class TomoScan13BM(TomoScan):
 
         # Call the base class method
         super().begin_scan()
-        # We save flats, darks, and projections in separate files.
-        # Set FileNumber back to 1.
-        self.epics_pvs['FPFileNumber'].put(1)
         # Need to collect 3 dummy frames after changing camera to triggered mode
-        self.collect_static_frames(3, False)
+        self.collect_static_frames(3)
         # The MCS LNE output stays low after stopping MCS for up to the
         # exposure time = LNE output width.
         # Need to wait for the exposure time
@@ -150,7 +136,10 @@ class TomoScan13BM(TomoScan):
         """
 
         # Save the configuration
-        self.save_configuration(self.file_path_rbv + self.file_name_rbv + '.config')
+        # Strip the extension from the FullFileName and add .config
+        full_file_name = self.epics_pvs['FPFullFileName'].get(as_string=True)
+        config_file_root = os.path.splitext(full_file_name)[0]
+        self.save_configuration(config_file_root + '.config')
         # Put the camera back in FreeRun mode and acquiring
         self.set_trigger_mode('FreeRun', 1)
         # Set the rotation speed to maximum
