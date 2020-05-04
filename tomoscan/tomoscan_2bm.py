@@ -47,7 +47,12 @@ class TomoScan2BM(TomoScan):
 
         # Call the base class method
         super().open_shutter()
-        # to complete need to add new PVs
+        # Open 2-BM-A fast shutter
+        print('open')
+        if not self.epics_pvs['OpenFastShutter'] is None:
+            value = self.epics_pvs['OpenFastShutterValue'].get(as_string=True)
+            print('open', value)
+            self.epics_pvs['OpenFastShutter'].put(value, wait=True)
 
     def close_shutter(self):
         """Closes the shutter to collect dark fields.
@@ -60,7 +65,12 @@ class TomoScan2BM(TomoScan):
        """
          # Call the base class method
         super().close_shutter()
-        # to complete need to add new PVs
+        # Close 2-BM-A fast shutter
+        print('close')
+        if not self.epics_pvs['CloseFastShutter'] is None:
+            value = self.epics_pvs['CloseFastShutterValue'].get(as_string=True)
+            print('close', value)
+            self.epics_pvs['CloseFastShutter'].put(value, wait=True)
 
     def set_trigger_mode(self, trigger_mode, num_images):
         """Sets the trigger mode SIS3820 and the camera.

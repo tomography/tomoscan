@@ -51,11 +51,17 @@ $(P)$(R)ProposalTitle
 $(P)$(R)ESAFNumber
 $(P)$(R)UserInfoUpdate
 
-##################
-# Data Management
-##################
+#################
+# Data management
+#################
 $(P)$(R)RemoteAnalysisDir
 $(P)$(R)UserLastName
 $(P)$(R)ExperimentYearMonth
 
-
+######################
+# Fast shutter control
+######################
+$(P)$(R)CloseFastShutterPVName
+$(P)$(R)CloseFastShutterValue
+$(P)$(R)OpenFastShutterPVName
+$(P)$(R)OpenFastShutterValue
