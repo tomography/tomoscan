@@ -2,20 +2,30 @@
 tomoScanApp EPICS application
 =============================
 
+.. toctree::
+   :hidden:
+
+   tomoScan.template
+   tomoScan_13BM.template
+   tomoScan_settings.req
+   tomoScan_13BM_settings.req
+   tomoScan.substitutions
+
+
 tomoscan includes a complete example EPICS application, including:
 
 - A database file that contains only the PVs required by the tomoscan.py base class
-  :download:`tomoScan.template <../../tomoScanApp/Db/tomoScan.template>`
+  :doc:`tomoScan.template`.
 - A corresponding autosave request file
-  :download:`tomoScan_settings.req <../../tomoScanApp/Db/tomoScan_settings.req>`.
+  :doc:`tomoScan_settings.req`.
 - A database file that contains PVs used by the tomoscan_13bm derived class
-  :download:`tomoScan_13BM.template <../../tomoScanApp/Db/tomoScan_13BM.template>`
+  :doc:`tomoScan_13BM.template`.
 - A corresponding autosave request file
-  :download:`tomoScan_13BM_settings.req <../../tomoScanApp/Db/tomoScan_13BM_settings.req>`.
+  :doc:`tomoScan_13BM_settings.req`.
 - OPI screens for medm, edm, caQtDM, CSS/Boy, and CSS/Phoebus
 - An example IOC application that can be used to run the above databases.
   The databases are loaded in the IOC with the example substitutions file, 
-  :download:`tomoScan.substitutions <../../iocBoot/iocTomoScan/tomoScan.substitutions>`.
+  :doc:`tomoScan.substitutions`.
 
 The following tables list all of the records in the tomoScan.template file.
 These records are used by the tomoscan base class and so are required.

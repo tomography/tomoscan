@@ -5,9 +5,11 @@ Demonstation code
 scan_demo.py
 ------------
 
-:download:`scan_demo.py <../../demo/scan_demo.py>` is a simple program that demonstrates 
+scan_demo.py is a simple program that demonstrates 
 scanning an EPICS PV and collecting a complete tomography dataset at each point in the scan.  
 The EPICS PV to be scanned could be anything, such as the sample height, sample temperature, etc.
+
+.. literalinclude:: ../../demo/scan_demo.py
 
 The following shows how the program is run, and the output.  In this case EPICS motor 13BMD:m90
 was scanned from position 5.0, incrementing by 1.0, for 5 points:
