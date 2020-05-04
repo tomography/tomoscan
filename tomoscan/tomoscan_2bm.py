@@ -7,6 +7,7 @@
 """
 import logging
 import time
+import os
 from tomoscan import TomoScan
 
 EPSILON = .001
@@ -45,8 +46,7 @@ class TomoScan2BM(TomoScan):
 
         num_images : int
             Number of images to collect.  Ignored if trigger_mode="FreeRun".
-            This is used to set the ``NumImages`` PV of the camera,
-            and the ``NumCapture`` PV of the file plugin.
+            This is used to set the ``NumImages`` PV of the camera.
         """
         if trigger_mode == 'FreeRun':
             self.epics_pvs['CamImageMode'].put('Continuous', wait=True)
@@ -81,9 +81,6 @@ class TomoScan2BM(TomoScan):
         ----------
         num_frames : int
             Number of frames to collect.
-
-        save : bool, optional
-            False to disable saving frames with the file plugin.
         """
         # This is called when collecting dark fields or flat fields
 
@@ -103,6 +100,9 @@ class TomoScan2BM(TomoScan):
 
         - Calls the base class method.
 
+        - Set the NumCapture in the file plugin to the total number of images
+
+        - Starts the file plugin streaming.
         """
 
         # Call the base class method
@@ -129,7 +129,10 @@ class TomoScan2BM(TomoScan):
         """
 
         # Save the configuration
-        self.save_configuration(self.file_path_rbv + self.file_name_rbv + '.config')
+        # Strip the extension from the FullFileName and add .config
+        full_file_name = self.epics_pvs['FPFullFileName'].get(as_string=True)
+        config_file_root = os.path.splitext(full_file_name)[0]
+        self.save_configuration(config_file_root + '.config')
         # Put the camera back in FreeRun mode and acquiring
         self.set_trigger_mode('FreeRun', 1)
         # Set the rotation speed to maximum
