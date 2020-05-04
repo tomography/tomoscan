@@ -10,8 +10,8 @@ About
 - tomoscan.py implements a base class (TomoScan) with the code that should be beamline-independent.  
 - Beamline-dependent code is implemented in derived classes that inherit from tomoscan.
 
-  - tomoscan_13bm.py is an implementation of the derived class TomoScan13BM. This is used at APS beamline 13-BM-D.
-  - tomoscan_2bm.py is an implementation of the derived class TomoScan2BM. This is used at APS beamline 2-BM-A.
+  - tomoscan_13bm.py implements the derived class TomoScan13BM. This is used at APS beamline 13-BM-D.
+  - tomoscan_2bm.py implements the derived class TomoScan2BM. This is used at APS beamline 2-BM-A.
 
 
 Advantages compared to current APS tomography Python software
