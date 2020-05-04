@@ -1,5 +1,5 @@
 :mod:`tomoscan.tomoscan_2bm`
-=============================
+============================
 
 .. automodule:: tomoscan.tomoscan_2bm
    :members:
@@ -10,4 +10,4 @@
 
    .. autosummary::
    
-      tomoscan_2bm
+      tomoscan.tomoscan_2bm

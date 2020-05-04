@@ -10,4 +10,4 @@
 
    .. autosummary::
    
-      tomoscan_13bm
+      tomoscan.tomoscan_13bm

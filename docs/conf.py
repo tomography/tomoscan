@@ -321,4 +321,5 @@ autodoc_mock_imports = [
     'epics',
     'time',
     'math',
+    'pymsgbox',
 ]
