@@ -40,9 +40,8 @@ class TomoScan13BM(TomoScan):
 
         num_images : int
             Number of images to collect.  Ignored if trigger_mode="FreeRun".
-            This is used to set the ``NuseAll`` PV of the SIS MCS,
-            the ``NumImages`` PV of the camera, and the ``NumCapture``
-            PV of the file plugin.
+            This is used to set the ``NuseAll`` PV of the SIS MCS
+            and the ``NumImages`` PV of the camera.
         """
         if trigger_mode == 'FreeRun':
             self.epics_pvs['CamImageMode'].put('Continuous', wait=True)
