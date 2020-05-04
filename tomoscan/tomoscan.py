@@ -473,7 +473,7 @@ class TomoScan():
         - Copies the ``FilePath`` and ``FileName`` PVs to the areaDetector file plugin.
 
         - Sets class variables with the important scan parameters
-        
+
         - Checks whether the file that will be saved by the file plugin already exists.
           If it does, and if the OverwriteWarning PV is 'Yes' then it opens a dialog
           box asking the user if they want to overwrite the file.  If they answer 'No'
@@ -525,7 +525,7 @@ class TomoScan():
             file_name = self.file_template % (self.file_path_rbv, self.file_name_rbv, self.file_number)
             if os.path.exists(file_name):
                 reply = pymsgbox.confirm('File ' + file_name + ' exists.  Overwrite?',
-                                        'Overwrite file', ['Yes', 'No'])
+                                         'Overwrite file', ['Yes', 'No'])
                 if reply == 'No':
                     raise FileOverwriteError
 
