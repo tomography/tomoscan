@@ -7,6 +7,7 @@ API reference
 
    api/tomoscan
    api/tomoscan_13bm
+   api/tomoscan_2bm
 
 .. automodule:: tomoscan
    :members:

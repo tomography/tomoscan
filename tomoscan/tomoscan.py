@@ -12,7 +12,9 @@ import threading
 import signal
 import logging
 import sys
+import os
 from datetime import timedelta
+import pymsgbox
 from epics import PV
 
 class ScanAbortError(Exception):
@@ -22,6 +24,10 @@ class ScanAbortError(Exception):
 
 class CameraTimeoutError(Exception):
     '''Exception raised when the camera times out during a scan.
+    '''
+
+class FileOverwriteError(Exception):
+    '''Exception raised when a file would be overwritten.
     '''
 
 
@@ -43,16 +49,27 @@ class TomoScan():
         self.config_pvs = {}
         self.control_pvs = {}
         self.pv_prefixes = {}
+
+        # These variables are set in begin_scan().
+        # They are used to prevent reading PVs repeatedly, and so that if the users changes
+        # a PV during the scan it won't mess things up.
+        self.exposure_time = None
         self.rotation_start = None
         self.rotation_step = None
-        self.num_angles = None
         self.rotation_stop = None
+        self.rotation_resolution = None
+        self.max_rotation_speed = None
+        self.return_rotation = None
+        self.num_angles = None
         self.num_dark_fields = None
         self.dark_field_mode = None
         self.num_flat_fields = None
         self.flat_field_mode = None
         self.total_images = None
-        self.return_rotation = None
+        self.file_path_rbv = None
+        self.file_name_rbv = None
+        self.file_number = None
+        self.file_template = None
 
         if not isinstance(pv_files, list):
             pv_files = [pv_files]
@@ -120,6 +137,7 @@ class TomoScan():
         self.control_pvs['FPFileNameRBV']     = PV(prefix + 'FileName_RBV')
         self.control_pvs['FPFileNumber']      = PV(prefix + 'FileNumber')
         self.control_pvs['FPAutoIncrement']   = PV(prefix + 'AutoIncrement')
+        self.control_pvs['FPFileTemplate']    = PV(prefix + 'FileTemplate')
         self.control_pvs['FPFullFileName']    = PV(prefix + 'FullFileName_RBV')
         self.control_pvs['FPAutoSave']        = PV(prefix + 'AutoSave')
         self.control_pvs['FPEnableCallbacks'] = PV(prefix + 'EnableCallbacks')
@@ -445,8 +463,6 @@ class TomoScan():
         """Performs the operations needed at the very start of a scan.
 
         This base class method does the following:
-          
-        - Sets class variables with the important scan parameters
 
         - Sets the status string in the ``ScanStatus`` PV.
 
@@ -456,28 +472,16 @@ class TomoScan():
 
         - Copies the ``FilePath`` and ``FileName`` PVs to the areaDetector file plugin.
 
+        - Sets class variables with the important scan parameters
+
+        - Checks whether the file that will be saved by the file plugin already exists.
+          If it does, and if the OverwriteWarning PV is 'Yes' then it opens a dialog
+          box asking the user if they want to overwrite the file.  If they answer 'No'
+          then a FileOverwriteError exception is raised.
+
         It is expected that most derived classes will override this method.  In most cases they
         should first call this base class method, and then perform any beamline-specific operations.
         """
-
-        self.rotation_start = self.epics_pvs['RotationStart'].value
-        self.rotation_step = self.epics_pvs['RotationStart'].value
-        self.num_angles = self.epics_pvs['NumAngles'].value
-        self.rotation_stop = self.rotation_start + (self.num_angles * self.rotation_step)
-        self.num_dark_fields = self.epics_pvs['NumDarkFields'].value
-        self.dark_field_mode = self.epics_pvs['DarkFieldMode'].get(as_string=True)
-        self.num_flat_fields = self.epics_pvs['NumFlatFields'].value
-        self.flat_field_mode = self.epics_pvs['FlatFieldMode'].get(as_string=True)
-        self.return_rotation = self.epics_pvs['ReturnRotation'].get(as_string=True)
-        self.total_images = self.num_angles
-        if self.dark_field_mode not in ('None'):
-            self.total_images += self.num_dark_fields;
-        if self.dark_field_mode == 'Both':
-            self.total_images += self.num_dark_fields;
-        if self.flat_field_mode not in ('None'):
-            self.total_images += self.num_flat_fields;
-        if self.flat_field_mode == 'Both':
-            self.total_images += self.num_flat_fields;
 
         self.scan_is_running = True
         self.epics_pvs['ScanStatus'].put('Beginning scan')
@@ -488,6 +492,42 @@ class TomoScan():
         # Set the file path, file name and file number
         self.epics_pvs['FPFilePath'].put(self.epics_pvs['FilePath'].value)
         self.epics_pvs['FPFileName'].put(self.epics_pvs['FileName'].value)
+
+        # Copy the current values of scan parameters into class variables
+        self.exposure_time        = self.epics_pvs['ExposureTime'].value
+        self.rotation_start       = self.epics_pvs['RotationStart'].value
+        self.rotation_step        = self.epics_pvs['RotationStep'].value
+        self.num_angles           = self.epics_pvs['NumAngles'].value
+        self.rotation_stop        = self.rotation_start + (self.num_angles * self.rotation_step)
+        self.rotation_resolution  = self.epics_pvs['RotationResolution'].value
+        self.max_rotation_speed   = self.epics_pvs['RotationMaxSpeed'].value
+        self.return_rotation      = self.epics_pvs['ReturnRotation'].get(as_string=True)
+        self.num_dark_fields      = self.epics_pvs['NumDarkFields'].value
+        self.dark_field_mode      = self.epics_pvs['DarkFieldMode'].get(as_string=True)
+        self.num_flat_fields      = self.epics_pvs['NumFlatFields'].value
+        self.flat_field_mode      = self.epics_pvs['FlatFieldMode'].get(as_string=True)
+        self.file_path_rbv        = self.epics_pvs['FPFilePathRBV'].get(as_string=True)
+        self.file_name_rbv        = self.epics_pvs['FPFileNameRBV'].get(as_string=True)
+        self.file_number          = self.epics_pvs['FPFileNumber'].value
+        self.file_template        = self.epics_pvs['FPFileTemplate'].get(as_string=True)
+        self.total_images = self.num_angles
+        if self.dark_field_mode != 'None':
+            self.total_images += self.num_dark_fields
+        if self.dark_field_mode == 'Both':
+            self.total_images += self.num_dark_fields
+        if self.flat_field_mode != 'None':
+            self.total_images += self.num_flat_fields
+        if self.flat_field_mode == 'Both':
+            self.total_images += self.num_flat_fields
+
+        if self.epics_pvs['OverwriteWarning'].get(as_string=True) == 'Yes':
+            # Make sure there is not already a file by this name
+            file_name = self.file_template % (self.file_path_rbv, self.file_name_rbv, self.file_number)
+            if os.path.exists(file_name):
+                reply = pymsgbox.confirm('File ' + file_name + ' exists.  Overwrite?',
+                                         'Overwrite file', ['Yes', 'No'])
+                if reply == 'No':
+                    raise FileOverwriteError
 
     def end_scan(self):
         """Performs the operations needed at the very end of a scan.
@@ -549,10 +589,10 @@ class TomoScan():
             self.epics_pvs['Rotation'].put(self.rotation_start, wait=True)
             # Collect the pre-scan dark fields if required
             if (self.num_dark_fields > 0) and (self.dark_field_mode in ('Start', 'Both')):
-               self.collect_dark_fields()
+                self.collect_dark_fields()
             # Collect the pre-scan flat fields if required
             if (self.num_flat_fields > 0) and (self.flat_field_mode in ('Start', 'Both')):
-               self.collect_flat_fields()
+                self.collect_flat_fields()
             # Collect the projections
             self.collect_projections()
             # Collect the post-scan flat fields if required
@@ -560,12 +600,14 @@ class TomoScan():
                 self.collect_flat_fields()
             # Collect the post-scan dark fields if required
             if (self.num_dark_fields > 0) and (self.dark_field_mode in ('End', 'Both')):
-               self.collect_dark_fields()
+                self.collect_dark_fields()
 
         except ScanAbortError:
             logging.error('Scan aborted')
         except CameraTimeoutError:
             logging.error('Camera timeout')
+        except FileOverwriteError:
+            logging.error('File overwrite aborted')
 
         # Finish scan
         self.end_scan()
@@ -586,7 +628,7 @@ class TomoScan():
           - Calls close_shutter()
 
           - Sets the HDF5 data location for dark fields
-          
+
           - Sets the FrameType to "DarkField"
 
         Derived classes must override this method to actually collect the dark fields.

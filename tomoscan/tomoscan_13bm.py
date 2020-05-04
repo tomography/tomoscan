@@ -7,6 +7,7 @@
 """
 import time
 import math
+import os
 from tomoscan import TomoScan
 
 class TomoScan13BM(TomoScan):
@@ -26,8 +27,6 @@ class TomoScan13BM(TomoScan):
 
         # Set the detector running in FreeRun mode
         self.set_trigger_mode('FreeRun', 1)
-        # Enable auto-increment on file writer
-        self.epics_pvs['FPAutoIncrement'].put('Yes')
         # Set the SIS output pulse width to 100 us
         self.epics_pvs['MCSLNEOutputWidth'].put(0.0001)
 
@@ -41,9 +40,8 @@ class TomoScan13BM(TomoScan):
 
         num_images : int
             Number of images to collect.  Ignored if trigger_mode="FreeRun".
-            This is used to set the ``NuseAll`` PV of the SIS MCS,
-            the ``NumImages`` PV of the camera, and the ``NumCapture``
-            PV of the file plugin.
+            This is used to set the ``NuseAll`` PV of the SIS MCS
+            and the ``NumImages`` PV of the camera.
         """
         if trigger_mode == 'FreeRun':
             self.epics_pvs['CamImageMode'].put('Continuous', wait=True)
@@ -59,7 +57,8 @@ class TomoScan13BM(TomoScan):
             # Set number of MCS channels, NumImages, and NumCapture
             self.epics_pvs['MCSStopAll'].put(1, wait=True)
             self.epics_pvs['MCSNuseAll'].put(num_images, wait=True)
-            self.epics_pvs['FPNumCapture'].put(num_images, wait=True)
+            # Uncomment this line to collect flat fields and dark fields in separate files
+            #self.epics_pvs['FPNumCapture'].put(num_images, wait=True)
 
         if trigger_mode == 'MCSExternal':
             # Put MCS in external trigger mode
@@ -70,23 +69,19 @@ class TomoScan13BM(TomoScan):
             frame_time = self.compute_frame_time()
             self.epics_pvs['MCSDwell'].put(frame_time, wait=True)
 
-    def collect_static_frames(self, num_frames, save=True):
+    def collect_static_frames(self, num_frames):
         """Collects num_frames images in "MCSInternal" trigger mode for dark fields and flat fields.
 
         Parameters
         ----------
         num_frames : int
             Number of frames to collect.
-
-        save : bool, optional
-            False to disable saving frames with the file plugin.
         """
+
         # This is called when collecting dark fields or flat fields
         self.set_trigger_mode('MCSInternal', num_frames)
-        if save:
-            self.epics_pvs['FPCapture'].put('Capture')
         self.epics_pvs['CamAcquire'].put('Acquire')
-        # Wait for detector and file plugin to be ready
+        # Wait for detector to be ready
         time.sleep(0.5)
         # Start the MCS
         self.epics_pvs['MCSEraseStart'].put(1)
@@ -104,9 +99,6 @@ class TomoScan13BM(TomoScan):
           This is required when switching from "FreeRun" to triggered mode
           on the Point Grey camera.
 
-        - Sets the FileNumber back to 1 because we collect dark-fields, flat-fields,
-          and projections into separate files with successive file numbers starting at 1.
-
         - Waits for 1 exposure time because the MCS LNE output stays low for
           up to the exposure time.
 
@@ -114,15 +106,17 @@ class TomoScan13BM(TomoScan):
 
         # Call the base class method
         super().begin_scan()
-        # We save flats, darks, and projections in separate files.
-        # Set FileNumber back to 1.
-        self.epics_pvs['FPFileNumber'].put(1)
         # Need to collect 3 dummy frames after changing camera to triggered mode
-        self.collect_static_frames(3, False)
+        self.collect_static_frames(3)
         # The MCS LNE output stays low after stopping MCS for up to the
         # exposure time = LNE output width.
         # Need to wait for the exposure time
-        time.sleep(self.epics_pvs['ExposureTime'].value)
+        time.sleep(self.exposure_time)
+        # Set the total number of frames to capture and start capture on file plugin
+        # Comment out the following two lines to collect flat fields and dark fields
+        # in separate files
+        self.epics_pvs['FPNumCapture'].put(self.total_images, wait=True)
+        self.epics_pvs['FPCapture'].put('Capture')
 
     def end_scan(self):
         """Performs the operations needed at the very end of a scan.
@@ -141,14 +135,14 @@ class TomoScan13BM(TomoScan):
         """
 
         # Save the configuration
-        file_path = self.epics_pvs['FPFilePathRBV'].get(as_string=True)
-        file_name = self.epics_pvs['FPFileNameRBV'].get(as_string=True)
-        self.save_configuration(file_path + file_name + '.config')
+        # Strip the extension from the FullFileName and add .config
+        full_file_name = self.epics_pvs['FPFullFileName'].get(as_string=True)
+        config_file_root = os.path.splitext(full_file_name)[0]
+        self.save_configuration(config_file_root + '.config')
         # Put the camera back in FreeRun mode and acquiring
         self.set_trigger_mode('FreeRun', 1)
         # Set the rotation speed to maximum
-        max_speed = self.epics_pvs['RotationMaxSpeed'].value
-        self.epics_pvs['RotationSpeed'].put(max_speed)
+        self.epics_pvs['RotationSpeed'].put(self.max_rotation_speed)
         # Move the sample in.  Could be out if scan was aborted while taking flat fields
         self.move_sample_in()
         # Call the base class method
@@ -162,7 +156,7 @@ class TomoScan13BM(TomoScan):
         """
 
         super().collect_dark_fields()
-        self.collect_static_frames(self.epics_pvs['NumDarkFields'].value)
+        self.collect_static_frames(self.num_dark_fields)
 
     def collect_flat_fields(self):
         """Collects flat field images.
@@ -171,7 +165,7 @@ class TomoScan13BM(TomoScan):
         by the ``NumFlatFields`` PV.
         """
         super().collect_flat_fields()
-        self.collect_static_frames(self.epics_pvs['NumFlatFields'].value)
+        self.collect_static_frames(self.num_flat_fields)
 
     def collect_projections(self):
         """Collects projections in fly scan mode.
@@ -203,30 +197,26 @@ class TomoScan13BM(TomoScan):
         """
 
         super().collect_projections()
-        rotation_start = self.epics_pvs['RotationStart'].value
-        rotation_step = self.epics_pvs['RotationStep'].value
-        num_angles = self.epics_pvs['NumAngles'].value
-        rotation_stop = rotation_start + (rotation_step * num_angles)
-        max_speed = self.epics_pvs['RotationMaxSpeed'].value
-        self.epics_pvs['RotationSpeed'].put(max_speed)
+        self.epics_pvs['RotationSpeed'].put(self.max_rotation_speed)
         # Start angle is decremented a half rotation step so scan is centered on rotation_start
         # The SIS does not put out pulses until after one dwell period so need to back up an
         # additional angle step
-        self.epics_pvs['Rotation'].put((rotation_start - 1.5 * rotation_step), wait=True)
+        self.epics_pvs['Rotation'].put((self.rotation_start - 1.5 * self.rotation_step), wait=True)
         # Compute and set the motor speed
         time_per_angle = self.compute_frame_time()
-        speed = rotation_step / time_per_angle
-        steps_per_deg = abs(round(1./self.epics_pvs['RotationResolution'].value, 0))
+        speed = self.rotation_step / time_per_angle
+        steps_per_deg = abs(round(1./self.rotation_resolution, 0))
         motor_speed = math.floor((speed * steps_per_deg)) / steps_per_deg
         self.epics_pvs['RotationSpeed'].put(motor_speed)
         # Set the external prescale according to the step size, use motor resolution
         # steps per degree (user unit)
         self.epics_pvs['MCSStopAll'].put(1, wait=True)
-        prescale = math.floor(abs(rotation_step  * steps_per_deg))
+        prescale = math.floor(abs(self.rotation_step  * steps_per_deg))
         self.epics_pvs['MCSPrescale'].put(prescale, wait=True)
-        self.set_trigger_mode('MCSExternal', num_angles)
+        self.set_trigger_mode('MCSExternal', self.num_angles)
+        # Uncomment this line to collect flat fields and dark fields in separate files
         # Start capturing in file plugin
-        self.epics_pvs['FPCapture'].put('Capture')
+        #self.epics_pvs['FPCapture'].put('Capture')
         # Start the camera
         self.epics_pvs['CamAcquire'].put('Acquire')
         # Start the MCS
@@ -234,6 +224,6 @@ class TomoScan13BM(TomoScan):
         # Wait for detector, file plugin, and MCS to be ready
         time.sleep(0.5)
         # Start the rotation motor
-        self.epics_pvs['Rotation'].put(rotation_stop)
-        collection_time = num_angles * time_per_angle
+        self.epics_pvs['Rotation'].put(self.rotation_stop)
+        collection_time = self.num_angles * time_per_angle
         self.wait_camera_done(collection_time + 60.)

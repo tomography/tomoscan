@@ -185,8 +185,8 @@ Frame type
   * - $(P)$(R)FrameType
     - mbbi
     - Type of the current frame. Choices are 'DarkField', 'FlatField', 'Projection'.
-      If each frame type is stored in a separate file this record can be used as
-      a detector attribute to indicate what type of data is in that file.
+      This record can be used as a detector attribute to indicate what type of data 
+      each frame contains.
 
 Exposure time
 ~~~~~~~~~~~~~
@@ -202,6 +202,7 @@ Exposure time
   * - $(P)$(R)ExposureTime
     - ao
     - The exposure time in seconds.  Currently the same time is used for dark fields, flat fields, and projections.
+      Writing to this PV will copy the value to the camera AcquireTime PV.
 
 File path and name control
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -216,14 +217,30 @@ File path and name control
     - Description
   * - $(P)$(R)FilePath
     - waveform
-    - The file path to save data.
+    - The file path to save data. Writing to this PV will copy the value to the file plugin.
   * - $(P)$(R)FileName
     - waveform
-    - The file name to save data.
+    - The file name to save data.  Writing to this PV will copy the value to the file plugin.
   * - $(P)$(R)FilePathExists
     - bi
     - Flag indicating whether the specified FilePath exists.
       This is a mirror of the FilePathExists_RBV record in the file plugin.
+  * - $(P)$(R)OverwriteWarning
+    - bi
+    - Selects whether to open a dialog box to warn the user if the file to be written
+      would overwrite an existing file.  The user can then choose 'Yes' or 'No'.
+
+Location for data in HDF5 file
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. cssclass:: table-bordered table-striped table-hover
+.. list-table::
+  :header-rows: 1
+  :widths: 5 5 90
+
+  * - Record name
+    - Record type
+    - Description
   * - $(P)$(R)HDF5ProjectionLocation
     - stringout
     - String defining the location in the HDF5 file to write projection frames.
