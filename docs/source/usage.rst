@@ -46,21 +46,21 @@ line will not be available until the scan completes.  The scan can be aborted by
 
 >>> ts.run_fly_scan()
 
-The above line runs the TomoScan.fly_scan() function in a new Python thread.  This means that the Python command
+The above line runs the ``TomoScan.fly_scan()`` function in a new Python thread.  This means that the Python command
 line is available immediately.  The scan can be aborted by typing ^C or by typing the command ``ts.abort_scan()``.
 
-The base class implementation of fly_scan does the common operations required for a tomography dataset:
+The base class implementation of ``fly_scan()`` does the common operations required for a tomography dataset:
 
-- Calls the begin_scan() method to perform whatever operations are required before the scan. 
-  begin_scan has an implementation in the base class, but will commonly also be implemented in the derived class.
-  The derived class will normally call the base class to perform the operations that are not beamline-specific. 
-- Closes the shutter and collects the dark fields by calling the collect_dark+fields() method in the derived class. 
+- Calls the ``begin_scan()`` method to perform whatever operations are required before the scan. 
+- Calls the ``collect_dark_fields()`` method to collect the dark fields.  
   This can be done before the scan, after the scan, both before and after, or never.
-- Opens the shutter, moves the sample out, and collects the flat fields by calling the collect_flat_fields() method in the derived class. 
+- Calls the ``collect_flat_fields()`` method to collect the flat fields. 
   This can be done before the scan, after the scan, both before and after, or never.
-- Moves the sample in and calls the collect_projections() method in the derived class.  
+- Calls the ``collect_projections()`` method to collect all of the projections.
   This method waits for the data collection to complete.
-- Calls the end_scan() method to do any post-scan operations required.
+- Calls the ``end_scan()`` method to do any post-scan operations required.
   These may include moving the rotation stage back to the start position, putting the camera in Continuous mode, etc.
-  end_scan has an implementation in the base class, but will commonly also be implemented in the derived class.
-  The derived class will normally call the base class to perform the operations that are not beamline-specific. 
+  
+``begin_scan()``, ``collect_dark_fields()``, ``collect_flat_fields()``, ``collect_projections()``, and ``end_scan()``
+all have implementations in the base class, but will commonly also be implemented in the derived class.
+The derived class will normally call the base class to perform the operations that are not beamline-specific. 
