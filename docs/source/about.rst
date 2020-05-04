@@ -2,15 +2,15 @@
 About
 =====
 
-:author: Mark Rivers (University of Chicago)
+:author: Mark Rivers (University of Chicago), Francesco De Carlo (Advanced Photon Source)
 
 .. _2bm-tomo: https://github.com/xray-imaging/2bm-tomo
 
-tomoscan is a Python module for collecting computed tomography data at the APS. 
-tomoscan.py implements a base class (TomoScan) with the code that should be beamline-independent.  
-Beamline-dependent code is implemented in derived classes that inherit from tomoscan.
-tomoscan_13bm.py is an example of such a derived class TomoScan13BM. This is used at APS beamline 13-BM-D.
-tomoscan_2bm.py is an example of such a derived class TomoScan13BM. This is used at APS beamline 2-BM-A.
+- tomoscan is a Python module for collecting computed tomography data at the APS. 
+- tomoscan.py implements a base class (TomoScan) with the code that should be beamline-independent.  
+- Beamline-dependent code is implemented in derived classes that inherit from tomoscan.
+- tomoscan_13bm.py is an example of such a derived class TomoScan13BM. This is used at APS beamline 13-BM-D.
+- tomoscan_2bm.py is an example of such a derived class TomoScan13BM. This is used at APS beamline 2-BM-A.
 
 
 Advantages compared to current APS tomography Python software
