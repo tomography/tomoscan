@@ -30,7 +30,7 @@ class TomoScan2BM(TomoScan):
         # Set the detector running in FreeRun mode
         # self.set_trigger_mode('FreeRun', 1)
         # Enable auto-increment on file writer
-        self.epics_pvs['FPAutoIncrement'].put('Yes')
+        #self.epics_pvs['FPAutoIncrement'].put('Yes')
 
         # Set some initial PV values
         self.control_pvs['FPAutoSave'].put('No')
