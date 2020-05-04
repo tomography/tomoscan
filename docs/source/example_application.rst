@@ -2,6 +2,16 @@
 tomoScanApp EPICS application
 =============================
 
+.. toctree::
+   :hidden:
+
+   tomoScan.template
+   tomoScan_13BM.template
+   tomoScan_settings.req
+   tomoScan_13BM_settings.req
+   tomoScan.substitutions
+
+
 tomoscan includes a complete example EPICS application, including:
 
 - A database file that contains only the PVs required by the tomoscan.py base class
