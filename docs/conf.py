@@ -123,11 +123,6 @@ pygments_style = 'sphinx'
 # a list of builtin themes.
 html_theme = 'default'
 
-
-html_css_files = [
-    'custom.css',
-]
-
 # on_rtd is whether we are on readthedocs.org
 on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
 
