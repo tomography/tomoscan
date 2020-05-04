@@ -202,6 +202,7 @@ Exposure time
   * - $(P)$(R)ExposureTime
     - ao
     - The exposure time in seconds.  Currently the same time is used for dark fields, flat fields, and projections.
+      Writing to this PV will copy the value to the camera AcquireTime PV.
 
 File path and name control
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -216,10 +217,10 @@ File path and name control
     - Description
   * - $(P)$(R)FilePath
     - waveform
-    - The file path to save data.
+    - The file path to save data. Writing to this PV will copy the value to the file plugin.
   * - $(P)$(R)FileName
     - waveform
-    - The file name to save data.
+    - The file name to save data.  Writing to this PV will copy the value to the file plugin.
   * - $(P)$(R)FilePathExists
     - bi
     - Flag indicating whether the specified FilePath exists.
