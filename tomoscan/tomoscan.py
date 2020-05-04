@@ -473,6 +473,11 @@ class TomoScan():
         - Copies the ``FilePath`` and ``FileName`` PVs to the areaDetector file plugin.
 
         - Sets class variables with the important scan parameters
+        
+        - Checks whether the file that will be saved by the file plugin already exists.
+          If it does, and if the OverwriteWarning PV is 'Yes' then it opens a dialog
+          box asking the user if they want to overwrite the file.  If they answer 'No'
+          then a FileOverwriteError exception is raised.
 
         It is expected that most derived classes will override this method.  In most cases they
         should first call this base class method, and then perform any beamline-specific operations.
