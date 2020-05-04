@@ -135,7 +135,7 @@ class TomoScan2BM(TomoScan):
         # Set FileNumber back to 1.
         self.epics_pvs['FPFileNumber'].put(1)
         # Need to collect 3 dummy frames after changing camera to triggered mode
-        self.collect_static_frames(3, False)
+        self.collect_static_frames(3)
         # The MCS LNE output stays low after stopping MCS for up to the
         # exposure time = LNE output width.
         # Need to wait for the exposure time
@@ -269,7 +269,7 @@ class TomoScan2BM(TomoScan):
 
         calc_num_proj = self.epics_pvs['PSOcalcProjections'].value
 
-        if calc_num_proj != num_angles:
+        if calc_num_proj != self.num_angles:
             #logging.warning('  *** *** Changing number of projections from: %s to: %s',
             #                self.num_angles, int(calc_num_proj))
             num_angles = calc_num_proj
@@ -279,7 +279,7 @@ class TomoScan2BM(TomoScan):
         self.epics_pvs['PSOtaxi'].put(1)
         self.wait_pv(self.epics_pvs['PSOtaxi'], 0)
 
-        self.set_trigger_mode('PSOExternal', num_angles)
+        self.set_trigger_mode('PSOExternal', self.num_angles)
 
 
         # Start the camera
