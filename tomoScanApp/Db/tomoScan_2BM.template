@@ -159,11 +159,11 @@ record(stringout, "$(P)$(R)UserInfoUpdate")
 }
 
 
-##################
-# Data Management
-##################
+#################
+# Data management
+#################
 
-record(stringout, "$(P)$(R)RemoteAnalysisDir") 
+record(stringout, "$(P)$(R)DetectorTopDir") 
 {
    field(VAL,  "Unknown")
 }
@@ -176,4 +176,33 @@ record(stringout, "$(P)$(R)UserLastName")
 record(stringout, "$(P)$(R)ExperimentYearMonth")
 {
    field(VAL,  "Unknown")
+}
+
+record(stringout, "$(P)$(R)RemoteAnalysisDir") 
+{
+   field(VAL,  "Unknown")
+}
+
+######################
+# Fast shutter control
+######################
+
+record(stringout, "$(P)$(R)CloseFastShutterPVName")
+{
+   field(VAL,  "$(CLOSE_FAST_SHUTTER)")
+}
+
+record(stringout, "$(P)$(R)CloseFastShutterValue")
+{
+   field(VAL,  "$(CLOSE_FAST_VALUE)")
+}
+
+record(stringout, "$(P)$(R)OpenFastShutterPVName")
+{
+   field(VAL,  "$(OPEN_FAST_SHUTTER)")
+}
+
+record(stringout, "$(P)$(R)OpenFastShutterValue")
+{
+   field(VAL,  "$(OPEN_FAST_VALUE)")
 }
