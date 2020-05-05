@@ -54,9 +54,10 @@ $(P)$(R)UserInfoUpdate
 #################
 # Data management
 #################
-$(P)$(R)RemoteAnalysisDir
+$(P)$(R)DetectorTopDir
 $(P)$(R)UserLastName
 $(P)$(R)ExperimentYearMonth
+$(P)$(R)RemoteAnalysisDir
 
 ######################
 # Fast shutter control

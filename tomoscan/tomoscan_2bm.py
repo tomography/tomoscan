@@ -29,8 +29,16 @@ class TomoScan2BM(TomoScan):
 
         # Set the detector running in FreeRun mode
         # self.set_trigger_mode('FreeRun', 1)
+        
         # Enable auto-increment on file writer
-        #self.epics_pvs['FPAutoIncrement'].put('Yes')
+        self.epics_pvs['FPAutoIncrement'].put('Yes')
+
+        # Set data directory
+        file_path = self.epics_pvs['DetectorTopDir'].get(as_string=True) + self.epics_pvs['ExperimentYearMonth'].get(as_string=True)
+        self.epics_pvs['FilePath'].put(file_path, wait=True)
+        # Set file name
+        file_name = str('{:03}'.format(self.epics_pvs['FPFileNumber'].value)) + '_' + self.epics_pvs['SampleName'].get(as_string=True)
+        self.epics_pvs['FileName'].put(file_name, wait=True)
 
         # Set some initial PV values
         self.control_pvs['FPAutoSave'].put('No')
@@ -48,10 +56,8 @@ class TomoScan2BM(TomoScan):
         # Call the base class method
         super().open_shutter()
         # Open 2-BM-A fast shutter
-        print('open')
         if not self.epics_pvs['OpenFastShutter'] is None:
             value = self.epics_pvs['OpenFastShutterValue'].get(as_string=True)
-            print('open', value)
             self.epics_pvs['OpenFastShutter'].put(value, wait=True)
 
     def close_shutter(self):
@@ -66,10 +72,8 @@ class TomoScan2BM(TomoScan):
          # Call the base class method
         super().close_shutter()
         # Close 2-BM-A fast shutter
-        print('close')
         if not self.epics_pvs['CloseFastShutter'] is None:
             value = self.epics_pvs['CloseFastShutterValue'].get(as_string=True)
-            print('close', value)
             self.epics_pvs['CloseFastShutter'].put(value, wait=True)
 
     def set_trigger_mode(self, trigger_mode, num_images):
@@ -93,9 +97,6 @@ class TomoScan2BM(TomoScan):
             self.epics_pvs['CamImageMode'].put('Multiple')
             self.epics_pvs['CamNumImages'].put(num_images, wait=True)
         else: # set camera to external triggering
-            # self.epics_pvs['CamAcquire'].put("Done")
-            # self.wait_pv(self.epics_pvs['CamAcquire'], 0, 2)
-            # Set camera to external trigger off before making changes
             self.epics_pvs['CamTriggerMode'].put('Off', wait=True)
             self.epics_pvs['CamTriggerSource'].put('Line2', wait=True)
             self.epics_pvs['CamTriggerOverlap'].put('ReadOut', wait=True)
@@ -136,20 +137,10 @@ class TomoScan2BM(TomoScan):
 
         - Calls the base class method.
 
-
         """
 
         # Call the base class method
         super().begin_scan()
-        # We save flats, darks, and projections in separate files.
-        # Set FileNumber back to 1.
-        self.epics_pvs['FPFileNumber'].put(1)
-        # Need to collect 3 dummy frames after changing camera to triggered mode
-        self.collect_static_frames(3)
-        # The MCS LNE output stays low after stopping MCS for up to the
-        # exposure time = LNE output width.
-        # Need to wait for the exposure time
-        time.sleep(self.epics_pvs['ExposureTime'].value)
         
         # Compute total number of frames to capture
         num_dark_fields = self.epics_pvs['NumDarkFields'].value
@@ -191,6 +182,8 @@ class TomoScan2BM(TomoScan):
 
         # Save the configuration
         # Strip the extension from the FullFileName and add .config
+
+
         full_file_name = self.epics_pvs['FPFullFileName'].get(as_string=True)
         config_file_root = os.path.splitext(full_file_name)[0]
         self.save_configuration(config_file_root + '.config')
@@ -280,9 +273,8 @@ class TomoScan2BM(TomoScan):
         calc_num_proj = self.epics_pvs['PSOcalcProjections'].value
 
         if calc_num_proj != self.num_angles:
-            #logging.warning('  *** *** Changing number of projections from: %s to: %s',
-            #                self.num_angles, int(calc_num_proj))
-            num_angles = calc_num_proj
+            logging.warning('PSO changed number of projections from: %s to: %s', self.num_angles, int(calc_num_proj))
+            self.num_angles = calc_num_proj
         self.epics_pvs['PSOscanControl'].put('Standard')
 
         # Taxi before starting capture
@@ -290,8 +282,6 @@ class TomoScan2BM(TomoScan):
         self.wait_pv(self.epics_pvs['PSOtaxi'], 0)
 
         self.set_trigger_mode('PSOExternal', self.num_angles)
-
-
         # Start the camera
         self.epics_pvs['CamAcquire'].put('Acquire')
         self.wait_pv(self.epics_pvs['CamAcquire'], 1)
