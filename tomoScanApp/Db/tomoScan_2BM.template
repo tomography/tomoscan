@@ -5,9 +5,10 @@
 # files written by areaDetector file plugin.
 
 
-################
+############
 # PSO Prefix
-################
+############
+
 record(stringout, "$(P)$(R)PSOPVPrefix")
 {
    field(VAL,  "$(PSO)")
@@ -159,9 +160,9 @@ record(stringout, "$(P)$(R)UserInfoUpdate")
 }
 
 
-#################
-# Data management
-#################
+#############################
+# Data management information
+#############################
 
 record(stringout, "$(P)$(R)DetectorTopDir") 
 {
