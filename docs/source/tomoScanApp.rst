@@ -1,8 +1,9 @@
-=============================
+*****************************
 tomoScanApp EPICS application
-=============================
+*****************************
 
-.. toctree::
+.. 
+   toctree::
    :hidden:
 
    tomoScan.template
@@ -14,24 +15,23 @@ tomoScanApp EPICS application
 
 tomoscan includes a complete example EPICS application, including:
 
-- A database file that contains only the PVs required by the tomoscan.py base class
-  :doc:`tomoScan.template`.
-- A corresponding autosave request file
-  :doc:`tomoScan_settings.req`.
-- A database file that contains PVs used by the tomoscan_13bm derived class
-  :doc:`tomoScan_13BM.template`.
-- A corresponding autosave request file
-  :doc:`tomoScan_13BM_settings.req`.
+- A database file and corresponding autosave request file that contain only the PVs required by the tomoscan.py base class.
+- Database files and corresponding autosave request files that contain PVs used by the derived classes.
 - OPI screens for medm, edm, caQtDM, CSS/Boy, and CSS/Phoebus
 - An example IOC application that can be used to run the above databases.
   The databases are loaded in the IOC with the example substitutions file, 
   :doc:`tomoScan.substitutions`.
 
+Base class files
+================
 The following tables list all of the records in the tomoScan.template file.
 These records are used by the tomoscan base class and so are required.
 
 tomoScan.template
 -----------------
+
+This is the database file that contains only the PVs required by the tomoscan.py base class
+:doc:`tomoScan.template`.
 
 Camera and File Plugin PV Prefixes
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -331,7 +331,10 @@ Scan status via Channel Access
 tomoScan_settings.req
 ---------------------
 
-This is the autosave request file for tomoScan.template. This file serves 2 purposes:
+This is the autosave request file for tomoScan.template
+:doc:`tomoScan_settings.req`.
+
+This file serves 2 purposes:
 
 - It is used by autosave to determine which PVs to save in the ``auto_settings.sav`` file.
 
@@ -377,9 +380,43 @@ It contains 4 types of PVs:
 When the request file is read it is used to construct all of the EPICS PV names that are used by TomoScan.
 This allows TomoScan to avoid having any hard-coded PV names, and makes it easy to port to a new beamline.
 
+medm files
+----------
+
+tomoScan.adl
+~~~~~~~~~~~~
+
+The following is the MEDM screen :download:`tomoScan.adl <../../tomoScanApp/op/adl/tomoScan.adl>` during a scan. 
+The status information is updating.
+
+.. image:: img/tomoScan.png
+    :width: 75%
+    :align: center
+
+tomoScanEPICS_PVs.adl
+~~~~~~~~~~~~~~~~~~~~~
+
+The following is the MEDM screen :download:`tomoScanEPICS_PVs.adl <../../tomoScanApp/op/adl/tomoScanEPICS_PVs.adl>`. 
+If these PVs are changed tomoscan must be restarted.
+
+.. image:: img/tomoScanEPICS_PVs.png
+    :width: 75%
+    :align: center
+
+Beamline-specific files
+=======================
+The following files are for the beamline-specific derived classes.
+
+Beamline 13BM
+-------------
+
+These are the files that are specific to the TomoScan13BM derived class used at APS beamline 13-BM-D.
 
 tomoScan_13BM.template
-----------------------
+~~~~~~~~~~~~~~~~~~~~~~
+
+This is database file for the TomoScan13BM derived class
+:doc:`tomoScan_13BM.template`.
 
 The following tables list all of the records in the tomoScan_13BM.template file.
 This file is used for records needed by the tomoscan_13bm derived class, and also
@@ -387,7 +424,7 @@ for metadata PVs that should be saved in the tomoscan configuration file and fil
 written by the areaDetector file plugins.
 
 SIS MCS Prefix
-~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^
 
 .. cssclass:: table-bordered table-striped table-hover
 .. list-table::
@@ -402,7 +439,7 @@ SIS MCS Prefix
     - Contains the prefix for the SIS MCS, e.g. 13BMD:SIS1:
 
 Energy information
-~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^
 
 .. cssclass:: table-bordered table-striped table-hover
 .. list-table::
@@ -417,7 +454,7 @@ Energy information
     - Contains the energy mode of the beamline, e.g. 'Mono', 'Pink', 'White'.
 
 Beam status information
-~~~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^
 
 .. cssclass:: table-bordered table-striped table-hover
 .. list-table::
@@ -435,7 +472,7 @@ Beam status information
     - Contains the value of the beam ready PV when beam is ready.
 
 Optics information
-~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^
 
 .. cssclass:: table-bordered table-striped table-hover
 .. list-table::
@@ -465,7 +502,7 @@ Optics information
     - Description of the camera objective
 
 Sample information
-~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^
 
 .. cssclass:: table-bordered table-striped table-hover
 .. list-table::
@@ -489,7 +526,7 @@ Sample information
     - Description of the sample, part 3
 
 User information
-~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^
 
 .. cssclass:: table-bordered table-striped table-hover
 .. list-table::
@@ -522,36 +559,20 @@ User information
     - Experiment Safety Approval Form number
 
 tomoScan_13BM_settings.req
---------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-This is the autosave request file for tomoScan_13BM.template. It has the same usage and type of content 
-as tomoScan_settings.req described above, except that it contains the PVs for the derived class TomoScan13BM.
+This is the autosave request file for tomoScan_13BM.template
+:doc:`tomoScan_13BM_settings.req`.
+
+It has the same usage and type of content as tomoScan_settings.req described above, except that it
+contains the PVs for the derived class TomoScan13BM.
+
 
 medm files
-----------
-
-tomoScan.adl
-~~~~~~~~~~~~
-
-The following is the MEDM screen :download:`tomoScan.adl <../../tomoScanApp/op/adl/tomoScan.adl>` during a scan. 
-The status information is updating.
-
-.. image:: img/tomoScan.png
-    :width: 75%
-    :align: center
-
-tomoScanEPICS_PVs.adl
-~~~~~~~~~~~~~~~~~~~~~
-
-The following is the MEDM screen :download:`tomoScanEPICS_PVs.adl <../../tomoScanApp/op/adl/tomoScanEPICS_PVs.adl>`. 
-If these PVs are changed tomoscan must be restarted.
-
-.. image:: img/tomoScanEPICS_PVs.png
-    :width: 75%
-    :align: center
+~~~~~~~~~~
 
 tomoScan_13BM.adl
-~~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^
 
 The following is the MEDM screen :download:`tomoScan_13BM.adl <../../tomoScanApp/op/adl/tomoScan_13BM.adl>`.  
 This screen contains the PVs for the TomoScan_13BM derived class.  If the MCSPrefix or BeamReadyPV are changed then tomoscan must be restarted.
@@ -559,4 +580,3 @@ This screen contains the PVs for the TomoScan_13BM derived class.  If the MCSPre
 .. image:: img/tomoScan_13BM.png
     :width: 75%
     :align: center
-
