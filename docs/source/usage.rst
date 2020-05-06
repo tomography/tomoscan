@@ -28,7 +28,7 @@ This line creates the TomoScan13BM object.  It takes two arguments that are pass
 TomoScan constructor:
 
 - The first argument is a list of paths to the autosave request files for the databases.
-  These are described in the :doc:`example_application` documentation.
+  These are described in the :doc:`tomoScanApp` documentation.
 - The second argument is a dictionary of macro substitution values for those request files.
   These define the PV prefixes to use when parsing the files.
 
