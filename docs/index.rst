@@ -10,7 +10,7 @@ Content
 
    source/about
    source/usage
-   source/example_application
+   source/tomoScanApp
    source/demo
    source/api
    source/credits
