@@ -8,8 +8,10 @@ tomoScanApp EPICS application
 
    tomoScan.template
    tomoScan_13BM.template
+   tomoScan_2BM.template
    tomoScan_settings.req
    tomoScan_13BM_settings.req
+   tomoScan_2BM_settings.req
    tomoScan.substitutions
 
 
@@ -567,7 +569,6 @@ This is the autosave request file for tomoScan_13BM.template
 It has the same usage and type of content as tomoScan_settings.req described above, except that it
 contains the PVs for the derived class TomoScan13BM.
 
-
 medm files
 ~~~~~~~~~~
 
@@ -578,5 +579,235 @@ The following is the MEDM screen :download:`tomoScan_13BM.adl <../../tomoScanApp
 This screen contains the PVs for the TomoScan_13BM derived class.  If the MCSPrefix or BeamReadyPV are changed then tomoscan must be restarted.
 
 .. image:: img/tomoScan_13BM.png
+    :width: 75%
+    :align: center
+
+Beamline 2-BM
+-------------
+
+These are the files that are specific to the TomoScan2BM derived class used at APS beamline 2-BM-A.
+
+tomoScan_2BM.template
+~~~~~~~~~~~~~~~~~~~~~
+
+This is database file for the TomoScan2BM derived class
+:doc:`tomoScan_2BM.template`.
+
+The following tables list all of the records in the tomoScan_2BM.template file.
+This file is used for records needed by the tomoscan_2bm derived class, and also
+for metadata PVs that should be saved in the tomoscan configuration file and files 
+written by the areaDetector file plugins.
+
+PSO Prefix
+^^^^^^^^^^
+
+.. cssclass:: table-bordered table-striped table-hover
+.. list-table::
+  :header-rows: 1
+  :widths: 5 5 90
+
+  * - Record name
+    - Record type
+    - Description
+  * - $(P)$(R)PSOPVPrefix
+    - stringout
+    - Contains the prefix for the PSO, e.g. 2bma:PSOFly2:
+
+Energy information
+^^^^^^^^^^^^^^^^^^
+
+.. cssclass:: table-bordered table-striped table-hover
+.. list-table::
+  :header-rows: 1
+  :widths: 5 5 90
+
+  * - Record name
+    - Record type
+    - Description
+  * - $(P)$(R)Energy
+    - mbbo
+    - Contains the energy of the beamline.
+  * - $(P)$(R)EnergyMode
+    - mbbo
+    - Contains the energy mode of the beamline, e.g. 'Mono', 'Pink', 'White'.
+  * - $(P)$(R)Filters
+    - stringout
+    - Contains the material and thickness of the filters manually set in the beam path, e.g. Al 1mm; Glass 5mm.
+
+Beam status information
+^^^^^^^^^^^^^^^^^^^^^^^
+
+.. cssclass:: table-bordered table-striped table-hover
+.. list-table::
+  :header-rows: 1
+  :widths: 5 5 90
+
+  * - Record name
+    - Record type
+    - Description
+  * - $(P)$(R)BeamReadyPVName
+    - stringout
+    - Contains the name of the PV that indicates if beam is ready, e.g. ACIS:ShutterPermit
+  * - $(P)$(R)BeamReadyValue
+    - stringout
+    - Contains the value of the beam ready PV when beam is ready.
+
+Optics information
+^^^^^^^^^^^^^^^^^^
+
+.. cssclass:: table-bordered table-striped table-hover
+.. list-table::
+  :header-rows: 1
+  :widths: 5 5 90
+
+  * - Record name
+    - Record type
+    - Description
+  * - $(P)$(R)ScintillatorType
+    - stringout
+    - Contains the type of scintillator being used.
+  * - $(P)$(R)ScintillatorThickness
+    - ao
+    - Contains the thickness of the scintillator in microns.
+  * - $(P)$(R)ImagePixelSize
+    - ao
+    - Contains the pixel size on the sample in microns (i.e. includes objective magnification)
+  * - $(P)$(R)DetectorPixelSize
+    - ao
+    - Contains the pixel size of the detector.
+  * - $(P)$(R)CameraObjective
+    - stringout
+    - Description of the camera objective
+  * - $(P)$(R)CameraTubeLength
+    - stringout
+    - Description of the camera objective
+
+Sample information
+^^^^^^^^^^^^^^^^^^
+
+.. cssclass:: table-bordered table-striped table-hover
+.. list-table::
+  :header-rows: 1
+  :widths: 5 5 90
+
+  * - Record name
+    - Record type
+    - Description
+  * - $(P)$(R)SampleName
+    - stringout
+    - Name of the sample
+  * - $(P)$(R)SampleDescription1
+    - stringout
+    - Description of the sample, part 1
+  * - $(P)$(R)SampleDescription2
+    - stringout
+    - Description of the sample, part 2
+  * - $(P)$(R)SampleDescription3
+    - stringout
+    - Description of the sample, part 3
+
+User information
+^^^^^^^^^^^^^^^^
+
+.. cssclass:: table-bordered table-striped table-hover
+.. list-table::
+  :header-rows: 1
+  :widths: 5 5 90
+
+  * - Record name
+    - Record type
+    - Description
+  * - $(P)$(R)UserName
+    - stringout
+    - User name
+  * - $(P)$(R)UserInstitution
+    - stringout
+    - User institution
+  * - $(P)$(R)UserBadge
+    - stringout
+    - User badge number
+  * - $(P)$(R)UserEmail
+    - stringout
+    - User email address
+  * - $(P)$(R)ProposalNumber
+    - stringout
+    - Proposal number
+  * - $(P)$(R)ProposalTitle
+    - stringout
+    - Proposal title
+  * - $(P)$(R)ESAFNumber
+    - stringout
+    - Experiment Safety Approval Form number
+  * - $(P)$(R)UserInfoUpdate
+    - stringout
+    - Date and time of the last synchronization of the user information with the APS scheduling system
+
+Data management information
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. cssclass:: table-bordered table-striped table-hover
+.. list-table::
+  :header-rows: 1
+  :widths: 5 5 90
+
+  * - Record name
+    - Record type
+    - Description
+  * - $(P)$(R)DetectorTopDir
+    - stringout
+    - Top directory from where the raw data will be saved.
+  * - $(P)$(R)UserLastName
+    - stringout
+    - User last name, automatically updated from the APS scheduling system, e.g. decarlo
+  * - $(P)$(R)ExperimentYearMonth
+    - stringout
+    - Experiment year and month, automatically updated from the APS scheduling system, e.g. 2020-04
+  * - $(P)$(R)RemoteAnalysisDir
+    - stringout
+    - Remote analysis location where to transfer the raw data for analysis, e.g tomo@handyn:/local/data/
+
+Fast shutter control
+^^^^^^^^^^^^^^^^^^^^
+
+.. cssclass:: table-bordered table-striped table-hover
+.. list-table::
+  :header-rows: 1
+  :widths: 5 5 90
+
+  * - Record name
+    - Record type
+    - Description
+  * - $(P)$(R)CloseFastShutterPVName
+    - stringout
+    - Contains the name of the PV to close the fast shutter
+  * - $(P)$(R)CloseFastShutterValue
+    - stringout
+    - Contains the value to write to close the fast shutter
+  * - $(P)$(R)OpenFastShutterPVName
+    - stringout
+    - Contains the name of the PV to open the fast shutter
+  * - $(P)$(R)OpenFastShutterValue
+    - stringout
+    - Contains the value to write to open the fast shutter
+
+tomoScan_2BM_settings.req
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This is the autosave request file for tomoScan_2BM.template
+:doc:`tomoScan_2BM_settings.req`.
+
+It has the same usage and type of content as tomoScan_settings.req described above, except that it
+contains the PVs for the derived class TomoScan2BM.
+
+medm files
+~~~~~~~~~~
+
+tomoScan_2BM.adl
+^^^^^^^^^^^^^^^^
+
+The following is the MEDM screen :download:`tomoScan_2BM.adl <../../tomoScanApp/op/adl/tomoScan_2BM.adl>`.  
+This screen contains the PVs for the TomoScan_2BM derived class.  If the BeamReadyPV is changed then tomoscan must be restarted.
+
+.. image:: img/tomoScan_2BM.png
     :width: 75%
     :align: center
