@@ -2,8 +2,7 @@
 tomoScanApp EPICS application
 *****************************
 
-.. 
-   toctree::
+.. toctree::
    :hidden:
 
    tomoScan.template
