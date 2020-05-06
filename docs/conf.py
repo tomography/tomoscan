@@ -135,7 +135,7 @@ if not on_rtd:  # only import and set the theme if we're building docs locally
 # further.  For a list of options available for each theme, see the
 # documentation.
 #html_theme_options = {}
-html_theme_options = {'body_max_width': '70%'}
+html_theme_options = {'includehidden': False}
 
 # Add any paths that contain custom themes here, relative to this directory.
 #html_theme_path = []
