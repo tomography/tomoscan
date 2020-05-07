@@ -1061,10 +1061,10 @@ text {
 }
 composite {
 	object {
-		x=5
-		y=805
-		width=555
-		height=130
+		x=10
+		y=835
+		width=545
+		height=95
 	}
 	"composite name"=""
 	children {
@@ -1072,343 +1072,299 @@ composite {
 			object {
 				x=10
 				y=835
-				width=545
+				width=160
 				height=95
-			}
-			"composite name"=""
-			children {
-				composite {
-					object {
-						x=10
-						y=835
-						width=160
-						height=95
-					}
-					"composite name"=""
-					children {
-						text {
-							object {
-								x=30
-								y=835
-								width=140
-								height=20
-							}
-							"basic attribute" {
-								clr=14
-							}
-							textix="Detector top dir"
-							align="horiz. right"
-						}
-						text {
-							object {
-								x=40
-								y=860
-								width=130
-								height=20
-							}
-							"basic attribute" {
-								clr=14
-							}
-							textix="User last name"
-							align="horiz. right"
-						}
-						text {
-							object {
-								x=10
-								y=885
-								width=160
-								height=20
-							}
-							"basic attribute" {
-								clr=14
-							}
-							textix="Experiment year month"
-							align="horiz. right"
-						}
-						text {
-							object {
-								x=40
-								y=910
-								width=130
-								height=20
-							}
-							"basic attribute" {
-								clr=14
-							}
-							textix="Remote analysis dir"
-							align="horiz. right"
-						}
-					}
-				}
-				composite {
-					object {
-						x=175
-						y=835
-						width=380
-						height=95
-					}
-					"composite name"=""
-					children {
-						"text entry" {
-							object {
-								x=175
-								y=835
-								width=380
-								height=20
-							}
-							control {
-								chan="$(P)$(R)DetectorTopDir"
-								clr=14
-								bclr=51
-							}
-							format="string"
-							limits {
-							}
-						}
-						"text entry" {
-							object {
-								x=175
-								y=860
-								width=380
-								height=20
-							}
-							control {
-								chan="$(P)$(R)UserLastName"
-								clr=14
-								bclr=51
-							}
-							format="string"
-							limits {
-							}
-						}
-						"text entry" {
-							object {
-								x=175
-								y=885
-								width=380
-								height=20
-							}
-							control {
-								chan="$(P)$(R)ExperimentYearMonth"
-								clr=14
-								bclr=51
-							}
-							format="string"
-							limits {
-							}
-						}
-						"text entry" {
-							object {
-								x=175
-								y=910
-								width=380
-								height=20
-							}
-							control {
-								chan="$(P)$(R)RemoteAnalysisDir"
-								clr=14
-								bclr=51
-							}
-							format="string"
-							limits {
-							}
-						}
-					}
-				}
-			}
-		}
-		composite {
-			object {
-				x=10
-				y=810
-				width=545
-				height=20
 			}
 			"composite name"=""
 			children {
 				text {
 					object {
-						x=143
-						y=810
-						width=281
+						x=30
+						y=835
+						width=140
 						height=20
 					}
 					"basic attribute" {
-						clr=54
+						clr=14
 					}
-					textix="Data Management Information"
-					align="horiz. centered"
+					textix="Detector top dir"
+					align="horiz. right"
 				}
-				rectangle {
+				text {
+					object {
+						x=40
+						y=860
+						width=130
+						height=20
+					}
+					"basic attribute" {
+						clr=14
+					}
+					textix="User last name"
+					align="horiz. right"
+				}
+				text {
 					object {
 						x=10
-						y=810
-						width=545
+						y=885
+						width=160
 						height=20
 					}
 					"basic attribute" {
-						clr=2
+						clr=14
 					}
+					textix="Experiment year month"
+					align="horiz. right"
+				}
+				text {
+					object {
+						x=40
+						y=910
+						width=130
+						height=20
+					}
+					"basic attribute" {
+						clr=14
+					}
+					textix="Remote analysis dir"
+					align="horiz. right"
 				}
 			}
 		}
-		rectangle {
+		composite {
 			object {
-				x=5
-				y=805
-				width=555
-				height=130
+				x=175
+				y=835
+				width=380
+				height=95
 			}
-			"basic attribute" {
-				clr=14
-				fill="outline"
+			"composite name"=""
+			children {
+				"text entry" {
+					object {
+						x=175
+						y=835
+						width=380
+						height=20
+					}
+					control {
+						chan="$(P)$(R)DetectorTopDir"
+						clr=14
+						bclr=51
+					}
+					format="string"
+					limits {
+					}
+				}
+				"text entry" {
+					object {
+						x=175
+						y=860
+						width=380
+						height=20
+					}
+					control {
+						chan="$(P)$(R)UserLastName"
+						clr=14
+						bclr=51
+					}
+					format="string"
+					limits {
+					}
+				}
+				"text entry" {
+					object {
+						x=175
+						y=885
+						width=380
+						height=20
+					}
+					control {
+						chan="$(P)$(R)ExperimentYearMonth"
+						clr=14
+						bclr=51
+					}
+					format="string"
+					limits {
+					}
+				}
+				"text entry" {
+					object {
+						x=175
+						y=910
+						width=380
+						height=20
+					}
+					control {
+						chan="$(P)$(R)RemoteAnalysisDir"
+						clr=14
+						bclr=51
+					}
+					format="string"
+					limits {
+					}
+				}
 			}
 		}
 	}
 }
+rectangle {
+	object {
+		x=10
+		y=810
+		width=545
+		height=20
+	}
+	"basic attribute" {
+		clr=2
+	}
+}
+rectangle {
+	object {
+		x=5
+		y=805
+		width=555
+		height=130
+	}
+	"basic attribute" {
+		clr=14
+		fill="outline"
+	}
+}
 composite {
+	object {
+		x=30
+		y=970
+		width=525
+		height=45
+	}
+	"composite name"=""
+	children {
+		composite {
+			object {
+				x=30
+				y=970
+				width=140
+				height=45
+			}
+			"composite name"=""
+			children {
+				text {
+					object {
+						x=30
+						y=970
+						width=140
+						height=20
+					}
+					"basic attribute" {
+						clr=14
+					}
+					textix="Energy (keV)"
+					align="horiz. right"
+				}
+				text {
+					object {
+						x=30
+						y=995
+						width=140
+						height=20
+					}
+					"basic attribute" {
+						clr=14
+					}
+					textix="Energy mode"
+					align="horiz. right"
+				}
+			}
+		}
+		composite {
+			object {
+				x=175
+				y=970
+				width=380
+				height=45
+			}
+			"composite name"=""
+			children {
+				"text entry" {
+					object {
+						x=175
+						y=970
+						width=380
+						height=20
+					}
+					control {
+						chan="$(P)$(R)Energy"
+						clr=14
+						bclr=51
+					}
+					format="string"
+					limits {
+					}
+				}
+				menu {
+					object {
+						x=175
+						y=995
+						width=80
+						height=20
+					}
+					control {
+						chan="$(P)$(R)EnergyMode"
+						clr=14
+						bclr=51
+					}
+				}
+			}
+		}
+	}
+}
+rectangle {
 	object {
 		x=5
 		y=940
 		width=555
 		height=80
 	}
-	"composite name"=""
-	children {
-		composite {
-			object {
-				x=10
-				y=945
-				width=545
-				height=20
-			}
-			"composite name"=""
-			children {
-				text {
-					object {
-						x=143
-						y=945
-						width=281
-						height=20
-					}
-					"basic attribute" {
-						clr=54
-					}
-					textix="Energy"
-					align="horiz. centered"
-				}
-				rectangle {
-					object {
-						x=10
-						y=945
-						width=545
-						height=20
-					}
-					"basic attribute" {
-						clr=2
-					}
-				}
-			}
-		}
-		composite {
-			object {
-				x=30
-				y=970
-				width=525
-				height=45
-			}
-			"composite name"=""
-			children {
-				composite {
-					object {
-						x=30
-						y=970
-						width=140
-						height=45
-					}
-					"composite name"=""
-					children {
-						text {
-							object {
-								x=30
-								y=970
-								width=140
-								height=20
-							}
-							"basic attribute" {
-								clr=14
-							}
-							textix="Energy (keV)"
-							align="horiz. right"
-						}
-						text {
-							object {
-								x=30
-								y=995
-								width=140
-								height=20
-							}
-							"basic attribute" {
-								clr=14
-							}
-							textix="Energy mode"
-							align="horiz. right"
-						}
-					}
-				}
-				composite {
-					object {
-						x=175
-						y=970
-						width=380
-						height=45
-					}
-					"composite name"=""
-					children {
-						"text entry" {
-							object {
-								x=175
-								y=970
-								width=380
-								height=20
-							}
-							control {
-								chan="$(P)$(R)Energy"
-								clr=14
-								bclr=51
-							}
-							format="string"
-							limits {
-							}
-						}
-						menu {
-							object {
-								x=175
-								y=995
-								width=80
-								height=20
-							}
-							control {
-								chan="$(P)$(R)EnergyMode"
-								clr=14
-								bclr=51
-							}
-						}
-					}
-				}
-			}
-		}
-		rectangle {
-			object {
-				x=5
-				y=940
-				width=555
-				height=80
-			}
-			"basic attribute" {
-				clr=14
-				fill="outline"
-			}
-		}
+	"basic attribute" {
+		clr=14
+		fill="outline"
 	}
+}
+text {
+	object {
+		x=143
+		y=810
+		width=281
+		height=20
+	}
+	"basic attribute" {
+		clr=54
+	}
+	textix="Data Management Information"
+	align="horiz. centered"
+}
+rectangle {
+	object {
+		x=10
+		y=945
+		width=545
+		height=20
+	}
+	"basic attribute" {
+		clr=2
+	}
+}
+text {
+	object {
+		x=143
+		y=945
+		width=281
+		height=20
+	}
+	"basic attribute" {
+		clr=54
+	}
+	textix="Energy"
+	align="horiz. centered"
 }
