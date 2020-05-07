@@ -71,6 +71,9 @@ Below are the customization steps for 2-BM, you can use these as teplates for yo
     - tomoScan_2BM_settings.req
     - tomoScan_2BM.template
 
+- Create in ~/epics/synApps/support/tomoscan/tomoScanApp/op/adl
+    - tomoScan_2BM.adl
+
 add here custom PVs required to run tomography at your beamline.
 
 ::
