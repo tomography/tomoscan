@@ -1,6 +1,6 @@
 
 file {
-	name="/home/beams8/USER2BMB/epics/synApps/support/tomoscan/tomoScanApp/op/adl/tomoScan_2BM.adl"
+	name="/home/beams/USER2BMB/epics/synApps/support/tomoscan/tomoScanApp/op/adl/tomoScan_2BM.adl"
 	version=030111
 }
 display {
@@ -627,240 +627,6 @@ text {
 	textix="PSO prefix"
 	align="horiz. right"
 }
-"text entry" {
-	object {
-		x=165
-		y=625
-		width=390
-		height=20
-	}
-	control {
-		chan="$(P)$(R)UserInstitution"
-		clr=14
-		bclr=51
-	}
-	format="string"
-	limits {
-	}
-}
-"text entry" {
-	object {
-		x=165
-		y=600
-		width=390
-		height=20
-	}
-	control {
-		chan="$(P)$(R)UserName"
-		clr=14
-		bclr=51
-	}
-	format="string"
-	limits {
-	}
-}
-"text entry" {
-	object {
-		x=165
-		y=675
-		width=390
-		height=20
-	}
-	control {
-		chan="$(P)$(R)UserEmail"
-		clr=14
-		bclr=51
-	}
-	format="string"
-	limits {
-	}
-}
-"text entry" {
-	object {
-		x=165
-		y=700
-		width=390
-		height=20
-	}
-	control {
-		chan="$(P)$(R)ProposalNumber"
-		clr=14
-		bclr=51
-	}
-	format="string"
-	limits {
-	}
-}
-"text entry" {
-	object {
-		x=165
-		y=725
-		width=390
-		height=20
-	}
-	control {
-		chan="$(P)$(R)ProposalTitle"
-		clr=14
-		bclr=51
-	}
-	format="string"
-	limits {
-	}
-}
-"text entry" {
-	object {
-		x=165
-		y=650
-		width=390
-		height=20
-	}
-	control {
-		chan="$(P)$(R)UserBadge"
-		clr=14
-		bclr=51
-	}
-	format="string"
-	limits {
-	}
-}
-text {
-	object {
-		x=70
-		y=600
-		width=90
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="User name"
-	align="horiz. right"
-}
-text {
-	object {
-		x=50
-		y=625
-		width=110
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="Institution"
-	align="horiz. right"
-}
-text {
-	object {
-		x=50
-		y=650
-		width=110
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="ANL badge #"
-	align="horiz. right"
-}
-text {
-	object {
-		x=50
-		y=675
-		width=110
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="User e-mail"
-	align="horiz. right"
-}
-text {
-	object {
-		x=20
-		y=700
-		width=140
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="APS proposal #"
-	align="horiz. right"
-}
-text {
-	object {
-		x=10
-		y=725
-		width=150
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="APS prop. title"
-	align="horiz. right"
-}
-composite {
-	object {
-		x=10
-		y=575
-		width=545
-		height=20
-	}
-	"composite name"=""
-	children {
-		text {
-			object {
-				x=158
-				y=575
-				width=249
-				height=20
-			}
-			"basic attribute" {
-				clr=54
-			}
-			textix="User Information"
-			align="horiz. centered"
-		}
-		rectangle {
-			object {
-				x=10
-				y=575
-				width=545
-				height=20
-			}
-			"basic attribute" {
-				clr=2
-			}
-		}
-		text {
-			object {
-				x=158
-				y=575
-				width=249
-				height=20
-			}
-			"basic attribute" {
-				clr=54
-			}
-			textix="User Information"
-			align="horiz. centered"
-		}
-	}
-}
-rectangle {
-	object {
-		x=5
-		y=570
-		width=555
-		height=230
-	}
-	"basic attribute" {
-		clr=14
-		fill="outline"
-	}
-}
 text {
 	object {
 		x=10
@@ -1001,63 +767,341 @@ text {
 	textix="Epics Process Variables"
 	align="horiz. centered"
 }
-"text entry" {
+composite {
 	object {
-		x=165
-		y=750
-		width=390
-		height=20
+		x=5
+		y=570
+		width=555
+		height=230
 	}
-	control {
-		chan="$(P)$(R)ESAFNumber"
-		clr=14
-		bclr=51
+	"composite name"=""
+	children {
+		composite {
+			object {
+				x=10
+				y=600
+				width=545
+				height=195
+			}
+			"composite name"=""
+			children {
+				composite {
+					object {
+						x=10
+						y=600
+						width=150
+						height=195
+					}
+					"composite name"=""
+					children {
+						text {
+							object {
+								x=70
+								y=600
+								width=90
+								height=20
+							}
+							"basic attribute" {
+								clr=14
+							}
+							textix="User name"
+							align="horiz. right"
+						}
+						text {
+							object {
+								x=50
+								y=625
+								width=110
+								height=20
+							}
+							"basic attribute" {
+								clr=14
+							}
+							textix="Institution"
+							align="horiz. right"
+						}
+						text {
+							object {
+								x=50
+								y=650
+								width=110
+								height=20
+							}
+							"basic attribute" {
+								clr=14
+							}
+							textix="ANL badge #"
+							align="horiz. right"
+						}
+						text {
+							object {
+								x=50
+								y=675
+								width=110
+								height=20
+							}
+							"basic attribute" {
+								clr=14
+							}
+							textix="User e-mail"
+							align="horiz. right"
+						}
+						text {
+							object {
+								x=20
+								y=700
+								width=140
+								height=20
+							}
+							"basic attribute" {
+								clr=14
+							}
+							textix="APS proposal #"
+							align="horiz. right"
+						}
+						text {
+							object {
+								x=10
+								y=725
+								width=150
+								height=20
+							}
+							"basic attribute" {
+								clr=14
+							}
+							textix="APS prop. title"
+							align="horiz. right"
+						}
+						text {
+							object {
+								x=60
+								y=750
+								width=100
+								height=20
+							}
+							"basic attribute" {
+								clr=14
+							}
+							textix="APS ESAF #"
+							align="horiz. right"
+						}
+						text {
+							object {
+								x=60
+								y=775
+								width=100
+								height=20
+							}
+							"basic attribute" {
+								clr=14
+							}
+							textix="User info update"
+							align="horiz. right"
+						}
+					}
+				}
+				composite {
+					object {
+						x=165
+						y=600
+						width=390
+						height=195
+					}
+					"composite name"=""
+					children {
+						"text entry" {
+							object {
+								x=165
+								y=600
+								width=390
+								height=20
+							}
+							control {
+								chan="$(P)$(R)UserName"
+								clr=14
+								bclr=51
+							}
+							format="string"
+							limits {
+							}
+						}
+						"text entry" {
+							object {
+								x=165
+								y=625
+								width=390
+								height=20
+							}
+							control {
+								chan="$(P)$(R)UserInstitution"
+								clr=14
+								bclr=51
+							}
+							format="string"
+							limits {
+							}
+						}
+						"text entry" {
+							object {
+								x=165
+								y=650
+								width=390
+								height=20
+							}
+							control {
+								chan="$(P)$(R)UserBadge"
+								clr=14
+								bclr=51
+							}
+							format="string"
+							limits {
+							}
+						}
+						"text entry" {
+							object {
+								x=165
+								y=675
+								width=390
+								height=20
+							}
+							control {
+								chan="$(P)$(R)UserEmail"
+								clr=14
+								bclr=51
+							}
+							format="string"
+							limits {
+							}
+						}
+						"text entry" {
+							object {
+								x=165
+								y=700
+								width=390
+								height=20
+							}
+							control {
+								chan="$(P)$(R)ProposalNumber"
+								clr=14
+								bclr=51
+							}
+							format="string"
+							limits {
+							}
+						}
+						"text entry" {
+							object {
+								x=165
+								y=725
+								width=390
+								height=20
+							}
+							control {
+								chan="$(P)$(R)ProposalTitle"
+								clr=14
+								bclr=51
+							}
+							format="string"
+							limits {
+							}
+						}
+						"text entry" {
+							object {
+								x=165
+								y=750
+								width=390
+								height=20
+							}
+							control {
+								chan="$(P)$(R)ESAFNumber"
+								clr=14
+								bclr=51
+							}
+							format="string"
+							limits {
+							}
+						}
+						"text entry" {
+							object {
+								x=165
+								y=775
+								width=390
+								height=20
+							}
+							control {
+								chan="$(P)$(R)UserInfoUpdate"
+								clr=14
+								bclr=51
+							}
+							format="string"
+							limits {
+							}
+						}
+					}
+				}
+			}
+		}
+		composite {
+			object {
+				x=10
+				y=575
+				width=545
+				height=20
+			}
+			"composite name"=""
+			children {
+				text {
+					object {
+						x=158
+						y=575
+						width=249
+						height=20
+					}
+					"basic attribute" {
+						clr=54
+					}
+					textix="User Information"
+					align="horiz. centered"
+				}
+				rectangle {
+					object {
+						x=10
+						y=575
+						width=545
+						height=20
+					}
+					"basic attribute" {
+						clr=2
+					}
+				}
+				text {
+					object {
+						x=158
+						y=575
+						width=249
+						height=20
+					}
+					"basic attribute" {
+						clr=54
+					}
+					textix="User Information"
+					align="horiz. centered"
+				}
+			}
+		}
+		rectangle {
+			object {
+				x=5
+				y=570
+				width=555
+				height=230
+			}
+			"basic attribute" {
+				clr=14
+				fill="outline"
+			}
+		}
 	}
-	format="string"
-	limits {
-	}
-}
-text {
-	object {
-		x=60
-		y=750
-		width=100
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="APS ESAF #"
-	align="horiz. right"
-}
-"text entry" {
-	object {
-		x=165
-		y=775
-		width=390
-		height=20
-	}
-	control {
-		chan="$(P)$(R)UserInfoUpdate"
-		clr=14
-		bclr=51
-	}
-	format="string"
-	limits {
-	}
-}
-text {
-	object {
-		x=60
-		y=775
-		width=100
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="User info update"
-	align="horiz. right"
 }
 composite {
 	object {
@@ -1068,6 +1112,41 @@ composite {
 	}
 	"composite name"=""
 	children {
+		composite {
+			object {
+				x=10
+				y=810
+				width=545
+				height=20
+			}
+			"composite name"=""
+			children {
+				rectangle {
+					object {
+						x=10
+						y=810
+						width=545
+						height=20
+					}
+					"basic attribute" {
+						clr=2
+					}
+				}
+				text {
+					object {
+						x=143
+						y=810
+						width=281
+						height=20
+					}
+					"basic attribute" {
+						clr=54
+					}
+					textix="Data Management Information"
+					align="horiz. centered"
+				}
+			}
+		}
 		composite {
 			object {
 				x=10
@@ -1217,41 +1296,6 @@ composite {
 				}
 			}
 		}
-		composite {
-			object {
-				x=10
-				y=810
-				width=545
-				height=20
-			}
-			"composite name"=""
-			children {
-				text {
-					object {
-						x=143
-						y=810
-						width=281
-						height=20
-					}
-					"basic attribute" {
-						clr=54
-					}
-					textix="Data Management Information"
-					align="horiz. centered"
-				}
-				rectangle {
-					object {
-						x=10
-						y=810
-						width=545
-						height=20
-					}
-					"basic attribute" {
-						clr=2
-					}
-				}
-			}
-		}
 		rectangle {
 			object {
 				x=5
@@ -1284,6 +1328,17 @@ composite {
 			}
 			"composite name"=""
 			children {
+				rectangle {
+					object {
+						x=10
+						y=945
+						width=545
+						height=20
+					}
+					"basic attribute" {
+						clr=2
+					}
+				}
 				text {
 					object {
 						x=143
@@ -1296,17 +1351,6 @@ composite {
 					}
 					textix="Energy"
 					align="horiz. centered"
-				}
-				rectangle {
-					object {
-						x=10
-						y=945
-						width=545
-						height=20
-					}
-					"basic attribute" {
-						clr=2
-					}
 				}
 			}
 		}
