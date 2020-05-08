@@ -46,27 +46,66 @@ To build a minimal synApp::
     $ make release
     $ make -sj
 
-Run TomoScan ioc
-----------------
+Testing the installation
+------------------------
 
-Once synApps is built you can start the epics ioc and associated medm screen with::
+- Edit /epics/synApps/support/tomoscan/configure
+    - Set EPICS_BASE to point to the location of EPICS base:
+    - EPICS_BASE=/APSshare/epics/base-3.15.6
 
-    $ cd ~/epics/synApps/support/tomoscan/iocBoot/iocTomoScan
+- Start the epics ioc and associated medm screen with::
+
+    $ cd ~/epics/synApps/support/tomoscan/iocBoot/iocTomoScan_13BM
     $ start_IOC
     $ start_medm
-
 
 Bemaline customization
 ----------------------
 
+tomoScan
+~~~~~~~~
 
-need to customize the following to work on your beamline:
+Below are the customization steps for 2-BM, you can use these as teplates for your beamline.
 
-- edit /epics/synApps/support/tomoscan/configure and modify the EPICS_BASE location to match your EPICS installation, for 2-BM this is::
+- Create in ~/epics/synApps/support/tomoscan/tomoScanApp/Db
+    - tomoScan_2BM_settings.req
+    - tomoScan_2BM.template
 
-    EPICS_BASE=/APSshare/epics/base-3.15.6
+- Create in ~/epics/synApps/support/tomoscan/tomoScanApp/op/adl
+    - tomoScan_2BM.adl
 
-- edit tomoscan/iocBoot/tomoScan.substitutions file to match your PVs for tomoScan.template and beamline specific tomoScan_xxYY.template, for 2-BM this is::
+add here custom PVs required to run tomography at your beamline.
+
+::
+
+    $ mkdir ~/epics/synApps/support/tomoscan/iocBoot/iocTomoScan_2BM
+    $ cd ~/epics/synApps/support/tomoscan/iocBoot/
+    $ cp -r iocTomoScan_13BM/* iocTomoScan_2BM/
+
+::
+
+    $ cd ~/epics/synApps/support/tomoscan/iocBoot/
+
+- Edit iocBoot/iocTomoScan_2BM/auto_settings.req
+    - file "tomoScan_settings.req", P=$(P), R=$(R)
+    - file "tomoScan_2BM_settings.req", P=$(P), R=$(R)
+
+- Edit iocBoot/iocTomoScan_2BM/st.cmd to match the name you want to assing to the TomoScan ioc
+    - epicsEnvSet("P", "2bma:")
+    - epicsEnvSet("R", "TomoScan:")
+
+- Edit iocBoot/iocTomoScan_2BM/start_medm to match the name assigned to the TomoScan ioc
+    -  medm -x -macro "P=2bma:,R=TomoScan:,BEAMLINE=tomoScan_2BM" ../../tomoScanApp/op/adl/tomoScan.adl &
+
+- Edit iocBoot/iocTomoScan_2BM/start_tomoscan_2bm.py
+    - from tomoscan.tomoscan_2bm import TomoScan2BM
+    - ts = TomoScan2BM(["../../db/tomoScan_settings.req","../../db/tomoScan_2BM_settings.req"], {"$(P)":"2bma:", "$(R)":"TomoScan:"})
+
+
+- Edit iocBoot/iocTomoScan_2BM/tomoScan.substitutions
+    - to match the custom PVs required to run tomography at your beamline.
+
+::
     
     file "$(TOP)/db/tomoScan.template"
     {
@@ -82,15 +121,6 @@ need to customize the following to work on your beamline:
     {2bma:, TomoScan:, 2bma:PSOFly2:,   ACIS:ShutterPermit,    1,             2bma:m23,                0,                    2bma:m23,                1,}
     }
 
-- edit tomoscan/iocBoot/st.cdm to match your ioc name::
-
-    picsEnvSet("P", "2bma:")
-    epicsEnvSet("R", "TomoScan:")
-
-- edit tomoscan/iocBoot/iocTomoScan/auto_settings.req to use your beamline setting.req file::
-
-    file "tomoScan_settings.req", P=$(P), R=$(R)
-    file "tomoScan_2BM_settings.req", P=$(P), R=$(R)
 
 then::
 
@@ -98,6 +128,14 @@ then::
     $ make release
     $ make -sj
 
+Python class
+~~~~~~~~~~~~
+
+- Create in ~/epics/synApps/support/tomoscan/tomoscan/
+    - tomoscan_2bm.py
+
+to implemented a derived classes that inherit from ~/epics/synApps/support/tomoscan/tomoscan/tomoscan.py
+This derived class will handle any beamline specific hardware (fast shutter, fly scan hardware etc.)
 
 To install the python class as a libray::
 
