@@ -5,7 +5,6 @@
    TomoScan2BM
      Derived class for tomography scanning with EPICS at APS beamline 2-BM-A
 """
-# import logging
 import time
 import os
 from tomoscan import TomoScan
