@@ -9,6 +9,7 @@ import time
 import math
 import os
 from tomoscan import TomoScan
+from tomoscan import log
 
 class TomoScan13BM(TomoScan):
     """Derived class used for tomography scanning with EPICS at APS beamline 13-BM-D
@@ -22,8 +23,8 @@ class TomoScan13BM(TomoScan):
         reading the pv_files
     """
 
-    def __init__(self, pv_files, macros):
-        super().__init__(pv_files, macros)
+    def __init__(self, pv_files, macros, lfname=None):
+        super().__init__(pv_files, macros, lfname)
 
         # Set the detector running in FreeRun mode
         self.set_trigger_mode('FreeRun', 1)
