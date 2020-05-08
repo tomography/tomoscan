@@ -58,8 +58,9 @@ class TomoScan2BM(TomoScan):
         super().open_shutter()
         # Open 2-BM-A fast shutter
         if not self.epics_pvs['OpenFastShutter'] is None:
-            log.info("open fast shutter")
+            pv = self.epics_pvs['OpenFastShutter']
             value = self.epics_pvs['OpenFastShutterValue'].get(as_string=True)
+            log.info('open fast shutter: %s, value: %s' % (pv, value))
             self.epics_pvs['OpenFastShutter'].put(value, wait=True)
 
     def close_shutter(self):
@@ -75,8 +76,9 @@ class TomoScan2BM(TomoScan):
         super().close_shutter()
         # Close 2-BM-A fast shutter
         if not self.epics_pvs['CloseFastShutter'] is None:
-            log.info("close fast shutter")
+            pv = self.epics_pvs['CloseFastShutter']
             value = self.epics_pvs['CloseFastShutterValue'].get(as_string=True)
+            log.info('close fast shutter: %s, value: %s' % (pv, value))
             self.epics_pvs['CloseFastShutter'].put(value, wait=True)
 
     def set_trigger_mode(self, trigger_mode, num_images):

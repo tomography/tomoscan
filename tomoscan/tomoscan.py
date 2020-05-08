@@ -10,7 +10,6 @@ import json
 import time
 import threading
 import signal
-# import logging
 import sys
 import os
 from datetime import timedelta
@@ -433,7 +432,9 @@ class TomoScan():
         """
 
         if not self.epics_pvs['OpenShutter'] is None:
+            pv = self.epics_pvs['OpenShutter']
             value = self.epics_pvs['OpenShutterValue'].get(as_string=True)
+            log.info('open shutter: %s, value: %s' % (pv, value))
             self.epics_pvs['OpenShutter'].put(value, wait=True)
 
     def close_shutter(self):
@@ -442,7 +443,9 @@ class TomoScan():
         The value in the ``CloseShutterValue`` PV is written to the ``CloseShutter`` PV.
         """
         if not self.epics_pvs['CloseShutter'] is None:
+            pv = self.epics_pvs['CloseShutter']
             value = self.epics_pvs['CloseShutterValue'].get(as_string=True)
+            log.info('close shutter: %s, value: %s' % (pv, value))
             self.epics_pvs['CloseShutter'].put(value, wait=True)
 
     def set_exposure_time(self, exposure_time=None):
