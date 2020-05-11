@@ -5,10 +5,10 @@
    TomoScan2BM
      Derived class for tomography scanning with EPICS at APS beamline 2-BM-A
 """
-import logging
 import time
 import os
 from tomoscan import TomoScan
+from tomoscan import log
 
 EPSILON = .001
 
@@ -24,8 +24,8 @@ class TomoScan2BM(TomoScan):
         reading the pv_files
     """
 
-    def __init__(self, pv_files, macros):
-        super().__init__(pv_files, macros)
+    def __init__(self, pv_files, macros, lfname=None):
+        super().__init__(pv_files, macros, lfname)
 
         # Set the detector running in FreeRun mode
         # self.set_trigger_mode('FreeRun', 1)
@@ -57,7 +57,9 @@ class TomoScan2BM(TomoScan):
         super().open_shutter()
         # Open 2-BM-A fast shutter
         if not self.epics_pvs['OpenFastShutter'] is None:
+            pv = self.epics_pvs['OpenFastShutter']
             value = self.epics_pvs['OpenFastShutterValue'].get(as_string=True)
+            log.info('open fast shutter: %s, value: %s' % (pv, value))
             self.epics_pvs['OpenFastShutter'].put(value, wait=True)
 
     def close_shutter(self):
@@ -73,7 +75,9 @@ class TomoScan2BM(TomoScan):
         super().close_shutter()
         # Close 2-BM-A fast shutter
         if not self.epics_pvs['CloseFastShutter'] is None:
+            pv = self.epics_pvs['CloseFastShutter']
             value = self.epics_pvs['CloseFastShutterValue'].get(as_string=True)
+            log.info('close fast shutter: %s, value: %s' % (pv, value))
             self.epics_pvs['CloseFastShutter'].put(value, wait=True)
 
     def set_trigger_mode(self, trigger_mode, num_images):
@@ -230,8 +234,8 @@ class TomoScan2BM(TomoScan):
                     current_time = time.time()
                     diff_time = current_time - start_time
                     if diff_time >= timeout:
-                        logging.error('  *** ERROR: DROPPED IMAGES ***')
-                        logging.error('  *** wait_pv(%s, %d, %5.2f reached max timeout. Return False',
+                        log.error('  *** ERROR: DROPPED IMAGES ***')
+                        log.error('  *** wait_pv(%s, %d, %5.2f reached max timeout. Return False',
                                       epics_pv.pvname, wait_val, timeout)
                         return False
                 time.sleep(.01)
@@ -273,7 +277,7 @@ class TomoScan2BM(TomoScan):
         calc_num_proj = self.epics_pvs['PSOcalcProjections'].value
 
         if calc_num_proj != self.num_angles:
-            logging.warning('PSO changed number of projections from: %s to: %s', self.num_angles, int(calc_num_proj))
+            log.warning('PSO changed number of projections from: %s to: %s', self.num_angles, int(calc_num_proj))
             self.num_angles = calc_num_proj
         self.epics_pvs['PSOscanControl'].put('Standard')
 

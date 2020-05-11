@@ -10,12 +10,12 @@ import json
 import time
 import threading
 import signal
-import logging
 import sys
 import os
 from datetime import timedelta
 import pymsgbox
 from epics import PV
+from tomoscan import log
 
 class ScanAbortError(Exception):
     '''Exception raised when user wants to abort a scan.
@@ -43,8 +43,8 @@ class TomoScan():
         reading the pv_files
     """
 
-    def __init__(self, pv_files, macros):
-        logging.basicConfig(level=logging.INFO)
+    def __init__(self, pv_files, macros, lfname=None):
+        log.setup_custom_logger(lfname)
         self.scan_is_running = False
         self.config_pvs = {}
         self.control_pvs = {}
@@ -77,13 +77,13 @@ class TomoScan():
             self.read_pv_file(pv_file, macros)
 
         if 'Rotation' not in self.control_pvs:
-            logging.error('RotationPVName must be present in autoSettingsFile')
+            log.error('RotationPVName must be present in autoSettingsFile')
             sys.exit()
         if 'Camera' not in self.pv_prefixes:
-            logging.error('CameraPVPrefix must be present in autoSettingsFile')
+            log.error('CameraPVPrefix must be present in autoSettingsFile')
             sys.exit()
         if  'FilePlugin' not in self.pv_prefixes:
-            logging.error('FilePluginPVPrefix must be present in autoSettingsFile')
+            log.error('FilePluginPVPrefix must be present in autoSettingsFile')
             sys.exit()
 
         rotation_pv_name = self.control_pvs['Rotation'].pvname
@@ -237,7 +237,7 @@ class TomoScan():
         - ``FPFilePathExists`` : Runs ``copy_file_path_exists`` in a new thread.
         """
 
-        logging.debug('pv_callback pvName=%s, value=%s, char_value=%s', pvname, value, char_value)
+        log.debug('pv_callback pvName=%s, value=%s, char_value=%s' % (pvname, value, char_value))
         if (pvname.find('MoveSampleIn') != -1) and (value == 1):
             thread = threading.Thread(target=self.move_sample_in, args=())
             thread.start()
@@ -299,7 +299,7 @@ class TomoScan():
         all_connected = True
         for key in self.epics_pvs:
             if not self.epics_pvs[key].connected:
-                logging.error('PV %s is not connected', self.epics_pvs[key].pvname)
+                log.error('PV %s is not connected', self.epics_pvs[key].pvname)
                 all_connected = False
         return all_connected
 
@@ -363,7 +363,7 @@ class TomoScan():
         """
 
         axis = self.epics_pvs['FlatFieldAxis'].get(as_string=True)
-        logging.info('move_sample_in axis: %s', axis)
+        log.info('move_sample_in axis: %s' % axis)
         if axis in ('X', 'Both'):
             position = self.epics_pvs['SampleInX'].value
             self.epics_pvs['SampleX'].put(position, wait=True)
@@ -382,7 +382,7 @@ class TomoScan():
         """
 
         axis = self.epics_pvs['FlatFieldAxis'].get(as_string=True)
-        logging.info('move_sample_out axis: %s', axis)
+        log.info('move_sample_out axis: %s', axis)
         if axis in ('X', 'Both'):
             position = self.epics_pvs['SampleOutX'].value
             self.epics_pvs['SampleX'].put(position, wait=True)
@@ -432,7 +432,9 @@ class TomoScan():
         """
 
         if not self.epics_pvs['OpenShutter'] is None:
+            pv = self.epics_pvs['OpenShutter']
             value = self.epics_pvs['OpenShutterValue'].get(as_string=True)
+            log.info('open shutter: %s, value: %s' % (pv, value))
             self.epics_pvs['OpenShutter'].put(value, wait=True)
 
     def close_shutter(self):
@@ -441,7 +443,9 @@ class TomoScan():
         The value in the ``CloseShutterValue`` PV is written to the ``CloseShutter`` PV.
         """
         if not self.epics_pvs['CloseShutter'] is None:
+            pv = self.epics_pvs['CloseShutter']
             value = self.epics_pvs['CloseShutterValue'].get(as_string=True)
+            log.info('close shutter: %s, value: %s' % (pv, value))
             self.epics_pvs['CloseShutter'].put(value, wait=True)
 
     def set_exposure_time(self, exposure_time=None):
@@ -603,11 +607,11 @@ class TomoScan():
                 self.collect_dark_fields()
 
         except ScanAbortError:
-            logging.error('Scan aborted')
+            log.error('Scan aborted')
         except CameraTimeoutError:
-            logging.error('Camera timeout')
+            log.error('Camera timeout')
         except FileOverwriteError:
-            logging.error('File overwrite aborted')
+            log.error('File overwrite aborted')
 
         # Finish scan
         self.end_scan()
@@ -748,7 +752,7 @@ class TomoScan():
             }
             readout = readout_times[pixel_format]/1000.
         if readout is None:
-            logging.error('Unsupported combination of camera model, pixel format and video mode: %s %s %s',
+            log.error('Unsupported combination of camera model, pixel format and video mode: %s %s %s',
                           camera_model, pixel_format, video_mode)
             return 0
 
@@ -800,10 +804,10 @@ class TomoScan():
             remaining_time = (elapsed_time * (num_images - num_collected) /
                               max(float(num_collected), 1))
             collect_progress = str(num_collected) + '/' + str(num_images)
-            logging.info('Collected %s', collect_progress)
+            log.info('Collected %s', collect_progress)
             self.epics_pvs['ImagesCollected'].put(collect_progress)
             save_progress = str(num_saved) + '/' + str(num_to_save)
-            logging.info('Saved %s', save_progress)
+            log.info('Saved %s', save_progress)
             self.epics_pvs['ImagesSaved'].put(save_progress)
             self.epics_pvs['ElapsedTime'].put(str(timedelta(seconds=int(elapsed_time))))
             self.epics_pvs['RemainingTime'].put(str(timedelta(seconds=int(remaining_time))))
