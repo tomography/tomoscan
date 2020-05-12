@@ -173,6 +173,8 @@ class TomoScan2BM(TomoScan):
 
         This does the following:
 
+        - Add theta to the raw data file. 
+
         - Calls ``save_configuration()``.
 
         - Put the camera back in "FreeRun" mode and acquiring so the user sees live images.
@@ -183,10 +185,14 @@ class TomoScan2BM(TomoScan):
 
         - Calls the base class method.
         """
-
+        # Add theta
+        self.theta = []
+        self.theta = self.epics_pvs['ThetaArray'].get(count=int(self.num_angles))
+        self.add_theta()
         # Save the configuration
         # Strip the extension from the FullFileName and add .config
         full_file_name = self.epics_pvs['FPFullFileName'].get(as_string=True)
+        log.info('data save location: %s' % full_file_name)
         config_file_root = os.path.splitext(full_file_name)[0]
         self.save_configuration(config_file_root + '.config')
         # Put the camera back in FreeRun mode and acquiring
@@ -198,19 +204,16 @@ class TomoScan2BM(TomoScan):
         # Call the base class method
         super().end_scan()
 
-        # Add theta
-        self.theta = []
-        self.theta = self.epics_pvs['ThetaArray'].get(count=int(self.num_angles))
-        self.add_theta()
-
     def add_theta(self):
-
+        """Add theta at the end of a scan.
+        """
         log.info('add theta')
         full_file_name = self.epics_pvs['FPFullFileName'].get(as_string=True)
         try:
             hdf_f = h5py.File(full_file_name, mode='a')
             if self.theta is not None:
                 theta_ds = hdf_f.create_dataset('/exchange/theta', (len(self.theta),))
+                theta_ds[:] = self.theta[:]
             hdf_f.close()
         except:
             log.error('add theta: Failed accessing: %s' % full_file_name)
