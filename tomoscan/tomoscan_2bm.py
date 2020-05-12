@@ -209,15 +209,14 @@ class TomoScan2BM(TomoScan):
         """
         log.info('add theta')
         full_file_name = self.epics_pvs['FPFullFileName'].get(as_string=True)
-        try:
-            hdf_f = h5py.File(full_file_name, mode='a')
-            if self.theta is not None:
-                theta_ds = hdf_f.create_dataset('/exchange/theta', (len(self.theta),))
-                theta_ds[:] = self.theta[:]
-            hdf_f.close()
-        except:
-            log.error('add theta: Failed accessing: %s' % full_file_name)
-            traceback.print_exc(file=sys.stdout)
+        with h5py.File(full_file_name, "a") as f:
+            try:
+                if self.theta is not None:
+                    theta_ds = f.create_dataset('/exchange/theta', (len(self.theta),))
+                    theta_ds[:] = self.theta[:]
+            except:
+                log.error('add theta: Failed accessing: %s' % full_file_name)
+                traceback.print_exc(file=sys.stdout)
 
 
     def collect_dark_fields(self):
