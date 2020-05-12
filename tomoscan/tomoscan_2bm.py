@@ -7,6 +7,8 @@
 """
 import time
 import os
+import h5py 
+
 from tomoscan import TomoScan
 from tomoscan import log
 
@@ -34,8 +36,9 @@ class TomoScan2BM(TomoScan):
         self.epics_pvs['FPAutoIncrement'].put('Yes')
 
         # Set data directory
-        file_path = self.epics_pvs['DetectorTopDir'].get(as_string=True) + self.epics_pvs['ExperimentYearMonth'].get(as_string=True)
+        file_path = self.epics_pvs['DetectorTopDir'].get(as_string=True) + self.epics_pvs['ExperimentYearMonth'].get(as_string=True) + os.path.sep + self.epics_pvs['UserLastName'].get(as_string=True) + os.path.sep
         self.epics_pvs['FilePath'].put(file_path, wait=True)
+        self.control_pvs['FPFileTemplate'] .put("%s%s.h5", wait=True)
         # Set file name
         file_name = str('{:03}'.format(self.epics_pvs['FPFileNumber'].value)) + '_' + self.epics_pvs['SampleName'].get(as_string=True)
         self.epics_pvs['FileName'].put(file_name, wait=True)
@@ -161,9 +164,6 @@ class TomoScan2BM(TomoScan):
             num_images += num_flat_fields;
         if flat_field_mode == 'Both':
             num_images += num_flat_fields;
-        self.epics_pvs['FPNumCapture'].put(num_images, wait=True)
-        self.epics_pvs['FPCapture'].put('Capture')
-
         # Set the total number of frames to capture and start capture on file plugin
         self.epics_pvs['FPNumCapture'].put(self.total_images, wait=True)
         self.epics_pvs['FPCapture'].put('Capture')
@@ -186,8 +186,6 @@ class TomoScan2BM(TomoScan):
 
         # Save the configuration
         # Strip the extension from the FullFileName and add .config
-
-
         full_file_name = self.epics_pvs['FPFullFileName'].get(as_string=True)
         config_file_root = os.path.splitext(full_file_name)[0]
         self.save_configuration(config_file_root + '.config')
@@ -199,6 +197,25 @@ class TomoScan2BM(TomoScan):
         self.move_sample_in()
         # Call the base class method
         super().end_scan()
+
+        # Add theta
+        self.theta = []
+        self.theta = self.epics_pvs['ThetaArray'].get(count=int(self.num_angles))
+        self.add_theta()
+
+    def add_theta(self):
+
+        log.info('add theta')
+        full_file_name = self.epics_pvs['FPFullFileName'].get(as_string=True)
+        try:
+            hdf_f = h5py.File(full_file_name, mode='a')
+            if self.theta is not None:
+                theta_ds = hdf_f.create_dataset('/exchange/theta', (len(self.theta),))
+            hdf_f.close()
+        except:
+            log.error('add theta: Failed accessing: %s' % full_file_name)
+            traceback.print_exc(file=sys.stdout)
+
 
     def collect_dark_fields(self):
         """Collects dark field images.
@@ -235,8 +252,8 @@ class TomoScan2BM(TomoScan):
                     diff_time = current_time - start_time
                     if diff_time >= timeout:
                         log.error('  *** ERROR: DROPPED IMAGES ***')
-                        log.error('  *** wait_pv(%s, %d, %5.2f reached max timeout. Return False',
-                                      epics_pv.pvname, wait_val, timeout)
+                        log.error('  *** wait_pv(%s, %d, %5.2f reached max timeout. Return False' %
+                                      (epics_pv.pvname, wait_val, timeout))
                         return False
                 time.sleep(.01)
             else:
@@ -277,7 +294,7 @@ class TomoScan2BM(TomoScan):
         calc_num_proj = self.epics_pvs['PSOcalcProjections'].value
 
         if calc_num_proj != self.num_angles:
-            log.warning('PSO changed number of projections from: %s to: %s', self.num_angles, int(calc_num_proj))
+            log.warning('PSO changed number of projections from: %s to: %s' % (self.num_angles, int(calc_num_proj)))
             self.num_angles = calc_num_proj
         self.epics_pvs['PSOscanControl'].put('Standard')
 
