@@ -171,7 +171,9 @@ class TomoScan():
             self.control_pvs['PSOtaxi']            = PV(prefix + 'taxi')
             self.control_pvs['PSOfly']             = PV(prefix + 'fly')
             self.control_pvs['PSOscanControl']     = PV(prefix + 'scanControl')
-            self.control_pvs['PSOcalcProjections'] = PV(prefix + 'numTriggers')
+            self.control_pvs['PSOcalcProjections'] = PV(prefix + 'numTriggers')        
+            self.control_pvs['ThetaArray']         = PV(prefix + 'motorPos.AVAL')
+
 
 
         self.epics_pvs = {**self.config_pvs, **self.control_pvs}
@@ -554,6 +556,7 @@ class TomoScan():
 
         if self.return_rotation == 'Yes':
             self.epics_pvs['Rotation'].put(self.rotation_start)
+        log.info('Scan complete')
         self.epics_pvs['ScanStatus'].put('Scan complete')
         self.epics_pvs['StartScan'].put(0)
         self.scan_is_running = False
