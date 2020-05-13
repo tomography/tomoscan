@@ -62,7 +62,7 @@ class TomoScan2BM(TomoScan):
         if not self.epics_pvs['OpenFastShutter'] is None:
             pv = self.epics_pvs['OpenFastShutter']
             value = self.epics_pvs['OpenFastShutterValue'].get(as_string=True)
-            log.info('open fast shutter: %s, value: %s' % (pv, value))
+            log.info('open fast shutter: %s, value: %s', pv, value)
             self.epics_pvs['OpenFastShutter'].put(value, wait=True)
 
     def close_shutter(self):
@@ -80,7 +80,7 @@ class TomoScan2BM(TomoScan):
         if not self.epics_pvs['CloseFastShutter'] is None:
             pv = self.epics_pvs['CloseFastShutter']
             value = self.epics_pvs['CloseFastShutterValue'].get(as_string=True)
-            log.info('close fast shutter: %s, value: %s' % (pv, value))
+            log.info('close fast shutter: %s, value: %s', pv, value)
             self.epics_pvs['CloseFastShutter'].put(value, wait=True)
 
     def set_trigger_mode(self, trigger_mode, num_images):
@@ -192,7 +192,7 @@ class TomoScan2BM(TomoScan):
         # Save the configuration
         # Strip the extension from the FullFileName and add .config
         full_file_name = self.epics_pvs['FPFullFileName'].get(as_string=True)
-        log.info('data save location: %s' % full_file_name)
+        log.info('data save location: %s', full_file_name)
         config_file_root = os.path.splitext(full_file_name)[0]
         self.save_configuration(config_file_root + '.config')
         # Put the camera back in FreeRun mode and acquiring
@@ -215,7 +215,7 @@ class TomoScan2BM(TomoScan):
                     theta_ds = f.create_dataset('/exchange/theta', (len(self.theta),))
                     theta_ds[:] = self.theta[:]
             except:
-                log.error('add theta: Failed accessing: %s' % full_file_name)
+                log.error('add theta: Failed accessing: %s', full_file_name)
                 traceback.print_exc(file=sys.stdout)
 
 
@@ -254,8 +254,8 @@ class TomoScan2BM(TomoScan):
                     diff_time = current_time - start_time
                     if diff_time >= timeout:
                         log.error('  *** ERROR: DROPPED IMAGES ***')
-                        log.error('  *** wait_pv(%s, %d, %5.2f reached max timeout. Return False' %
-                                      (epics_pv.pvname, wait_val, timeout))
+                        log.error('  *** wait_pv(%s, %d, %5.2f reached max timeout. Return False',
+                                      epics_pv.pvname, wait_val, timeout)
                         return False
                 time.sleep(.01)
             else:
@@ -296,7 +296,7 @@ class TomoScan2BM(TomoScan):
         calc_num_proj = self.epics_pvs['PSOcalcProjections'].value
 
         if calc_num_proj != self.num_angles:
-            log.warning('PSO changed number of projections from: %s to: %s' % (self.num_angles, int(calc_num_proj)))
+            log.warning('PSO changed number of projections from: %s to: %s', self.num_angles, int(calc_num_proj))
             self.num_angles = calc_num_proj
         self.epics_pvs['PSOscanControl'].put('Standard')
 
