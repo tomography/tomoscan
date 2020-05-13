@@ -239,7 +239,7 @@ class TomoScan():
         - ``FPFilePathExists`` : Runs ``copy_file_path_exists`` in a new thread.
         """
 
-        log.debug('pv_callback pvName=%s, value=%s, char_value=%s' % (pvname, value, char_value))
+        log.debug('pv_callback pvName=%s, value=%s, char_value=%s', pvname, value, char_value)
         if (pvname.find('MoveSampleIn') != -1) and (value == 1):
             thread = threading.Thread(target=self.move_sample_in, args=())
             thread.start()
@@ -301,7 +301,7 @@ class TomoScan():
         all_connected = True
         for key in self.epics_pvs:
             if not self.epics_pvs[key].connected:
-                log.error('PV %s is not connected' % self.epics_pvs[key].pvname)
+                log.error('PV %s is not connected', self.epics_pvs[key].pvname)
                 all_connected = False
         return all_connected
 
@@ -365,7 +365,7 @@ class TomoScan():
         """
 
         axis = self.epics_pvs['FlatFieldAxis'].get(as_string=True)
-        log.info('move_sample_in axis: %s' % axis)
+        log.info('move_sample_in axis: %s', axis)
         if axis in ('X', 'Both'):
             position = self.epics_pvs['SampleInX'].value
             self.epics_pvs['SampleX'].put(position, wait=True)
@@ -384,7 +384,7 @@ class TomoScan():
         """
 
         axis = self.epics_pvs['FlatFieldAxis'].get(as_string=True)
-        log.info('move_sample_out axis: %s' % axis)
+        log.info('move_sample_out axis: %s', axis)
         if axis in ('X', 'Both'):
             position = self.epics_pvs['SampleOutX'].value
             self.epics_pvs['SampleX'].put(position, wait=True)
@@ -436,7 +436,7 @@ class TomoScan():
         if not self.epics_pvs['OpenShutter'] is None:
             pv = self.epics_pvs['OpenShutter']
             value = self.epics_pvs['OpenShutterValue'].get(as_string=True)
-            log.info('open shutter: %s, value: %s' % (pv, value))
+            log.info('open shutter: %s, value: %s', pv, value)
             self.epics_pvs['OpenShutter'].put(value, wait=True)
 
     def close_shutter(self):
@@ -447,7 +447,7 @@ class TomoScan():
         if not self.epics_pvs['CloseShutter'] is None:
             pv = self.epics_pvs['CloseShutter']
             value = self.epics_pvs['CloseShutterValue'].get(as_string=True)
-            log.info('close shutter: %s, value: %s' % (pv, value))
+            log.info('close shutter: %s, value: %s', pv, value)
             self.epics_pvs['CloseShutter'].put(value, wait=True)
 
     def set_exposure_time(self, exposure_time=None):
@@ -755,8 +755,8 @@ class TomoScan():
             }
             readout = readout_times[pixel_format]/1000.
         if readout is None:
-            log.error('Unsupported combination of camera model, pixel format and video mode: %s %s %s' %
-                          (camera_model, pixel_format, video_mode))
+            log.error('Unsupported combination of camera model, pixel format and video mode: %s %s %s',
+                          camera_model, pixel_format, video_mode)
             return 0
 
         # We need to use the actual exposure time that the camera is using, not the requested time
@@ -807,10 +807,10 @@ class TomoScan():
             remaining_time = (elapsed_time * (num_images - num_collected) /
                               max(float(num_collected), 1))
             collect_progress = str(num_collected) + '/' + str(num_images)
-            log.info('Collected %s' % collect_progress)
+            log.info('Collected %s', collect_progress)
             self.epics_pvs['ImagesCollected'].put(collect_progress)
             save_progress = str(num_saved) + '/' + str(num_to_save)
-            log.info('Saved %s' % save_progress)
+            log.info('Saved %s', save_progress)
             self.epics_pvs['ImagesSaved'].put(save_progress)
             self.epics_pvs['ElapsedTime'].put(str(timedelta(seconds=int(elapsed_time))))
             self.epics_pvs['RemainingTime'].put(str(timedelta(seconds=int(remaining_time))))
