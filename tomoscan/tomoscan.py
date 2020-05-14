@@ -43,8 +43,7 @@ class TomoScan():
         reading the pv_files
     """
 
-    def __init__(self, pv_files, macros, lfname=None):
-        log.setup_custom_logger(lfname)
+    def __init__(self, pv_files, macros):
         self.scan_is_running = False
         self.config_pvs = {}
         self.control_pvs = {}
@@ -555,7 +554,7 @@ class TomoScan():
         """
 
         if self.return_rotation == 'Yes':
-            self.epics_pvs['Rotation'].put(self.rotation_start)
+            self.epics_pvs['Rotation'].put(self.rotation_start, wait=True)
         log.info('Scan complete')
         self.epics_pvs['ScanStatus'].put('Scan complete')
         self.epics_pvs['StartScan'].put(0)
