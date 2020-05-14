@@ -43,8 +43,7 @@ class TomoScan():
         reading the pv_files
     """
 
-    def __init__(self, pv_files, macros, lfname=None):
-        log.setup_custom_logger(lfname)
+    def __init__(self, pv_files, macros):
         self.scan_is_running = False
         self.config_pvs = {}
         self.control_pvs = {}
