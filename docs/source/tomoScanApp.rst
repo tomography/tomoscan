@@ -124,7 +124,7 @@ Data collection control
     - The number of angles (projections) to collect
   * - $(P)$(R)ReturnRotation
     - bo
-    - Flag controlling whether to return rotation to RotationStart at the end of collection. Choices are 'No' and 'Yes'.
+    - Flag controlling whether to return rotation to RotationStart at the end of collection. Choices are 'No' and 'Yes'. When 'Yes' the ScanStatus will report complete before the rotation axis returns to the start.
 
 Dark field control
 ~~~~~~~~~~~~~~~~~~
