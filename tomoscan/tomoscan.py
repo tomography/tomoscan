@@ -527,12 +527,24 @@ class TomoScan():
 
         if self.epics_pvs['OverwriteWarning'].get(as_string=True) == 'Yes':
             # Make sure there is not already a file by this name
-            file_name = self.file_template % (self.file_path_rbv, self.file_name_rbv, self.file_number)
+            try:
+                file_name = self.file_template % (self.file_path_rbv, self.file_name_rbv, self.file_number)
+            except:
+                try:
+                    file_name = self.file_template % (self.file_path_rbv, self.file_name_rbv)
+                except:
+                    try:
+                        file_name = self.file_template % (self.file_path_rbv)
+                    except:
+                        log.error("File name template: %s not supported", self.file_template)
+                        raise TypeError
             if os.path.exists(file_name):
                 reply = pymsgbox.confirm('File ' + file_name + ' exists.  Overwrite?',
                                          'Overwrite file', ['Yes', 'No'])
                 if reply == 'No':
                     raise FileOverwriteError
+
+
 
     def end_scan(self):
         """Performs the operations needed at the very end of a scan.
