@@ -7,6 +7,8 @@
 """
 import time
 import os
+import h5py 
+
 from tomoscan import TomoScan
 from tomoscan import log
 
@@ -34,8 +36,9 @@ class TomoScan2BM(TomoScan):
         self.epics_pvs['FPAutoIncrement'].put('Yes')
 
         # Set data directory
-        file_path = self.epics_pvs['DetectorTopDir'].get(as_string=True) + self.epics_pvs['ExperimentYearMonth'].get(as_string=True)
+        file_path = self.epics_pvs['DetectorTopDir'].get(as_string=True) + self.epics_pvs['ExperimentYearMonth'].get(as_string=True) + os.path.sep + self.epics_pvs['UserLastName'].get(as_string=True) + os.path.sep
         self.epics_pvs['FilePath'].put(file_path, wait=True)
+        self.control_pvs['FPFileTemplate'] .put("%s%s.h5", wait=True)
         # Set file name
         file_name = str('{:03}'.format(self.epics_pvs['FPFileNumber'].value)) + '_' + self.epics_pvs['SampleName'].get(as_string=True)
         self.epics_pvs['FileName'].put(file_name, wait=True)
@@ -59,7 +62,7 @@ class TomoScan2BM(TomoScan):
         if not self.epics_pvs['OpenFastShutter'] is None:
             pv = self.epics_pvs['OpenFastShutter']
             value = self.epics_pvs['OpenFastShutterValue'].get(as_string=True)
-            log.info('open fast shutter: %s, value: %s' % (pv, value))
+            log.info('open fast shutter: %s, value: %s', pv, value)
             self.epics_pvs['OpenFastShutter'].put(value, wait=True)
 
     def close_shutter(self):
@@ -77,7 +80,7 @@ class TomoScan2BM(TomoScan):
         if not self.epics_pvs['CloseFastShutter'] is None:
             pv = self.epics_pvs['CloseFastShutter']
             value = self.epics_pvs['CloseFastShutterValue'].get(as_string=True)
-            log.info('close fast shutter: %s, value: %s' % (pv, value))
+            log.info('close fast shutter: %s, value: %s', pv, value)
             self.epics_pvs['CloseFastShutter'].put(value, wait=True)
 
     def set_trigger_mode(self, trigger_mode, num_images):
@@ -161,9 +164,6 @@ class TomoScan2BM(TomoScan):
             num_images += num_flat_fields;
         if flat_field_mode == 'Both':
             num_images += num_flat_fields;
-        self.epics_pvs['FPNumCapture'].put(num_images, wait=True)
-        self.epics_pvs['FPCapture'].put('Capture')
-
         # Set the total number of frames to capture and start capture on file plugin
         self.epics_pvs['FPNumCapture'].put(self.total_images, wait=True)
         self.epics_pvs['FPCapture'].put('Capture')
@@ -172,6 +172,8 @@ class TomoScan2BM(TomoScan):
         """Performs the operations needed at the very end of a scan.
 
         This does the following:
+
+        - Add theta to the raw data file. 
 
         - Calls ``save_configuration()``.
 
@@ -183,12 +185,14 @@ class TomoScan2BM(TomoScan):
 
         - Calls the base class method.
         """
-
+        # Add theta
+        self.theta = []
+        self.theta = self.epics_pvs['ThetaArray'].get(count=int(self.num_angles))
+        self.add_theta()
         # Save the configuration
         # Strip the extension from the FullFileName and add .config
-
-
         full_file_name = self.epics_pvs['FPFullFileName'].get(as_string=True)
+        log.info('data save location: %s', full_file_name)
         config_file_root = os.path.splitext(full_file_name)[0]
         self.save_configuration(config_file_root + '.config')
         # Put the camera back in FreeRun mode and acquiring
@@ -199,6 +203,21 @@ class TomoScan2BM(TomoScan):
         self.move_sample_in()
         # Call the base class method
         super().end_scan()
+
+    def add_theta(self):
+        """Add theta at the end of a scan.
+        """
+        log.info('add theta')
+        full_file_name = self.epics_pvs['FPFullFileName'].get(as_string=True)
+        with h5py.File(full_file_name, "a") as f:
+            try:
+                if self.theta is not None:
+                    theta_ds = f.create_dataset('/exchange/theta', (len(self.theta),))
+                    theta_ds[:] = self.theta[:]
+            except:
+                log.error('add theta: Failed accessing: %s', full_file_name)
+                traceback.print_exc(file=sys.stdout)
+
 
     def collect_dark_fields(self):
         """Collects dark field images.
