@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Tomo scan software for Sector 2-BM.
+tomoscan-cli
 """
 
 import os
