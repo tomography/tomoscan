@@ -64,3 +64,68 @@ The base class implementation of ``fly_scan()`` does the common operations requi
 ``begin_scan()``, ``collect_dark_fields()``, ``collect_flat_fields()``, ``collect_projections()``, and ``end_scan()``
 all have implementations in the base class, but will commonly also be implemented in the derived class.
 The derived class will normally call the base class to perform the operations that are not beamline-specific. 
+
+tomoscan-cli
+------------
+
+Installing tomoscan as a python libray with::
+
+    $ cd ~/epics/synApps/support/tomoscan/
+    $ python setup.py install
+
+enables the tomoscan commnand line interface. To use it::
+
+    $ tomoscan -h
+    usage: tomoscan [-h] [--config FILE] [--version]  ...
+    optional arguments:
+      -h, --help     show this help message and exit
+      --config FILE  File name of configuration file
+      --version      show program's version number and exit
+
+      Commands:
+  
+    init         Create configuration file
+    status       Show tomoscan status
+    single       Run a single tomographic scan
+    vertical     Run a vertical tomographic scan
+    horizontal   Run a horizontal tomographic scan
+    mosaic       Run a mosaic tomographic scan
+
+each command help is accessible with ``-h``::
+
+    usage: tomoscan vertical [-h] [--beamline {2BM,7BM,13BM,32ID}]
+                         [--scan-type SCAN_TYPE] [--tomoscan-db-home FILE]
+                         [--sleep-steps SLEEP_STEPS] [--sleep-time SLEEP_TIME]
+                         [--vertical-start VERTICAL_START]
+                         [--vertical-step-size VERTICAL_STEP_SIZE]
+                         [--vertical-steps VERTICAL_STEPS] [--config FILE]
+                         [--logs-home FILE] [--sleep] [--testing] [--verbose]
+
+    optional arguments:
+      -h, --help            show this help message and exit
+      --beamline {2BM,7BM,13BM,32ID}
+                            Beamline (default: 13BM)
+      --scan-type SCAN_TYPE For internal use to log the tomoscan status 
+                            (default:'')
+      --tomoscan-db-home FILE
+                            Log file directory 
+                            (default:/home/user2bmb/epics/synApps/support/tomoscan/db/)
+      --sleep-steps SLEEP_STEPS
+                            Number of sleep steps (default: 1)
+      --sleep-time SLEEP_TIME
+                            Wait time (s) between each data collection scan
+                            (default: 0)
+      --vertical-start VERTICAL_START
+                            Vertical start position (mm) (default: 0)
+      --vertical-step-size VERTICAL_STEP_SIZE
+                            Vertical step size (mm) (default: 1)
+      --vertical-steps VERTICAL_STEPS
+                            Number of vertical steps (default: 1)
+      --config FILE         File name of configuration file 
+                            (default: /home/user2bmb/tomoscan.conf)
+      --logs-home FILE      Log file directory (default: /home/user2bmb/logs)
+      --sleep               Enable sleep time between tomography scans 
+                            (default: False)
+      --testing             Enable test mode, tomography scan will not run
+                            (default: False)
+      --verbose             Verbose output (default: False)
