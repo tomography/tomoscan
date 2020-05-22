@@ -163,7 +163,7 @@ Flat field control
     - Number of flat fields to collect
   * - $(P)$(R)FlatFieldMode
     - mbbo
-    - When to collect flat fields.  Choices are 'Start', 'End', 'Both', 'NoneChoices'.
+    - When to collect flat fields.  Choices are 'Start', 'End', 'Both', 'None'.
   * - $(P)$(R)FlatFieldAxis
     - mbbo
     - Axis to move when collecting flat fields.  Choices are 'X', 'Y', and 'Both'.
