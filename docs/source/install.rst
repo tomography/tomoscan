@@ -90,7 +90,7 @@ add here custom PVs required to run tomography at your beamline.
     - file "tomoScan_settings.req", P=$(P), R=$(R)
     - file "tomoScan_2BM_settings.req", P=$(P), R=$(R)
 
-- Edit iocBoot/iocTomoScan_2BM/st.cmd to match the name you want to assing to the TomoScan ioc
+- Edit iocBoot/iocTomoScan_2BM/st.cmd to match the name you want to assign to the TomoScan ioc
     - epicsEnvSet("P", "2bma:")
     - epicsEnvSet("R", "TomoScan:")
 
