@@ -59,7 +59,7 @@ Testing the installation
     $ start_IOC
     $ start_medm
 
-Bemaline customization
+Beamline customization
 ----------------------
 
 tomoScan
