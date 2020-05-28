@@ -213,15 +213,23 @@ class TomoScan2BM(TomoScan):
         """Add theta at the end of a scan.
         """
         log.info('add theta')
+
         full_file_name = self.epics_pvs['FPFullFileName'].get(as_string=True)
-        with h5py.File(full_file_name, "a") as f:
+        if os.path.exists(full_file_name):
             try:
-                if self.theta is not None:
-                    theta_ds = f.create_dataset('/exchange/theta', (len(self.theta),))
-                    theta_ds[:] = self.theta[:]
-            except:
-                log.error('add theta: Failed accessing: %s', full_file_name)
-                traceback.print_exc(file=sys.stdout)
+                f = h5py.File(full_file_name, "a")
+                with f:
+                    try:
+                        if self.theta is not None:
+                            theta_ds = f.create_dataset('/exchange/theta', (len(self.theta),))
+                            theta_ds[:] = self.theta[:]
+                    except:
+                        log.error('add theta: Failed accessing: %s', full_file_name)
+                        traceback.print_exc(file=sys.stdout)
+            except OSError:
+                log.error('>>> Add theta aborted')
+        else:
+            log.error('Failed adding theta. %s file does not exist', full_file_name)
 
     def collect_dark_fields(self):
         """Collects dark field images.
@@ -318,6 +326,9 @@ class TomoScan2BM(TomoScan):
         self.wait_pv(self.epics_pvs['CamAcquire'], 1)
         log.info('start fly scan')
         # Start fly scan
-        self.epics_pvs['PSOfly'].put(1, wait=True)
+        self.epics_pvs['PSOfly'].put(1) #, wait=True)
         # wait for acquire to finish
-        self.wait_pv(self.epics_pvs['PSOfly'], 0)
+        # wait_camera_done instead of the wait_pv enabled the counter update
+        # self.wait_pv(self.epics_pvs['PSOfly'], 0)
+        collection_time = self.num_angles * time_per_angle
+        self.wait_camera_done(collection_time + 60.)
