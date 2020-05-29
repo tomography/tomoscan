@@ -55,6 +55,10 @@ SECTIONS['general'] = {
         'default': False,
         'help': 'Enable sleep time between tomography scans',
         'action': 'store_true'},
+    'in-situ': {
+        'default': False,
+        'help': 'Enable in-situ PV scan during sleep time',
+        'action': 'store_true'},
     'testing': {
         'default': False,
         'help': 'Enable test mode, tomography scan will not run',
@@ -67,18 +71,33 @@ SECTIONS['tomoscan'] = {
         'type': str,
         'help': "Log file directory",
         'metavar': 'FILE'},
+    'tomoscan-prefix':{
+        'default': '2bma:TomoScan:',
+        'type': str,
+        'help': "The tomoscan prefix, i.e.'13BMDPG1:TS:' or '2bma:TomoScan:' "},
     'scan-type':{
         'default': '',
         'type': str,
         'help': "For internal use to log the tomoscan status"},
-    'beamline': {
-        'default': '13BM',
-        'type': str,
-        'choices': ['2BM', '7BM', '13BM', '32ID'],
-        'help': "Beamline"},
         }
 
-SECTIONS['sleep'] = {
+SECTIONS['in-situ'] = {
+    'in-situ-pv': {
+        'default': '',
+        'type': str,
+        'help': "Name of the in-situ EPICS process variable to set"},
+    'in-situ-pv-rbv': {
+        'default': '',
+        'type': str,
+        'help': "Name of the in-situ EPICS process variable to read back"},
+    'in-situ-start': {
+        'default': 0,
+        'type': float,
+        'help': "In-situ start"},
+    'in-situ-step-size': {
+        'default': 1,
+        'type': float,
+        'help': "In-situ step size"},
     'sleep-time': {
         'default': 0,
         'type': float,
@@ -86,7 +105,7 @@ SECTIONS['sleep'] = {
     'sleep-steps': {
         'type': util.positive_int,
         'default': 1,
-        'help': "Number of sleep steps"},
+        'help': "Number of sleep/in-situ steps"},
        }
 
 SECTIONS['vertical'] = {
@@ -119,12 +138,12 @@ SECTIONS['horizontal'] = {
         'help': "Number of horizontal steps"},
     }
 
-SINGLE_SCAN_PARAMS = ('tomoscan', 'sleep')
+SINGLE_SCAN_PARAMS = ('tomoscan', 'in-situ')
 VERTICAL_SCAN_PARAMS = SINGLE_SCAN_PARAMS + ('vertical',)
 HORIZONTAL_SCAN_PARAMS = SINGLE_SCAN_PARAMS + ('horizontal',)
 MOSAIC_SCAN_PARAMS = SINGLE_SCAN_PARAMS + ('vertical', 'horizontal')
 
-NICE_NAMES = ('General', 'Tomoscan', 'Sleep Scans', 'Vertical Scan', "Horizonatal Scan")
+NICE_NAMES = ('General', 'Tomoscan', 'In-situ Scans', 'Vertical Scan', "Horizonatal Scan")
 
 def get_config_name():
     """Get the command line --config option."""

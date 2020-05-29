@@ -16,8 +16,28 @@ from datetime import datetime
 
 from tomoscan import config, __version__
 from tomoscan import log
-from tomoscan.tomoscan_2bm import TomoScan2BM
-from tomoscan.tomoscan_13bm import TomoScan13BM
+# from tomoscan.tomoscan_2bm import TomoScan2BM
+# from tomoscan.tomoscan_13bm import TomoScan13BM
+
+from epics import PV
+import epics
+
+def init_PVs(tomoscan_prefix):
+    
+    ts_pvs = {}
+    file_plugin_prefix = epics.caget(tomoscan_prefix + 'FilePluginPVPrefix')    
+
+    ts_pvs['StartScan'] = PV(tomoscan_prefix + 'StartScan')
+    ts_pvs['ServerRunning'] = PV(tomoscan_prefix + 'ServerRunning')
+    ts_pvs['ScanStatus'] = PV(tomoscan_prefix + 'ScanStatus')
+    ts_pvs['SampleName'] = PV(tomoscan_prefix + 'SampleName')
+    ts_pvs['SampleInX'] = PV(tomoscan_prefix + 'SampleInX')
+    ts_pvs['SampleInY'] = PV(tomoscan_prefix + 'SampleInY')
+    ts_pvs['FileName'] = PV(tomoscan_prefix + 'FileName')
+    ts_pvs['FileTemplate'] = PV(file_plugin_prefix + 'FileTemplate')
+    ts_pvs['FileNumber'] = PV(file_plugin_prefix + 'FileNumber')
+
+    return ts_pvs
 
 def init(args):
 
@@ -48,81 +68,84 @@ def run_horizontal(args):
 def run_mosaic(args):
     args.scan_type = 'mosaic'
     run_scan(args)
-    config.write(args.config, sections=config.MOSAIC_SCAN_PARAMS)
+    config.write(args.config, args, sections=config.MOSAIC_SCAN_PARAMS)
 
 def run_scan(args):
     
-    if args.beamline == '2BM':
-        ts = TomoScan2BM([args.tomoscan_db_home + "tomoScan_settings.req", args.tomoscan_db_home + "tomoScan_2BM_settings.req"], {"$(P)":"2bma:", "$(R)":"TomoScan:"})
-    elif args.beamline == '13BM':
-        ts = TomoScan13BM([args.tomoscan_db_home + "tomoScan_settings.req", args.tomoscan_db_home + "tomoScan_2BM_settings.req"], {"$(P)":"2bma:", "$(R)":"TomoScan:"})
-    else:
-        log.error('beamline %s is not supported', args.beamline)
-        exit()
-    log.warning('%s scan start', args.scan_type)
+    ts_pvs = init_PVs(args.tomoscan_prefix)
 
-    if (args.sleep_steps >= 2) and (args.sleep == True):
-        log.warning('running %d x %2.2fs sleep scans', args.sleep_steps, args.sleep_time)
-        tic =  time.time()
-        for ii in np.arange(1, args.sleep_steps+1, 1):
-            log.warning('sleep start scan %d/%d', ii, args.sleep_steps)
-            scan(args, ts)
-            if (args.sleep_steps+2)!=(ii+2):
-                log.warning('wait (s): %s ' , str(args.sleep_time))
-                time.sleep(args.sleep_time)
-        dtime = (time.time() - tic)/60.
-        log.info('sleep scans time: %3.3f minutes', dtime)
-        log.warning('sleep scan end')
+    if ts_pvs['ServerRunning'].get():
+        if ts_pvs['ScanStatus'].get(as_string=True) == 'Scan complete':
+            log.warning('%s scan start', args.scan_type)
+            if (args.sleep_steps >= 1) and (args.sleep == True):
+                log.warning('running %d x %2.2fs sleep scans', args.sleep_steps, args.sleep_time)
+                tic =  time.time()
+                for ii in np.arange(0, args.sleep_steps, 1):
+                    log.warning('sleep start scan %d/%d', ii, args.sleep_steps-1)
+                    scan(args, ts_pvs)
+                    if (args.sleep_steps+1)!=(ii+1):
+                        if (args.in_situ):
+                            in_situ_set_value = args.in_situ_start + (ii) * args.in_situ_step_size
+                            log.error('in-situ set value: %3.3f ', in_situ_set_value)
+                            # set in-situ PV
+                            # wait on in-situ read back value
+                        log.warning('wait (s): %s ' , str(args.sleep_time))
+                        time.sleep(args.sleep_time)
+                dtime = (time.time() - tic)/60.
+                log.info('sleep scans time: %3.3f minutes', dtime)
+                log.warning('sleep scan end')
+            else:
+                scan(args, ts_pvs)
+            log.warning('%s scan end', args.scan_type)
+        else:
+            log.error('Server %s is busy', args.tomoscan_prefix)
     else:
-        scan(args, ts)
-    log.warning('%s scan end', args.scan_type)
+        log.error('Server %s is not runnig', args.tomoscan_prefix)
 
 def scan(args, ts):
 
     tic_01 =  time.time()
-    log.info('scan start')
     if (args.scan_type == 'single'):
         single_scan(args, ts)
     elif (args.scan_type == 'mosaic'):
-            start_y = args.vertical_start
-            step_size_y = args.vertical_step_size       
-            end_y = start_y+ (step_size_y * args.vertical_steps)
-            start_x = args.horizontal_start
-            pv_y = 'SampleY'
+        start_y = args.vertical_start
+        step_size_y = args.vertical_step_size       
+        end_y = start_y+ (step_size_y * args.vertical_steps)
 
-            start_x = args.horizontal_start
-            step_size_x = args.horizontal_step_size       
-            end_x = start_x + (step_size_x * args.horizontal_steps)
-            pv_x = 'SampleX'
-            log.info('vertical positions (mm): %s', np.arange(start_y, end_y, step_size_y))
-            for i in np.arange(start_y, end_y, step_size_y):
-                log.warning('%s stage start position: %3.3f mm', pv_y, i)
-                ts.epics_pvs[pv_y].put(i, wait=True)
-                log.info('horizontal positions (mm): %s', np.arange(start_x, end_x, step_size_x))
-                for j in np.arange(start_x, end_x, step_size_x):
-                    log.warning('%s stage start position: %3.3f mm', pv_x, j)
-                    ts.epics_pvs[pv_x].put(j, wait=True)
-                    single_scan(args, ts)
+        start_x = args.horizontal_start
+        step_size_x = args.horizontal_step_size       
+        end_x = start_x + (step_size_x * args.horizontal_steps)
+
+        log.info('vertical positions (mm): %s', np.arange(start_y, end_y, step_size_y))
+        for i in np.arange(start_y, end_y, step_size_y):
+            log.warning('%s stage start position: %3.3f mm', 'SampleInY', i)
+            ts['SampleInY'].put(i, wait=True)
+            log.info('horizontal positions (mm): %s', np.arange(start_x, end_x, step_size_x))
+            for j in np.arange(start_x, end_x, step_size_x):
+                log.warning('%s stage start position: %3.3f mm', 'SampleInX', j)
+                ts['SampleInX'].put(j, wait=True)
+                single_scan(args, ts)
+        dtime = (time.time() - tic_01)/60.
+        log.info('%s scan time: %3.3f minutes', args.scan_type, dtime)
     else:
         if (args.scan_type == 'horizontal'):
             start = args.horizontal_start
             step_size = args.horizontal_step_size       
             end = start + (step_size * args.horizontal_steps)
             log.info('horizontal positions (mm): %s', np.arange(start, end, step_size))
-            pv = "SampleX"
+            pv = "SampleInX"
         elif (args.scan_type == 'vertical'):
             start = args.vertical_start
-            step_size = args.vertical_step_size       
+            step_size = args.vertical_step_size
             end = start + (step_size * args.vertical_steps)
             log.info('vertical positions (mm): %s', np.arange(start, end, step_size))
-            pv = "SampleY"
+            pv = "SampleInY"
         for i in np.arange(start, end, step_size):
             log.warning('%s stage start position: %3.3f mm', pv, i)
-            ts.epics_pvs[pv].put(i, wait=True)
+            ts[pv].put(i, wait=True)
             single_scan(args, ts)
-    dtime = (time.time() - tic_01)/60.
-    log.info('%s scan time: %3.3f minutes', args.scan_type, dtime)
-
+        dtime = (time.time() - tic_01)/60.
+        log.info('%s scan time: %3.3f minutes', args.scan_type, dtime)
 
 def single_scan(args, ts):
 
@@ -130,8 +153,8 @@ def single_scan(args, ts):
     log.info('single scan start')
     if args.testing:
         log.warning('testing mode')
-    else:
-        ts.fly_scan()
+    else: 
+        ts['StartScan'].put(1, wait=True, timeout=100)
     dtime = (time.time() - tic_01)/60.
     log.info('single scan time: %3.3f minutes', dtime)
 

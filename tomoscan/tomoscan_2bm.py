@@ -35,8 +35,8 @@ class TomoScan2BM(TomoScan):
         file_path = self.epics_pvs['DetectorTopDir'].get(as_string=True) + self.epics_pvs['ExperimentYearMonth'].get(as_string=True) + os.path.sep + self.epics_pvs['UserLastName'].get(as_string=True) + os.path.sep
         self.epics_pvs['FilePath'].put(file_path, wait=True)
 
-        # Set default file name template
-        self.control_pvs['FPFileTemplate'].put("%s%s_%3.3d.h5", wait=True)
+        # # Set default file name template
+        # self.control_pvs['FPFileTemplate'].put("%s%s_%3.3d.h5", wait=True)
 
         # Enable auto-increment on file writer
         self.epics_pvs['FPAutoIncrement'].put('Yes')
@@ -193,6 +193,10 @@ class TomoScan2BM(TomoScan):
         self.theta = self.epics_pvs['ThetaArray'].get(count=int(self.num_angles))
         self.add_theta()
 
+        # # Set default file name template back to handle abort of a tomoscan cli using a custom file name template
+        # # or switch between tomoscan server and tomoscan-cli
+        # self.control_pvs['FPFileTemplate'].put("%s%s_%3.3d.h5", wait=True)
+
         # Save the configuration
         # Strip the extension from the FullFileName and add .config
         full_file_name = self.epics_pvs['FPFullFileName'].get(as_string=True)
@@ -224,10 +228,10 @@ class TomoScan2BM(TomoScan):
                             theta_ds = f.create_dataset('/exchange/theta', (len(self.theta),))
                             theta_ds[:] = self.theta[:]
                     except:
-                        log.error('add theta: Failed accessing: %s', full_file_name)
+                        log.error('Add theta: Failed accessing: %s', full_file_name)
                         traceback.print_exc(file=sys.stdout)
             except OSError:
-                log.error('>>> Add theta aborted')
+                log.error('Add theta aborted')
         else:
             log.error('Failed adding theta. %s file does not exist', full_file_name)
 
