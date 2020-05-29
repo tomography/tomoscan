@@ -35,9 +35,6 @@ class TomoScan2BM(TomoScan):
         file_path = self.epics_pvs['DetectorTopDir'].get(as_string=True) + self.epics_pvs['ExperimentYearMonth'].get(as_string=True) + os.path.sep + self.epics_pvs['UserLastName'].get(as_string=True) + os.path.sep
         self.epics_pvs['FilePath'].put(file_path, wait=True)
 
-        # # Set default file name template
-        # self.control_pvs['FPFileTemplate'].put("%s%s_%3.3d.h5", wait=True)
-
         # Enable auto-increment on file writer
         self.epics_pvs['FPAutoIncrement'].put('Yes')
 
@@ -192,10 +189,6 @@ class TomoScan2BM(TomoScan):
         self.theta = []
         self.theta = self.epics_pvs['ThetaArray'].get(count=int(self.num_angles))
         self.add_theta()
-
-        # # Set default file name template back to handle abort of a tomoscan cli using a custom file name template
-        # # or switch between tomoscan server and tomoscan-cli
-        # self.control_pvs['FPFileTemplate'].put("%s%s_%3.3d.h5", wait=True)
 
         # Save the configuration
         # Strip the extension from the FullFileName and add .config

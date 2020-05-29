@@ -16,8 +16,6 @@ from datetime import datetime
 
 from tomoscan import config, __version__
 from tomoscan import log
-# from tomoscan.tomoscan_2bm import TomoScan2BM
-# from tomoscan.tomoscan_13bm import TomoScan13BM
 
 from epics import PV
 import epics
