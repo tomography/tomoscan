@@ -1,0 +1,13 @@
+file "$(TOP)/db/tomoScan.template"
+{
+pattern
+{  P,      R,      CAMERA,    FILE_PLUGIN,   ROTATION,  SAMPLE_X,  SAMPLE_Y,      CLOSE_SHUTTER,        CLOSE_VALUE,        OPEN_SHUTTER,         OPEN_VALUE}
+{7bmtomo:, TomoScan:, 7bm_pg1:, 7bm_pg1:HDF1:,  7bmb1:aero:m3,  7bmb1:aero:m2,  7bmb1:aero:m1,  7bma1:rShtrA:Close,    1,   7bma1:rShutrA:Open,      1}
+}
+
+file "$(TOP)/db/tomoScan_7BM.template"
+{
+pattern
+{  P,      R,         PSO,           BEAM_READY,      READY_VALUE,    CLOSE_FAST_SHUTTER,  CLOSE_FAST_VALUE,        OPEN_FAST_SHUTTER,         OPEN_FAST_VALUE,}
+{7bmtomo:, TomoScan:, 7bmb1:PSOFly3:,   PA:07BM:STA_A_BEAMREADY_PL.VAL,    1,      7bmb1:m27,                0.2,            7bmb1:m27,         0,}
+}
