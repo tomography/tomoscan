@@ -27,7 +27,6 @@ from tomoscan import __version__
 home = os.path.expanduser("~")
 LOGS_HOME = os.path.join(home, 'logs')
 CONFIG_FILE_NAME = os.path.join(home, 'tomoscan.conf')
-TOMOSCAN_DB_HOME = '/home/user2bmb/epics/synApps/support/tomoscan/db/'
 
 SECTIONS = OrderedDict()
 
@@ -66,11 +65,6 @@ SECTIONS['general'] = {
         }
 
 SECTIONS['tomoscan'] = {
-    'tomoscan-db-home': {
-        'default': TOMOSCAN_DB_HOME,
-        'type': str,
-        'help': "Log file directory",
-        'metavar': 'FILE'},
     'tomoscan-prefix':{
         'default': '2bma:TomoScan:',
         'type': str,
