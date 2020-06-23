@@ -20,7 +20,7 @@ setup(
     url='https://github.com/tomography/tomoscan.git',
     packages=find_packages(),
     include_package_data = True,
-    #scripts=['bin/tomo'],
+    scripts=['bin/tomoscan'],
     description='Classes to run tomography scans',
     zip_safe=False,
     #cmdclass={'install': PostInstallCommand},
