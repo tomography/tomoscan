@@ -142,27 +142,60 @@ class TomoScan2BM(TomoScan):
         This does the following:
 
         - Calls the base class method.
-
+        - 
         """
         log.info('begin scan')
         # Call the base class method
         super().begin_scan()
-        
+ 
+        # Confirm angle step is an integer number of encoder pulses
+        # Pass the user selected values to the PSO
+        self.epics_pvs['PSOstartPos'].put(self.rotation_start, wait=True)
+        self.wait_pv(self.epics_pvs['PSOstartPos'], self.rotation_start)
+        self.epics_pvs['PSOendPos'].put(self.rotation_stop, wait=True)
+        self.wait_pv(self.epics_pvs['PSOendPos'], self.rotation_stop)
+        # Compute and set the motor speed
+        time_per_angle = self.compute_frame_time()
+        motor_speed = self.rotation_step / time_per_angle
+        self.epics_pvs['PSOslewSpeed'].put(motor_speed)
+        self.wait_pv(self.epics_pvs['PSOslewSpeed'], motor_speed)
+
+        self.epics_pvs['PSOscanDelta'].put(self.rotation_step, wait=True)
+        self.wait_pv(self.epics_pvs['PSOscanDelta'], self.rotation_step)
+
+        # Get the number of projections and angle steps calculated by the PSO
+        calc_rotation_step = self.epics_pvs['PSOscanDelta'].value
+        calc_num_proj = int(self.epics_pvs['PSOcalcProjections'].value)
+        # If this is different from the user selected values adjust them
+        if calc_rotation_step != self.rotation_step:
+            # This should happen most of the time since rotation_step is rounded down to the closest integer
+            # number of encoder pulses
+            log.warning('PSO changed rotation step from %s to %s', self.rotation_step, calc_rotation_step)
+            self.rotation_step = calc_rotation_step
+        if calc_num_proj != self.num_angles:
+            # This happens rarely an it is a +/-1 change in the number of projections to make sure that
+            # after the rotation_step round down we don't pass the user set rotation_stop
+            log.warning('PSO changed number of projections from %s to %s', self.num_angles, calc_num_proj)
+            self.num_angles = calc_num_proj
+
+        self.epics_pvs['PSOscanControl'].put('Standard')
+        self.wait_pv(self.epics_pvs['PSOscanControl'], 0)
+        time.sleep(1)
+
+        # # Create theta array
+        self.theta = []
+        self.theta = self.epics_pvs['ThetaArray'].get(count=int(self.num_angles))
+
         # Compute total number of frames to capture
-        num_dark_fields = self.epics_pvs['NumDarkFields'].value
-        dark_field_mode = self.epics_pvs['DarkFieldMode'].get(as_string=True)
-        num_flat_fields = self.epics_pvs['NumFlatFields'].value
-        flat_field_mode = self.epics_pvs['FlatFieldMode'].get(as_string=True)
-        num_angles = self.epics_pvs['NumAngles'].value
-        num_images = num_angles
-        if dark_field_mode not in ('None'):
-            num_images += num_dark_fields;
-        if dark_field_mode == 'Both':
-            num_images += num_dark_fields;
-        if flat_field_mode not in ('None'):
-            num_images += num_flat_fields;
-        if flat_field_mode == 'Both':
-            num_images += num_flat_fields;
+        self.total_images = self.num_angles
+        if self.dark_field_mode != 'None':
+            self.total_images += self.num_dark_fields
+        if self.dark_field_mode == 'Both':
+            self.total_images += self.num_dark_fields
+        if self.flat_field_mode != 'None':
+            self.total_images += self.num_flat_fields
+        if self.flat_field_mode == 'Both':
+            self.total_images += self.num_flat_fields
         # Set the total number of frames to capture and start capture on file plugin
         self.epics_pvs['FPNumCapture'].put(self.total_images, wait=True)
         self.epics_pvs['FPCapture'].put('Capture')
@@ -185,9 +218,7 @@ class TomoScan2BM(TomoScan):
         - Calls the base class method.
         """
         log.info('end scan')
-        # Add theta 
-        self.theta = []
-        self.theta = self.epics_pvs['ThetaArray'].get(count=int(self.num_angles))
+        # Add theta in the hdf file
         self.add_theta()
 
         # Save the configuration
@@ -204,7 +235,6 @@ class TomoScan2BM(TomoScan):
         self.move_sample_in()
         # Call the base class method
         super().end_scan()
-
 
     def add_theta(self):
         """Add theta at the end of a scan.
@@ -296,22 +326,6 @@ class TomoScan2BM(TomoScan):
 
         log.info('collect projections')
         super().collect_projections()
-        # Compute and set the motor speed
-        time_per_angle = self.compute_frame_time()
-        motor_speed = self.rotation_step / time_per_angle
-
-        self.epics_pvs['PSOstartPos'].put(self.rotation_start)
-        self.epics_pvs['PSOendPos'].put(self.rotation_stop)
-        self.epics_pvs['PSOslewSpeed'].put(motor_speed)
-        self.epics_pvs['PSOscanDelta'].put(self.rotation_step)
-
-        calc_num_proj = self.epics_pvs['PSOcalcProjections'].value
-
-        if calc_num_proj != self.num_angles:
-            log.warning('PSO changed number of projections from: %s to: %s', self.num_angles, int(calc_num_proj))
-            self.num_angles = calc_num_proj
-        self.epics_pvs['PSOscanControl'].put('Standard')
-
         log.info('taxi before starting capture')
         # Taxi before starting capture
         self.epics_pvs['PSOtaxi'].put(1, wait=True)
@@ -327,5 +341,6 @@ class TomoScan2BM(TomoScan):
         # wait for acquire to finish
         # wait_camera_done instead of the wait_pv enabled the counter update
         # self.wait_pv(self.epics_pvs['PSOfly'], 0)
+        time_per_angle = self.compute_frame_time()
         collection_time = self.num_angles * time_per_angle
         self.wait_camera_done(collection_time + 60.)
