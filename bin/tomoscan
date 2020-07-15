@@ -31,9 +31,17 @@ def init_PVs(tomoscan_prefix):
     ts_pvs['SampleName'] = PV(tomoscan_prefix + 'SampleName')
     ts_pvs['SampleInX'] = PV(tomoscan_prefix + 'SampleInX')
     ts_pvs['SampleInY'] = PV(tomoscan_prefix + 'SampleInY')
+    ts_pvs['FlatFieldAxis'] = PV(tomoscan_prefix + 'FlatFieldAxis')
+    ts_pvs['FlatFieldMode'] = PV(tomoscan_prefix + 'FlatFieldMode')
     ts_pvs['FileName'] = PV(tomoscan_prefix + 'FileName')
     ts_pvs['FileTemplate'] = PV(file_plugin_prefix + 'FileTemplate')
     ts_pvs['FileNumber'] = PV(file_plugin_prefix + 'FileNumber')
+
+    sample_x_pv_name = PV(tomoscan_prefix + 'SampleXPVName').value
+    sample_y_pv_name  = PV(tomoscan_prefix + 'SampleYPVName').value
+
+    ts_pvs['SampleX'] = PV(sample_x_pv_name)
+    ts_pvs['SampleY'] = PV(sample_y_pv_name)
 
     return ts_pvs
 
@@ -103,6 +111,8 @@ def run_scan(args):
 def scan(args, ts):
 
     tic_01 =  time.time()
+    flat_field_axis = ts['FlatFieldAxis'].get(as_string=True)
+    flat_field_mode = ts['FlatFieldMode'].get(as_string=True)
     if (args.scan_type == 'single'):
         single_scan(args, ts)
     elif (args.scan_type == 'mosaic'):
@@ -117,11 +127,19 @@ def scan(args, ts):
         log.info('vertical positions (mm): %s', np.arange(start_y, end_y, step_size_y))
         for i in np.arange(start_y, end_y, step_size_y):
             log.warning('%s stage start position: %3.3f mm', 'SampleInY', i)
-            ts['SampleInY'].put(i, wait=True)
+            if flat_field_axis in ('X') or flat_field_mode == 'None':
+                pv_y = "SampleY"
+            else:
+                pv_y = "SampleInY"
+            ts[pv_y].put(i, wait=True)
             log.info('horizontal positions (mm): %s', np.arange(start_x, end_x, step_size_x))
             for j in np.arange(start_x, end_x, step_size_x):
                 log.warning('%s stage start position: %3.3f mm', 'SampleInX', j)
-                ts['SampleInX'].put(j, wait=True)
+                if flat_field_axis in ('Y') or flat_field_mode == 'None':
+                    pv_x = "SampleX"
+                else:
+                    pv_x = "SampleInX"
+                ts[pv_x].put(j, wait=True, timeout=600)
                 single_scan(args, ts)
         dtime = (time.time() - tic_01)/60.
         log.info('%s scan time: %3.3f minutes', args.scan_type, dtime)
@@ -131,16 +149,22 @@ def scan(args, ts):
             step_size = args.horizontal_step_size       
             end = start + (step_size * args.horizontal_steps)
             log.info('horizontal positions (mm): %s', np.arange(start, end, step_size))
-            pv = "SampleInX"
+            if flat_field_axis in ('Y') or flat_field_mode == 'None':
+                pv = "SampleX"
+            else:
+                pv = "SampleInX"
         elif (args.scan_type == 'vertical'):
             start = args.vertical_start
             step_size = args.vertical_step_size
             end = start + (step_size * args.vertical_steps)
             log.info('vertical positions (mm): %s', np.arange(start, end, step_size))
-            pv = "SampleInY"
+            if flat_field_axis in ('X') or flat_field_mode == 'None':
+                pv = "SampleY"
+            else:
+                pv = "SampleInY"
         for i in np.arange(start, end, step_size):
             log.warning('%s stage start position: %3.3f mm', pv, i)
-            ts[pv].put(i, wait=True)
+            ts[pv].put(i, wait=True, timeout=600)
             single_scan(args, ts)
         dtime = (time.time() - tic_01)/60.
         log.info('%s scan time: %3.3f minutes', args.scan_type, dtime)
@@ -152,7 +176,7 @@ def single_scan(args, ts):
     if args.testing:
         log.warning('testing mode')
     else: 
-        ts['StartScan'].put(1, wait=True, timeout=100)
+        ts['StartScan'].put(1, wait=True, timeout=3600)
     dtime = (time.time() - tic_01)/60.
     log.info('single scan time: %3.3f minutes', dtime)
 
