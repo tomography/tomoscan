@@ -1,0 +1,233 @@
+#!/usr/bin/env python
+
+"""
+tomoscan-cli
+"""
+
+import os
+import re
+import sys
+import argparse
+import time
+import shutil
+import pathlib
+import numpy as np
+from datetime import datetime
+
+from tomoscan import config, __version__
+from tomoscan import log
+
+from epics import PV
+import epics
+
+def init_PVs(tomoscan_prefix):
+    
+    ts_pvs = {}
+    file_plugin_prefix = epics.caget(tomoscan_prefix + 'FilePluginPVPrefix')    
+
+    ts_pvs['StartScan'] = PV(tomoscan_prefix + 'StartScan')
+    ts_pvs['ServerRunning'] = PV(tomoscan_prefix + 'ServerRunning')
+    ts_pvs['ScanStatus'] = PV(tomoscan_prefix + 'ScanStatus')
+    ts_pvs['SampleName'] = PV(tomoscan_prefix + 'SampleName')
+    ts_pvs['SampleInX'] = PV(tomoscan_prefix + 'SampleInX')
+    ts_pvs['SampleInY'] = PV(tomoscan_prefix + 'SampleInY')
+    ts_pvs['FlatFieldAxis'] = PV(tomoscan_prefix + 'FlatFieldAxis')
+    ts_pvs['FlatFieldMode'] = PV(tomoscan_prefix + 'FlatFieldMode')
+    ts_pvs['FileName'] = PV(tomoscan_prefix + 'FileName')
+    ts_pvs['FileTemplate'] = PV(file_plugin_prefix + 'FileTemplate')
+    ts_pvs['FileNumber'] = PV(file_plugin_prefix + 'FileNumber')
+
+    sample_x_pv_name = PV(tomoscan_prefix + 'SampleXPVName').value
+    sample_y_pv_name  = PV(tomoscan_prefix + 'SampleYPVName').value
+
+    ts_pvs['SampleX'] = PV(sample_x_pv_name)
+    ts_pvs['SampleY'] = PV(sample_y_pv_name)
+
+    return ts_pvs
+
+def init(args):
+
+    if not os.path.exists(str(args.config)):
+        config.write(args.config)
+    else:
+        log.error("{0} already exists".format(args.config))
+
+def run_status(args):
+    config.show_config(args)
+
+def run_single(args):
+    args.scan_type = 'single'
+
+    run_scan(args)
+    config.write(args.config, args, sections=config.SINGLE_SCAN_PARAMS)
+
+def run_vertical(args):
+    args.scan_type = 'vertical'
+    run_scan(args)
+    config.write(args.config, args, sections=config.VERTICAL_SCAN_PARAMS)
+
+def run_horizontal(args):
+    args.scan_type = 'horizontal'
+    run_scan(args)
+    config.write(args.config, args, sections=config.HORIZONTAL_SCAN_PARAMS)
+
+def run_mosaic(args):
+    args.scan_type = 'mosaic'
+    run_scan(args)
+    config.write(args.config, args, sections=config.MOSAIC_SCAN_PARAMS)
+
+def run_scan(args):
+    
+    ts_pvs = init_PVs(args.tomoscan_prefix)
+
+    if ts_pvs['ServerRunning'].get():
+        if ts_pvs['ScanStatus'].get(as_string=True) == 'Scan complete':
+            log.warning('%s scan start', args.scan_type)
+            if (args.sleep_steps >= 1) and (args.sleep == True):
+                log.warning('running %d x %2.2fs sleep scans', args.sleep_steps, args.sleep_time)
+                tic =  time.time()
+                for ii in np.arange(0, args.sleep_steps, 1):
+                    log.warning('sleep start scan %d/%d', ii, args.sleep_steps-1)
+                    scan(args, ts_pvs)
+                    if (args.sleep_steps+1)!=(ii+1):
+                        if (args.in_situ):
+                            in_situ_set_value = args.in_situ_start + (ii) * args.in_situ_step_size
+                            log.error('in-situ set value: %3.3f ', in_situ_set_value)
+                            # set in-situ PV
+                            # wait on in-situ read back value
+                        log.warning('wait (s): %s ' , str(args.sleep_time))
+                        time.sleep(args.sleep_time)
+                dtime = (time.time() - tic)/60.
+                log.info('sleep scans time: %3.3f minutes', dtime)
+                log.warning('sleep scan end')
+            else:
+                scan(args, ts_pvs)
+            log.warning('%s scan end', args.scan_type)
+        else:
+            log.error('Server %s is busy', args.tomoscan_prefix)
+    else:
+        log.error('Server %s is not runnig', args.tomoscan_prefix)
+
+def scan(args, ts):
+
+    tic_01 =  time.time()
+    flat_field_axis = ts['FlatFieldAxis'].get(as_string=True)
+    flat_field_mode = ts['FlatFieldMode'].get(as_string=True)
+    if (args.scan_type == 'single'):
+        single_scan(args, ts)
+    elif (args.scan_type == 'mosaic'):
+        start_y = args.vertical_start
+        step_size_y = args.vertical_step_size       
+        end_y = start_y+ (step_size_y * args.vertical_steps)
+
+        start_x = args.horizontal_start
+        step_size_x = args.horizontal_step_size       
+        end_x = start_x + (step_size_x * args.horizontal_steps)
+
+        log.info('vertical positions (mm): %s', np.arange(start_y, end_y, step_size_y))
+        for i in np.arange(start_y, end_y, step_size_y):
+            log.warning('%s stage start position: %3.3f mm', 'SampleInY', i)
+            if flat_field_axis in ('X') or flat_field_mode == 'None':
+                pv_y = "SampleY"
+            else:
+                pv_y = "SampleInY"
+            ts[pv_y].put(i, wait=True)
+            log.info('horizontal positions (mm): %s', np.arange(start_x, end_x, step_size_x))
+            for j in np.arange(start_x, end_x, step_size_x):
+                log.warning('%s stage start position: %3.3f mm', 'SampleInX', j)
+                if flat_field_axis in ('Y') or flat_field_mode == 'None':
+                    pv_x = "SampleX"
+                else:
+                    pv_x = "SampleInX"
+                ts[pv_x].put(j, wait=True, timeout=600)
+                single_scan(args, ts)
+        dtime = (time.time() - tic_01)/60.
+        log.info('%s scan time: %3.3f minutes', args.scan_type, dtime)
+    else:
+        if (args.scan_type == 'horizontal'):
+            start = args.horizontal_start
+            step_size = args.horizontal_step_size       
+            end = start + (step_size * args.horizontal_steps)
+            log.info('horizontal positions (mm): %s', np.arange(start, end, step_size))
+            if flat_field_axis in ('Y') or flat_field_mode == 'None':
+                pv = "SampleX"
+            else:
+                pv = "SampleInX"
+        elif (args.scan_type == 'vertical'):
+            start = args.vertical_start
+            step_size = args.vertical_step_size
+            end = start + (step_size * args.vertical_steps)
+            log.info('vertical positions (mm): %s', np.arange(start, end, step_size))
+            if flat_field_axis in ('X') or flat_field_mode == 'None':
+                pv = "SampleY"
+            else:
+                pv = "SampleInY"
+        for i in np.arange(start, end, step_size):
+            log.warning('%s stage start position: %3.3f mm', pv, i)
+            ts[pv].put(i, wait=True, timeout=600)
+            single_scan(args, ts)
+        dtime = (time.time() - tic_01)/60.
+        log.info('%s scan time: %3.3f minutes', args.scan_type, dtime)
+
+def single_scan(args, ts):
+
+    tic_01 =  time.time()
+    log.info('single scan start')
+    if args.testing:
+        log.warning('testing mode')
+    else: 
+        ts['StartScan'].put(1, wait=True, timeout=3600)
+    dtime = (time.time() - tic_01)/60.
+    log.info('single scan time: %3.3f minutes', dtime)
+
+
+def main():
+    # set logs directory
+    home = os.path.expanduser("~")
+    logs_home = home + '/logs/'
+    # make sure logs directory exists
+    if not os.path.exists(logs_home):
+        os.makedirs(logs_home)
+    # setup logger
+    lfname = logs_home + 'tomoscan_' + datetime.strftime(datetime.now(), "%Y-%m-%d_%H:%M:%S") + '.log'
+    log.setup_custom_logger(lfname)
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--config', **config.SECTIONS['general']['config'])
+    parser.add_argument('--version', action='version',
+                        version='%(prog)s {}'.format(__version__))
+
+    single_param = config.SINGLE_SCAN_PARAMS
+    vertical_param = config.VERTICAL_SCAN_PARAMS
+    horizontal_param = config.HORIZONTAL_SCAN_PARAMS
+    mosaic_param = config.MOSAIC_SCAN_PARAMS
+
+    cmd_parsers = [
+        ('init',           init,              (),                   "Create configuration file"),
+        ('status',         run_status,        mosaic_param,         "Show tomoscan status"),
+        ('single',         run_single,        single_param,         "Run a single tomographic scan"),
+        ('vertical',       run_vertical,      vertical_param,       "Run a vertical tomographic scan"),
+        ('horizontal',     run_horizontal,    horizontal_param,     "Run a horizontal tomographic scan"),
+        ('mosaic',         run_mosaic,        mosaic_param,         "Run a mosaic tomographic scan"),
+    ]
+
+    subparsers = parser.add_subparsers(title="Commands", metavar='')
+
+    for cmd, func, sections, text in cmd_parsers:
+        cmd_params = config.Params(sections=sections)
+        cmd_parser = subparsers.add_parser(cmd, help=text, formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+        cmd_parser = cmd_params.add_arguments(cmd_parser)
+        cmd_parser.set_defaults(_func=func)
+
+    args = config.parse_known_args(parser, subparser=True)
+    # args.scan_type is an internal parameters used to log the scan type in the args.config () file
+    args.scan_type = ''
+    try:
+        args._func(args)
+    except RuntimeError as e:
+        log.error(str(e))
+        sys.exit(1)
+
+
+if __name__ == '__main__':
+    main()
