@@ -212,7 +212,7 @@ record(stringout, "$(P)$(R)OpenFastShutterValue")
 # Streaming analysis control
 ############################
 
-record(bo, "$(P)$(R)Stream")
+record(bo, "$(P)$(R)StreamStatus")
 {
    field(ZNAM, "Off")
    field(ONAM, "On")

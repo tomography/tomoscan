@@ -70,7 +70,7 @@ $(P)$(R)OpenFastShutterValue
 ############################
 # Streaming analysis control
 ############################
-$(P)$(R)Stream
+$(P)$(R)StreamStatus
 $(P)$(R)StreamBufferSize
 $(P)$(R)StreamSave
 $(P)$(R)StreamBinning

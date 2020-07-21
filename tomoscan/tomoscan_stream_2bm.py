@@ -32,7 +32,7 @@ class TomoScanStream2BM(TomoScan):
         self.set_trigger_mode('Internal', 1)
 
         # This is used by the streaming reconstruction to stop the analysis
-        self.epics_pvs['Stream'].put('Off')
+        self.epics_pvs['StreamStatus'].put('Off')
         
         # Set data directory
         file_path = self.epics_pvs['DetectorTopDir'].get(as_string=True) + self.epics_pvs['ExperimentYearMonth'].get(as_string=True) + os.path.sep + self.epics_pvs['UserLastName'].get(as_string=True) + os.path.sep
@@ -147,7 +147,7 @@ class TomoScanStream2BM(TomoScan):
         super().begin_scan()
  
         # This marks the beginning of the streaming mode
-        self.epics_pvs['Stream'].put('On')
+        self.epics_pvs['StreamStatus'].put('On')
 
         # Confirm angle step is an integer number of encoder pulses
         # Pass the user selected values to the PSO
@@ -215,7 +215,7 @@ class TomoScanStream2BM(TomoScan):
         """
         log.info('end scan')
         # This is used by the streaming reconstruction to stop the analysis
-        self.epics_pvs['Stream'].put('Off')
+        self.epics_pvs['StreamStatus'].put('Off')
 
         # Put the camera back in FreeRun mode and acquiring
         self.set_trigger_mode('FreeRun', 1)

@@ -790,8 +790,8 @@ Fast shutter control
     - stringout
     - Contains the value to write to open the fast shutter
 
-Streaming analysis control
-^^^^^^^^^^^^^^^^^^^^^^^^^^
+Streaming analysis information
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. cssclass:: table-bordered table-striped table-hover
 .. list-table::
@@ -801,9 +801,9 @@ Streaming analysis control
   * - Record name
     - Record type
     - Description
-  * - $(P)$(R)Stream
+  * - $(P)$(R)StreamStatus
     - bo
-    - Flag controlling whether the streaming is on or off
+    - Flag storing the  streaming status
   * - $(P)$(R)StreamBufferSize
     - longout
     - Stream buffer size
@@ -830,13 +830,13 @@ Streaming analysis control
     - Filter type for streaming reconstruction, 'Parzen', 'Shepp-logan', 'Ramp', 'Butterworth'
   * - $(P)$(R)StreamOrthoX
     - longout
-    - Selected ortho slice in the X direction for streaming reconstruction
+    - Ortho slice in the X direction for streaming reconstruction
   * - $(P)$(R)StreamOrthoY
     - longout
-    - Selected ortho slice in the Y direction for streaming reconstruction
+    - Ortho slice in the Y direction for streaming reconstruction
   * - $(P)$(R)StreamOrthoZ
     - longout
-    - Selected ortho slice in the Z direction for streaming reconstruction
+    - Ortho slice in the Z direction for streaming reconstruction
 
 
 
