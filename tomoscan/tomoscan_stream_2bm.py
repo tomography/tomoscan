@@ -139,7 +139,8 @@ class TomoScanStream2BM(TomoScan):
         This does the following:
 
         - Calls the base class method.
-        - 
+
+        - Turns on streaming.
         """
         log.info('begin scan')
         # Call the base class method
@@ -202,9 +203,7 @@ class TomoScanStream2BM(TomoScan):
 
         This does the following:
 
-        - Add theta to the raw data file. 
-
-        - Calls ``save_configuration()``.
+        - Turns off streaming.
 
         - Put the camera back in "FreeRun" mode and acquiring so the user sees live images.
 
@@ -283,10 +282,6 @@ class TomoScanStream2BM(TomoScan):
           angle just after the current exposure and readout are complete.
 
         - These will be used by the PSO to calculate the Taxi distance and rotary stage acceleration.
-
-        - Starts the file plugin capturing in stream mode.
-
-        - Starts the camera acquiring in external trigger mode.
 
         - Starts the PSOfly.
 

@@ -790,6 +790,56 @@ Fast shutter control
     - stringout
     - Contains the value to write to open the fast shutter
 
+Streaming analysis control
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. cssclass:: table-bordered table-striped table-hover
+.. list-table::
+  :header-rows: 1
+  :widths: 5 5 90
+
+  * - Record name
+    - Record type
+    - Description
+  * - $(P)$(R)Stream
+    - bo
+    - Flag controlling whether the streaming is on or off
+  * - $(P)$(R)StreamBufferSize
+    - longout
+    - Stream buffer size
+  * - $(P)$(R)StreamSave
+    - bo
+    - Flag controlling whether the streaming raw data save in on or off
+  * - $(P)$(R)StreamBinning
+    - bo
+    - Flag controlling whether the streaming reconstruction are 2x binned 
+  * - $(P)$(R)StreamRingRemoval
+    - bo
+    - Flag controlling whether the streaming reconstruction applies ring removal
+  * - $(P)$(R)StreamPaganin
+    - bo
+    - Flag controlling whether the streaming reconstruction applies paganin
+  * - $(P)$(R)StreamPaganinAlpha
+    - ao
+    - Paganin alpha coefficient
+  * - $(P)$(R)StreamCenter
+    - ao
+    - Rotation center for streaming reconstruction
+  * - $(P)$(R)StreamFilterType
+    - mbbo
+    - Filter type for streaming reconstruction, 'Parzen', 'Shepp-logan', 'Ramp', 'Butterworth'
+  * - $(P)$(R)StreamOrthoX
+    - longout
+    - Selected ortho slice in the X direction for streaming reconstruction
+  * - $(P)$(R)StreamOrthoY
+    - longout
+    - Selected ortho slice in the Y direction for streaming reconstruction
+  * - $(P)$(R)StreamOrthoZ
+    - longout
+    - Selected ortho slice in the Z direction for streaming reconstruction
+
+
+
 tomoScan_2BM_settings.req
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
