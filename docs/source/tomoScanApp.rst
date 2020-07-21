@@ -811,8 +811,8 @@ Streaming analysis information
     - bo
     - Flag controlling whether the streaming raw data save in on or off
   * - $(P)$(R)StreamBinning
-    - bo
-    - Flag controlling whether the streaming reconstruction are 2x binned 
+    - mbbo
+    - Flag controlling whether the streaming reconstruction is binned 0, 2, 4 times
   * - $(P)$(R)StreamRingRemoval
     - bo
     - Flag controlling whether the streaming reconstruction applies ring removal
