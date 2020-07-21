@@ -807,9 +807,6 @@ Streaming analysis information
   * - $(P)$(R)StreamBufferSize
     - longout
     - Stream buffer size
-  * - $(P)$(R)StreamSave
-    - bo
-    - Flag controlling whether the streaming raw data save in on or off
   * - $(P)$(R)StreamBinning
     - mbbo
     - Flag controlling whether the streaming reconstruction is binned 0, 2, 4 times
