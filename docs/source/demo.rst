@@ -9,6 +9,11 @@ scan_demo.py is a simple program that demonstrates
 scanning an EPICS PV and collecting a complete tomography dataset at each point in the scan.  
 The EPICS PV to be scanned could be anything, such as the sample height, sample temperature, etc.
 
+Note that scanning the sample height with this script will not work correctly if that motor
+will be moved when collecting the flat fields, i.e. FlatFieldAxis=Y or Both. 
+Similarly, scanning the sample horizontal position will not work correctly if that motor
+will be moved when collecting the flat fields, i.e. FlatFieldAxis=X or Both. 
+
 .. literalinclude:: ../../demo/scan_demo.py
 
 The following shows how the program is run, and the output.  In this case EPICS motor 13BMD:m90
