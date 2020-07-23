@@ -38,6 +38,12 @@ class TomoScanStream2BM(TomoScan):
         file_path = self.epics_pvs['DetectorTopDir'].get(as_string=True) + self.epics_pvs['ExperimentYearMonth'].get(as_string=True) + os.path.sep + self.epics_pvs['UserLastName'].get(as_string=True) + os.path.sep
         self.epics_pvs['FilePath'].put(file_path, wait=True)
 
+        # Enable auto-increment on file writer
+        self.epics_pvs['FPAutoIncrement'].put('Yes')
+
+        # Disable overw writing warning
+        self.epics_pvs['OverwriteWarning'].put('Yes')
+
     def open_shutter(self):
         """Opens the shutter to collect flat fields or projections.
 
