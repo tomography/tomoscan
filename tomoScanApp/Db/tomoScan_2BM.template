@@ -207,3 +207,79 @@ record(stringout, "$(P)$(R)OpenFastShutterValue")
 {
    field(VAL,  "$(OPEN_FAST_VALUE)")
 }
+
+############################
+# Streaming analysis control
+############################
+
+record(bo, "$(P)$(R)StreamStatus")
+{
+   field(ZNAM, "Off")
+   field(ONAM, "On")
+}
+
+record(longout, "$(P)$(R)StreamBufferSize")
+{
+}
+
+record(mbbo, "$(P)$(R)StreamBinning")
+{
+   field(ZRVL, "0")
+   field(ZRST, "None")
+   field(ONVL, "1")
+   field(ONST, "2x")
+   field(TWVL, "2")
+   field(TWST, "4x")
+}
+
+record(bo, "$(P)$(R)StreamRingRemoval")
+{
+   field(ZNAM, "Off")
+   field(ONAM, "On")
+}
+
+record(bo, "$(P)$(R)StreamPaganin")
+{
+   field(ZNAM, "Off")
+   field(ONAM, "On")
+}
+
+record(ao, "$(P)$(R)StreamPaganinAlpha")
+{
+   field(PREC,  "3")
+}
+
+record(ao, "$(P)$(R)StreamCenter")
+{
+   field(PREC,  "3")
+}
+
+record(mbbo, "$(P)$(R)StreamFilterType")
+{
+   field(ZRVL, "0")
+   field(ZRST, "Parzen")
+   field(ONVL, "1")
+   field(ONST, "Shepp-logan")
+   field(TWVL, "2")
+   field(TWST, "Ramp")
+   field(THVL, "3")
+   field(THST, "Butterworth")
+}
+
+record(longout, "$(P)$(R)StreamOrthoX")
+{
+   field(LOPR, "0")
+   field(HOPR, "2048")
+}
+
+record(longout, "$(P)$(R)StreamOrthoY")
+{
+   field(LOPR, "0")
+   field(HOPR, "2048")
+}
+
+record(longout, "$(P)$(R)StreamOrthoZ")
+{
+   field(LOPR, "0")
+   field(HOPR, "2048")
+}
