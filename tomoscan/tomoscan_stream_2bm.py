@@ -193,6 +193,10 @@ class TomoScanStream2BM(TomoScan):
         self.theta = []
         self.theta = self.epics_pvs['ThetaArray'].get(count=int(self.num_angles))
 
+        # set dark/flat to be taken at beginning
+        # replace file name with a dark/flat default
+        # sum= dark+flat
+
         # Compute total number of frames to capture
         self.total_images = self.num_angles
         if self.dark_field_mode != 'None':
@@ -203,6 +207,9 @@ class TomoScanStream2BM(TomoScan):
             self.total_images += self.num_flat_fields
         if self.flat_field_mode == 'Both':
             self.total_images += self.num_flat_fields
+        # Set the total number of frames to capture and start capture on file plugin
+        # self.epics_pvs['FPNumCapture'].put(self.total_images, wait=True)
+        # self.epics_pvs['FPCapture'].put('Capture')
 
     def end_scan(self):
         """Performs the operations needed at the very end of a scan.
@@ -321,6 +328,6 @@ class TomoScanStream2BM(TomoScan):
         """
 
         log.info('abort')
-        super().abort()
+        super().abort_scan()
         self.epics_pvs['StreamStatus'].put('Off')
 
