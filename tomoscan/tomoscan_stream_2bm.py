@@ -314,3 +314,13 @@ class TomoScanStream2BM(TomoScan):
         time_per_angle = self.compute_frame_time()
         collection_time = self.num_angles * time_per_angle
         self.wait_camera_done(collection_time + 60.)
+
+    def abort_scan(self):
+        """Aborts a scan that is running.
+        Calls abort() and sets the StreamStatus to 'Off'
+        """
+
+        log.info('abort')
+        super().abort()
+        self.epics_pvs['StreamStatus'].put('Off')
+
