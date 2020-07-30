@@ -12,6 +12,8 @@ import h5py
 from tomoscan import TomoScan
 from tomoscan import log
 
+import numpy
+
 EPSILON = .001
 
 class TomoScanStream2BM(TomoScan):
@@ -138,7 +140,7 @@ class TomoScanStream2BM(TomoScan):
         frame_time = self.compute_frame_time()
         collection_time = frame_time * num_frames
         self.wait_camera_done(collection_time + 5.0)
-
+		
     def begin_scan(self):
         """Performs the operations needed at the very start of a scan.
 
@@ -194,22 +196,18 @@ class TomoScanStream2BM(TomoScan):
         self.theta = self.epics_pvs['ThetaArray'].get(count=int(self.num_angles))
 
         # set dark/flat to be taken at beginning
+        self.epics_pvs['FlatFieldMode'].put('Start')
         # replace file name with a dark/flat default
-        # sum= dark+flat
-
-        # Compute total number of frames to capture
-        self.total_images = self.num_angles
-        if self.dark_field_mode != 'None':
-            self.total_images += self.num_dark_fields
-        if self.dark_field_mode == 'Both':
-            self.total_images += self.num_dark_fields
-        if self.flat_field_mode != 'None':
-            self.total_images += self.num_flat_fields
-        if self.flat_field_mode == 'Both':
-            self.total_images += self.num_flat_fields
+        file_name = self.epics_pvs['FPFileName'].get()[:2]  
+        file_name[:] = [ord('t'),0]
+        # replace template
+        self.epics_pvs['FPFileName'].put(file_name)
+        # Compute total number of frames to capture (dark+flat)
+        self.total_images = self.num_dark_fields+self.num_flat_fields        
         # Set the total number of frames to capture and start capture on file plugin
-        # self.epics_pvs['FPNumCapture'].put(self.total_images, wait=True)
-        # self.epics_pvs['FPCapture'].put('Capture')
+        self.epics_pvs['FPNumCapture'].put(self.total_images, wait=True)
+        self.epics_pvs['FPCapture'].put('Capture')
+        
 
     def end_scan(self):
         """Performs the operations needed at the very end of a scan.
@@ -300,9 +298,12 @@ class TomoScanStream2BM(TomoScan):
 
         - Wait on the PSO done.
         """
+		
 
         log.info('collect projections')
         super().collect_projections()
+        # return filename from the initial one
+        self.epics_pvs['FPFileName'].put(self.epics_pvs['FileName'].get())                        
         log.info('taxi before starting capture')
         # Taxi before starting capture
         self.epics_pvs['PSOtaxi'].put(1, wait=True)
@@ -329,5 +330,7 @@ class TomoScanStream2BM(TomoScan):
 
         log.info('abort')
         super().abort_scan()
+        # return filename from the initial one
+        self.epics_pvs['FPFileName'].put(self.epics_pvs['FileName'].get())                        
         self.epics_pvs['StreamStatus'].put('Off')
 
