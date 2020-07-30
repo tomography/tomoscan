@@ -142,7 +142,12 @@ class TomoScan2BM(TomoScan):
         This does the following:
 
         - Calls the base class method.
-        - 
+        
+        - Sets the PSO controller.
+
+        - Creates theta array using list from PSO. 
+
+        - Turns on data capture.
         """
         log.info('begin scan')
         # Call the base class method
