@@ -775,9 +775,9 @@ class TomoScan():
         # Add 1 or 5 ms to exposure time for margin
         if exposure > 2.3:
             frame_time = exposure + .005
-        else if exposure > 1.0:
+        elif exposure > 1.0:
             frame_time = exposure + .002
-        else
+        else:
             frame_time = exposure + .001
 
         # If the time is less than the readout time then use the readout time
