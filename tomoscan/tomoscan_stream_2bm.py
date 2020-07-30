@@ -196,11 +196,13 @@ class TomoScanStream2BM(TomoScan):
         self.theta = self.epics_pvs['ThetaArray'].get(count=int(self.num_angles))
 
         # set dark/flat to be taken at beginning
+
         self.epics_pvs['FlatFieldMode'].put('Start', wait=True)
         self.epics_pvs['DarkFieldMode'].put('Start', wait=True)
 
         # replace file name with a dark/flat default
         self.epics_pvs['FPFileName'].put("t", wait=True)
+
         # Compute total number of frames to capture (dark+flat)
         self.total_images = self.num_dark_fields+self.num_flat_fields        
         # Set the total number of frames to capture and start capture on file plugin
