@@ -23,11 +23,20 @@ TEMPLATE_TOP=$(EPICS_BASE)/templates/makeBaseApp/top
 
 SUPPORT=/home/beams/7BMB/epics/synApps/support
 
+<<<<<<< HEAD
 BUSY=$(SUPPORT)/busy-R1-7-2
 AUTOSAVE=$(SUPPORT)/autosave-R5-10
 
 # EPICS_BASE usually appears last so other apps can override stuff:
 EPICS_BASE=/APSshare/epics/base-3.15.6
+=======
+BUSY=$(SUPPORT)/busy-1-7-2
+AUTOSAVE=$(SUPPORT)/autosave-5-10
+ASYN=$(SUPPORT)/asyn-4-38
+
+# EPICS_BASE usually appears last so other apps can override stuff:
+EPICS_BASE=/corvette/usr/local/epics/base-7.0.4
+>>>>>>> d9cc50092ae2a9d82820b3a8e853569de6c0a95d
 
 # Set RULES here if you want to take build rules from somewhere
 # other than EPICS_BASE:
