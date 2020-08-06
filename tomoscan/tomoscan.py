@@ -89,9 +89,9 @@ class TomoScan():
         self.control_pvs['RotationSpeed']      = PV(rotation_pv_name + '.VELO')
         self.control_pvs['RotationMaxSpeed']   = PV(rotation_pv_name + '.VMAX')
         self.control_pvs['RotationResolution'] = PV(rotation_pv_name + '.MRES')
-        self.control_pvs['RotationSet'] = PV(rotation_pv_name + '.SET')
-        self.control_pvs['RotationStop'] = PV(rotation_pv_name + '.STOP')
-        self.control_pvs['RotationDmov'] = PV(rotation_pv_name + '.DMOV')
+        self.control_pvs['RotationSet']        = PV(rotation_pv_name + '.SET')
+        self.control_pvs['RotationStop']       = PV(rotation_pv_name + '.STOP')
+        self.control_pvs['RotationDmov']       = PV(rotation_pv_name + '.DMOV')
 
         prefix = self.pv_prefixes['Camera']
         camera_prefix = prefix + 'cam1:'
