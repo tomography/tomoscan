@@ -204,8 +204,14 @@ class TomoScanStream2BM(TomoScan):
         self.epics_pvs['FlatFieldMode'].put('Start', wait=True)
         self.epics_pvs['DarkFieldMode'].put('Start', wait=True)
 
-        # replace file name with a dark/flat temporary default
-        self.epics_pvs['FPFileName'].put("t", wait=True)
+        # replace file name settings with dark flat fields temporarily settings
+        self.file_name = self.epics_pvs['FPFileName'].get()        
+        self.file_template = self.epics_pvs['FPFileTemplate'].get()        
+        self.auto_increment = self.epics_pvs['FPAutoIncrement'].get()        
+        
+        self.epics_pvs['FPFileName'].put("dark_flat_buffer", wait=True)
+        self.epics_pvs['FPFileTemplate'].put("%s%s.h5", wait=True)
+        self.epics_pvs['FPAutoIncrement'].put("No", wait=True)
 
         # Compute total number of frames to capture (dark+flat)
         self.total_images = self.num_dark_fields+self.num_flat_fields        
@@ -229,6 +235,7 @@ class TomoScanStream2BM(TomoScan):
 
         - Calls the base class method.
         """
+        print('tomoscan_stream_2bm: end scan')
         log.info('end scan')
         # This is used by the streaming reconstruction to stop the analysis
         self.epics_pvs['StreamStatus'].put('Off')
@@ -239,6 +246,15 @@ class TomoScanStream2BM(TomoScan):
         self.epics_pvs['RotationSpeed'].put(self.max_rotation_speed)
         # Move the sample in.  Could be out if scan was aborted while taking flat fields
         self.move_sample_in()
+
+        if self.return_rotation == 'Yes':
+        # Reset rotation position by mod 360 , the actual return 
+        # to start position is handled by super().end_scan()
+            current_angle = self.epics_pvs['Rotation'].get() %360
+            self.epics_pvs['RotationSet'].put('Set', wait=True)
+            self.epics_pvs['Rotation'].put(current_angle, wait=True)
+            self.epics_pvs['RotationSet'].put('Use', wait=True)
+
         # Call the base class method
         super().end_scan()
 
@@ -310,7 +326,10 @@ class TomoScanStream2BM(TomoScan):
         log.info('collect projections')
         super().collect_projections()
         # restore file name 
-        self.epics_pvs['FPFileName'].put(self.epics_pvs['FileName'].get())                        
+        self.epics_pvs['FPFileName'].put(self.file_name)                        
+        self.epics_pvs['FPFileTemplate'].put(self.file_template)                        
+        self.epics_pvs['FPAutoIncrement'].put(self.auto_increment)                        
+        
         log.info('taxi before starting capture')
         # Taxi before starting capture
         self.epics_pvs['PSOtaxi'].put(1, wait=True)
@@ -336,8 +355,17 @@ class TomoScanStream2BM(TomoScan):
         """
 
         log.info('abort')
+        # Stop the rotary stage
+        self.epics_pvs['RotationStop'].put(1)
+        self.wait_pv(self.epics_pvs['RotationDmov'], 0)
+
         super().abort_scan()
-        # return filename from the initial one
-        self.epics_pvs['FPFileName'].put(self.epics_pvs['FileName'].get())                        
+        
+        # return file name settings
+        self.epics_pvs['FPFileName'].put(self.file_name)                        
+        self.epics_pvs['FPFileTemplate'].put(self.file_template)    
+        self.epics_pvs['FPAutoIncrement'].put(self.auto_increment)                        
+                            
+        
         self.epics_pvs['StreamStatus'].put('Off')
 
