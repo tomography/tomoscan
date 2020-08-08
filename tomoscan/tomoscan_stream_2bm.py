@@ -5,16 +5,17 @@
    TomoScan2BM
      Derived class for tomography scanning with EPICS at APS beamline 2-BM-A
 """
-import time
 import os
+import time
 import h5py 
+import numpy
 
 from tomoscan import TomoScan
 from tomoscan import log
 
 EPSILON = .001
 
-class TomoScan2BM(TomoScan):
+class TomoScanStream2BM(TomoScan):
     """Derived class used for tomography scanning with EPICS at APS beamline 2-BM-A
 
     Parameters
@@ -28,8 +29,11 @@ class TomoScan2BM(TomoScan):
 
     def __init__(self, pv_files, macros):
         super().__init__(pv_files, macros)
-        # Set the detector running in FreeRun mode
-        self.set_trigger_mode('FreeRun', 1)
+        # Set the detector in idle
+        self.set_trigger_mode('Internal', 1)
+
+        # This is used by the streaming reconstruction to stop the analysis
+        self.epics_pvs['StreamStatus'].put('Off')
         
         # Set data directory
         file_path = self.epics_pvs['DetectorTopDir'].get(as_string=True) + self.epics_pvs['ExperimentYearMonth'].get(as_string=True) + os.path.sep + self.epics_pvs['UserLastName'].get(as_string=True) + os.path.sep
@@ -135,24 +139,29 @@ class TomoScan2BM(TomoScan):
         frame_time = self.compute_frame_time()
         collection_time = frame_time * num_frames
         self.wait_camera_done(collection_time + 5.0)
-
+    
     def begin_scan(self):
         """Performs the operations needed at the very start of a scan.
 
         This does the following:
 
+		- Turns on StreamStatus.
+		
         - Calls the base class method.
         
         - Sets the PSO controller.
 
         - Creates theta array using list from PSO. 
 
-        - Turns on data capture.
+        - Turns on streaming for dark/flat capture.
         """
         log.info('begin scan')
         # Call the base class method
         super().begin_scan()
  
+        # This marks the beginning of the streaming mode
+        self.epics_pvs['StreamStatus'].put('On')
+
         # Confirm angle step is an integer number of encoder pulses
         # Pass the user selected values to the PSO
         self.epics_pvs['PSOstartPos'].put(self.rotation_start, wait=True)
@@ -191,28 +200,26 @@ class TomoScan2BM(TomoScan):
         self.theta = []
         self.theta = self.epics_pvs['ThetaArray'].get(count=int(self.num_angles))
 
-        # Compute total number of frames to capture
-        self.total_images = self.num_angles
-        if self.dark_field_mode != 'None':
-            self.total_images += self.num_dark_fields
-        if self.dark_field_mode == 'Both':
-            self.total_images += self.num_dark_fields
-        if self.flat_field_mode != 'None':
-            self.total_images += self.num_flat_fields
-        if self.flat_field_mode == 'Both':
-            self.total_images += self.num_flat_fields
+        # set dark/flat to be taken at beginning
+        self.epics_pvs['FlatFieldMode'].put('Start', wait=True)
+        self.epics_pvs['DarkFieldMode'].put('Start', wait=True)
+
+        # replace file name with a dark/flat temporary default
+        self.epics_pvs['FPFileName'].put("t", wait=True)
+
+        # Compute total number of frames to capture (dark+flat)
+        self.total_images = self.num_dark_fields+self.num_flat_fields        
         # Set the total number of frames to capture and start capture on file plugin
         self.epics_pvs['FPNumCapture'].put(self.total_images, wait=True)
         self.epics_pvs['FPCapture'].put('Capture')
+        
 
     def end_scan(self):
         """Performs the operations needed at the very end of a scan.
 
         This does the following:
 
-        - Add theta to the raw data file. 
-
-        - Calls ``save_configuration()``.
+        - Turns off streaming.
 
         - Put the camera back in "FreeRun" mode and acquiring so the user sees live images.
 
@@ -223,15 +230,9 @@ class TomoScan2BM(TomoScan):
         - Calls the base class method.
         """
         log.info('end scan')
-        # Add theta in the hdf file
-        self.add_theta()
+        # This is used by the streaming reconstruction to stop the analysis
+        self.epics_pvs['StreamStatus'].put('Off')
 
-        # Save the configuration
-        # Strip the extension from the FullFileName and add .config
-        full_file_name = self.epics_pvs['FPFullFileName'].get(as_string=True)
-        log.info('data save location: %s', full_file_name)
-        config_file_root = os.path.splitext(full_file_name)[0]
-        self.save_configuration(config_file_root + '.config')
         # Put the camera back in FreeRun mode and acquiring
         self.set_trigger_mode('FreeRun', 1)
         # Set the rotation speed to maximum
@@ -240,28 +241,6 @@ class TomoScan2BM(TomoScan):
         self.move_sample_in()
         # Call the base class method
         super().end_scan()
-
-    def add_theta(self):
-        """Add theta at the end of a scan.
-        """
-        log.info('add theta')
-
-        full_file_name = self.epics_pvs['FPFullFileName'].get(as_string=True)
-        if os.path.exists(full_file_name):
-            try:
-                f = h5py.File(full_file_name, "a")
-                with f:
-                    try:
-                        if self.theta is not None:
-                            theta_ds = f.create_dataset('/exchange/theta', (len(self.theta),))
-                            theta_ds[:] = self.theta[:]
-                    except:
-                        log.error('Add theta: Failed accessing: %s', full_file_name)
-                        traceback.print_exc(file=sys.stdout)
-            except OSError:
-                log.error('Add theta aborted')
-        else:
-            log.error('Failed adding theta. %s file does not exist', full_file_name)
 
     def collect_dark_fields(self):
         """Collects dark field images.
@@ -312,6 +291,8 @@ class TomoScan2BM(TomoScan):
 
         This does the following:
 
+        - Restore file name for on demand projection capturing.
+
         - Set the rotation motor position specified by the ``RotationStart`` PV in the
           PSOstartPos.
 
@@ -320,17 +301,16 @@ class TomoScan2BM(TomoScan):
 
         - These will be used by the PSO to calculate the Taxi distance and rotary stage acceleration.
 
-        - Starts the file plugin capturing in stream mode.
-
-        - Starts the camera acquiring in external trigger mode.
-
         - Starts the PSOfly.
 
         - Wait on the PSO done.
         """
+        
 
         log.info('collect projections')
         super().collect_projections()
+        # restore file name 
+        self.epics_pvs['FPFileName'].put(self.epics_pvs['FileName'].get())                        
         log.info('taxi before starting capture')
         # Taxi before starting capture
         self.epics_pvs['PSOtaxi'].put(1, wait=True)
@@ -349,3 +329,15 @@ class TomoScan2BM(TomoScan):
         time_per_angle = self.compute_frame_time()
         collection_time = self.num_angles * time_per_angle
         self.wait_camera_done(collection_time + 60.)
+
+    def abort_scan(self):
+        """Aborts a scan that is running.
+        Calls abort() and sets the StreamStatus to 'Off'
+        """
+
+        log.info('abort')
+        super().abort_scan()
+        # return filename from the initial one
+        self.epics_pvs['FPFileName'].put(self.epics_pvs['FileName'].get())                        
+        self.epics_pvs['StreamStatus'].put('Off')
+

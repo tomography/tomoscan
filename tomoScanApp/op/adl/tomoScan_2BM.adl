@@ -5,10 +5,10 @@ file {
 }
 display {
 	object {
-		x=1103
-		y=795
+		x=1993
+		y=114
 		width=565
-		height=1050
+		height=1335
 	}
 	clr=14
 	bclr=4
@@ -85,6 +85,41 @@ display {
 		3cb420,
 		289315,
 		1a7309,
+	}
+}
+composite {
+	object {
+		x=10
+		y=1055
+		width=545
+		height=20
+	}
+	"composite name"=""
+	children {
+		text {
+			object {
+				x=158
+				y=1055
+				width=249
+				height=20
+			}
+			"basic attribute" {
+				clr=54
+			}
+			textix="Streaming Analysis"
+			align="horiz. centered"
+		}
+		rectangle {
+			object {
+				x=10
+				y=1055
+				width=545
+				height=20
+			}
+			"basic attribute" {
+				clr=2
+			}
+		}
 	}
 }
 rectangle {
@@ -893,95 +928,29 @@ composite {
 		}
 	}
 }
-composite {
+rectangle {
 	object {
 		x=10
 		y=945
 		width=545
 		height=20
 	}
-	"composite name"=""
-	children {
-		rectangle {
-			object {
-				x=10
-				y=945
-				width=545
-				height=20
-			}
-			"basic attribute" {
-				clr=2
-			}
-		}
-		text {
-			object {
-				x=143
-				y=945
-				width=281
-				height=20
-			}
-			"basic attribute" {
-				clr=54
-			}
-			textix="Energy"
-			align="horiz. centered"
-		}
+	"basic attribute" {
+		clr=2
 	}
 }
 text {
 	object {
-		x=30
-		y=970
-		width=140
+		x=143
+		y=945
+		width=281
 		height=20
 	}
 	"basic attribute" {
-		clr=14
+		clr=54
 	}
-	textix="Energy (keV)"
-	align="horiz. right"
-}
-text {
-	object {
-		x=30
-		y=995
-		width=140
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="Energy mode"
-	align="horiz. right"
-}
-"text entry" {
-	object {
-		x=175
-		y=970
-		width=380
-		height=20
-	}
-	control {
-		chan="$(P)$(R)Energy"
-		clr=14
-		bclr=51
-	}
-	format="string"
-	limits {
-	}
-}
-menu {
-	object {
-		x=175
-		y=995
-		width=80
-		height=20
-	}
-	control {
-		chan="$(P)$(R)EnergyMode"
-		clr=14
-		bclr=51
-	}
+	textix="Energy"
+	align="horiz. centered"
 }
 rectangle {
 	object {
@@ -993,35 +962,6 @@ rectangle {
 	"basic attribute" {
 		clr=14
 		fill="outline"
-	}
-}
-text {
-	object {
-		x=30
-		y=1020
-		width=140
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="Filters"
-	align="horiz. right"
-}
-"text entry" {
-	object {
-		x=175
-		y=1020
-		width=380
-		height=20
-	}
-	control {
-		chan="$(P)$(R)Filters"
-		clr=14
-		bclr=51
-	}
-	format="string"
-	limits {
 	}
 }
 composite {
@@ -1492,6 +1432,453 @@ composite {
 			"basic attribute" {
 				clr=14
 				fill="outline"
+			}
+		}
+	}
+}
+rectangle {
+	object {
+		x=5
+		y=1050
+		width=555
+		height=280
+	}
+	"basic attribute" {
+		clr=14
+		fill="outline"
+	}
+}
+composite {
+	object {
+		x=30
+		y=970
+		width=525
+		height=70
+	}
+	"composite name"=""
+	children {
+		composite {
+			object {
+				x=175
+				y=970
+				width=380
+				height=70
+			}
+			"composite name"=""
+			children {
+				"text entry" {
+					object {
+						x=175
+						y=970
+						width=380
+						height=20
+					}
+					control {
+						chan="$(P)$(R)Energy"
+						clr=14
+						bclr=51
+					}
+					format="string"
+					limits {
+					}
+				}
+				menu {
+					object {
+						x=175
+						y=995
+						width=80
+						height=20
+					}
+					control {
+						chan="$(P)$(R)EnergyMode"
+						clr=14
+						bclr=51
+					}
+				}
+				"text entry" {
+					object {
+						x=175
+						y=1020
+						width=380
+						height=20
+					}
+					control {
+						chan="$(P)$(R)Filters"
+						clr=14
+						bclr=51
+					}
+					format="string"
+					limits {
+					}
+				}
+			}
+		}
+		composite {
+			object {
+				x=30
+				y=970
+				width=140
+				height=70
+			}
+			"composite name"=""
+			children {
+				text {
+					object {
+						x=30
+						y=970
+						width=140
+						height=20
+					}
+					"basic attribute" {
+						clr=14
+					}
+					textix="Energy (keV)"
+					align="horiz. right"
+				}
+				text {
+					object {
+						x=30
+						y=995
+						width=140
+						height=20
+					}
+					"basic attribute" {
+						clr=14
+					}
+					textix="Energy mode"
+					align="horiz. right"
+				}
+				text {
+					object {
+						x=30
+						y=1020
+						width=140
+						height=20
+					}
+					"basic attribute" {
+						clr=14
+					}
+					textix="Filters"
+					align="horiz. right"
+				}
+			}
+		}
+	}
+}
+text {
+	object {
+		x=143
+		y=1055
+		width=281
+		height=20
+	}
+	"basic attribute" {
+		clr=54
+	}
+	textix="Stream Control"
+	align="horiz. centered"
+}
+composite {
+	object {
+		x=10
+		y=1080
+		width=545
+		height=245
+	}
+	"composite name"=""
+	children {
+		composite {
+			object {
+				x=165
+				y=1080
+				width=390
+				height=245
+			}
+			"composite name"=""
+			children {
+				"text entry" {
+					object {
+						x=165
+						y=1080
+						width=390
+						height=20
+					}
+					control {
+						chan="$(P)$(R)StreamBufferSize"
+						clr=14
+						bclr=51
+					}
+					limits {
+					}
+				}
+				menu {
+					object {
+						x=165
+						y=1105
+						width=80
+						height=20
+					}
+					control {
+						chan="$(P)$(R)StreamBinning"
+						clr=14
+						bclr=51
+					}
+				}
+				menu {
+					object {
+						x=165
+						y=1130
+						width=80
+						height=20
+					}
+					control {
+						chan="$(P)$(R)StreamRingRemoval"
+						clr=14
+						bclr=51
+					}
+				}
+				menu {
+					object {
+						x=165
+						y=1155
+						width=80
+						height=20
+					}
+					control {
+						chan="$(P)$(R)StreamPaganin"
+						clr=14
+						bclr=51
+					}
+				}
+				"text entry" {
+					object {
+						x=165
+						y=1180
+						width=390
+						height=20
+					}
+					control {
+						chan="$(P)$(R)StreamPaganinAlpha"
+						clr=14
+						bclr=51
+					}
+					limits {
+					}
+				}
+				"text entry" {
+					object {
+						x=165
+						y=1205
+						width=390
+						height=20
+					}
+					control {
+						chan="$(P)$(R)StreamCenter"
+						clr=14
+						bclr=51
+					}
+					limits {
+					}
+				}
+				menu {
+					object {
+						x=165
+						y=1230
+						width=80
+						height=20
+					}
+					control {
+						chan="$(P)$(R)StreamFilterType"
+						clr=14
+						bclr=51
+					}
+				}
+				"text entry" {
+					object {
+						x=165
+						y=1255
+						width=390
+						height=20
+					}
+					control {
+						chan="$(P)$(R)StreamOrthoX"
+						clr=14
+						bclr=51
+					}
+					limits {
+					}
+				}
+				"text entry" {
+					object {
+						x=165
+						y=1280
+						width=390
+						height=20
+					}
+					control {
+						chan="$(P)$(R)StreamOrthoY"
+						clr=14
+						bclr=51
+					}
+					limits {
+					}
+				}
+				"text entry" {
+					object {
+						x=165
+						y=1305
+						width=390
+						height=20
+					}
+					control {
+						chan="$(P)$(R)StreamOrthoZ"
+						clr=14
+						bclr=51
+					}
+					limits {
+					}
+				}
+			}
+		}
+		composite {
+			object {
+				x=10
+				y=1080
+				width=150
+				height=245
+			}
+			"composite name"=""
+			children {
+				text {
+					object {
+						x=50
+						y=1080
+						width=110
+						height=20
+					}
+					"basic attribute" {
+						clr=14
+					}
+					textix="Buffer size"
+					align="horiz. right"
+				}
+				text {
+					object {
+						x=50
+						y=1105
+						width=110
+						height=20
+					}
+					"basic attribute" {
+						clr=14
+					}
+					textix="Binning"
+					align="horiz. right"
+				}
+				text {
+					object {
+						x=20
+						y=1130
+						width=140
+						height=20
+					}
+					"basic attribute" {
+						clr=14
+					}
+					textix="Ring removal"
+					align="horiz. right"
+				}
+				text {
+					object {
+						x=10
+						y=1155
+						width=150
+						height=20
+					}
+					"basic attribute" {
+						clr=14
+					}
+					textix="Paganin"
+					align="horiz. right"
+				}
+				text {
+					object {
+						x=60
+						y=1180
+						width=100
+						height=20
+					}
+					"basic attribute" {
+						clr=14
+					}
+					textix="Paganin alpha"
+					align="horiz. right"
+				}
+				text {
+					object {
+						x=60
+						y=1205
+						width=100
+						height=20
+					}
+					"basic attribute" {
+						clr=14
+					}
+					textix="Center"
+					align="horiz. right"
+				}
+				text {
+					object {
+						x=60
+						y=1230
+						width=100
+						height=20
+					}
+					"basic attribute" {
+						clr=14
+					}
+					textix="Filter type"
+					align="horiz. right"
+				}
+				text {
+					object {
+						x=60
+						y=1255
+						width=100
+						height=20
+					}
+					"basic attribute" {
+						clr=14
+					}
+					textix="Ortho X"
+					align="horiz. right"
+				}
+				text {
+					object {
+						x=60
+						y=1280
+						width=100
+						height=20
+					}
+					"basic attribute" {
+						clr=14
+					}
+					textix="Orhto Y"
+					align="horiz. right"
+				}
+				text {
+					object {
+						x=60
+						y=1305
+						width=100
+						height=20
+					}
+					"basic attribute" {
+						clr=14
+					}
+					textix="Ortho Z"
+					align="horiz. right"
+				}
 			}
 		}
 	}
