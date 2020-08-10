@@ -132,6 +132,7 @@ class TomoScan():
         self.control_pvs['FPNumCapture']      = PV(prefix + 'NumCapture')
         self.control_pvs['FPNumCaptured']     = PV(prefix + 'NumCaptured_RBV')
         self.control_pvs['FPCapture']         = PV(prefix + 'Capture')
+        self.control_pvs['FPCapture_RBV']     = PV(prefix + 'Capture_RBV')
         self.control_pvs['FPFilePath']        = PV(prefix + 'FilePath')
         self.control_pvs['FPFilePathRBV']     = PV(prefix + 'FilePath_RBV')
         self.control_pvs['FPFilePathExists']  = PV(prefix + 'FilePathExists_RBV')
@@ -681,9 +682,14 @@ class TomoScan():
         the beamline-specific operations.
         """
         self.epics_pvs['ScanStatus'].put('Collecting flat fields')
-        self.open_shutter()
+        #self.open_shutter()
+        print('move out')
         self.move_sample_out()
+        print('h5 location')
+        
         self.epics_pvs['HDF5Location'].put(self.epics_pvs['HDF5FlatLocation'].value)
+        print('type')
+        
         self.epics_pvs['FrameType'].put('FlatField')
 
     def collect_projections(self):
