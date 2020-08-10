@@ -284,9 +284,10 @@ record(longout, "$(P)$(R)StreamOrthoZ")
    field(HOPR, "2048")
 }
 
-record(stringout, "$(P)$(R)StreamRetakeFlat")
+record(bo, "$(P)$(R)StreamRetakeFlat")
 {
-   field(VAL, "0")
+   field(ZNAM, "No")
+   field(ONAM, "Yes")
 }
 
 record(ao, "$(P)$(R)StreamReconTime")
