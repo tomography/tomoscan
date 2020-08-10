@@ -12,6 +12,7 @@ import numpy
 
 from tomoscan import TomoScan
 from tomoscan import log
+import threading
 
 EPSILON = .001
 
@@ -44,6 +45,11 @@ class TomoScanStream2BM(TomoScan):
 
         # Disable overw writing warning
         self.epics_pvs['OverwriteWarning'].put('Yes')
+
+        # Unset retake button
+        self.epics_pvs['StreamRetakeFlat'].put(0)
+        # Monitor retake flat fields button
+        self.epics_pvs['StreamRetakeFlat'].add_callback(self.pv_callback_stream)
 
     def open_shutter(self):
         """Opens the shutter to collect flat fields or projections.
@@ -369,3 +375,32 @@ class TomoScanStream2BM(TomoScan):
         
         self.epics_pvs['StreamStatus'].put('Off')
 
+    def pv_callback_stream(self, pvname=None, value=None, char_value=None, **kw):
+        """Callback functions for the streaming mode"""
+        
+        if (pvname.find('StreamRetakeFlat') != -1) and (value == 1):
+            thread = threading.Thread(target=self.retake_flat, args=())
+            thread.start()
+        
+
+    def retake_flat(self):
+        """Recollect flat fields while in the streaming mode"""
+
+        self.epics_pvs['FPFileName'].put("dark_flat_buffer", wait=True)
+        self.epics_pvs['FPFileTemplate'].put("%s%s.h5", wait=True)
+        self.epics_pvs['FPAutoIncrement'].put("No", wait=True)
+        
+        super().collect_flat_fields()        
+        self.epics_pvs['FPNumCapture'].put(self.num_flat_fields, wait=True)        
+        self.epics_pvs['FPCapture'].put('Capture', wait=True)   
+        self.wait_pv(self.epics_pvs['FPCapture_RBV'], 0)        
+        self.epics_pvs['FPFileName'].put(self.file_name, wait=True)                        
+        self.epics_pvs['FPFileTemplate'].put(self.file_template, wait=True)                        
+        self.epics_pvs['FPAutoIncrement'].put(self.auto_increment, wait=True)
+        self.epics_pvs['ScanStatus'].put('Collecting projections', wait=True)
+
+        self.move_sample_in()
+        self.epics_pvs['HDF5Location'].put(self.epics_pvs['HDF5ProjectionLocation'].value, wait=True)
+        self.epics_pvs['FrameType'].put('Projection', wait=True)
+        self.epics_pvs['StreamRetakeFlat'].put(0)   
+        
