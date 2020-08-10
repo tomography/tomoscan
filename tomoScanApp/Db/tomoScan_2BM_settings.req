@@ -81,3 +81,5 @@ $(P)$(R)StreamFilterType
 $(P)$(R)StreamOrthoX
 $(P)$(R)StreamOrthoY
 $(P)$(R)StreamOrthoZ
+$(P)$(R)StreamRetakeFlat
+$(P)$(R)StreamReconTime

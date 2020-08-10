@@ -283,3 +283,13 @@ record(longout, "$(P)$(R)StreamOrthoZ")
    field(LOPR, "0")
    field(HOPR, "2048")
 }
+
+record(stringout, "$(P)$(R)StreamRetakeFlat")
+{
+   field(VAL, "0")
+}
+
+record(ao, "$(P)$(R)StreamReconTime")
+{
+   field(PREC, "0")
+}
