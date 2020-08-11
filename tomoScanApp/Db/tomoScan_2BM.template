@@ -265,5 +265,5 @@ record(bo, "$(P)$(R)StreamRetakeFlat")
 
 record(ao, "$(P)$(R)StreamReconTime")
 {
-   field(PREC, "0")
+   field(PREC, "5")
 }
