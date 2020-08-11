@@ -803,7 +803,7 @@ Streaming analysis information
     - Description
   * - $(P)$(R)StreamStatus
     - bo
-    - Flag storing the  streaming status
+    - Flag storing the  streaming status. Choices are 'Off' and 'On'. When 'On' the streaming reconstruction is enabled 
   * - $(P)$(R)StreamBufferSize
     - longout
     - Stream buffer size
@@ -834,8 +834,12 @@ Streaming analysis information
   * - $(P)$(R)StreamOrthoZ
     - longout
     - Ortho slice in the Z direction for streaming reconstruction
-
-
+  * - $(P)$(R)StreamRetakeFlat
+    - bo
+    - Stream retake flat. Choices are 'No' and 'Yes'. When 'Yes' a new set of flat field images will be collected and used for reconstructing the following projections
+  * - $(P)$(R)StreamReconTime
+    - ao
+    - Streaming reconstruction time
 
 tomoScan_2BM_settings.req
 ~~~~~~~~~~~~~~~~~~~~~~~~~
