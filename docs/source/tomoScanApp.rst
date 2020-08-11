@@ -807,18 +807,6 @@ Streaming analysis information
   * - $(P)$(R)StreamBufferSize
     - longout
     - Stream buffer size
-  * - $(P)$(R)StreamBinning
-    - mbbo
-    - Flag controlling whether the streaming reconstruction is binned 0, 2, 4 times
-  * - $(P)$(R)StreamRingRemoval
-    - bo
-    - Flag controlling whether the streaming reconstruction applies ring removal
-  * - $(P)$(R)StreamPaganin
-    - bo
-    - Flag controlling whether the streaming reconstruction applies paganin
-  * - $(P)$(R)StreamPaganinAlpha
-    - ao
-    - Paganin alpha coefficient
   * - $(P)$(R)StreamCenter
     - ao
     - Rotation center for streaming reconstruction

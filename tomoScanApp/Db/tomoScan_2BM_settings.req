@@ -72,10 +72,6 @@ $(P)$(R)OpenFastShutterValue
 ############################
 $(P)$(R)StreamStatus
 $(P)$(R)StreamBufferSize
-$(P)$(R)StreamBinning
-$(P)$(R)StreamRingRemoval
-$(P)$(R)StreamPaganin
-$(P)$(R)StreamPaganinAlpha
 $(P)$(R)StreamCenter
 $(P)$(R)StreamFilterType
 $(P)$(R)StreamOrthoX

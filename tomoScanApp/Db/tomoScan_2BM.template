@@ -222,33 +222,6 @@ record(longout, "$(P)$(R)StreamBufferSize")
 {
 }
 
-record(mbbo, "$(P)$(R)StreamBinning")
-{
-   field(ZRVL, "0")
-   field(ZRST, "None")
-   field(ONVL, "1")
-   field(ONST, "2x")
-   field(TWVL, "2")
-   field(TWST, "4x")
-}
-
-record(bo, "$(P)$(R)StreamRingRemoval")
-{
-   field(ZNAM, "Off")
-   field(ONAM, "On")
-}
-
-record(bo, "$(P)$(R)StreamPaganin")
-{
-   field(ZNAM, "Off")
-   field(ONAM, "On")
-}
-
-record(ao, "$(P)$(R)StreamPaganinAlpha")
-{
-   field(PREC,  "3")
-}
-
 record(ao, "$(P)$(R)StreamCenter")
 {
    field(PREC,  "3")
