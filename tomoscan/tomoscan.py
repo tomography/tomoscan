@@ -682,14 +682,9 @@ class TomoScan():
         the beamline-specific operations.
         """
         self.epics_pvs['ScanStatus'].put('Collecting flat fields')
-        #self.open_shutter()
-        print('move out')
+        self.open_shutter()
         self.move_sample_out()
-        print('h5 location')
-        
         self.epics_pvs['HDF5Location'].put(self.epics_pvs['HDF5FlatLocation'].value)
-        print('type')
-        
         self.epics_pvs['FrameType'].put('FlatField')
 
     def collect_projections(self):
