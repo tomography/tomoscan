@@ -267,3 +267,12 @@ record(ao, "$(P)$(R)StreamReconTime")
 {
    field(PREC, "5")
 }
+
+################
+# Shutter status
+################
+
+record(stringout, "$(P)$(R)ShutterStatusPVName")
+{
+   field(VAL,  "$(SHUTTER_STATUS)")
+}

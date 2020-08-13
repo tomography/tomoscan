@@ -79,3 +79,8 @@ $(P)$(R)StreamOrthoY
 $(P)$(R)StreamOrthoZ
 $(P)$(R)StreamRetakeFlat
 $(P)$(R)StreamReconTime
+
+################
+# Shutter status
+################
+$(P)$(R)ShutterStatusPVName

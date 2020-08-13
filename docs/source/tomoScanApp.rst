@@ -766,6 +766,21 @@ Data management information
     - stringout
     - Remote analysis location where to transfer the raw data for analysis, e.g tomo@handyn:/local/data/
 
+Front-end shutter status
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. cssclass:: table-bordered table-striped table-hover
+.. list-table::
+  :header-rows: 1
+  :widths: 5 5 90
+
+  * - Record name
+    - Record type
+    - Description
+  * - $(P)$(R)ShutterStatusPVName
+    - stringout
+    - Contains the name of the PV to read the front-end shutter status
+
 Fast shutter control
 ^^^^^^^^^^^^^^^^^^^^
 

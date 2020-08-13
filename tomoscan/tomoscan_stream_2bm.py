@@ -166,8 +166,17 @@ class TomoScanStream2BM(TomoScan):
         log.info('begin scan')
         # Call the base class method
         super().begin_scan()
-        # Open front-end shutter
-        super().open_shutter()
+        # Open 2-BM-A front-end shutter
+        if not self.epics_pvs['OpenShutter'] is None:
+            pv = self.epics_pvs['OpenShutter']
+            value = self.epics_pvs['OpenShutterValue'].get(as_string=True)
+            status = self.epics_pvs['ShutterStatus'].get(as_string=True)
+            log.info('shutter status: %s', status)
+            log.info('open shutter: %s, value: %s', pv, value)
+            self.epics_pvs['OpenShutter'].put(value, wait=True)
+            self.wait_pv(self.epics_pvs['ShutterStatus'], 1)
+            status = self.epics_pvs['ShutterStatus'].get(as_string=True)
+            log.info('shutter status: %s', status)
  
         # This marks the beginning of the streaming mode
         self.epics_pvs['StreamStatus'].put('On')
@@ -267,8 +276,17 @@ class TomoScanStream2BM(TomoScan):
 
         # Call the base class method
         super().end_scan()
-        # Close front-end shutter
-        super().close_shutter()
+        # Close 2-BM-A front-end shutter
+        if not self.epics_pvs['CloseShutter'] is None:
+            pv = self.epics_pvs['CloseShutter']
+            value = self.epics_pvs['CloseShutterValue'].get(as_string=True)
+            status = self.epics_pvs['ShutterStatus'].get(as_string=True)
+            log.info('shutter status: %s', status)
+            log.info('close shutter: %s, value: %s', pv, value)
+            self.epics_pvs['CloseShutter'].put(value, wait=True)
+            self.wait_pv(self.epics_pvs['ShutterStatus'], 0)
+            status = self.epics_pvs['ShutterStatus'].get(as_string=True)
+            log.info('shutter status: %s', status)
  
 
     def collect_dark_fields(self):
