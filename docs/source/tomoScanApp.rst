@@ -766,6 +766,21 @@ Data management information
     - stringout
     - Remote analysis location where to transfer the raw data for analysis, e.g tomo@handyn:/local/data/
 
+Front-end shutter status
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. cssclass:: table-bordered table-striped table-hover
+.. list-table::
+  :header-rows: 1
+  :widths: 5 5 90
+
+  * - Record name
+    - Record type
+    - Description
+  * - $(P)$(R)ShutterStatusPVName
+    - stringout
+    - Contains the name of the PV to read the front-end shutter status
+
 Fast shutter control
 ^^^^^^^^^^^^^^^^^^^^
 
@@ -803,22 +818,10 @@ Streaming analysis information
     - Description
   * - $(P)$(R)StreamStatus
     - bo
-    - Flag storing the  streaming status
+    - Flag storing the  streaming status. Choices are 'Off' and 'On'. When 'On' the streaming reconstruction is enabled 
   * - $(P)$(R)StreamBufferSize
     - longout
     - Stream buffer size
-  * - $(P)$(R)StreamBinning
-    - mbbo
-    - Flag controlling whether the streaming reconstruction is binned 0, 2, 4 times
-  * - $(P)$(R)StreamRingRemoval
-    - bo
-    - Flag controlling whether the streaming reconstruction applies ring removal
-  * - $(P)$(R)StreamPaganin
-    - bo
-    - Flag controlling whether the streaming reconstruction applies paganin
-  * - $(P)$(R)StreamPaganinAlpha
-    - ao
-    - Paganin alpha coefficient
   * - $(P)$(R)StreamCenter
     - ao
     - Rotation center for streaming reconstruction
@@ -834,8 +837,12 @@ Streaming analysis information
   * - $(P)$(R)StreamOrthoZ
     - longout
     - Ortho slice in the Z direction for streaming reconstruction
-
-
+  * - $(P)$(R)StreamRetakeFlat
+    - bo
+    - Stream retake flat. Choices are 'No' and 'Yes'. When 'Yes' a new set of flat field images will be collected and used for reconstructing the following projections
+  * - $(P)$(R)StreamReconTime
+    - ao
+    - Streaming reconstruction time
 
 tomoScan_2BM_settings.req
 ~~~~~~~~~~~~~~~~~~~~~~~~~

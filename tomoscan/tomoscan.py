@@ -132,6 +132,7 @@ class TomoScan():
         self.control_pvs['FPNumCapture']      = PV(prefix + 'NumCapture')
         self.control_pvs['FPNumCaptured']     = PV(prefix + 'NumCaptured_RBV')
         self.control_pvs['FPCapture']         = PV(prefix + 'Capture')
+        self.control_pvs['FPCapture_RBV']     = PV(prefix + 'Capture_RBV')
         self.control_pvs['FPFilePath']        = PV(prefix + 'FilePath')
         self.control_pvs['FPFilePathRBV']     = PV(prefix + 'FilePath_RBV')
         self.control_pvs['FPFilePathExists']  = PV(prefix + 'FilePathExists_RBV')
