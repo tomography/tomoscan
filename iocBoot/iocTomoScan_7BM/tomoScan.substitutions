@@ -8,6 +8,6 @@ pattern
 file "$(TOP)/db/tomoScan_7BM.template"
 {
 pattern
-{  P,      R,         PSO,           BEAM_READY,      READY_VALUE,    CLOSE_FAST_SHUTTER,  CLOSE_FAST_VALUE,        OPEN_FAST_SHUTTER,         OPEN_FAST_VALUE,}
-{7bmtomo:, TomoScan:, 7bmb1:PSOFly3:,   PA:07BM:STA_A_BEAMREADY_PL.VAL,    1,      7bmb1:m27,                0.2,            7bmb1:m27,         0,}
+{  P,      R,         PSO,           BEAM_READY,      READY_VALUE,    CLOSE_FAST_SHUTTER,  CLOSE_FAST_VALUE,        OPEN_FAST_SHUTTER,         OPEN_FAST_VALUE, ASYN_RECORD, }
+{7bmtomo:, TomoScan:, 7bmb1:PSOFly3:,   PA:07BM:STA_A_BEAMREADY_PL.VAL,    1,      7bmb1:m27,                0.2,            7bmb1:m27,         0, 7bmb1:PSOFly3:cmdWriteRead:, }
 }

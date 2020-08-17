@@ -1,5 +1,5 @@
-# Database for EPICS PVS for tomography data collection software at APS 2-BM
-# It contains the PVs that are required by the tomoscan_13bm derived class,
+# Database for EPICS PVS for tomography data collection software at APS 7-BM
+# It contains the PVs that are required by the tomoscan_7bm derived class,
 # as well as additional PVs used for metadata about the scan that are stored
 # both in the configuration files written by tomoscan, and in the
 # files written by areaDetector file plugin.
@@ -14,6 +14,68 @@ record(stringout, "$(P)$(R)PSOPVPrefix")
    field(VAL,  "$(PSO)")
 }
 
+################
+# PSO parameters
+################
+record(ao, "$(P)$(Q)startPos") {
+  field(DESC, "Angle of first image trigger")
+  field(EGU, "degrees")
+  field(PREC, "5")
+}
+
+record(ao, "$(P)$(Q)startTaxi") {
+  field(DESC, "start position with taxi")
+  field(EGU, "degrees")
+  field(PREC, "5")
+}
+
+record(ao, "$(P)$(Q)endPos") {
+  field(DESC, "Angle of last image trigger")
+  field(EGU, "degrees")
+  field(PREC, "5")
+}
+
+record(ao, "$(P)$(Q)endTaxi") {
+  field(DESC, "end position with taxi")
+  field(EGU, "degrees")
+  field(PREC, "5")
+}
+
+record(ao, "$(P)$(Q)slewSpeed") {
+  field(EGU, "degrees/s")
+  field(PREC, "5")
+}
+
+record(busy, "$(P)$(Q)taxi") {
+  field(ONAM, "Taxi")
+}
+
+record(busy, "$(P)$(Q)fly") {
+  field(ONAM, "Fly")
+}
+
+record(busy, "$(P)$(Q)scanControl") {
+  field(ONAM, "ScanControl")
+}
+
+record(ao, "$(P)$(Q)scanDelta") {
+  field(DRVH, "180")
+  field(DRVL, ".0001")
+  field(DESC, "Angle between triggers")
+  field(EGU, "degrees")
+  field(PREC, "5")
+}
+
+record(longout, "$(P)$(Q)numTriggers") {
+  field(DESC, "Number of triggers")
+  field(DRVL, "0")
+  field(DRVH, "1000000")
+}
+
+record(stringout, "$(P)$(R)PSOAsynRecordName")
+{
+   field(VAL,  "$(ASYN_RECORD)")
+}
 ####################
 # Energy information
 ####################

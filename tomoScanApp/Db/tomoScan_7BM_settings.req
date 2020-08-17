@@ -8,6 +8,19 @@
 ############
 $(P)$(R)PSOPVPrefix
 
+##########################
+#PSO Parameters
+$(P)$(Q)startPos
+$(P)$(Q)startTaxi
+$(P)$(Q)endPos
+$(P)$(Q)endTaxi
+$(P)$(Q)slewSpeed
+$(P)$(Q)taxi
+$(P)$(Q)fly
+$(P)$(Q)scanControl
+$(P)$(Q)scanDelta
+$(P)$(Q)numTriggers
+#
 ####################
 # Energy information
 ####################

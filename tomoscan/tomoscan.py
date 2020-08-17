@@ -85,11 +85,13 @@ class TomoScan():
             log.error('FilePluginPVPrefix must be present in autoSettingsFile')
             sys.exit()
 
+        #Define PVs we will need from the rotation motor, which is on another IOC
         rotation_pv_name = self.control_pvs['Rotation'].pvname
         self.control_pvs['RotationSpeed']      = PV(rotation_pv_name + '.VELO')
         self.control_pvs['RotationMaxSpeed']   = PV(rotation_pv_name + '.VMAX')
         self.control_pvs['RotationResolution'] = PV(rotation_pv_name + '.MRES')
 
+        #Define PVs from the camera IOC that we will need
         prefix = self.pv_prefixes['Camera']
         camera_prefix = prefix + 'cam1:'
         self.control_pvs['CamManufacturer']      = PV(camera_prefix + 'Manufacturer_RBV')
@@ -150,6 +152,7 @@ class TomoScan():
         self.control_pvs['FPFileWriteMode'].put('Stream')
         self.control_pvs['FPEnableCallbacks'].put('Enable')
 
+        #Define PVs from the MCS or PSO that live on another IOC
         if 'MCS' in self.pv_prefixes:
             prefix = self.pv_prefixes['MCS']
             self.control_pvs['MCSEraseStart']      = PV(prefix + 'EraseStart')
@@ -172,8 +175,6 @@ class TomoScan():
             self.control_pvs['PSOscanControl']     = PV(prefix + 'scanControl')
             self.control_pvs['PSOcalcProjections'] = PV(prefix + 'numTriggers')        
             self.control_pvs['ThetaArray']         = PV(prefix + 'motorPos.AVAL')
-
-
 
         self.epics_pvs = {**self.config_pvs, **self.control_pvs}
         # Wait 1 second for all PVs to connect
