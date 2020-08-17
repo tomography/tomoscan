@@ -5,12 +5,14 @@
    TomoScan2BM
      Derived class for tomography scanning with EPICS at APS beamline 2-BM-A
 """
-import time
 import os
+import time
 import h5py 
+import numpy
 
 from tomoscan import TomoScan
 from tomoscan import log
+import threading
 
 EPSILON = .001
 
@@ -44,6 +46,11 @@ class TomoScanStream2BM(TomoScan):
         # Disable overw writing warning
         self.epics_pvs['OverwriteWarning'].put('Yes')
 
+        # Unset retake button
+        self.epics_pvs['StreamRetakeFlat'].put(0)
+        # Monitor retake flat fields button
+        self.epics_pvs['StreamRetakeFlat'].add_callback(self.pv_callback_stream)
+
     def open_shutter(self):
         """Opens the shutter to collect flat fields or projections.
 
@@ -55,7 +62,9 @@ class TomoScanStream2BM(TomoScan):
         """
 
         # Call the base class method
-        super().open_shutter()
+        
+       # super().open_shutter()
+        
         # Open 2-BM-A fast shutter
         if not self.epics_pvs['OpenFastShutter'] is None:
             pv = self.epics_pvs['OpenFastShutter']
@@ -73,7 +82,7 @@ class TomoScanStream2BM(TomoScan):
 
        """
          # Call the base class method
-        super().close_shutter()
+       # super().close_shutter()
         # Close 2-BM-A fast shutter
         if not self.epics_pvs['CloseFastShutter'] is None:
             pv = self.epics_pvs['CloseFastShutter']
@@ -138,19 +147,36 @@ class TomoScanStream2BM(TomoScan):
         frame_time = self.compute_frame_time()
         collection_time = frame_time * num_frames
         self.wait_camera_done(collection_time + 5.0)
-
+    
     def begin_scan(self):
         """Performs the operations needed at the very start of a scan.
 
         This does the following:
 
+		- Turns on StreamStatus.
+		
         - Calls the base class method.
+        
+        - Sets the PSO controller.
 
-        - Turns on streaming.
+        - Creates theta array using list from PSO. 
+
+        - Turns on streaming for dark/flat capture.
         """
         log.info('begin scan')
         # Call the base class method
         super().begin_scan()
+        # Open 2-BM-A front-end shutter
+        if not self.epics_pvs['OpenShutter'] is None:
+            pv = self.epics_pvs['OpenShutter']
+            value = self.epics_pvs['OpenShutterValue'].get(as_string=True)
+            status = self.epics_pvs['ShutterStatus'].get(as_string=True)
+            log.info('shutter status: %s', status)
+            log.info('open shutter: %s, value: %s', pv, value)
+            self.epics_pvs['OpenShutter'].put(value, wait=True)
+            self.wait_pv(self.epics_pvs['ShutterStatus'], 1)
+            status = self.epics_pvs['ShutterStatus'].get(as_string=True)
+            log.info('shutter status: %s', status)
  
         # This marks the beginning of the streaming mode
         self.epics_pvs['StreamStatus'].put('On')
@@ -193,16 +219,25 @@ class TomoScanStream2BM(TomoScan):
         self.theta = []
         self.theta = self.epics_pvs['ThetaArray'].get(count=int(self.num_angles))
 
-        # Compute total number of frames to capture
-        self.total_images = self.num_angles
-        if self.dark_field_mode != 'None':
-            self.total_images += self.num_dark_fields
-        if self.dark_field_mode == 'Both':
-            self.total_images += self.num_dark_fields
-        if self.flat_field_mode != 'None':
-            self.total_images += self.num_flat_fields
-        if self.flat_field_mode == 'Both':
-            self.total_images += self.num_flat_fields
+        # set dark/flat to be taken at beginning
+        self.epics_pvs['FlatFieldMode'].put('Start', wait=True)
+        self.epics_pvs['DarkFieldMode'].put('Start', wait=True)
+
+        # replace file name settings with dark flat fields temporarily settings
+        self.file_name = self.epics_pvs['FPFileName'].get()        
+        self.file_template = self.epics_pvs['FPFileTemplate'].get()        
+        self.auto_increment = self.epics_pvs['FPAutoIncrement'].get()        
+        
+        self.epics_pvs['FPFileName'].put("dark_flat_buffer", wait=True)
+        self.epics_pvs['FPFileTemplate'].put("%s%s.h5", wait=True)
+        self.epics_pvs['FPAutoIncrement'].put("No", wait=True)
+
+        # Compute total number of frames to capture (dark+flat)
+        self.total_images = self.num_dark_fields+self.num_flat_fields        
+        # Set the total number of frames to capture and start capture on file plugin
+        self.epics_pvs['FPNumCapture'].put(self.total_images, wait=True)
+        self.epics_pvs['FPCapture'].put('Capture')
+        
 
     def end_scan(self):
         """Performs the operations needed at the very end of a scan.
@@ -219,6 +254,7 @@ class TomoScanStream2BM(TomoScan):
 
         - Calls the base class method.
         """
+        print('tomoscan_stream_2bm: end scan')
         log.info('end scan')
         # This is used by the streaming reconstruction to stop the analysis
         self.epics_pvs['StreamStatus'].put('Off')
@@ -229,8 +265,29 @@ class TomoScanStream2BM(TomoScan):
         self.epics_pvs['RotationSpeed'].put(self.max_rotation_speed)
         # Move the sample in.  Could be out if scan was aborted while taking flat fields
         self.move_sample_in()
+
+        if self.return_rotation == 'Yes':
+        # Reset rotation position by mod 360 , the actual return 
+        # to start position is handled by super().end_scan()
+            current_angle = self.epics_pvs['Rotation'].get() %360
+            self.epics_pvs['RotationSet'].put('Set', wait=True)
+            self.epics_pvs['Rotation'].put(current_angle, wait=True)
+            self.epics_pvs['RotationSet'].put('Use', wait=True)
+
         # Call the base class method
         super().end_scan()
+        # Close 2-BM-A front-end shutter
+        if not self.epics_pvs['CloseShutter'] is None:
+            pv = self.epics_pvs['CloseShutter']
+            value = self.epics_pvs['CloseShutterValue'].get(as_string=True)
+            status = self.epics_pvs['ShutterStatus'].get(as_string=True)
+            log.info('shutter status: %s', status)
+            log.info('close shutter: %s, value: %s', pv, value)
+            self.epics_pvs['CloseShutter'].put(value, wait=True)
+            self.wait_pv(self.epics_pvs['ShutterStatus'], 0)
+            status = self.epics_pvs['ShutterStatus'].get(as_string=True)
+            log.info('shutter status: %s', status)
+ 
 
     def collect_dark_fields(self):
         """Collects dark field images.
@@ -281,6 +338,8 @@ class TomoScanStream2BM(TomoScan):
 
         This does the following:
 
+        - Restore file name for on demand projection capturing.
+
         - Set the rotation motor position specified by the ``RotationStart`` PV in the
           PSOstartPos.
 
@@ -293,9 +352,15 @@ class TomoScanStream2BM(TomoScan):
 
         - Wait on the PSO done.
         """
+        
 
         log.info('collect projections')
         super().collect_projections()
+        # restore file name 
+        self.epics_pvs['FPFileName'].put(self.file_name)                        
+        self.epics_pvs['FPFileTemplate'].put(self.file_template)                        
+        self.epics_pvs['FPAutoIncrement'].put(self.auto_increment)                        
+        
         log.info('taxi before starting capture')
         # Taxi before starting capture
         self.epics_pvs['PSOtaxi'].put(1, wait=True)
@@ -314,3 +379,69 @@ class TomoScanStream2BM(TomoScan):
         time_per_angle = self.compute_frame_time()
         collection_time = self.num_angles * time_per_angle
         self.wait_camera_done(collection_time + 60.)
+
+    def abort_scan(self):
+        """Aborts a scan that is running.
+        Calls abort() and sets the StreamStatus to 'Off'
+        """
+
+        log.info('abort')
+        # Stop the rotary stage
+        self.epics_pvs['RotationStop'].put(1)
+        self.wait_pv(self.epics_pvs['RotationDmov'], 0)
+
+        super().abort_scan()
+        
+        # return file name settings
+        self.epics_pvs['FPFileName'].put(self.file_name)                        
+        self.epics_pvs['FPFileTemplate'].put(self.file_template)    
+        self.epics_pvs['FPAutoIncrement'].put(self.auto_increment)                        
+                            
+        
+        self.epics_pvs['StreamStatus'].put('Off')
+
+    def pv_callback_stream(self, pvname=None, value=None, char_value=None, **kw):
+        """Callback functions for the streaming mode"""
+
+        if (pvname.find('StreamRetakeFlat') != -1) and (value == 1):
+            thread = threading.Thread(target=self.retake_flat, args=())
+            thread.start()
+        
+
+    def retake_flat(self):
+        """Recollect flat fields while in the streaming mode"""
+        
+        self.epics_pvs['StreamStatus'].put('Off')
+        
+        self.epics_pvs['FPFileName'].put("dark_flat_buffer", wait=True)
+        self.epics_pvs['FPFileTemplate'].put("%s%s.h5", wait=True)
+        self.epics_pvs['FPAutoIncrement'].put("No", wait=True)
+        
+        super().collect_flat_fields()        
+        self.epics_pvs['FPNumCapture'].put(self.num_flat_fields, wait=True)        
+        self.epics_pvs['FPCapture'].put('Capture', wait=True)   
+        self.wait_pv(self.epics_pvs['FPCapture_RBV'], 0)        
+        
+        # super().collect_dark_fields()        
+        # self.epics_pvs['FPNumCapture'].put(self.num_dark_fields, wait=True)        
+        # self.epics_pvs['FPCapture'].put('Capture', wait=True)   
+        # self.wait_pv(self.epics_pvs['FPCapture_RBV'], 0)        
+        # print('open shutter')
+        # self.open_shutter()
+        # print('done open shutter')
+        
+        self.epics_pvs['FPFileName'].put(self.file_name, wait=True)                        
+        self.epics_pvs['FPFileTemplate'].put(self.file_template, wait=True)                        
+        self.epics_pvs['FPAutoIncrement'].put(self.auto_increment, wait=True)
+        self.epics_pvs['ScanStatus'].put('Collecting projections', wait=True)
+
+        self.move_sample_in()
+        self.epics_pvs['HDF5Location'].put(self.epics_pvs['HDF5ProjectionLocation'].value, wait=True)
+        self.epics_pvs['FrameType'].put('Projection', wait=True)
+        self.epics_pvs['StreamRetakeFlat'].put(0)   
+
+        self.epics_pvs['StreamStatus'].put('On')
+        
+
+
+        

@@ -90,6 +90,9 @@ class TomoScan():
         self.control_pvs['RotationSpeed']      = PV(rotation_pv_name + '.VELO')
         self.control_pvs['RotationMaxSpeed']   = PV(rotation_pv_name + '.VMAX')
         self.control_pvs['RotationResolution'] = PV(rotation_pv_name + '.MRES')
+        self.control_pvs['RotationSet']        = PV(rotation_pv_name + '.SET')
+        self.control_pvs['RotationStop']       = PV(rotation_pv_name + '.STOP')
+        self.control_pvs['RotationDmov']       = PV(rotation_pv_name + '.DMOV')
 
         #Define PVs from the camera IOC that we will need
         prefix = self.pv_prefixes['Camera']
@@ -131,6 +134,7 @@ class TomoScan():
         self.control_pvs['FPNumCapture']      = PV(prefix + 'NumCapture')
         self.control_pvs['FPNumCaptured']     = PV(prefix + 'NumCaptured_RBV')
         self.control_pvs['FPCapture']         = PV(prefix + 'Capture')
+        self.control_pvs['FPCapture_RBV']     = PV(prefix + 'Capture_RBV')
         self.control_pvs['FPFilePath']        = PV(prefix + 'FilePath')
         self.control_pvs['FPFilePathRBV']     = PV(prefix + 'FilePath_RBV')
         self.control_pvs['FPFilePathExists']  = PV(prefix + 'FilePathExists_RBV')

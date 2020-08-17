@@ -42,17 +42,26 @@ class TomoScan2BM(TomoScan):
         self.epics_pvs['OverwriteWarning'].put('Yes')
 
     def open_shutter(self):
-        """Opens the shutter to collect flat fields or projections.
+        """Opens the shutters to collect flat fields or projections.
 
         This does the following:
 
-        - Calls the base class method.
+        - Opens the 2-BM-A front-end shutter.
 
         - Opens the 2-BM-A fast shutter.
         """
 
-        # Call the base class method
-        super().open_shutter()
+        # Open 2-BM-A front-end shutter
+        if not self.epics_pvs['OpenShutter'] is None:
+            pv = self.epics_pvs['OpenShutter']
+            value = self.epics_pvs['OpenShutterValue'].get(as_string=True)
+            status = self.epics_pvs['ShutterStatus'].get(as_string=True)
+            log.info('shutter status: %s', status)
+            log.info('open shutter: %s, value: %s', pv, value)
+            self.epics_pvs['OpenShutter'].put(value, wait=True)
+            self.wait_pv(self.epics_pvs['ShutterStatus'], 1)
+            status = self.epics_pvs['ShutterStatus'].get(as_string=True)
+            log.info('shutter status: %s', status)
         # Open 2-BM-A fast shutter
         if not self.epics_pvs['OpenFastShutter'] is None:
             pv = self.epics_pvs['OpenFastShutter']
@@ -61,16 +70,25 @@ class TomoScan2BM(TomoScan):
             self.epics_pvs['OpenFastShutter'].put(value, wait=True)
 
     def close_shutter(self):
-        """Closes the shutter to collect dark fields.
+        """Closes the shutters to collect dark fields.
         This does the following:
 
-        - Calls the base class method.
+        - Closes the 2-BM-A front-end shutter.
 
         - Closes the 2-BM-A fast shutter.
+        """
 
-       """
-         # Call the base class method
-        super().close_shutter()
+        # Close 2-BM-A front-end shutter
+        if not self.epics_pvs['CloseShutter'] is None:
+            pv = self.epics_pvs['CloseShutter']
+            value = self.epics_pvs['CloseShutterValue'].get(as_string=True)
+            status = self.epics_pvs['ShutterStatus'].get(as_string=True)
+            log.info('shutter status: %s', status)
+            log.info('close shutter: %s, value: %s', pv, value)
+            self.epics_pvs['CloseShutter'].put(value, wait=True)
+            self.wait_pv(self.epics_pvs['ShutterStatus'], 0)
+            status = self.epics_pvs['ShutterStatus'].get(as_string=True)
+            log.info('shutter status: %s', status)
         # Close 2-BM-A fast shutter
         if not self.epics_pvs['CloseFastShutter'] is None:
             pv = self.epics_pvs['CloseFastShutter']
@@ -142,7 +160,12 @@ class TomoScan2BM(TomoScan):
         This does the following:
 
         - Calls the base class method.
-        - 
+        
+        - Sets the PSO controller.
+
+        - Creates theta array using list from PSO. 
+
+        - Turns on data capture.
         """
         log.info('begin scan')
         # Call the base class method
@@ -152,8 +175,8 @@ class TomoScan2BM(TomoScan):
         # Pass the user selected values to the PSO
         self.epics_pvs['PSOstartPos'].put(self.rotation_start, wait=True)
         self.wait_pv(self.epics_pvs['PSOstartPos'], self.rotation_start)
-        self.epics_pvs['PSOendPos'].put(self.rotation_stop, wait=True)
-        self.wait_pv(self.epics_pvs['PSOendPos'], self.rotation_stop)
+        self.epics_pvs['PSOendPos'].put(self.rotation_stop+self.rotation_step, wait=True)
+        self.wait_pv(self.epics_pvs['PSOendPos'], self.rotation_stop+self.rotation_step)
         # Compute and set the motor speed
         time_per_angle = self.compute_frame_time()
         motor_speed = self.rotation_step / time_per_angle
