@@ -11,16 +11,13 @@ $(P)$(R)PSOPVPrefix
 ###############
 #PSO Parameters
 ###############
-$(P)$(R)startPos
 $(P)$(R)startTaxi
-$(P)$(R)endPos
 $(P)$(R)endTaxi
-$(P)$(R)slewSpeed
-$(P)$(R)taxi
-$(P)$(R)fly
-$(P)$(R)scanControl
-$(P)$(R)scanDelta
-$(P)$(R)numTriggers
+$(P)$(R)EncoderPulsesPerStep
+$(P)$(R)PSOAsynPVName
+$(P)$(R)PSOAxisName
+$(P)$(R)PSOEncoderInput
+$(P)$(R)PSOPulsesPerRotation
 
 ####################
 # Energy information

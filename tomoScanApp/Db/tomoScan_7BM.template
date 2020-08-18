@@ -11,61 +11,67 @@
 
 record(stringout, "$(P)$(R)PSOPVPrefix")
 {
-   field(VAL,  "$(PSO)")
+    field(VAL,  "$(PSO)")
 }
 
 ################
 # PSO parameters
 ################
 
-record(ao, "$(P)$(R)startTaxi") {
-  field(DESC, "start position with taxi")
-  field(EGU, "degrees")
-  field(PREC, "5")
+record(ao, "$(P)$(R)startTaxi") 
+{
+    field(DESC, "start position with taxi")
+    field(EGU, "degrees")
+    field(PREC, "5")
 }
 
-record(ao, "$(P)$(R)endTaxi") {
-  field(DESC, "end position with taxi")
-  field(EGU, "degrees")
-  field(PREC, "5")
+record(ao, "$(P)$(R)endTaxi") 
+{
+    field(DESC, "end position with taxi")
+    field(EGU, "degrees")
+    field(PREC, "5")
 }
 
-record(longout, "$(P)$(R)EncoderPulsesPerStep") {
-  field(DESC, "Encoder pulses per projection")
-  field(VAL, "6400")
-  field(DRVL, "0")
-  field(DRVH, "$(PSO_ENC_PER_ROTATION)")
+record(longout, "$(P)$(R)EncoderPulsesPerStep") 
+{
+    field(DESC, "Encoder pulses per projection")
+    field(VAL, "6400")
+    field(DRVL, "0")
+    field(DRVH, "$(PSO_ENC_PER_ROTATION)")
 }
 
 record(stringout, "$(P)$(R)PSOAsynPVName")
 {
-   field(VAL,  "$(ASYN_RECORD)")
+    field(VAL,  "$(ASYN_RECORD)")
 }
 
 record(stringout, "$(P)$(R)PSOAxisName")
 {
-   field(VAL, "$(PSO_AXIS_NAME)")
+    field(VAL, "$(PSO_AXIS_NAME)")
 }
 
-record(longout, "$(P)$(R)PSOEncoderInput") {
-  field(DESC, "Encoder input")
-  field(VAL, "$(PSO_ENC_INPUT)")
-  field(DRVL, "0")
-  field(DRVH, "4")
+record(longout, "$(P)$(R)PSOEncoderInput") 
+{
+    field(DESC, "Encoder input")
+    field(VAL, "$(PSO_ENC_INPUT)")
+    field(DRVL, "0")
+    field(DRVH, "4")
 }
 
-record(ao, "$(P)$(R)PSOPulsesPerRotation") {
-  field(DESC, "Number of encoder counts per revolution")
-  filed(VAL, "$(PSO_ENC_PER_ROTATION)")
-  field(DRVL, "0")
-  field(DRVH, "1000000")
+record(ao, "$(P)$(R)PSOPulsesPerRotation") 
+{
+    field(DESC, "Number of encoder counts per revolution")
+    filed(VAL, "$(PSO_ENC_PER_ROTATION)")
+    field(DRVL, "0")
+    field(DRVH, "1000000")
 }
 
 ####################
 # Energy information
 ####################
 
-record(ao, "$(P)$(R)Energy") {
+record(ao, "$(P)$(R)Energy")
+{
     field(SCAN, "Passive")
     field(DTYP, "Soft Channel")
     field(PREC, 2)
