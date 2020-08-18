@@ -93,6 +93,7 @@ class TomoScan():
         self.control_pvs['RotationSet']        = PV(rotation_pv_name + '.SET')
         self.control_pvs['RotationStop']       = PV(rotation_pv_name + '.STOP')
         self.control_pvs['RotationDmov']       = PV(rotation_pv_name + '.DMOV')
+        self.control_pvs['RotationDirection']  = PV(rotation_pv_name + '.DIR')
 
         #Define PVs from the camera IOC that we will need
         prefix = self.pv_prefixes['Camera']
@@ -326,6 +327,7 @@ class TomoScan():
         pv_file.close()
         lines = lines.splitlines()
         for line in lines:
+            print(line)
             is_config_pv = True
             if line.find('#controlPV') != -1:
                 line = line.replace('#controlPV', '')
@@ -345,6 +347,7 @@ class TomoScan():
             dictentry = line
             for key in macros:
                 dictentry = dictentry.replace(key, '')
+            print(pvname)
             epics_pv = PV(pvname)
             if is_config_pv:
                 self.config_pvs[dictentry] = epics_pv

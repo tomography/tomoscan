@@ -1,14 +1,14 @@
 
 file {
-	name="/home/beams8/USER2BMB/epics/synApps/support/tomoscan/tomoScanApp/op/adl/tomoScan_2BM.adl"
+	name="/home/beams/7BMB/epics/synApps/support/tomoscan/tomoScanApp/op/adl/tomoScan_7BM.adl"
 	version=030111
 }
 display {
 	object {
-		x=1103
-		y=795
-		width=565
-		height=1050
+		x=460
+		y=45
+		width=860
+		height=974
 	}
 	clr=14
 	bclr=4

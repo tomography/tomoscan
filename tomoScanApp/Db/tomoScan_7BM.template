@@ -17,20 +17,8 @@ record(stringout, "$(P)$(R)PSOPVPrefix")
 ################
 # PSO parameters
 ################
-record(ao, "$(P)$(Q)startPos") {
-  field(DESC, "Angle of first image trigger")
-  field(EGU, "degrees")
-  field(PREC, "5")
-}
-
 record(ao, "$(P)$(Q)startTaxi") {
   field(DESC, "start position with taxi")
-  field(EGU, "degrees")
-  field(PREC, "5")
-}
-
-record(ao, "$(P)$(Q)endPos") {
-  field(DESC, "Angle of last image trigger")
   field(EGU, "degrees")
   field(PREC, "5")
 }
@@ -41,41 +29,37 @@ record(ao, "$(P)$(Q)endTaxi") {
   field(PREC, "5")
 }
 
-record(ao, "$(P)$(Q)slewSpeed") {
-  field(EGU, "degrees/s")
-  field(PREC, "5")
+record(longout, "$(P)$(Q)EncoderPulsesPerStep") {
+  field(DESC, "Encoder pulses per projection")
+  field(VAL, "6400")
+  field(DRVL, "0")
+  field(DRVH, "$(PSO_ENC_PER_ROTATION)")
 }
 
-record(busy, "$(P)$(Q)taxi") {
-  field(ONAM, "Taxi")
+record(stringout, "$(P)$(R)PSOAsynPVName")
+{
+   field(VAL,  "$(ASYN_RECORD)")
 }
 
-record(busy, "$(P)$(Q)fly") {
-  field(ONAM, "Fly")
+record(stringout, "$(P)$(R)PSOAxisName")
+{
+   field(VAL, "$(PSO_AXIS_NAME)")
 }
 
-record(busy, "$(P)$(Q)scanControl") {
-  field(ONAM, "ScanControl")
+record(longout, "$(P)$(Q)PSOEncoderInput") {
+  field(DESC, "Encoder input")
+  field(VAL, "$(PSO_ENC_INPUT)")
+  field(DRVL, "0")
+  field(DRVH, "4")
 }
 
-record(ao, "$(P)$(Q)scanDelta") {
-  field(DRVH, "180")
-  field(DRVL, ".0001")
-  field(DESC, "Angle between triggers")
-  field(EGU, "degrees")
-  field(PREC, "5")
-}
-
-record(longout, "$(P)$(Q)numTriggers") {
-  field(DESC, "Number of triggers")
+record(ao, "$(P)$(Q)PSOPulsesPerRotation") {
+  field(DESC, "Number of encoder counts per revolution")
+  filed(VAL, "$(PSO_ENC_PER_ROTATION)")
   field(DRVL, "0")
   field(DRVH, "1000000")
 }
 
-record(stringout, "$(P)$(R)PSOAsynRecordName")
-{
-   field(VAL,  "$(ASYN_RECORD)")
-}
 ####################
 # Energy information
 ####################
