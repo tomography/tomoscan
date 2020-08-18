@@ -17,19 +17,20 @@ record(stringout, "$(P)$(R)PSOPVPrefix")
 ################
 # PSO parameters
 ################
-record(ao, "$(P)$(Q)startTaxi") {
+
+record(ao, "$(P)$(R)startTaxi") {
   field(DESC, "start position with taxi")
   field(EGU, "degrees")
   field(PREC, "5")
 }
 
-record(ao, "$(P)$(Q)endTaxi") {
+record(ao, "$(P)$(R)endTaxi") {
   field(DESC, "end position with taxi")
   field(EGU, "degrees")
   field(PREC, "5")
 }
 
-record(longout, "$(P)$(Q)EncoderPulsesPerStep") {
+record(longout, "$(P)$(R)EncoderPulsesPerStep") {
   field(DESC, "Encoder pulses per projection")
   field(VAL, "6400")
   field(DRVL, "0")
@@ -46,14 +47,14 @@ record(stringout, "$(P)$(R)PSOAxisName")
    field(VAL, "$(PSO_AXIS_NAME)")
 }
 
-record(longout, "$(P)$(Q)PSOEncoderInput") {
+record(longout, "$(P)$(R)PSOEncoderInput") {
   field(DESC, "Encoder input")
   field(VAL, "$(PSO_ENC_INPUT)")
   field(DRVL, "0")
   field(DRVH, "4")
 }
 
-record(ao, "$(P)$(Q)PSOPulsesPerRotation") {
+record(ao, "$(P)$(R)PSOPulsesPerRotation") {
   field(DESC, "Number of encoder counts per revolution")
   filed(VAL, "$(PSO_ENC_PER_ROTATION)")
   field(DRVL, "0")
