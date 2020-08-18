@@ -124,9 +124,12 @@ record(stringout, "$(P)$(R)UserName")
    field(VAL,  "Unknown")
 }
 
-record(stringout, "$(P)$(R)UserInstitution")
+record(waveform, "$(P)$(R)UserInstitution") 
 {
-   field(VAL,  "Unknown")
+    field(SCAN, "Passive")
+    field(DTYP, "Soft Channel")
+    field(NELM, "256")
+    field(FTVL, "CHAR")
 }
 
 record(stringout, "$(P)$(R)UserBadge")
@@ -144,9 +147,12 @@ record(stringout, "$(P)$(R)ProposalNumber")
    field(VAL,  "Unknown")
 }
 
-record(stringout, "$(P)$(R)ProposalTitle")
+record(waveform, "$(P)$(R)ProposalTitle") 
 {
-   field(VAL,  "Unknown")
+    field(SCAN, "Passive")
+    field(DTYP, "Soft Channel")
+    field(NELM, "256")
+    field(FTVL, "CHAR")
 }
 
 record(stringout, "$(P)$(R)ESAFNumber")
