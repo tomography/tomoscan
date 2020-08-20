@@ -193,7 +193,6 @@ class TomoScan2BM(TomoScan):
         super().begin_scan()
         # Opens the front-end shutter
         if not TESTING:
-            print("Trying to open the front end shutter")
             self.open_frontend_shutter()
 
         # Confirm angle step is an integer number of encoder pulses
