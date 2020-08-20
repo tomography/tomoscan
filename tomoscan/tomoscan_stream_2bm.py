@@ -15,6 +15,7 @@ from tomoscan import log
 import threading
 
 EPSILON = .001
+TESTING = True
 
 class TomoScanStream2BM(TomoScan):
     """Derived class used for tomography scanning with EPICS at APS beamline 2-BM-A
@@ -51,20 +52,35 @@ class TomoScanStream2BM(TomoScan):
         # Monitor retake flat fields button
         self.epics_pvs['StreamRetakeFlat'].add_callback(self.pv_callback_stream)
 
-    def open_shutter(self):
-        """Opens the shutter to collect flat fields or projections.
+    def open_frontend_shutter(self):
+        """Opens the shutters to collect flat fields or projections.
 
         This does the following:
 
-        - Calls the base class method.
+        - Opens the 2-BM-A front-end shutter.
+
+        """
+
+        # Open 2-BM-A front-end shutter
+        if not self.epics_pvs['OpenShutter'] is None:
+            pv = self.epics_pvs['OpenShutter']
+            value = self.epics_pvs['OpenShutterValue'].get(as_string=True)
+            status = self.epics_pvs['ShutterStatus'].get(as_string=True)
+            log.info('shutter status: %s', status)
+            log.info('open shutter: %s, value: %s', pv, value)
+            self.epics_pvs['OpenShutter'].put(value, wait=True)
+            self.wait_pv(self.epics_pvs['ShutterStatus'], 1)
+            status = self.epics_pvs['ShutterStatus'].get(as_string=True)
+            log.info('shutter status: %s', status)
+
+    def open_shutter(self):
+        """Opens the shutters to collect flat fields or projections.
+
+        This does the following:
 
         - Opens the 2-BM-A fast shutter.
         """
 
-        # Call the base class method
-        
-       # super().open_shutter()
-        
         # Open 2-BM-A fast shutter
         if not self.epics_pvs['OpenFastShutter'] is None:
             pv = self.epics_pvs['OpenFastShutter']
@@ -72,17 +88,33 @@ class TomoScanStream2BM(TomoScan):
             log.info('open fast shutter: %s, value: %s', pv, value)
             self.epics_pvs['OpenFastShutter'].put(value, wait=True)
 
-    def close_shutter(self):
-        """Closes the shutter to collect dark fields.
+    def close_frontend_shutter(self):
+        """Closes the shutters to collect dark fields.
         This does the following:
 
-        - Calls the base class method.
+        - Closes the 2-BM-A front-end shutter.
+
+        """
+
+        # Close 2-BM-A front-end shutter
+        if not self.epics_pvs['CloseShutter'] is None:
+            pv = self.epics_pvs['CloseShutter']
+            value = self.epics_pvs['CloseShutterValue'].get(as_string=True)
+            status = self.epics_pvs['ShutterStatus'].get(as_string=True)
+            log.info('shutter status: %s', status)
+            log.info('close shutter: %s, value: %s', pv, value)
+            self.epics_pvs['CloseShutter'].put(value, wait=True)
+            self.wait_pv(self.epics_pvs['ShutterStatus'], 0)
+            status = self.epics_pvs['ShutterStatus'].get(as_string=True)
+            log.info('shutter status: %s', status)
+
+    def close_shutter(self):
+        """Closes the shutters to collect dark fields.
+        This does the following:
 
         - Closes the 2-BM-A fast shutter.
+        """
 
-       """
-         # Call the base class method
-       # super().close_shutter()
         # Close 2-BM-A fast shutter
         if not self.epics_pvs['CloseFastShutter'] is None:
             pv = self.epics_pvs['CloseFastShutter']
@@ -153,9 +185,11 @@ class TomoScanStream2BM(TomoScan):
 
         This does the following:
 
-		- Turns on StreamStatus.
-		
         - Calls the base class method.
+
+        - Opens the front-end shutter
+
+        - Turns on StreamStatus.
         
         - Sets the PSO controller.
 
@@ -166,17 +200,9 @@ class TomoScanStream2BM(TomoScan):
         log.info('begin scan')
         # Call the base class method
         super().begin_scan()
-        # Open 2-BM-A front-end shutter
-        if not self.epics_pvs['OpenShutter'] is None:
-            pv = self.epics_pvs['OpenShutter']
-            value = self.epics_pvs['OpenShutterValue'].get(as_string=True)
-            status = self.epics_pvs['ShutterStatus'].get(as_string=True)
-            log.info('shutter status: %s', status)
-            log.info('open shutter: %s, value: %s', pv, value)
-            self.epics_pvs['OpenShutter'].put(value, wait=True)
-            self.wait_pv(self.epics_pvs['ShutterStatus'], 1)
-            status = self.epics_pvs['ShutterStatus'].get(as_string=True)
-            log.info('shutter status: %s', status)
+        # Opens the front-end shutter
+        if not TESTING:
+            self.open_frontend_shutter()
  
         # This marks the beginning of the streaming mode
         self.epics_pvs['StreamStatus'].put('On')
@@ -253,6 +279,8 @@ class TomoScanStream2BM(TomoScan):
         - Calls ``move_sample_in()``.
 
         - Calls the base class method.
+
+        - Closes shutter.
         """
         print('tomoscan_stream_2bm: end scan')
         log.info('end scan')
@@ -273,20 +301,10 @@ class TomoScanStream2BM(TomoScan):
             self.epics_pvs['RotationSet'].put('Set', wait=True)
             self.epics_pvs['Rotation'].put(current_angle, wait=True)
             self.epics_pvs['RotationSet'].put('Use', wait=True)
-
         # Call the base class method
         super().end_scan()
-        # Close 2-BM-A front-end shutter
-        if not self.epics_pvs['CloseShutter'] is None:
-            pv = self.epics_pvs['CloseShutter']
-            value = self.epics_pvs['CloseShutterValue'].get(as_string=True)
-            status = self.epics_pvs['ShutterStatus'].get(as_string=True)
-            log.info('shutter status: %s', status)
-            log.info('close shutter: %s, value: %s', pv, value)
-            self.epics_pvs['CloseShutter'].put(value, wait=True)
-            self.wait_pv(self.epics_pvs['ShutterStatus'], 0)
-            status = self.epics_pvs['ShutterStatus'].get(as_string=True)
-            log.info('shutter status: %s', status)
+        # Close shutter
+        self.close_shutter()
  
 
     def collect_dark_fields(self):
