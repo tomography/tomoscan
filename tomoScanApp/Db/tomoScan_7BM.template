@@ -4,16 +4,6 @@
 # both in the configuration files written by tomoscan, and in the
 # files written by areaDetector file plugin.
 
-
-############
-# PSO Prefix
-############
-
-record(stringout, "$(P)$(R)PSOPVPrefix")
-{
-    field(VAL,  "$(PSO)")
-}
-
 ################
 # PSO parameters
 ################
@@ -50,20 +40,20 @@ record(stringout, "$(P)$(R)PSOAxisName")
     field(VAL, "$(PSO_AXIS_NAME)")
 }
 
+record(ao, "$(P)$(R)PSOPulsesPerRotation") 
+{
+    field(DESC, "Number of encoder counts per revolution")
+    field(VAL, "$(PSO_ENC_PER_ROTATION)")
+    field(DRVL, "0")
+    field(DRVH, "1000000000")
+}
+
 record(longout, "$(P)$(R)PSOEncoderInput") 
 {
     field(DESC, "Encoder input")
     field(VAL, "$(PSO_ENC_INPUT)")
     field(DRVL, "0")
     field(DRVH, "4")
-}
-
-record(ao, "$(P)$(R)PSOPulsesPerRotation") 
-{
-    field(DESC, "Number of encoder counts per revolution")
-    filed(VAL, "$(PSO_ENC_PER_ROTATION)")
-    field(DRVL, "0")
-    field(DRVH, "1000000")
 }
 
 ####################
@@ -260,3 +250,4 @@ record(stringout, "$(P)$(R)OpenFastShutterValue")
 {
    field(VAL,  "$(OPEN_FAST_VALUE)")
 }
+

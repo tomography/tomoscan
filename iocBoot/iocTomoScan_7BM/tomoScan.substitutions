@@ -9,5 +9,5 @@ file "$(TOP)/db/tomoScan_7BM.template"
 {
 pattern
 {  P,      R,         PSO,           BEAM_READY,      READY_VALUE,    CLOSE_FAST_SHUTTER,  CLOSE_FAST_VALUE,        OPEN_FAST_SHUTTER,         OPEN_FAST_VALUE, ASYN_RECORD, PSO_AXIS_NAME, PSO_ENC_INPUT, PSO_ENC_PER_ROTATION}
-{7bmtomo:, TomoScan:, 7bmb1:PSOFly3:,   PA:07BM:STA_A_BEAMREADY_PL.VAL,    1,      7bmb1:m27,                0.2,            7bmb1:m27,         0, 7bmb1:PSOFly3:cmdWriteRead:BOUT, Z, 3, 32768000}
+{7bmtomo:, TomoScan:, 7bmb1:PSOFly3:,   PA:07BM:STA_A_BEAMREADY_PL.VAL,    1,      7bmb1:m27,                0.2,            7bmb1:m27,         0, 7bmb1:PSOFly3:cmdWriteRead:BOUT, Z, 3, 32768000.}
 }
