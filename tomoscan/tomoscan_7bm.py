@@ -60,11 +60,17 @@ class TomoScan7BM(TomoScan):
 
         This does the following:
 
+        - Checks if we are in testing mode.  If we are, do nothing.
+
         - Calls the base class method.
 
         - Opens the 2-BM-A fast shutter.
         """
 
+        log.info(self.epics_pvs['Testing'].get())
+        if self.epics_pvs['Testing'].get():
+            log.warning('In testing mode, so not opening shutters.')
+            return
         # Call the base class method
         super().open_shutter()
         # Open 2-BM-A fast shutter
@@ -79,11 +85,17 @@ class TomoScan7BM(TomoScan):
         """Closes the shutter to collect dark fields.
         This does the following:
 
+        - Checks if we are in testing mode.  If we are, do nothing
+
         - Calls the base class method.
 
         - Closes the 7-BM-B fast shutter.
 
        """
+        log.info(self.epics_pvs['Testing'].get())
+        if self.epics_pvs['Testing'].get():
+            log.warning('In testing mode, so not opening shutters.')
+            return
          # Call the base class method
         super().close_shutter()
         # Close 2-BM-A fast shutter
@@ -235,7 +247,7 @@ class TomoScan7BM(TomoScan):
         """Add theta at the end of a scan.
         """
         log.info('add theta')
-        self.theta = np.linspace(rotation_start, rotation_stop, self.num_angles)
+        self.theta = np.linspace(self.rotation_start, self.rotation_stop, self.num_angles)
         full_file_name = self.epics_pvs['FPFullFileName'].get(as_string=True)
         if os.path.exists(full_file_name):
             try:
@@ -452,6 +464,7 @@ class TomoScan7BM(TomoScan):
             log.warning('  *** *** *** Calculated # of encoder pulses per step = {0:9.4f}'.format(raw_delta_encoder_counts))
             log.warning('  *** *** *** Instead, using {0:d}'.format(delta_encoder_counts))
         self.epics_pvs['EncoderPulsesPerStep'].put(delta_encoder_counts)
+        #Change the rotation step Python variable and PV
         self.rotation_step = delta_encoder_counts / encoder_multiply
         self.epics_pvs['RotationStep'].put(self.rotation_step)
                   
@@ -459,7 +472,7 @@ class TomoScan7BM(TomoScan):
         #Add 1/2 of a delta to ensure that we are really up to speed.
         taxi_dist = (math.ceil(accel_dist / self.rotation_step) + 0.5) * self.rotation_step 
         self.epics_pvs['startTaxi'].put(self.rotation_start - taxi_dist * user_direction)
-        self.epics_pvs['endTaxi'].put(self.rotation_end + taxi_dist * user_direction)
+        self.epics_pvs['endTaxi'].put(self.rotation_stop + taxi_dist * user_direction)
         
         #Where will the last point actually be?
         self.rotation_stop = (self.rotation_start 

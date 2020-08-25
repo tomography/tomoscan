@@ -96,6 +96,12 @@ record(stringout, "$(P)$(R)BeamReadyValue")
    field(VAL,  "$(READY_VALUE)")
 }
 
+record(bo, "$(P)$(R)Testing")
+{
+   field(ZNAM, "No")
+   field(ONAM, "Yes")
+}
+
 ####################
 # Optics information
 ####################

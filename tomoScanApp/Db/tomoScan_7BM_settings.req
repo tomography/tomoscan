@@ -3,11 +3,6 @@
 
 # This is the file for the tomoscan_7bm derived class.
 
-############
-# PSO Prefix
-############
-$(P)$(R)PSOPVPrefix
-
 ###############
 #PSO Parameters
 ###############
@@ -31,6 +26,7 @@ $(P)$(R)Filters
 #########################
 $(P)$(R)BeamReadyPVName
 $(P)$(R)BeamReadyValue
+$(P)$(R)Testing
 
 ####################
 # Optics information
