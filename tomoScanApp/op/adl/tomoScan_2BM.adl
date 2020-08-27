@@ -8,7 +8,7 @@ display {
 		x=1922
 		y=22
 		width=565
-		height=1310
+		height=1330
 	}
 	clr=14
 	bclr=4
@@ -1347,7 +1347,7 @@ rectangle {
 		x=5
 		y=1075
 		width=555
-		height=230
+		height=250
 	}
 	"basic attribute" {
 		clr=14
@@ -1395,259 +1395,6 @@ text {
 	}
 	textix="Sample Information"
 	align="horiz. centered"
-}
-composite {
-	object {
-		x=50
-		y=1105
-		width=505
-		height=195
-	}
-	"composite name"=""
-	children {
-		composite {
-			object {
-				x=165
-				y=1105
-				width=390
-				height=195
-			}
-			"composite name"=""
-			children {
-				"text entry" {
-					object {
-						x=165
-						y=1105
-						width=390
-						height=20
-					}
-					control {
-						chan="$(P)$(R)StreamBufferSize"
-						clr=14
-						bclr=51
-					}
-					limits {
-					}
-				}
-				menu {
-					object {
-						x=165
-						y=1130
-						width=80
-						height=20
-					}
-					control {
-						chan="$(P)$(R)StreamRetakeFlat"
-						clr=14
-						bclr=51
-					}
-				}
-				"text entry" {
-					object {
-						x=165
-						y=1155
-						width=390
-						height=20
-					}
-					control {
-						chan="$(P)$(R)StreamReconTime"
-						clr=14
-						bclr=51
-					}
-					limits {
-					}
-				}
-				"text entry" {
-					object {
-						x=165
-						y=1180
-						width=390
-						height=20
-					}
-					control {
-						chan="$(P)$(R)StreamCenter"
-						clr=14
-						bclr=51
-					}
-					limits {
-					}
-				}
-				menu {
-					object {
-						x=165
-						y=1205
-						width=80
-						height=20
-					}
-					control {
-						chan="$(P)$(R)StreamFilterType"
-						clr=14
-						bclr=51
-					}
-				}
-				"text entry" {
-					object {
-						x=165
-						y=1230
-						width=390
-						height=20
-					}
-					control {
-						chan="$(P)$(R)StreamOrthoX"
-						clr=14
-						bclr=51
-					}
-					limits {
-					}
-				}
-				"text entry" {
-					object {
-						x=165
-						y=1255
-						width=390
-						height=20
-					}
-					control {
-						chan="$(P)$(R)StreamOrthoY"
-						clr=14
-						bclr=51
-					}
-					limits {
-					}
-				}
-				"text entry" {
-					object {
-						x=165
-						y=1280
-						width=390
-						height=20
-					}
-					control {
-						chan="$(P)$(R)StreamOrthoZ"
-						clr=14
-						bclr=51
-					}
-					limits {
-					}
-				}
-			}
-		}
-		composite {
-			object {
-				x=50
-				y=1105
-				width=110
-				height=195
-			}
-			"composite name"=""
-			children {
-				text {
-					object {
-						x=50
-						y=1105
-						width=110
-						height=20
-					}
-					"basic attribute" {
-						clr=14
-					}
-					textix="Buffer size"
-					align="horiz. right"
-				}
-				text {
-					object {
-						x=50
-						y=1130
-						width=110
-						height=20
-					}
-					"basic attribute" {
-						clr=14
-					}
-					textix="Retake flat&dark"
-					align="horiz. right"
-				}
-				text {
-					object {
-						x=60
-						y=1155
-						width=100
-						height=20
-					}
-					"basic attribute" {
-						clr=14
-					}
-					textix="Recon time"
-					align="horiz. right"
-				}
-				text {
-					object {
-						x=60
-						y=1180
-						width=100
-						height=20
-					}
-					"basic attribute" {
-						clr=14
-					}
-					textix="Center"
-					align="horiz. right"
-				}
-				text {
-					object {
-						x=60
-						y=1205
-						width=100
-						height=20
-					}
-					"basic attribute" {
-						clr=14
-					}
-					textix="Filter type"
-					align="horiz. right"
-				}
-				text {
-					object {
-						x=60
-						y=1230
-						width=100
-						height=20
-					}
-					"basic attribute" {
-						clr=14
-					}
-					textix="Ortho X"
-					align="horiz. right"
-				}
-				text {
-					object {
-						x=60
-						y=1255
-						width=100
-						height=20
-					}
-					"basic attribute" {
-						clr=14
-					}
-					textix="Orhto Y"
-					align="horiz. right"
-				}
-				text {
-					object {
-						x=60
-						y=1280
-						width=100
-						height=20
-					}
-					"basic attribute" {
-						clr=14
-					}
-					textix="Ortho Z"
-					align="horiz. right"
-				}
-			}
-		}
-	}
 }
 composite {
 	object {
@@ -1846,6 +1593,285 @@ composite {
 			}
 			textix="Energy"
 			align="horiz. centered"
+		}
+	}
+}
+composite {
+	object {
+		x=50
+		y=1105
+		width=505
+		height=220
+	}
+	"composite name"=""
+	children {
+		composite {
+			object {
+				x=165
+				y=1105
+				width=390
+				height=220
+			}
+			"composite name"=""
+			children {
+				menu {
+					object {
+						x=165
+						y=1105
+						width=80
+						height=20
+					}
+					control {
+						chan="$(P)$(R)StreamStatus"
+						clr=14
+						bclr=51
+					}
+				}
+				"text entry" {
+					object {
+						x=165
+						y=1130
+						width=390
+						height=20
+					}
+					control {
+						chan="$(P)$(R)StreamBufferSize"
+						clr=14
+						bclr=51
+					}
+					limits {
+					}
+				}
+				menu {
+					object {
+						x=165
+						y=1155
+						width=80
+						height=20
+					}
+					control {
+						chan="$(P)$(R)StreamRetakeFlat"
+						clr=14
+						bclr=51
+					}
+				}
+				"text entry" {
+					object {
+						x=165
+						y=1180
+						width=390
+						height=20
+					}
+					control {
+						chan="$(P)$(R)StreamReconTime"
+						clr=14
+						bclr=51
+					}
+					limits {
+					}
+				}
+				"text entry" {
+					object {
+						x=165
+						y=1205
+						width=390
+						height=20
+					}
+					control {
+						chan="$(P)$(R)StreamCenter"
+						clr=14
+						bclr=51
+					}
+					limits {
+					}
+				}
+				menu {
+					object {
+						x=165
+						y=1230
+						width=80
+						height=20
+					}
+					control {
+						chan="$(P)$(R)StreamFilterType"
+						clr=14
+						bclr=51
+					}
+				}
+				"text entry" {
+					object {
+						x=165
+						y=1255
+						width=390
+						height=20
+					}
+					control {
+						chan="$(P)$(R)StreamOrthoX"
+						clr=14
+						bclr=51
+					}
+					limits {
+					}
+				}
+				"text entry" {
+					object {
+						x=165
+						y=1280
+						width=390
+						height=20
+					}
+					control {
+						chan="$(P)$(R)StreamOrthoY"
+						clr=14
+						bclr=51
+					}
+					limits {
+					}
+				}
+				"text entry" {
+					object {
+						x=165
+						y=1305
+						width=390
+						height=20
+					}
+					control {
+						chan="$(P)$(R)StreamOrthoZ"
+						clr=14
+						bclr=51
+					}
+					limits {
+					}
+				}
+			}
+		}
+		composite {
+			object {
+				x=50
+				y=1105
+				width=110
+				height=220
+			}
+			"composite name"=""
+			children {
+				text {
+					object {
+						x=50
+						y=1105
+						width=110
+						height=20
+					}
+					"basic attribute" {
+						clr=14
+					}
+					textix="Status"
+					align="horiz. right"
+				}
+				text {
+					object {
+						x=50
+						y=1130
+						width=110
+						height=20
+					}
+					"basic attribute" {
+						clr=14
+					}
+					textix="Buffer size"
+					align="horiz. right"
+				}
+				text {
+					object {
+						x=50
+						y=1155
+						width=110
+						height=20
+					}
+					"basic attribute" {
+						clr=14
+					}
+					textix="Retake flat&dark"
+					align="horiz. right"
+				}
+				text {
+					object {
+						x=60
+						y=1180
+						width=100
+						height=20
+					}
+					"basic attribute" {
+						clr=14
+					}
+					textix="Recon time"
+					align="horiz. right"
+				}
+				text {
+					object {
+						x=60
+						y=1205
+						width=100
+						height=20
+					}
+					"basic attribute" {
+						clr=14
+					}
+					textix="Center"
+					align="horiz. right"
+				}
+				text {
+					object {
+						x=60
+						y=1230
+						width=100
+						height=20
+					}
+					"basic attribute" {
+						clr=14
+					}
+					textix="Filter type"
+					align="horiz. right"
+				}
+				text {
+					object {
+						x=60
+						y=1255
+						width=100
+						height=20
+					}
+					"basic attribute" {
+						clr=14
+					}
+					textix="Ortho X"
+					align="horiz. right"
+				}
+				text {
+					object {
+						x=60
+						y=1280
+						width=100
+						height=20
+					}
+					"basic attribute" {
+						clr=14
+					}
+					textix="Orhto Y"
+					align="horiz. right"
+				}
+				text {
+					object {
+						x=60
+						y=1305
+						width=100
+						height=20
+					}
+					"basic attribute" {
+						clr=14
+					}
+					textix="Ortho Z"
+					align="horiz. right"
+				}
+			}
 		}
 	}
 }
