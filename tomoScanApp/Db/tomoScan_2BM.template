@@ -230,7 +230,8 @@ record(longout, "$(P)$(R)StreamBufferSize")
 
 record(ao, "$(P)$(R)StreamCenter")
 {
-   field(PREC,  "3")
+   field(PREC, "3")
+   field(HOPR, "2448")
 }
 
 record(mbbo, "$(P)$(R)StreamFilterType")
@@ -248,19 +249,19 @@ record(mbbo, "$(P)$(R)StreamFilterType")
 record(longout, "$(P)$(R)StreamOrthoX")
 {
    field(LOPR, "0")
-   field(HOPR, "2048")
+   field(HOPR, "2448")
 }
 
 record(longout, "$(P)$(R)StreamOrthoY")
 {
    field(LOPR, "0")
-   field(HOPR, "2048")
+   field(HOPR, "2448")
 }
 
 record(longout, "$(P)$(R)StreamOrthoZ")
 {
    field(LOPR, "0")
-   field(HOPR, "2048")
+   field(HOPR, "2448")
 }
 
 record(bo, "$(P)$(R)StreamRetakeFlat")
