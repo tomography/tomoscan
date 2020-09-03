@@ -67,6 +67,13 @@ $(P)$(R)CloseFastShutterValue
 $(P)$(R)OpenFastShutterPVName
 $(P)$(R)OpenFastShutterValue
 
+####################################
+# Pva, Roi and Cb Plugin PV Prefixes
+####################################
+$(P)$(R)PvaPluginPVPrefix
+$(P)$(R)RoiPluginPVPrefix
+$(P)$(R)CbPluginPVPrefix
+
 ############################
 # Streaming analysis control
 ############################
