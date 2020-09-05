@@ -613,6 +613,27 @@ PSO Prefix
     - stringout
     - Contains the prefix for the PSO, e.g. 2bma:PSOFly2:
 
+Pva, Roi and Cb Plugin PV Prefixes
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. cssclass:: table-bordered table-striped table-hover
+.. list-table::
+  :header-rows: 1
+  :widths: 5 5 90
+
+  * - Record name
+    - Record type
+    - Description
+  * - $(P)$(R)PvaPluginPVPrefix
+    - stringout
+    - Contains the prefix for the Pva plugin, e.g. 2bmbSP1:Pva1:
+  * - $(P)$(R)RoiPluginPVPrefix
+    - stringout
+    - Contains the prefix for the ROI plugin, e.g. 2bmbSP1:ROI1:
+  * - $(P)$(R)CbPluginPVPrefix
+    - stringout
+    - Contains the prefix for the CB plugin, e.g. 2bmbSP1:CB1:
+
 Energy information
 ^^^^^^^^^^^^^^^^^^
 
