@@ -66,20 +66,17 @@ class TomoScanStream2BM(TomoScan):
         self.epics_pvs['ROIEnableCallbacks'].put('Enable')
         self.epics_pvs['CBEnableCallbacks'].put('Enable')
         self.epics_pvs['FPEnableCallbacks'].put('Enable')
-        
-        self.epics_pvs['CBPreCount'].put(100)# 100 should be a parameter in the tomoscan medm
-        self.epics_pvs['CBPostCount'].put(100)# 100 should be a parameter in the tomoscan medm
-
+                
         self.epics_pvs['ROIScale'].put(4) # should be binx*biny   
         self.epics_pvs['ROIBinX'].put(2) # 2 should be a parameter in the tomoscan medm   
         self.epics_pvs['ROIBinY'].put(2) # 2 should be a parameter in the tomoscan medm   
 
         self.capturing = 0 # flag for controling only one capturing
         
-        # Monitor retake flat fields button
-        self.epics_pvs['StreamRetakeFlat'].add_callback(self.pv_callback_stream)
         self.epics_pvs['FPCaptureRBV'].add_callback(self.pv_callback_stream)
-
+        self.epics_pvs['StreamRetakeFlat'].add_callback(self.pv_callback_stream)
+        self.epics_pvs['StreamPreCount'].add_callback(self.pv_callback_stream)
+        
         
 
     def open_frontend_shutter(self):
@@ -429,8 +426,8 @@ class TomoScanStream2BM(TomoScan):
 
 
         # start writing to the circular buffer
-        self.epics_pvs['CBCapture'].put('Capture')        
-
+        self.change_cbsize()
+        
         self.wait_camera_done(collection_time + 60.)
 
     def abort_scan(self):
@@ -457,10 +454,16 @@ class TomoScanStream2BM(TomoScan):
         if (pvname.find('StreamRetakeFlat') != -1) and (value == 1):
             thread = threading.Thread(target=self.retake_dark_flat, args=())
             thread.start() 
+        if (pvname.find('StreamPreCount') != -1):
+            thread = threading.Thread(target=self.change_cbsize, args=())
+            thread.start() 
           
     def capture_projections(self):
         """Monitor the capturing projections process: capture projections, save pre-buffer, 
-        dump angles, copy dark and flat fields.
+        dump angles, copy dark and flat fields. The result of this capturing process is 3 files, e.g.
+        scan_045.h5 (captured projections), cb_scan_045.h5 (pre-buffer with projections), 
+        df_scan_045.h5 (dark flat fields).
+
         """
         #1) set capturing flag to 1
         #2) disable CB1 plugin
@@ -487,27 +490,30 @@ class TomoScanStream2BM(TomoScan):
         self.wait_pv(self.epics_pvs['FPCaptureRBV'], 0)
         self.dump_theta(self.epics_pvs['FPFullFileName'].get(as_string=True))
         
-        print('save pre-buffer')
-        file_name = self.epics_pvs['FPFileName'].get(as_string=True)
-        file_template = self.epics_pvs['FPFileTemplate'].get(as_string=True)
-        autoincrement =  self.epics_pvs['FPAutoIncrement'].get(as_string=True)
-        basename = os.path.basename(self.epics_pvs['FPFullFileName'].get(as_string=True))
-        dirname = os.path.dirname(self.epics_pvs['FPFullFileName'].get(as_string=True))
-        
-        self.epics_pvs['FPFileName'].put('cb_'+ basename, wait=True)
-        self.epics_pvs['FPFileTemplate'].put('%s%s', wait=True)
-        self.epics_pvs['FPAutoIncrement'].put('No', wait=True)                                
-        self.epics_pvs['FPNDArrayPort'].put('CB1')                
+        if(self.epics_pvs['StreamPreCount'].get()>0):
+            print('save pre-buffer')
+            file_name = self.epics_pvs['FPFileName'].get(as_string=True)
+            file_template = self.epics_pvs['FPFileTemplate'].get(as_string=True)
+            autoincrement =  self.epics_pvs['FPAutoIncrement'].get(as_string=True)
+            basename = os.path.basename(self.epics_pvs['FPFullFileName'].get(as_string=True))
+            dirname = os.path.dirname(self.epics_pvs['FPFullFileName'].get(as_string=True))
+            
+            self.epics_pvs['FPFileName'].put('cb_'+ basename, wait=True)
+            self.epics_pvs['FPFileTemplate'].put('%s%s', wait=True)
+            self.epics_pvs['FPAutoIncrement'].put('No', wait=True)                                
+            self.epics_pvs['FPNDArrayPort'].put('CB1')                
 
-        self.epics_pvs['FPNumCapture'].put(100, wait=True)        # 100 should be in tomoscan gui
-        self.epics_pvs['FPCapture'].put('Capture')
-        self.epics_pvs['CBTrigger'].put('Trigger')      
-        self.wait_pv(self.epics_pvs['FPCaptureRBV'], 1)            
-        self.wait_pv(self.epics_pvs['CBTriggerRBV'], 1)                    
-        self.epics_pvs['CBEnableCallbacks'].put('Enable')     
-        self.wait_pv(self.epics_pvs['FPCaptureRBV'], 0)            
-        self.epics_pvs['CBCapture'].put('Capture')   
-        self.dump_theta(self.epics_pvs['FPFullFileName'].get(as_string=True))
+            self.epics_pvs['FPNumCapture'].put(self.epics_pvs['StreamPreCount'].get(), wait=True)
+            self.epics_pvs['FPCapture'].put('Capture')
+            self.epics_pvs['CBTrigger'].put('Trigger')      
+            self.wait_pv(self.epics_pvs['FPCaptureRBV'], 1)            
+            self.wait_pv(self.epics_pvs['CBTriggerRBV'], 1)                    
+            self.epics_pvs['CBEnableCallbacks'].put('Enable')     
+            self.wait_pv(self.epics_pvs['FPCaptureRBV'], 0)            
+            self.epics_pvs['CBCapture'].put('Capture')   
+            self.dump_theta(self.epics_pvs['FPFullFileName'].get(as_string=True))
+        
+        print('save dark flat fields')
         cmd = 'cp '+ dirname+'/df.h5 '+ dirname + '/df_'+ basename
         os.popen(cmd)
         
@@ -567,6 +573,23 @@ class TomoScanStream2BM(TomoScan):
         self.epics_pvs['FPAutoIncrement'].put(autoincrement, wait=True) 
         
         self.capture = 0
+
+    def change_cbsize(self):
+        """ Change pre-buffer size"""        
+        #1) set precount in CB to the new size
+        #2) set postcount in CB to the new size
+        #3) stop CB capturing
+        #4) start CB capturing
+        
+        print('change pre-buffer size')
+
+        newsize = self.epics_pvs['StreamPreCount'].get()
+        self.epics_pvs['CBPreCount'].put(newsize, wait=True)
+        self.epics_pvs['CBPostCount'].put(newsize, wait=True)
+        self.epics_pvs['CBCapture'].put('Done')
+        self.wait_pv(self.epics_pvs['FPCaptureRBV'], 0)                    
+        self.epics_pvs['CBCapture'].put('Capture')
+
 
     def dump_theta(self, file_name):
         """Add theta to the hdf5 file by using unique ids stored in the same hdf5 file
