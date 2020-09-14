@@ -93,12 +93,12 @@ class TomoScanStream2BM(TomoScan):
             pv = self.epics_pvs['OpenShutter']
             value = self.epics_pvs['OpenShutterValue'].get(as_string=True)
             status = self.epics_pvs['ShutterStatus'].get(as_string=True)
-            print('shutter status: %s', status)
-            print('open shutter: %s, value: %s', pv, value)
+            log.info('shutter status: %s', status)
+            log.info('open shutter: %s, value: %s', pv, value)
             self.epics_pvs['OpenShutter'].put(value, wait=True)
             self.wait_pv(self.epics_pvs['ShutterStatus'], 1)
             status = self.epics_pvs['ShutterStatus'].get(as_string=True)
-            print('shutter status: %s', status)
+            log.info('shutter status: %s', status)
 
     def open_shutter(self):
         """Opens the shutters to collect flat fields or projections.
@@ -112,7 +112,7 @@ class TomoScanStream2BM(TomoScan):
         if not self.epics_pvs['OpenFastShutter'] is None:
             pv = self.epics_pvs['OpenFastShutter']
             value = self.epics_pvs['OpenFastShutterValue'].get(as_string=True)
-            print('open fast shutter: %s, value: %s', pv, value)
+            log.info('open fast shutter: %s, value: %s', pv, value)
             self.epics_pvs['OpenFastShutter'].put(value, wait=True)
 
     def close_frontend_shutter(self):
@@ -128,12 +128,12 @@ class TomoScanStream2BM(TomoScan):
             pv = self.epics_pvs['CloseShutter']
             value = self.epics_pvs['CloseShutterValue'].get(as_string=True)
             status = self.epics_pvs['ShutterStatus'].get(as_string=True)
-            print('shutter status: %s', status)
-            print('close shutter: %s, value: %s', pv, value)
+            log.info('shutter status: %s', status)
+            log.info('close shutter: %s, value: %s', pv, value)
             self.epics_pvs['CloseShutter'].put(value, wait=True)
             self.wait_pv(self.epics_pvs['ShutterStatus'], 0)
             status = self.epics_pvs['ShutterStatus'].get(as_string=True)
-            print('shutter status: %s', status)
+            log.info('shutter status: %s', status)
 
     def close_shutter(self):
         """Closes the shutters to collect dark fields.
@@ -146,7 +146,7 @@ class TomoScanStream2BM(TomoScan):
         if not self.epics_pvs['CloseFastShutter'] is None:
             pv = self.epics_pvs['CloseFastShutter']
             value = self.epics_pvs['CloseFastShutterValue'].get(as_string=True)
-            print('close fast shutter: %s, value: %s', pv, value)
+            log.info('close fast shutter: %s, value: %s', pv, value)
             self.epics_pvs['CloseFastShutter'].put(value, wait=True)
 
     def set_trigger_mode(self, trigger_mode, num_images):
@@ -161,7 +161,7 @@ class TomoScanStream2BM(TomoScan):
             Number of images to collect.  Ignored if trigger_mode="FreeRun".
             This is used to set the ``NumImages`` PV of the camera.
         """
-        print('set trigger mode: %s', trigger_mode)
+        log.info('set trigger mode: %s', trigger_mode)
         if trigger_mode == 'FreeRun':
             self.epics_pvs['CamImageMode'].put('Continuous', wait=True)
             self.epics_pvs['CamTriggerMode'].put('Off', wait=True)
@@ -197,7 +197,7 @@ class TomoScanStream2BM(TomoScan):
         """
         # This is called when collecting dark fields or flat fields
 
-        print('collect static frames: %d', num_frames)
+        log.info('collect static frames: %d', num_frames)
         self.set_trigger_mode('Internal', num_frames)
         self.epics_pvs['CamAcquire'].put('Acquire')
         self.wait_pv(self.epics_pvs['CamAcquire'], 1)
@@ -224,7 +224,7 @@ class TomoScanStream2BM(TomoScan):
 
         - Turns on streaming for dark/flat capture.
         """
-        print('begin scan')
+        log.info('begin scan')
         # Call the base class method
         super().begin_scan()
         # Opens the front-end shutter
@@ -308,8 +308,8 @@ class TomoScanStream2BM(TomoScan):
 
         - Closes shutter.
         """
-        print('tomoscan_stream_2bm: end scan')
-        print('end scan')
+        log.info('tomoscan_stream_2bm: end scan')
+        log.info('end scan')
         # This is used by the streaming reconstruction to stop the analysis
         self.epics_pvs['StreamStatus'].put('Off')
 
@@ -339,7 +339,7 @@ class TomoScanStream2BM(TomoScan):
         by the ``NumDarkFields`` PV.
         """
 
-        print('collect dark fields')
+        log.info('collect dark fields')
         super().collect_dark_fields()
         self.collect_static_frames(self.num_dark_fields)
 
@@ -348,7 +348,7 @@ class TomoScanStream2BM(TomoScan):
         Calls ``collect_static_frames()`` with the number of images specified
         by the ``NumFlatFields`` PV.
         """
-        print('collect flat fields')
+        log.info('collect flat fields')
         super().collect_flat_fields()
         self.collect_static_frames(self.num_flat_fields)
 
@@ -398,7 +398,7 @@ class TomoScanStream2BM(TomoScan):
         """
         
 
-        print('collect projections')
+        log.info('collect projections')
         super().collect_projections()
         # # restore file name 
         # self.epics_pvs['FPFileName'].put(self.file_name, wait=True)                        
@@ -406,7 +406,7 @@ class TomoScanStream2BM(TomoScan):
         # self.epics_pvs['FPAutoIncrement'].put(self.autoincrement, wait=True)                        
         
         
-        print('taxi before starting capture')
+        log.info('taxi before starting capture')
         # Taxi before starting capture
         self.epics_pvs['PSOtaxi'].put(1, wait=True)
         self.wait_pv(self.epics_pvs['PSOtaxi'], 0)
@@ -415,7 +415,7 @@ class TomoScanStream2BM(TomoScan):
         # Start the camera
         self.epics_pvs['CamAcquire'].put('Acquire')
         self.wait_pv(self.epics_pvs['CamAcquire'], 1)
-        print('start fly scan')
+        log.info('start fly scan')
         # Start fly scan
         self.epics_pvs['PSOfly'].put(1) #, wait=True)
         # wait for acquire to finish
@@ -435,7 +435,7 @@ class TomoScanStream2BM(TomoScan):
         Calls abort() and sets the StreamStatus to 'Off'
         """
 
-        print('abort')
+        log.info('abort')
         # Stop the rotary stage
         self.epics_pvs['RotationStop'].put(1)
         self.wait_pv(self.epics_pvs['RotationDmov'], 0)
@@ -483,7 +483,7 @@ class TomoScanStream2BM(TomoScan):
         #16) switch input port for hdf plugin to SP1        
         #17) set capturing flag to 0
 
-        print('capture projections')
+        log.info('capture projections')
         self.capturing = 1
         
         self.epics_pvs['CBEnableCallbacks'].put('Disable')        
@@ -491,7 +491,7 @@ class TomoScanStream2BM(TomoScan):
         self.dump_theta(self.epics_pvs['FPFullFileName'].get(as_string=True))
         
         if(self.epics_pvs['StreamPreCount'].get()>0):
-            print('save pre-buffer')
+            log.info('save pre-buffer')
             file_name = self.epics_pvs['FPFileName'].get(as_string=True)
             file_template = self.epics_pvs['FPFileTemplate'].get(as_string=True)
             autoincrement =  self.epics_pvs['FPAutoIncrement'].get(as_string=True)
@@ -513,7 +513,7 @@ class TomoScanStream2BM(TomoScan):
             self.epics_pvs['CBCapture'].put('Capture')   
             self.dump_theta(self.epics_pvs['FPFullFileName'].get(as_string=True))
         
-        print('save dark flat fields')
+        log.info('save dark flat fields')
         cmd = 'cp '+ dirname+'/df.h5 '+ dirname + '/df_'+ basename
         os.popen(cmd)
         
@@ -537,7 +537,7 @@ class TomoScanStream2BM(TomoScan):
         #9) set the retake flat button to Off
         #10) set stream status to On
         #11) set capturing flag to 0
-        print('retake dark and flat')
+        log.info('retake dark and flat')
         self.capture = 1
 
         self.epics_pvs['StreamStatus'].put('Off')        
@@ -581,7 +581,7 @@ class TomoScanStream2BM(TomoScan):
         #3) stop CB capturing
         #4) start CB capturing
         
-        print('change pre-buffer size')
+        log.info('change pre-buffer size')
 
         newsize = self.epics_pvs['StreamPreCount'].get()
         self.epics_pvs['CBPreCount'].put(newsize, wait=True)
@@ -598,7 +598,7 @@ class TomoScanStream2BM(TomoScan):
         #1) read unique projection ids from the hdf5 file
         #2) take angles y ids from the PSO
         #3) dump angles into hdf5 file
-        print('dump theta into the hdf5 file',file_name)
+        log.info('dump theta into the hdf5 file',file_name)
 
         hdf_file = util.open_hdf5(file_name,'r+')                
         unique_ids = hdf_file['/defaults/NDArrayUniqueId'][:]
@@ -606,5 +606,5 @@ class TomoScanStream2BM(TomoScan):
         dset = hdf_file.create_dataset('/exchange/theta', (len(unique_ids),), dtype='float32')
         dset[:] = theta[unique_ids]
         
-        print('theta to save: %s', theta[unique_ids])
-        print('total saved theta: %s', len(unique_ids))        
+        log.info('theta to save: %s', theta[unique_ids])
+        log.info('total saved theta: %s', len(unique_ids))        
