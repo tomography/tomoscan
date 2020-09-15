@@ -22,24 +22,33 @@ To build a minimal synApp::
 
     $ assemble_synApps.sh
 
-
 - This will create a synApps/ directory::
 
     $ cd synApps/support/
 
-- Edit  ~/epics/synApps/support/busy-R1-7-2/configure/RELEASE
-    - comment out the ASYN line.
+- Edit  busy-R1-7-2/configure/RELEASE to comment out this line::
+    
+    ASYN=$(SUPPORT)/asyn-4-32).
+
 - Clone the tomoscan module into synApps/support::
     
-    $ git clone https://github.com/tomography/tomoscan
+    $ git clone https://github.com/tomography/tomoscan.git
 
-- Edit ~/epics/synApps/support/configure/RELEASE
-    - add this line to the end:
-    - TOMOSCAN=$(SUPPORT)/tomoscan
+- Edit tomoscan/configure/RELEASE to comment out this line::
+    
+    ASYN=$(SUPPORT)/asyn-4-38
 
-- Edit ~/epics/synApps/support/Makefile
-    - add this line to the end of the MODULE_LIST
-    - MODULE_LIST += TOMOSCAN
+- Edit tomoscan/tomoScanApp/src/Makefile to comment out this line::
+    
+    tomoScanApp_LIBS += asyn
+
+- Edit configure/RELEASE add this line to the end::
+    
+    TOMOSCAN=$(SUPPORT)/tomoscan
+
+- Edit Makefile add this line to the end of the MODULE_LIST::
+    
+    MODULE_LIST += TOMOSCAN
 
 - Run the following commands::
 
