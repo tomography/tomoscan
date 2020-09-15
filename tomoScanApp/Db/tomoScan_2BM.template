@@ -275,6 +275,12 @@ record(ao, "$(P)$(R)StreamReconTime")
    field(PREC, "5")
 }
 
+record(longout, "$(P)$(R)StreamPreCount")
+{
+   field(LOPR, "0")
+   field(HOPR, "4000")
+}
+
 ################
 # Shutter status
 ################
