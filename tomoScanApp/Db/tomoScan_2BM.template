@@ -124,9 +124,12 @@ record(stringout, "$(P)$(R)UserName")
    field(VAL,  "Unknown")
 }
 
-record(stringout, "$(P)$(R)UserInstitution")
+record(waveform, "$(P)$(R)UserInstitution") 
 {
-   field(VAL,  "Unknown")
+    field(SCAN, "Passive")
+    field(DTYP, "Soft Channel")
+    field(NELM, "256")
+    field(FTVL, "CHAR")
 }
 
 record(stringout, "$(P)$(R)UserBadge")
@@ -144,9 +147,12 @@ record(stringout, "$(P)$(R)ProposalNumber")
    field(VAL,  "Unknown")
 }
 
-record(stringout, "$(P)$(R)ProposalTitle")
+record(waveform, "$(P)$(R)ProposalTitle") 
 {
-   field(VAL,  "Unknown")
+    field(SCAN, "Passive")
+    field(DTYP, "Soft Channel")
+    field(NELM, "256")
+    field(FTVL, "CHAR")
 }
 
 record(stringout, "$(P)$(R)ESAFNumber")
@@ -224,7 +230,8 @@ record(longout, "$(P)$(R)StreamBufferSize")
 
 record(ao, "$(P)$(R)StreamCenter")
 {
-   field(PREC,  "3")
+   field(PREC, "3")
+   field(HOPR, "2448")
 }
 
 record(mbbo, "$(P)$(R)StreamFilterType")
@@ -242,19 +249,19 @@ record(mbbo, "$(P)$(R)StreamFilterType")
 record(longout, "$(P)$(R)StreamOrthoX")
 {
    field(LOPR, "0")
-   field(HOPR, "2048")
+   field(HOPR, "2448")
 }
 
 record(longout, "$(P)$(R)StreamOrthoY")
 {
    field(LOPR, "0")
-   field(HOPR, "2048")
+   field(HOPR, "2448")
 }
 
 record(longout, "$(P)$(R)StreamOrthoZ")
 {
    field(LOPR, "0")
-   field(HOPR, "2048")
+   field(HOPR, "2448")
 }
 
 record(bo, "$(P)$(R)StreamRetakeFlat")
@@ -268,6 +275,12 @@ record(ao, "$(P)$(R)StreamReconTime")
    field(PREC, "5")
 }
 
+record(longout, "$(P)$(R)StreamPreCount")
+{
+   field(LOPR, "0")
+   field(HOPR, "4000")
+}
+
 ################
 # Shutter status
 ################
@@ -275,4 +288,31 @@ record(ao, "$(P)$(R)StreamReconTime")
 record(stringout, "$(P)$(R)ShutterStatusPVName")
 {
    field(VAL,  "$(SHUTTER_STATUS)")
+}
+
+######################
+# Pva Plugin PV Prefix
+######################
+
+record(stringout, "$(P)$(R)PvaPluginPVPrefix")
+{
+   field(VAL,  "$(PVA_PLUGIN)")
+}
+
+######################
+# Roi Plugin PV Prefix
+######################
+
+record(stringout, "$(P)$(R)RoiPluginPVPrefix")
+{
+   field(VAL,  "$(ROI_PLUGIN)")
+}
+
+#####################
+# Cb Plugin PV Prefix
+#####################
+
+record(stringout, "$(P)$(R)CbPluginPVPrefix")
+{
+   field(VAL,  "$(CB_PLUGIN)")
 }

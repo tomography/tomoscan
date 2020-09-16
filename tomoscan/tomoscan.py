@@ -129,13 +129,14 @@ class TomoScan():
         # Set some initial PV values
         self.control_pvs['CamWaitForPlugins'].put('Yes')
         self.control_pvs['StartScan'].put(0)
-
+        
         prefix = self.pv_prefixes['FilePlugin']
+        self.control_pvs['FPNDArrayPort']     = PV(prefix + 'NDArrayPort')        
         self.control_pvs['FPFileWriteMode']   = PV(prefix + 'FileWriteMode')
         self.control_pvs['FPNumCapture']      = PV(prefix + 'NumCapture')
         self.control_pvs['FPNumCaptured']     = PV(prefix + 'NumCaptured_RBV')
         self.control_pvs['FPCapture']         = PV(prefix + 'Capture')
-        self.control_pvs['FPCapture_RBV']     = PV(prefix + 'Capture_RBV')
+        self.control_pvs['FPCaptureRBV']      = PV(prefix + 'Capture_RBV')
         self.control_pvs['FPFilePath']        = PV(prefix + 'FilePath')
         self.control_pvs['FPFilePathRBV']     = PV(prefix + 'FilePath_RBV')
         self.control_pvs['FPFilePathExists']  = PV(prefix + 'FilePathExists_RBV')
@@ -147,7 +148,8 @@ class TomoScan():
         self.control_pvs['FPFullFileName']    = PV(prefix + 'FullFileName_RBV')
         self.control_pvs['FPAutoSave']        = PV(prefix + 'AutoSave')
         self.control_pvs['FPEnableCallbacks'] = PV(prefix + 'EnableCallbacks')
-
+        
+         
         # Set some initial PV values
         file_path = self.config_pvs['FilePath'].get(as_string=True)
         self.control_pvs['FPFilePath'].put(file_path)
@@ -180,6 +182,29 @@ class TomoScan():
             self.control_pvs['PSOscanControl']     = PV(prefix + 'scanControl')
             self.control_pvs['PSOcalcProjections'] = PV(prefix + 'numTriggers')        
             self.control_pvs['ThetaArray']         = PV(prefix + 'motorPos.AVAL')
+
+        if 'PvaPlugin' in self.pv_prefixes:
+            prefix = self.pv_prefixes['PvaPlugin']
+            self.control_pvs['PVANDArrayPort']     = PV(prefix + 'NDArrayPort')                
+            self.control_pvs['PVAEnableCallbacks'] = PV(prefix + 'EnableCallbacks')        
+
+        if 'RoiPlugin' in self.pv_prefixes:
+            prefix = self.pv_prefixes['RoiPlugin']
+            self.control_pvs['ROINDArrayPort']     = PV(prefix + 'NDArrayPort')        
+            self.control_pvs['ROIScale']           = PV(prefix + 'Scale')        
+            self.control_pvs['ROIBinX']            = PV(prefix + 'BinX')        
+            self.control_pvs['ROIBinY']            = PV(prefix + 'BinY')        
+            self.control_pvs['ROIEnableCallbacks'] = PV(prefix + 'EnableCallbacks')
+
+        if 'CbPlugin' in self.pv_prefixes:
+            prefix = self.pv_prefixes['CbPlugin']
+            self.control_pvs['CBNDArrayPort']     = PV(prefix + 'NDArrayPort')        
+            self.control_pvs['CBPreCount']        = PV(prefix + 'PreCount')
+            self.control_pvs['CBPostCount']       = PV(prefix + 'PostCount')
+            self.control_pvs['CBCapture']         = PV(prefix + 'Capture')
+            self.control_pvs['CBTrigger']         = PV(prefix + 'Trigger')
+            self.control_pvs['CBTriggerRBV']      = PV(prefix + 'Trigger_RBV')
+            self.control_pvs['CBEnableCallbacks'] = PV(prefix + 'EnableCallbacks')
 
         self.epics_pvs = {**self.config_pvs, **self.control_pvs}
         # Wait 1 second for all PVs to connect
