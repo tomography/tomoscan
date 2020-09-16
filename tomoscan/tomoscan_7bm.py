@@ -459,8 +459,7 @@ class TomoScan7BM(TomoScan):
 
         #Compute the actual delta to keep each interval an integer number of encoder counts
         encoder_multiply = float(self.epics_pvs['PSOPulsesPerRotation'].get()) / 360.
-        raw_delta_encoder_counts = (abs(self.rotation_stop - self.rotation_start) 
-                                    * encoder_multiply / (self.num_angles - 1))
+        raw_delta_encoder_counts = self.rotation_step * encoder_multiply
         delta_encoder_counts = round(raw_delta_encoder_counts)
         if abs(raw_delta_encoder_counts - delta_encoder_counts) > 1e-4:
             log.warning('  *** *** *** Requested scan would have used a non-integer number of encoder pulses.')
