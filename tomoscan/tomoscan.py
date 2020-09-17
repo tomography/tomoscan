@@ -352,7 +352,6 @@ class TomoScan():
         pv_file.close()
         lines = lines.splitlines()
         for line in lines:
-            print(line)
             is_config_pv = True
             if line.find('#controlPV') != -1:
                 line = line.replace('#controlPV', '')
@@ -372,7 +371,6 @@ class TomoScan():
             dictentry = line
             for key in macros:
                 dictentry = dictentry.replace(key, '')
-            print(pvname)
             epics_pv = PV(pvname)
             if is_config_pv:
                 self.config_pvs[dictentry] = epics_pv
