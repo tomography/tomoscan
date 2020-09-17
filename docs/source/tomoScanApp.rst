@@ -886,3 +886,254 @@ This screen contains the PVs for the TomoScan_2BM derived class.  If the BeamRea
 .. image:: img/tomoScan_2BM.png
     :width: 75%
     :align: center
+
+Beamline 7-BM
+-------------
+
+These are the files that are specific to the TomoScan7BM derived class used at APS beamline 7-BM.
+
+tomoScan_7BM.template
+~~~~~~~~~~~~~~~~~~~~~
+
+This is database file for the TomoScan7BM derived class
+:doc:`tomoScan_7BM.template`.
+
+The following tables list all of the records in the tomoScan_7BM.template file.
+This file is used for records needed by the tomoscan_7bm derived class, and also
+for metadata PVs that should be saved in the tomoscan configuration file and files 
+written by the areaDetector file plugins.
+
+PSO Parameters
+^^^^^^^^^^^^^^
+
+.. cssclass:: table-bordered table-striped table-hover
+.. list-table::
+  :header-rows: 1
+  :widths: 5 5 90
+
+  * - Record name
+    - Record type
+    - Description
+  * - $(P)$(R)startTaxi
+    - ao
+    - Start position with taxi
+  * - $(P)$(R)endTaxi
+    - ao
+    - End position with taxi
+  * - $(P)$(R)EncoderPulsesPerStep
+    - longout
+    - Encoder pulses per projection
+  * - $(P)$(R)PSOAsynPVName
+    - stringout
+    - PSO asyn PV name
+  * - $(P)$(R)PSOAxisName
+    - stringout
+    - PSO axis name
+  * - $(P)$(R)PSOEncoderInput
+    - longout
+    - Encoder input
+  * - (P)$(R)PSOPulsesPerRotation
+    - ao
+    - Number of encoder counts per revolution
+
+Energy information
+^^^^^^^^^^^^^^^^^^
+
+.. cssclass:: table-bordered table-striped table-hover
+.. list-table::
+  :header-rows: 1
+  :widths: 5 5 90
+
+  * - Record name
+    - Record type
+    - Description
+  * - $(P)$(R)Energy
+    - mbbo
+    - Contains the energy of the beamline.
+  * - $(P)$(R)EnergyMode
+    - mbbo
+    - Contains the energy mode of the beamline, e.g. 'Mono', 'Pink', 'White'.
+  * - $(P)$(R)Filters
+    - stringout
+    - Contains the material and thickness of the filters manually set in the beam path, e.g. Al 1mm; Glass 5mm.
+
+Beam status information
+^^^^^^^^^^^^^^^^^^^^^^^
+
+.. cssclass:: table-bordered table-striped table-hover
+.. list-table::
+  :header-rows: 1
+  :widths: 5 5 90
+
+  * - Record name
+    - Record type
+    - Description
+  * - $(P)$(R)BeamReadyPVName
+    - stringout
+    - Contains the name of the PV that indicates if beam is ready, e.g. ACIS:ShutterPermit
+  * - $(P)$(R)BeamReadyValue
+    - stringout
+    - Contains the value of the beam ready PV when beam is ready.
+  * - $(P)$(R)Testing
+    - stringout
+    - Enable testing mode 'Yes'.
+
+Optics information
+^^^^^^^^^^^^^^^^^^
+
+.. cssclass:: table-bordered table-striped table-hover
+.. list-table::
+  :header-rows: 1
+  :widths: 5 5 90
+
+  * - Record name
+    - Record type
+    - Description
+  * - $(P)$(R)ScintillatorType
+    - stringout
+    - Contains the type of scintillator being used.
+  * - $(P)$(R)ScintillatorThickness
+    - ao
+    - Contains the thickness of the scintillator in microns.
+  * - $(P)$(R)ImagePixelSize
+    - ao
+    - Contains the pixel size on the sample in microns (i.e. includes objective magnification)
+  * - $(P)$(R)DetectorPixelSize
+    - ao
+    - Contains the pixel size of the detector.
+  * - $(P)$(R)CameraObjective
+    - stringout
+    - Description of the camera objective
+  * - $(P)$(R)CameraTubeLength
+    - stringout
+    - Description of the camera objective
+
+Sample information
+^^^^^^^^^^^^^^^^^^
+
+.. cssclass:: table-bordered table-striped table-hover
+.. list-table::
+  :header-rows: 1
+  :widths: 5 5 90
+
+  * - Record name
+    - Record type
+    - Description
+  * - $(P)$(R)SampleName
+    - stringout
+    - Name of the sample
+  * - $(P)$(R)SampleDescription1
+    - stringout
+    - Description of the sample, part 1
+  * - $(P)$(R)SampleDescription2
+    - stringout
+    - Description of the sample, part 2
+  * - $(P)$(R)SampleDescription3
+    - stringout
+    - Description of the sample, part 3
+
+User information
+^^^^^^^^^^^^^^^^
+
+.. cssclass:: table-bordered table-striped table-hover
+.. list-table::
+  :header-rows: 1
+  :widths: 5 5 90
+
+  * - Record name
+    - Record type
+    - Description
+  * - $(P)$(R)UserName
+    - stringout
+    - User name
+  * - $(P)$(R)UserInstitution
+    - stringout
+    - User institution
+  * - $(P)$(R)UserBadge
+    - stringout
+    - User badge number
+  * - $(P)$(R)UserEmail
+    - stringout
+    - User email address
+  * - $(P)$(R)ProposalNumber
+    - stringout
+    - Proposal number
+  * - $(P)$(R)ProposalTitle
+    - stringout
+    - Proposal title
+  * - $(P)$(R)ESAFNumber
+    - stringout
+    - Experiment Safety Approval Form number
+  * - $(P)$(R)UserInfoUpdate
+    - stringout
+    - Date and time of the last synchronization of the user information with the APS scheduling system
+
+Data management information
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. cssclass:: table-bordered table-striped table-hover
+.. list-table::
+  :header-rows: 1
+  :widths: 5 5 90
+
+  * - Record name
+    - Record type
+    - Description
+  * - $(P)$(R)DetectorTopDir
+    - stringout
+    - Top directory from where the raw data will be saved.
+  * - $(P)$(R)UserLastName
+    - stringout
+    - User last name, automatically updated from the APS scheduling system, e.g. decarlo
+  * - $(P)$(R)ExperimentYearMonth
+    - stringout
+    - Experiment year and month, automatically updated from the APS scheduling system, e.g. 2020-04
+  * - $(P)$(R)RemoteAnalysisDir
+    - stringout
+    - Remote analysis location where to transfer the raw data for analysis, e.g tomo@handyn:/local/data/
+
+Fast shutter control
+^^^^^^^^^^^^^^^^^^^^
+
+.. cssclass:: table-bordered table-striped table-hover
+.. list-table::
+  :header-rows: 1
+  :widths: 5 5 90
+
+  * - Record name
+    - Record type
+    - Description
+  * - $(P)$(R)CloseFastShutterPVName
+    - stringout
+    - Contains the name of the PV to close the fast shutter
+  * - $(P)$(R)CloseFastShutterValue
+    - stringout
+    - Contains the value to write to close the fast shutter
+  * - $(P)$(R)OpenFastShutterPVName
+    - stringout
+    - Contains the name of the PV to open the fast shutter
+  * - $(P)$(R)OpenFastShutterValue
+    - stringout
+    - Contains the value to write to open the fast shutter
+
+tomoScan_7BM_settings.req
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This is the autosave request file for tomoScan_7BM.template
+:doc:`tomoScan_7BM_settings.req`.
+
+It has the same usage and type of content as tomoScan_settings.req described above, except that it
+contains the PVs for the derived class TomoScan7BM.
+
+medm files
+~~~~~~~~~~
+
+tomoScan_7BM.adl
+^^^^^^^^^^^^^^^^
+
+The following is the MEDM screen :download:`tomoScan_7BM.adl <../../tomoScanApp/op/adl/tomoScan_7BM.adl>`.  
+This screen contains the PVs for the TomoScan_7BM derived class.  If the BeamReadyPV is changed then tomoscan must be restarted.
+
+.. image:: img/tomoScan_7BM.png
+    :width: 75%
+    :align: center
