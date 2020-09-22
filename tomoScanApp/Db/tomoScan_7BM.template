@@ -263,3 +263,11 @@ record(stringout, "$(P)$(R)OpenFastShutterValue")
    field(VAL,  "$(OPEN_FAST_VALUE)")
 }
 
+#########################
+# Camera External Trigger
+#########################
+
+record(stringout, "$(P)$(R)ExternalTriggerSource")
+{
+    field(VAL, "Line2")
+}

@@ -67,14 +67,12 @@ class TomoScan7BM(TomoScan):
 
         - Opens the 2-BM-A fast shutter.
         """
-
-        log.info(self.epics_pvs['Testing'].get())
         if self.epics_pvs['Testing'].get():
             log.warning('In testing mode, so not opening shutters.')
             return
         # Call the base class method
         super().open_shutter()
-        # Open 2-BM-A fast shutter
+        # Open 7-BM-B fast shutter
         if not self.epics_pvs['OpenFastShutter'] is None:
             pv = self.epics_pvs['OpenFastShutter']
             value = self.epics_pvs['OpenFastShutterValue'].get(as_string=True)
@@ -93,13 +91,12 @@ class TomoScan7BM(TomoScan):
         - Closes the 7-BM-B fast shutter.
 
        """
-        log.info(self.epics_pvs['Testing'].get())
         if self.epics_pvs['Testing'].get():
-            log.warning('In testing mode, so not opening shutters.')
+            log.warning('In testing mode, so not closing shutters.')
             return
-         # Call the base class method
+        # Call the base class method
         super().close_shutter()
-        # Close 2-BM-A fast shutter
+        # Close 7-BM-B fast shutter
         if not self.epics_pvs['CloseFastShutter'] is None:
             pv = self.epics_pvs['CloseFastShutter']
             value = self.epics_pvs['CloseFastShutterValue'].get(as_string=True)
@@ -120,6 +117,8 @@ class TomoScan7BM(TomoScan):
             This is used to set the ``NumImages`` PV of the camera.
         """
         log.info('set trigger mode: %s', trigger_mode)
+        # Stop acquisition if we are acquiring
+        self.epics_pvs['CamAcquire'].put('Done', wait=True)
         if trigger_mode == 'FreeRun':
             self.epics_pvs['CamImageMode'].put('Continuous', wait=True)
             self.epics_pvs['CamTriggerMode'].put('Off', wait=True)
@@ -133,8 +132,9 @@ class TomoScan7BM(TomoScan):
         else: # set camera to external triggering
             # These are just in case the scan aborted with the camera in another state
             self.epics_pvs['CamTriggerMode'].put('Off', wait=True)
-            self.epics_pvs['CamTriggerSource'].put('Line2', wait=True)
-            self.epics_pvs['CamTriggerOverlap'].put('ReadOut', wait=True)
+            cam_trig_source = self.epics_pvs['ExternalTriggerSource'].get(as_string=True)
+            self.epics_pvs['CamTriggerSource'].put(cam_trig_source, wait=True)
+            self.epics_pvs['CamTriggerOverlap'].put(1, wait=True)
             self.epics_pvs['CamExposureMode'].put('Timed', wait=True)
 
             self.epics_pvs['CamImageMode'].put('Multiple')
@@ -223,10 +223,10 @@ class TomoScan7BM(TomoScan):
         - Calls the base class method.
         """
         log.info('end scan')
-
+        # Close the shutter
+        self.close_shutter()
         # Add theta in the hdf file
         self.add_theta()
-
         # Save the configuration
         # Strip the extension from the FullFileName and add .config
         full_file_name = self.epics_pvs['FPFullFileName'].get(as_string=True)
@@ -328,6 +328,7 @@ class TomoScan7BM(TomoScan):
         - Set the trigger mode on the camera
    
         - Move the stage to the end position
+
         - Computes and sets the speed of the rotation motor so that it reaches the next projection
           angle just after the current exposure and readout are complete.
 

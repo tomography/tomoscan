@@ -493,7 +493,27 @@ class TomoScan():
 
         if exposure_time is None:
             exposure_time = self.epics_pvs['ExposureTime'].value
-        self.epics_pvs['CamAcquireTime'].put(exposure_time)
+        self.epics_pvs['CamAcquireTime'].put(exposure_time, wait=True, timeout = 10.0)
+
+    def set_bright_exposure_time(self, exposure_time=None):
+        """Sets the camera exposure time for bright fields.
+
+        The exposure_time is written to the camera's ``AcquireTime`` PV.
+
+        Parameters
+        ----------
+        exposure_time : float, optional
+            The exposure time to use. If None then the value of the ``BrightExposureTime`` PV is used.
+        """
+
+        print(self.epics_pvs['DifferentBrightExposureTime'].get(as_string=True))
+        if self.epics_pvs['DifferentBrightExposureTime'].get(as_string=True) == 'Same':
+            self.set_exposure_time(exposure_time)
+            return
+        if exposure_time is None:
+            print(self.epics_pvs['BrightExposureTime'].value)
+            exposure_time = self.epics_pvs['BrightExposureTime'].value
+        self.epics_pvs['CamAcquireTime'].put(exposure_time, wait=True, timeout = 10.)
 
     def begin_scan(self):
         """Performs the operations needed at the very start of a scan.
@@ -657,9 +677,9 @@ class TomoScan():
             log.error('Camera timeout')
         except FileOverwriteError:
             log.error('File overwrite aborted')
-
-        # Finish scan
-        self.end_scan()
+        #Make sure we do cleanup tasks from the end of the scan
+        finally:
+            self.end_scan()
 
     def run_fly_scan(self):
         """Runs ``fly_scan()`` in a new thread."""
@@ -685,6 +705,7 @@ class TomoScan():
         the beamline-specific operations.
         """
         self.epics_pvs['ScanStatus'].put('Collecting dark fields')
+        self.set_exposure_time()
         self.close_shutter()
         self.epics_pvs['HDF5Location'].put(self.epics_pvs['HDF5DarkLocation'].value)
         self.epics_pvs['FrameType'].put('DarkField')
@@ -709,6 +730,7 @@ class TomoScan():
         the beamline-specific operations.
         """
         self.epics_pvs['ScanStatus'].put('Collecting flat fields')
+        self.set_bright_exposure_time()
         self.open_shutter()
         self.move_sample_out()
         self.epics_pvs['HDF5Location'].put(self.epics_pvs['HDF5FlatLocation'].value)
@@ -734,6 +756,7 @@ class TomoScan():
         the beamline-specific operations.
         """
         self.epics_pvs['ScanStatus'].put('Collecting projections')
+        self.set_exposure_time()
         self.open_shutter()
         self.move_sample_in()
         self.epics_pvs['HDF5Location'].put(self.epics_pvs['HDF5ProjectionLocation'].value)
@@ -771,8 +794,6 @@ class TomoScan():
             The frame time, which is the minimum time allowed between triggers for the value of the
             ``ExposureTime`` PV.
         """
-
-        self.set_exposure_time()
         # The readout time of the camera depends on the model, and things like the
         # PixelFormat, VideoMode, etc.
         # The measured times in ms with 100 microsecond exposure time and 1000 frames

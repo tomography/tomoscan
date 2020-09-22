@@ -73,3 +73,8 @@ $(P)$(R)CloseFastShutterPVName
 $(P)$(R)CloseFastShutterValue
 $(P)$(R)OpenFastShutterPVName
 $(P)$(R)OpenFastShutterValue
+
+#########################
+# Camera External Trigger
+#########################
+$(P)$(R)ExternalTriggerSource
