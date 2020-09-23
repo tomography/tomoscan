@@ -68,8 +68,8 @@ $(P)$(R)SampleOutY
 # Exposure time
 #################
 $(P)$(R)ExposureTime
-$(P)$(R)BrightExposureTime
-$(P)$(R)DifferentBrightExposureTime
+$(P)$(R)FlatExposureTime
+$(P)$(R)DifferentFlatExposure
 
 ############################
 # File path and name control

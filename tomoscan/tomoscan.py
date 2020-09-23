@@ -495,24 +495,24 @@ class TomoScan():
             exposure_time = self.epics_pvs['ExposureTime'].value
         self.epics_pvs['CamAcquireTime'].put(exposure_time, wait=True, timeout = 10.0)
 
-    def set_bright_exposure_time(self, exposure_time=None):
-        """Sets the camera exposure time for bright fields.
+    def set_flat_exposure_time(self, exposure_time=None):
+        """Sets the camera exposure time for flat fields.
 
         The exposure_time is written to the camera's ``AcquireTime`` PV.
 
         Parameters
         ----------
         exposure_time : float, optional
-            The exposure time to use. If None then the value of the ``BrightExposureTime`` PV is used.
+            The exposure time to use. If None then the value of the ``FlatExposureTime`` PV is used.
         """
 
-        print(self.epics_pvs['DifferentBrightExposureTime'].get(as_string=True))
-        if self.epics_pvs['DifferentBrightExposureTime'].get(as_string=True) == 'Same':
+        print(self.epics_pvs['DifferentFlatExposure'].get(as_string=True))
+        if self.epics_pvs['DifferentFlatExposure'].get(as_string=True) == 'Same':
             self.set_exposure_time(exposure_time)
             return
         if exposure_time is None:
-            print(self.epics_pvs['BrightExposureTime'].value)
-            exposure_time = self.epics_pvs['BrightExposureTime'].value
+            print(self.epics_pvs['FlatExposureTime'].value)
+            exposure_time = self.epics_pvs['FlatExposureTime'].value
         self.epics_pvs['CamAcquireTime'].put(exposure_time, wait=True, timeout = 10.)
 
     def begin_scan(self):
@@ -730,7 +730,7 @@ class TomoScan():
         the beamline-specific operations.
         """
         self.epics_pvs['ScanStatus'].put('Collecting flat fields')
-        self.set_bright_exposure_time()
+        self.set_flat_exposure_time()
         self.open_shutter()
         self.move_sample_out()
         self.epics_pvs['HDF5Location'].put(self.epics_pvs['HDF5FlatLocation'].value)
