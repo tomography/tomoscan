@@ -1,12 +1,12 @@
 
 file {
-	name="/home/epics/support/tomoscan/tomoScanApp/op/adl/tomoScan.adl"
+	name="/home/epics/scratch/tomoScan/tomoScanApp/op/adl/tomoScan.adl"
 	version=030109
 }
 display {
 	object {
-		x=252
-		y=72
+		x=242
+		y=64
 		width=700
 		height=825
 	}
@@ -143,7 +143,7 @@ composite {
 	display[0] {
 		label="Beamline-specific display"
 		name="$(BEAMLINE).adl"
-		args="P=$(P), R=$(R)"
+		args="P=$(P), R=$(R), BEAMLINE=$(BEAMLINE)"
 	}
 	clr=14
 	bclr=51
@@ -326,7 +326,7 @@ rectangle {
 }
 text {
 	object {
-		x=75
+		x=35
 		y=260
 		width=130
 		height=20
@@ -338,7 +338,7 @@ text {
 }
 "text entry" {
 	object {
-		x=215
+		x=170
 		y=260
 		width=100
 		height=20
@@ -353,7 +353,7 @@ text {
 }
 "text entry" {
 	object {
-		x=215
+		x=170
 		y=285
 		width=100
 		height=20
@@ -368,7 +368,7 @@ text {
 }
 text {
 	object {
-		x=65
+		x=25
 		y=285
 		width=140
 		height=20
@@ -380,7 +380,7 @@ text {
 }
 menu {
 	object {
-		x=215
+		x=170
 		y=310
 		width=100
 		height=20
@@ -393,7 +393,7 @@ menu {
 }
 text {
 	object {
-		x=55
+		x=15
 		y=310
 		width=150
 		height=20
@@ -403,41 +403,9 @@ text {
 	}
 	textix="Flat field axis"
 }
-"message button" {
-	object {
-		x=190
-		y=335
-		width=120
-		height=20
-	}
-	control {
-		chan="$(P)$(R)MoveSampleOut"
-		clr=14
-		bclr=51
-	}
-	label="Move Sample Out"
-	press_msg="1"
-	release_msg="0"
-}
-"message button" {
-	object {
-		x=40
-		y=335
-		width=120
-		height=20
-	}
-	control {
-		chan="$(P)$(R)MoveSampleIn"
-		clr=14
-		bclr=51
-	}
-	label="Move Sample In"
-	press_msg="1"
-	release_msg="0"
-}
 text {
 	object {
-		x=410
+		x=300
 		y=285
 		width=140
 		height=20
@@ -449,7 +417,7 @@ text {
 }
 "text entry" {
 	object {
-		x=555
+		x=445
 		y=285
 		width=100
 		height=20
@@ -464,7 +432,7 @@ text {
 }
 "text entry" {
 	object {
-		x=555
+		x=445
 		y=260
 		width=100
 		height=20
@@ -479,7 +447,7 @@ text {
 }
 text {
 	object {
-		x=420
+		x=310
 		y=260
 		width=130
 		height=20
@@ -491,9 +459,9 @@ text {
 }
 "text entry" {
 	object {
-		x=615
+		x=575
 		y=335
-		width=70
+		width=100
 		height=20
 	}
 	control {
@@ -506,15 +474,16 @@ text {
 }
 text {
 	object {
-		x=380
+		x=440
 		y=335
-		width=230
+		width=130
 		height=20
 	}
 	"basic attribute" {
 		clr=14
 	}
-	textix="# Images per flat field"
+	textix="# Flat fields"
+	align="horiz. right"
 }
 rectangle {
 	object {
@@ -666,40 +635,30 @@ text {
 	limits {
 	}
 }
-composite {
+text {
 	object {
-		x=360
+		x=380
 		y=310
-		width=295
+		width=190
 		height=20
 	}
-	"composite name"=""
-	children {
-		text {
-			object {
-				x=360
-				y=310
-				width=190
-				height=20
-			}
-			"basic attribute" {
-				clr=14
-			}
-			textix="Collect flat fields"
-		}
-		menu {
-			object {
-				x=555
-				y=310
-				width=100
-				height=20
-			}
-			control {
-				chan="$(P)$(R)FlatFieldMode"
-				clr=14
-				bclr=51
-			}
-		}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Collect flat fields"
+	align="horiz. right"
+}
+menu {
+	object {
+		x=575
+		y=310
+		width=100
+		height=20
+	}
+	control {
+		chan="$(P)$(R)FlatFieldMode"
+		clr=14
+		bclr=51
 	}
 }
 text {
@@ -1242,5 +1201,78 @@ menu {
 		chan="$(P)$(R)OverwriteWarning"
 		clr=14
 		bclr=51
+	}
+}
+"message button" {
+	object {
+		x=565
+		y=260
+		width=120
+		height=20
+	}
+	control {
+		chan="$(P)$(R)MoveSampleIn"
+		clr=14
+		bclr=51
+	}
+	label="Move Sample In"
+	press_msg="1"
+	release_msg="0"
+}
+"message button" {
+	object {
+		x=565
+		y=285
+		width=120
+		height=20
+	}
+	control {
+		chan="$(P)$(R)MoveSampleOut"
+		clr=14
+		bclr=51
+	}
+	label="Move Sample Out"
+	press_msg="1"
+	release_msg="0"
+}
+text {
+	object {
+		x=35
+		y=335
+		width=130
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Flat exposure"
+	align="horiz. right"
+}
+menu {
+	object {
+		x=170
+		y=335
+		width=100
+		height=20
+	}
+	control {
+		chan="$(P)$(R)DifferentFlatExposure"
+		clr=14
+		bclr=51
+	}
+}
+"text entry" {
+	object {
+		x=275
+		y=335
+		width=100
+		height=20
+	}
+	control {
+		chan="$(P)$(R)FlatExposureTime"
+		clr=14
+		bclr=51
+	}
+	limits {
 	}
 }

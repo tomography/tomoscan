@@ -1,0 +1,273 @@
+# Database for EPICS PVS for tomography data collection software at APS 7-BM
+# It contains the PVs that are required by the tomoscan_7bm derived class,
+# as well as additional PVs used for metadata about the scan that are stored
+# both in the configuration files written by tomoscan, and in the
+# files written by areaDetector file plugin.
+
+################
+# PSO parameters
+################
+
+record(ao, "$(P)$(R)startTaxi") 
+{
+    field(DESC, "start position with taxi")
+    field(EGU, "degrees")
+    field(PREC, "5")
+}
+
+record(ao, "$(P)$(R)endTaxi") 
+{
+    field(DESC, "end position with taxi")
+    field(EGU, "degrees")
+    field(PREC, "5")
+}
+
+record(longout, "$(P)$(R)EncoderPulsesPerStep") 
+{
+    field(DESC, "Encoder pulses per projection")
+    field(VAL, "6400")
+    field(DRVL, "0")
+    field(DRVH, "$(PSO_ENC_PER_ROTATION)")
+}
+
+record(stringout, "$(P)$(R)PSOAsynPVName")
+{
+    field(VAL,  "$(ASYN_RECORD)")
+}
+
+record(stringout, "$(P)$(R)PSOAxisName")
+{
+    field(VAL, "$(PSO_AXIS_NAME)")
+}
+
+record(ao, "$(P)$(R)PSOPulsesPerRotation") 
+{
+    field(DESC, "Number of encoder counts per revolution")
+    field(VAL, "$(PSO_ENC_PER_ROTATION)")
+    field(DRVL, "0")
+    field(DRVH, "1000000000")
+}
+
+record(longout, "$(P)$(R)PSOEncoderInput") 
+{
+    field(DESC, "Encoder input")
+    field(VAL, "$(PSO_ENC_INPUT)")
+    field(DRVL, "0")
+    field(DRVH, "4")
+}
+
+####################
+# Energy information
+####################
+
+record(ao, "$(P)$(R)Energy")
+{
+    field(SCAN, "Passive")
+    field(DTYP, "Soft Channel")
+    field(PREC, 2)
+}
+
+record(mbbo, "$(P)$(R)EnergyMode")
+{
+   field(ZRVL, "0")
+   field(ZRST, "Mono")
+   field(ONVL, "1")
+   field(ONST, "Pink")
+   field(TWVL, "2")
+   field(TWST, "White")
+}
+
+record(stringout, "$(P)$(R)Filters")
+{
+   field(VAL,  "Unknown")
+}
+
+#########################
+# Beam status information
+#########################
+
+record(stringout, "$(P)$(R)BeamReadyPVName")
+{
+   field(VAL,  "$(BEAM_READY)")
+}
+
+record(stringout, "$(P)$(R)BeamReadyValue")
+{
+   field(VAL,  "$(READY_VALUE)")
+}
+
+record(bo, "$(P)$(R)Testing")
+{
+   field(ZNAM, "No")
+   field(ONAM, "Yes")
+}
+
+####################
+# Optics information
+####################
+
+record(stringout, "$(P)$(R)ScintillatorType")
+{
+   field(VAL,  "Unknown")
+}
+
+record(ao, "$(P)$(R)ScintillatorThickness")
+{
+   field(PREC,  "0")
+}
+
+record(ao, "$(P)$(R)ImagePixelSize")
+{
+   field(PREC, "2")
+   field(EGU,  "microns")
+}
+
+record(ao, "$(P)$(R)DetectorPixelSize")
+{
+   field(PREC, "2")
+   field(EGU,  "microns")
+}
+
+record(stringout, "$(P)$(R)CameraObjective")
+{
+   field(VAL,  "Unknown")
+}
+
+record(ao, "$(P)$(R)CameraTubeLength")
+{
+   field(PREC, "0")
+   field(EGU,  "mm")
+}
+
+
+####################
+# Sample information
+####################
+
+record(stringout, "$(P)$(R)SampleName")
+{
+   field(VAL,  "Unknown")
+}
+
+record(stringout, "$(P)$(R)SampleDescription1")
+{
+   field(VAL,  "Unknown")
+}
+
+record(stringout, "$(P)$(R)SampleDescription2")
+{
+   field(VAL,  "Unknown")
+}
+
+record(stringout, "$(P)$(R)SampleDescription3")
+{
+   field(VAL,  "Unknown")
+}
+
+##################
+# User information
+##################
+
+record(stringout, "$(P)$(R)UserName")
+{
+   field(VAL,  "Unknown")
+}
+
+record(waveform, "$(P)$(R)UserInstitution")
+{
+   field(SCAN, "Passive")
+   field(DTYP, "Soft Channel")
+   field(NELM, "256")
+   field(FTVL, "CHAR")
+}
+
+record(stringout, "$(P)$(R)UserBadge")
+{
+   field(VAL,  "Unknown")
+}
+
+record(stringout, "$(P)$(R)UserEmail")
+{
+   field(VAL,  "Unknown")
+}
+
+record(stringout, "$(P)$(R)ProposalNumber")
+{
+   field(VAL,  "Unknown")
+}
+
+record(waveform, "$(P)$(R)ProposalTitle")
+{
+   field(SCAN, "Passive")
+   field(DTYP, "Soft Channel")
+   field(NELM, "256")
+   field(FTVL, "CHAR")
+}
+
+record(stringout, "$(P)$(R)ESAFNumber")
+{
+   field(VAL,  "Unknown")
+}
+
+record(stringout, "$(P)$(R)UserInfoUpdate")
+{
+   field(VAL,  "Unknown")
+}
+
+
+#############################
+# Data management information
+#############################
+
+record(stringout, "$(P)$(R)DetectorTopDir") 
+{
+   field(VAL,  "Unknown")
+}
+
+record(stringout, "$(P)$(R)UserLastName")
+{
+   field(VAL,  "Unknown")
+}
+
+record(stringout, "$(P)$(R)ExperimentYearMonth")
+{
+   field(VAL,  "Unknown")
+}
+
+record(stringout, "$(P)$(R)RemoteAnalysisDir") 
+{
+   field(VAL,  "Unknown")
+}
+
+######################
+# Fast shutter control
+######################
+
+record(stringout, "$(P)$(R)CloseFastShutterPVName")
+{
+   field(VAL,  "$(CLOSE_FAST_SHUTTER)")
+}
+
+record(stringout, "$(P)$(R)CloseFastShutterValue")
+{
+   field(VAL,  "$(CLOSE_FAST_VALUE)")
+}
+
+record(stringout, "$(P)$(R)OpenFastShutterPVName")
+{
+   field(VAL,  "$(OPEN_FAST_SHUTTER)")
+}
+
+record(stringout, "$(P)$(R)OpenFastShutterValue")
+{
+   field(VAL,  "$(OPEN_FAST_VALUE)")
+}
+
+#########################
+# Camera External Trigger
+#########################
+
+record(stringout, "$(P)$(R)ExternalTriggerSource")
+{
+    field(VAL, "Line2")
+}

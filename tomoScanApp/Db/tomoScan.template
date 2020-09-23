@@ -199,6 +199,17 @@ record(ao, "$(P)$(R)ExposureTime")
    field(PREC,  "3")
 }
 
+record(ao, "$(P)$(R)FlatExposureTime")
+{
+   field(PREC,  "3")
+}
+
+record(bo, "$(P)$(R)DifferentFlatExposure")
+{
+   field(ZNAM, "Same")
+   field(ONAM, "Different")
+}
+
 ############################
 # File path and name control
 ############################
