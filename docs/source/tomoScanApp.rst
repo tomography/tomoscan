@@ -672,6 +672,9 @@ Beam status information
   * - $(P)$(R)BeamReadyValue
     - stringout
     - Contains the value of the beam ready PV when beam is ready.
+  * - $(P)$(R)Testing
+    - stringout
+    - Enable testing mode 'Yes'.
 
 Optics information
 ^^^^^^^^^^^^^^^^^^
