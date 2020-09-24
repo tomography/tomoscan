@@ -1,7 +1,7 @@
 
 file {
-	name="/home/epics/scratch/tomoScan/tomoScanApp/op/adl/tomoScan.adl"
-	version=030109
+	name="/home/beams9/7BMB/epics/synApps/support/tomoscan/tomoScanApp/op/adl/tomoScan.adl"
+	version=030111
 }
 display {
 	object {
@@ -1217,7 +1217,6 @@ menu {
 	}
 	label="Move Sample In"
 	press_msg="1"
-	release_msg="0"
 }
 "message button" {
 	object {
@@ -1233,7 +1232,6 @@ menu {
 	}
 	label="Move Sample Out"
 	press_msg="1"
-	release_msg="0"
 }
 text {
 	object {
