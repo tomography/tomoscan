@@ -840,33 +840,12 @@ Streaming analysis information
   * - Record name
     - Record type
     - Description
-  * - $(P)$(R)StreamStatus
-    - bo
-    - Flag storing the  streaming status. Choices are 'Off' and 'On'. When 'On' the streaming reconstruction is enabled 
-  * - $(P)$(R)StreamBufferSize
-    - longout
-    - Stream buffer size
-  * - $(P)$(R)StreamCenter
-    - ao
-    - Rotation center for streaming reconstruction
-  * - $(P)$(R)StreamFilterType
-    - mbbo
-    - Filter type for streaming reconstruction, 'Parzen', 'Shepp-logan', 'Ramp', 'Butterworth'
-  * - $(P)$(R)StreamOrthoX
-    - longout
-    - Ortho slice in the X direction for streaming reconstruction
-  * - $(P)$(R)StreamOrthoY
-    - longout
-    - Ortho slice in the Y direction for streaming reconstruction
-  * - $(P)$(R)StreamOrthoZ
-    - longout
-    - Ortho slice in the Z direction for streaming reconstruction
   * - $(P)$(R)StreamRetakeFlat
     - bo
     - Stream retake flat. Choices are 'No' and 'Yes'. When 'Yes' a new set of flat field images will be collected and used for reconstructing the following projections
-  * - $(P)$(R)StreamReconTime
-    - ao
-    - Streaming reconstruction time
+  * - $(P)$(R)StreamPreCount
+    - longout
+    - Streaming pre-count are the number of projections pre-capture that are stored in a buffer. At the end of capturing these images are added to the data file.
 
 tomoScan_2BM_settings.req
 ~~~~~~~~~~~~~~~~~~~~~~~~~
