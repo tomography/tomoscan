@@ -75,9 +75,11 @@ $(P)$(R)PvaPluginPVPrefix
 $(P)$(R)RoiPluginPVPrefix
 $(P)$(R)CbPluginPVPrefix
 
-############################
-# Streaming analysis control
-############################
+#################
+# Stream control
+#################
+$(P)$(R)StreamCapture
+$(P)$(R)StreamNumCapture
 $(P)$(R)StreamRetakeFlat
 $(P)$(R)StreamPreCount
 
