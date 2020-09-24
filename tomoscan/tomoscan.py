@@ -403,7 +403,6 @@ class TomoScan():
         if axis in ('Y', 'Both'):
             position = self.epics_pvs['SampleInY'].value
             self.epics_pvs['SampleY'].put(position, wait=True)
-        self.epics_pvs['MoveSampleIn'].put(0)
 
         self.epics_pvs['MoveSampleIn'].put('Done')
 
@@ -425,7 +424,6 @@ class TomoScan():
         if axis in ('Y', 'Both'):
             position = self.epics_pvs['SampleOutY'].value
             self.epics_pvs['SampleY'].put(position, wait=True)
-        self.epics_pvs['MoveSampleOut'].put(0)
 
         self.epics_pvs['MoveSampleOut'].put('Done')
 
