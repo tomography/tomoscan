@@ -5,8 +5,8 @@ file {
 }
 display {
 	object {
-		x=6229
-		y=475
+		x=890
+		y=467
 		width=600
 		height=325
 	}
@@ -193,70 +193,6 @@ text {
 	textix="# Pre count"
 	align="horiz. right"
 }
-"text update" {
-	object {
-		x=220
-		y=195
-		width=340
-		height=20
-	}
-	monitor {
-		chan="$(P)$(R)FPCaptureRBV"
-		clr=54
-		bclr=4
-	}
-	clrmod="alarm"
-	format="string"
-	limits {
-	}
-}
-"text update" {
-	object {
-		x=220
-		y=170
-		width=340
-		height=20
-	}
-	monitor {
-		chan="$(P)$(R)FPNumCapturedRBV"
-		clr=54
-		bclr=4
-	}
-	limits {
-	}
-}
-"text update" {
-	object {
-		x=220
-		y=220
-		width=340
-		height=20
-	}
-	monitor {
-		chan="$(P)$(B)CBCurrentQtyRBV"
-		clr=54
-		bclr=4
-	}
-	limits {
-	}
-}
-"text update" {
-	object {
-		x=220
-		y=245
-		width=340
-		height=20
-	}
-	monitor {
-		chan="$(P)$(B)CBStatusMessage"
-		clr=54
-		bclr=4
-	}
-	clrmod="alarm"
-	format="string"
-	limits {
-	}
-}
 text {
 	object {
 		x=385
@@ -278,7 +214,7 @@ text {
 		height=22
 	}
 	control {
-		chan="$(P)$(R)FPNumCapture"
+		chan="$(P)$(R)StreamNumCapture"
 		clr=14
 		bclr=51
 	}
@@ -306,7 +242,7 @@ text {
 		height=20
 	}
 	control {
-		chan="$(P)$(R)FPCapture"
+		chan="$(P)$(R)StreamCapture"
 		clr=14
 		bclr=51
 	}
@@ -321,121 +257,10 @@ text {
 		height=20
 	}
 	control {
-		chan="$(P)$(R)FPCapture"
+		chan="$(P)$(R)StreamCapture"
 		clr=14
 		bclr=51
 	}
 	label="Stop"
 	press_msg="0"
-}
-"text update" {
-	object {
-		x=220
-		y=145
-		width=340
-		height=20
-	}
-	monitor {
-		chan="$(P)$(R)FPWriteMessage"
-		clr=20
-		bclr=2
-	}
-	format="string"
-	limits {
-	}
-}
-text {
-	object {
-		x=40
-		y=145
-		width=170
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="Write message"
-	align="horiz. right"
-}
-text {
-	object {
-		x=40
-		y=120
-		width=170
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="Write status"
-	align="horiz. right"
-}
-"text update" {
-	object {
-		x=220
-		y=120
-		width=340
-		height=20
-	}
-	monitor {
-		chan="$(P)$(R)FPWriteStatus"
-		clr=63
-		bclr=4
-	}
-	clrmod="alarm"
-	format="string"
-	limits {
-	}
-}
-text {
-	object {
-		x=40
-		y=170
-		width=170
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="HDF NumCaptured"
-	align="horiz. right"
-}
-text {
-	object {
-		x=40
-		y=195
-		width=170
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="HDF Capture"
-	align="horiz. right"
-}
-text {
-	object {
-		x=40
-		y=220
-		width=170
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="CB CurrentQty"
-	align="horiz. right"
-}
-text {
-	object {
-		x=40
-		y=245
-		width=170
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="CB StatusMessage"
-	align="horiz. right"
 }
