@@ -829,8 +829,8 @@ Fast shutter control
     - stringout
     - Contains the value to write to open the fast shutter
 
-Streaming analysis information
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Stream control
+^^^^^^^^^^^^^^
 
 .. cssclass:: table-bordered table-striped table-hover
 .. list-table::
@@ -845,7 +845,13 @@ Streaming analysis information
     - Stream retake flat. Choices are 'No' and 'Yes'. When 'Yes' a new set of flat field images will be collected and used for reconstructing the following projections
   * - $(P)$(R)StreamPreCount
     - longout
-    - Streaming pre-count are the number of projections pre-capture that are stored in a buffer. At the end of capturing these images are added to the data file.
+    - Streaming pre-count are the number of projections pre-capture that are stored in a buffer. At the end of capturing these images are added to the data file
+  * - $(P)$(R)StreamCapture
+    - busy 
+    - In streaming mode, set to "Capture" to start the projection saving
+  * - $(P)$(R)StreamNumCapture    
+    - longout
+    - In streaming mode, set the number of projections to save when capture is set
 
 tomoScan_2BM_settings.req
 ~~~~~~~~~~~~~~~~~~~~~~~~~
