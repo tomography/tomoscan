@@ -266,13 +266,13 @@ record(stringout, "$(P)$(R)HDF5Location")
 # Scan control via Channel Access
 #################################
 
-record(bo, "$(P)$(R)MoveSampleIn")
+record(busy, "$(P)$(R)MoveSampleIn")
 {
    field(ZNAM, "Done")
    field(ONAM, "Move")
 }
 
-record(bo, "$(P)$(R)MoveSampleOut")
+record(busy, "$(P)$(R)MoveSampleOut")
 {
    field(ZNAM, "Done")
    field(ONAM, "Move")
