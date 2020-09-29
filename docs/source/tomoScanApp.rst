@@ -672,6 +672,9 @@ Beam status information
   * - $(P)$(R)BeamReadyValue
     - stringout
     - Contains the value of the beam ready PV when beam is ready.
+  * - $(P)$(R)Testing
+    - stringout
+    - Enable testing mode 'Yes'.
 
 Optics information
 ^^^^^^^^^^^^^^^^^^
@@ -826,8 +829,8 @@ Fast shutter control
     - stringout
     - Contains the value to write to open the fast shutter
 
-Streaming analysis information
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Stream control
+^^^^^^^^^^^^^^
 
 .. cssclass:: table-bordered table-striped table-hover
 .. list-table::
@@ -837,33 +840,18 @@ Streaming analysis information
   * - Record name
     - Record type
     - Description
-  * - $(P)$(R)StreamStatus
-    - bo
-    - Flag storing the  streaming status. Choices are 'Off' and 'On'. When 'On' the streaming reconstruction is enabled 
-  * - $(P)$(R)StreamBufferSize
-    - longout
-    - Stream buffer size
-  * - $(P)$(R)StreamCenter
-    - ao
-    - Rotation center for streaming reconstruction
-  * - $(P)$(R)StreamFilterType
-    - mbbo
-    - Filter type for streaming reconstruction, 'Parzen', 'Shepp-logan', 'Ramp', 'Butterworth'
-  * - $(P)$(R)StreamOrthoX
-    - longout
-    - Ortho slice in the X direction for streaming reconstruction
-  * - $(P)$(R)StreamOrthoY
-    - longout
-    - Ortho slice in the Y direction for streaming reconstruction
-  * - $(P)$(R)StreamOrthoZ
-    - longout
-    - Ortho slice in the Z direction for streaming reconstruction
   * - $(P)$(R)StreamRetakeFlat
     - bo
     - Stream retake flat. Choices are 'No' and 'Yes'. When 'Yes' a new set of flat field images will be collected and used for reconstructing the following projections
-  * - $(P)$(R)StreamReconTime
-    - ao
-    - Streaming reconstruction time
+  * - $(P)$(R)StreamPreCount
+    - longout
+    - Streaming pre-count are the number of projections pre-capture that are stored in a buffer. At the end of capturing these images are added to the data file
+  * - $(P)$(R)StreamCapture
+    - busy 
+    - In streaming mode, set to "Capture" to start the projection saving
+  * - $(P)$(R)StreamNumCapture    
+    - longout
+    - In streaming mode, set the number of projections to save when capture is set
 
 tomoScan_2BM_settings.req
 ~~~~~~~~~~~~~~~~~~~~~~~~~
