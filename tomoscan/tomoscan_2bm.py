@@ -180,7 +180,7 @@ class TomoScan2BM(TomoScan):
 
         - Calls the base class method.
         
-        - Opens the front-end shutter
+        - Checks if we are in testing mode. If we are, do nothing else opens the front-end shutter
 
         - Sets the PSO controller.
 
@@ -192,7 +192,9 @@ class TomoScan2BM(TomoScan):
         # Call the base class method
         super().begin_scan()
         # Opens the front-end shutter
-        if not TESTING:
+        if self.epics_pvs['Testing'].get():
+            log.warning('In testing mode, so not opening shutters.')
+        else:
             self.open_frontend_shutter()
 
         # Confirm angle step is an integer number of encoder pulses

@@ -17,7 +17,6 @@ import threading
 import numpy as np
 
 EPSILON = .001
-TESTING = True
 
 class TomoScanStream2BM(TomoScan):
     """Derived class used for tomography scanning with EPICS at APS beamline 2-BM-A
@@ -214,7 +213,7 @@ class TomoScanStream2BM(TomoScan):
 
         - Calls the base class method.
 
-        - Opens the front-end shutter
+        - Checks if we are in testing mode. If we are, do nothing else opens the front-end shutter
 
         - Turns on StreamStatus.
         
@@ -228,7 +227,9 @@ class TomoScanStream2BM(TomoScan):
         # Call the base class method
         super().begin_scan()
         # Opens the front-end shutter
-        if not TESTING:
+        if self.epics_pvs['Testing'].get():
+            log.warning('In testing mode, so not opening shutters.')
+        else:
             self.open_frontend_shutter()
  
         # This marks the beginning of the streaming mode
@@ -553,7 +554,7 @@ class TomoScanStream2BM(TomoScan):
         self.epics_pvs['FPNumCapture'].put(self.num_flat_fields, wait=True)        
         self.epics_pvs['FPCapture'].put('Capture', wait=True)   
         self.wait_pv(self.epics_pvs['FPCaptureRBV'], 0)                                
-        #self.close_shutter()
+
         super().collect_dark_fields()        
         self.epics_pvs['FPNumCapture'].put(self.num_dark_fields, wait=True)        
         self.epics_pvs['FPCapture'].put('Capture', wait=True)   
