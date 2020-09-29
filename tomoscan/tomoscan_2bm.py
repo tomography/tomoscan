@@ -13,7 +13,6 @@ from tomoscan import TomoScan
 from tomoscan import log
 
 EPSILON = .001
-TESTING = True
 
 class TomoScan2BM(TomoScan):
     """Derived class used for tomography scanning with EPICS at APS beamline 2-BM-A
