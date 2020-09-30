@@ -245,10 +245,26 @@ record(bo, "$(P)$(R)StreamRetakeFlat")
    field(ONAM, "Yes")
 }
 
+record(bo, "$(P)$(R)StreamRetakeDark")
+{
+   field(ZNAM, "No")
+   field(ONAM, "Yes")
+}
+
 record(longout, "$(P)$(R)StreamPreCount")
 {
    field(LOPR, "0")
    field(HOPR, "4000")
+}
+
+record(mbbo, "$(P)$(R)StreamBinning")
+{
+   field(ZRVL, "0")
+   field(ZRST, "1x")
+   field(ONVL, "1")
+   field(ONST, "2x")
+   field(TWVL, "2")
+   field(TWST, "4x")
 }
 
 ################
