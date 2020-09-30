@@ -269,10 +269,7 @@ class TomoScan7BM(TomoScan):
         log.info('add theta')
         self.theta = np.linspace(self.rotation_start, self.rotation_stop, self.num_angles)
         full_file_name = self.epics_pvs['FPFullFileName'].get(as_string=True)
-        print(full_file_name)
         file_name_path = Path(full_file_name)
-        for i in file_name_path.parent.iterdir():
-            print(i)
         if os.path.exists(full_file_name):
             try:
                 f = h5py.File(full_file_name, "a")
