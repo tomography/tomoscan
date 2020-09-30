@@ -843,6 +843,9 @@ Stream control
   * - $(P)$(R)StreamRetakeFlat
     - bo
     - Stream retake flat. Choices are 'No' and 'Yes'. When 'Yes' a new set of flat field images will be collected and used for reconstructing the following projections
+  * - $(P)$(R)StreamRetakeDark
+    - bo
+    - Stream retake dark. Choices are 'No' and 'Yes'. When 'Yes' a new set of dark field images will be collected and used for reconstructing the following projections
   * - $(P)$(R)StreamPreCount
     - longout
     - Streaming pre-count are the number of projections pre-capture that are stored in a buffer. At the end of capturing these images are added to the data file
@@ -852,6 +855,9 @@ Stream control
   * - $(P)$(R)StreamNumCapture    
     - longout
     - In streaming mode, set the number of projections to save when capture is set
+  * - $(P)$(R)StreamBinning    
+    - mbbo
+    - In streaming mode, set the binnig scale for projections and streamed reconstruction. Captured data are always not binned and saved at full size
 
 tomoScan_2BM_settings.req
 ~~~~~~~~~~~~~~~~~~~~~~~~~
