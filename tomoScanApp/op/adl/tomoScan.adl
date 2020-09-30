@@ -1,7 +1,7 @@
 
 file {
-	name="/home/beams9/7BMB/epics/synApps/support/tomoscan/tomoScanApp/op/adl/tomoScan.adl"
-	version=030111
+	name="/home/epics/support/tomoscan/tomoScanApp/op/adl/tomoScan.adl"
+	version=030109
 }
 display {
 	object {
