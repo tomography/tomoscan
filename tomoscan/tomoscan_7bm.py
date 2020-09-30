@@ -63,15 +63,25 @@ class TomoScan7BM(TomoScan):
 
         - Checks if we are in testing mode.  If we are, do nothing.
 
-        - Calls the base class method.
+        - Opens the front end shutter, waiting for it to indicate it is open.
+            This is copied from the 2-BM implementation 9/2020
 
         - Opens the 2-BM-A fast shutter.
         """
         if self.epics_pvs['Testing'].get():
             log.warning('In testing mode, so not opening shutters.')
             return
-        # Call the base class method
-        super().open_shutter()
+        # Open the front end shutter
+        if not self.epics_pvs['OpenShutter'] is None:
+            pv = self.epics_pvs['OpenShutter']
+            value = self.epics_pvs['OpenShutterValue'].get(as_string=True)
+            status = self.epics_pvs['ShutterStatus'].get(as_string=True)
+            log.info('shutter status: %s', status)
+            log.info('open shutter: %s, value: %s', pv, value)
+            self.epics_pvs['OpenShutter'].put(value, wait=True)
+            self.wait_pv(self.epics_pvs['ShutterStatus'], 0)
+            status = self.epics_pvs['ShutterStatus'].get(as_string=True)
+            log.info('shutter status: %s', status)
         # Open 7-BM-B fast shutter
         if not self.epics_pvs['OpenFastShutter'] is None:
             pv = self.epics_pvs['OpenFastShutter']
@@ -95,7 +105,16 @@ class TomoScan7BM(TomoScan):
             log.warning('In testing mode, so not closing shutters.')
             return
         # Call the base class method
-        super().close_shutter()
+        if not self.epics_pvs['CloseShutter'] is None:
+            pv = self.epics_pvs['CloseShutter']
+            value = self.epics_pvs['CloseShutterValue'].get(as_string=True)
+            status = self.epics_pvs['ShutterStatus'].get(as_string=True)
+            log.info('shutter status: %s', status)
+            log.info('close shutter: %s, value: %s', pv, value)
+            self.epics_pvs['CloseShutter'].put(value, wait=True)
+            self.wait_pv(self.epics_pvs['ShutterStatus'], 1)
+            status = self.epics_pvs['ShutterStatus'].get(as_string=True)
+            log.info('shutter status: %s', status)
         # Close 7-BM-B fast shutter
         if not self.epics_pvs['CloseFastShutter'] is None:
             pv = self.epics_pvs['CloseFastShutter']
