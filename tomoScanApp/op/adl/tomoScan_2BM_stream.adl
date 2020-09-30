@@ -1,12 +1,12 @@
 
 file {
-	name="/local/user2bmb/conda/tomoscan/tomoScanApp/op/adl/tomoScan_2BM_stream.adl"
+	name="/local/user2bmb/epics/synApps/support/tomoscan/tomoScanApp/op/adl/tomoScan_2BM_stream.adl"
 	version=030111
 }
 display {
 	object {
-		x=890
-		y=467
+		x=880
+		y=459
 		width=600
 		height=325
 	}
@@ -263,4 +263,56 @@ text {
 	}
 	label="Stop"
 	press_msg="0"
+}
+text {
+	object {
+		x=40
+		y=225
+		width=170
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Retake dark"
+	align="horiz. right"
+}
+"choice button" {
+	object {
+		x=220
+		y=210
+		width=80
+		height=50
+	}
+	control {
+		chan="$(P)$(R)StreamRetakeDark"
+		clr=14
+		bclr=4
+	}
+}
+menu {
+	object {
+		x=220
+		y=144
+		width=80
+		height=20
+	}
+	control {
+		chan="$(P)$(R)StreamBinning"
+		clr=14
+		bclr=51
+	}
+}
+text {
+	object {
+		x=42
+		y=144
+		width=170
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Binning"
+	align="horiz. right"
 }
