@@ -841,10 +841,10 @@ Stream control
     - Record type
     - Description
   * - $(P)$(R)StreamRetakeFlat
-    - bo
+    - busy
     - Stream retake flat. Choices are 'No' and 'Yes'. When 'Yes' a new set of flat field images will be collected and used for reconstructing the following projections
   * - $(P)$(R)StreamRetakeDark
-    - bo
+    - busy
     - Stream retake dark. Choices are 'No' and 'Yes'. When 'Yes' a new set of dark field images will be collected and used for reconstructing the following projections
   * - $(P)$(R)StreamPreCount
     - longout
@@ -855,9 +855,18 @@ Stream control
   * - $(P)$(R)StreamNumCapture    
     - longout
     - In streaming mode, set the number of projections to save when capture is set
+  * - $(P)$(R)StreamNumCapture_RBV  
+    - longout
+    - Number of images set to be captured in streaming mode
   * - $(P)$(R)StreamBinning    
     - mbbo
     - In streaming mode, set the binnig scale for projections and streamed reconstruction. Captured data are always not binned and saved at full size
+  * - $(P)$(R)StreamMessage
+    - waveform
+    - Stream message
+  * - $(P)$(R)StreamNumCaptured_RBV 
+    - longout
+    - Number of imaged captured in streaming mode
 
 tomoScan_2BM_settings.req
 ~~~~~~~~~~~~~~~~~~~~~~~~~
