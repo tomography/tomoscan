@@ -1,14 +1,14 @@
 
 file {
-	name="/local/user2bmb/epics/synApps/support/tomoscan/tomoScanApp/op/adl/tomoScan_2BM_stream.adl"
+	name="/local/user2bmb/conda/tomoscan/tomoScanApp/op/adl/tomoScan_2BM_stream.adl"
 	version=030111
 }
 display {
 	object {
-		x=880
-		y=459
-		width=600
-		height=325
+		x=482
+		y=1140
+		width=700
+		height=220
 	}
 	clr=14
 	bclr=4
@@ -100,8 +100,8 @@ rectangle {
 }
 text {
 	object {
-		x=40
-		y=95
+		x=5
+		y=170
 		width=170
 		height=20
 	}
@@ -113,8 +113,8 @@ text {
 }
 "text update" {
 	object {
-		x=220
-		y=95
+		x=185
+		y=170
 		width=300
 		height=20
 	}
@@ -126,23 +126,10 @@ text {
 	limits {
 	}
 }
-"choice button" {
-	object {
-		x=220
-		y=267
-		width=80
-		height=50
-	}
-	control {
-		chan="$(P)$(R)StreamRetakeFlat"
-		clr=14
-		bclr=4
-	}
-}
 text {
 	object {
-		x=40
-		y=282
+		x=5
+		y=120
 		width=170
 		height=20
 	}
@@ -167,7 +154,7 @@ text {
 }
 "text entry" {
 	object {
-		x=220
+		x=185
 		y=45
 		width=80
 		height=20
@@ -182,7 +169,7 @@ text {
 }
 text {
 	object {
-		x=40
+		x=5
 		y=45
 		width=170
 		height=20
@@ -195,7 +182,7 @@ text {
 }
 text {
 	object {
-		x=385
+		x=350
 		y=70
 		width=90
 		height=20
@@ -208,10 +195,10 @@ text {
 }
 "text entry" {
 	object {
-		x=480
+		x=445
 		y=70
 		width=80
-		height=22
+		height=20
 	}
 	control {
 		chan="$(P)$(R)StreamNumCapture"
@@ -223,7 +210,7 @@ text {
 }
 text {
 	object {
-		x=40
+		x=5
 		y=70
 		width=170
 		height=20
@@ -236,7 +223,7 @@ text {
 }
 "message button" {
 	object {
-		x=220
+		x=185
 		y=70
 		width=80
 		height=20
@@ -251,7 +238,7 @@ text {
 }
 "message button" {
 	object {
-		x=302
+		x=267
 		y=70
 		width=80
 		height=20
@@ -266,8 +253,8 @@ text {
 }
 text {
 	object {
-		x=40
-		y=225
+		x=5
+		y=95
 		width=170
 		height=20
 	}
@@ -277,23 +264,10 @@ text {
 	textix="Retake dark"
 	align="horiz. right"
 }
-"choice button" {
-	object {
-		x=220
-		y=210
-		width=80
-		height=50
-	}
-	control {
-		chan="$(P)$(R)StreamRetakeDark"
-		clr=14
-		bclr=4
-	}
-}
 menu {
 	object {
-		x=220
-		y=144
+		x=185
+		y=145
 		width=80
 		height=20
 	}
@@ -305,8 +279,8 @@ menu {
 }
 text {
 	object {
-		x=42
-		y=144
+		x=5
+		y=145
 		width=170
 		height=20
 	}
@@ -314,5 +288,94 @@ text {
 		clr=14
 	}
 	textix="Binning"
+	align="horiz. right"
+}
+"message button" {
+	object {
+		x=185
+		y=95
+		width=80
+		height=20
+	}
+	control {
+		chan="$(P)$(R)StreamRetakeDark"
+		clr=14
+		bclr=51
+	}
+	label="Start"
+	press_msg="1"
+}
+"message button" {
+	object {
+		x=185
+		y=120
+		width=80
+		height=20
+	}
+	control {
+		chan="$(P)$(R)StreamRetakeFlat"
+		clr=14
+		bclr=51
+	}
+	label="Start"
+	press_msg="1"
+}
+"text update" {
+	object {
+		x=531
+		y=70
+		width=80
+		height=20
+	}
+	monitor {
+		chan="$(P)$(R)StreamNumCapture_RBV"
+		clr=54
+		bclr=4
+	}
+	limits {
+	}
+}
+"text update" {
+	object {
+		x=615
+		y=70
+		width=80
+		height=20
+	}
+	monitor {
+		chan="$(P)$(R)StreamNumCaptured_RBV"
+		clr=54
+		bclr=4
+	}
+	limits {
+	}
+}
+"text update" {
+	object {
+		x=185
+		y=195
+		width=300
+		height=20
+	}
+	monitor {
+		chan="$(P)$(R)StreamMessage"
+		clr=54
+		bclr=4
+	}
+	format="string"
+	limits {
+	}
+}
+text {
+	object {
+		x=5
+		y=195
+		width=170
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Message"
 	align="horiz. right"
 }
