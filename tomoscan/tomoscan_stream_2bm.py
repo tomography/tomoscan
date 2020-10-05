@@ -384,12 +384,11 @@ class TomoScanStream2BM(TomoScan):
 
         - set dark/flat fields modes as None (do not take static dark/flat fields)
         - set binning in ROI1 plugin
-        - set circular buffer size
         - set capturing status to Done for all capturing pvs
+        - set circular buffer            
         - add callbacks for capturing pvs
         - add callbacks for changing sizes pvs          
         - add callbacks for syncing tomoscan pvs         
-        - start writing to cb
         
         - init flag for controling only one capturing at a time          
         """
@@ -406,6 +405,8 @@ class TomoScanStream2BM(TomoScan):
         self.epics_pvs['StreamRetakeDark'].put('Done')
         self.epics_pvs['StreamRetakeFlat'].put('Done')                
         
+        self.change_cbsize()        
+        
         self.epics_pvs['StreamCapture'].add_callback(self.pv_callback_stream_capture)
         self.epics_pvs['StreamRetakeDark'].add_callback(self.pv_callback_stream_capture)                
         self.epics_pvs['StreamRetakeFlat'].add_callback(self.pv_callback_stream_capture)
@@ -415,8 +416,6 @@ class TomoScanStream2BM(TomoScan):
         self.epics_pvs['CBStatusMessage'].add_callback(self.pv_callback_stream_sync)
         self.epics_pvs['FPNumCapture'].add_callback(self.pv_callback_stream_sync)
         self.epics_pvs['FPNumCaptured'].add_callback(self.pv_callback_stream_sync)
-
-        self.change_cbsize()        
         
         self.capturing = 0              
 
@@ -503,13 +502,12 @@ class TomoScanStream2BM(TomoScan):
 
         - set capturing flag to 1
         - disable cb plugin
-        - compute total number of capturing frames including circular buffer
         - set number of captured frames in the hdf5 plugin as StreamNumCapture parameter
         - start capturing to the hdf5 file
-        - take basename and dirname from full file name                  
         - wait when capturing is started
         - wait when captruing is finished
         - dump angles
+        - take basename and dirname from full file name                          
         - copy dark_flat fields file to the one having the same index as data (eg. copy dark_fields.h5 dark_fields_scan_045.h5)
         - copy dark_flat fields file to the one having the same index as data (eg. copy flat_fields.h5 flat_fields_scan_045.h5)
           
@@ -530,6 +528,7 @@ class TomoScanStream2BM(TomoScan):
           - change hdf5 file name back to the initial             
         
         - set capturing status to Done      
+        - compute total number of captured frames and show it the medm screen
         - set capturing flag to 0
         
         """
@@ -542,16 +541,15 @@ class TomoScanStream2BM(TomoScan):
         
         self.epics_pvs['FPNumCapture'].put(self.epics_pvs['StreamNumCapture'].get())
         self.epics_pvs['FPCapture'].put('Capture')
-        self.wait_pv(self.epics_pvs['FPCaptureRBV'], 1)
-        
-        basename = os.path.basename(self.epics_pvs['FPFullFileName'].get(as_string=True))
-        dirname = os.path.dirname(self.epics_pvs['FPFullFileName'].get(as_string=True))        
-        
+        self.wait_pv(self.epics_pvs['FPCaptureRBV'], 1)        
         self.wait_pv(self.epics_pvs['FPCaptureRBV'], 0)
         num_captured = self.epics_pvs['StreamNumCaptured'].get()
 
         self.dump_theta(self.epics_pvs['FPFullFileName'].get(as_string=True))
             
+        basename = os.path.basename(self.epics_pvs['FPFullFileName'].get(as_string=True))
+        dirname = os.path.dirname(self.epics_pvs['FPFullFileName'].get(as_string=True))                
+        
         log.info('save dark fields')
         cmd = 'cp '+ dirname+'/dark_fields.h5 '+ dirname + '/dark_fields_'+ basename
         os.popen(cmd)
@@ -561,7 +559,8 @@ class TomoScanStream2BM(TomoScan):
         
         if(self.epics_pvs['StreamPreCount'].get()>0):
             self.epics_pvs['StreamMessage'].put('Capturing circular buffer')                    
-            log.info('save pre-buffer')            
+            log.info('save pre-buffer')        
+
             file_name = self.epics_pvs['FPFileName'].get(as_string=True)
             file_template = self.epics_pvs['FPFileTemplate'].get(as_string=True)
             autoincrement =  self.epics_pvs['FPAutoIncrement'].get(as_string=True)
@@ -635,6 +634,7 @@ class TomoScanStream2BM(TomoScan):
         # switch frame type before closing the shutter to let the reconstruction engine 
         # know that following frames should not be used for reconstruction 
         self.epics_pvs['FrameType'].put('DarkField', wait=True)      
+        
         self.epics_pvs['CBEnableCallbacks'].put('Disable')  
 
         super().collect_dark_fields()        
@@ -698,6 +698,7 @@ class TomoScanStream2BM(TomoScan):
         # switch frame type before closing the shutter to let the reconstruction engine 
         # know that following frames should not be used for reconstruction 
         self.epics_pvs['FrameType'].put('FlatField', wait=True)
+        
         self.epics_pvs['CBEnableCallbacks'].put('Disable')  
 
         super().collect_flat_fields()        
