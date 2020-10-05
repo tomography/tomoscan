@@ -111,6 +111,7 @@ class TomoScan():
         self.control_pvs['CamBinX']              = PV(camera_prefix + 'BinX')
         self.control_pvs['CamBinY']              = PV(camera_prefix + 'BinY')
         self.control_pvs['CamWaitForPlugins']    = PV(camera_prefix + 'WaitForPlugins')
+        self.control_pvs['PortNameRBV']          = PV(camera_prefix + 'PortName_RBV')
 
         # If this is a Point Grey camera then assume we are running ADSpinnaker
         # and create some PVs specific to that driver
@@ -193,18 +194,23 @@ class TomoScan():
             self.control_pvs['ROINDArrayPort']     = PV(prefix + 'NDArrayPort')        
             self.control_pvs['ROIScale']           = PV(prefix + 'Scale')        
             self.control_pvs['ROIBinX']            = PV(prefix + 'BinX')        
-            self.control_pvs['ROIBinY']            = PV(prefix + 'BinY')        
+            self.control_pvs['ROIBinY']            = PV(prefix + 'BinY')
             self.control_pvs['ROIEnableCallbacks'] = PV(prefix + 'EnableCallbacks')
 
         if 'CbPlugin' in self.pv_prefixes:
             prefix = self.pv_prefixes['CbPlugin']
+            self.control_pvs['CBPortNameRBV']     = PV(prefix + 'PortName_RBV')                    
             self.control_pvs['CBNDArrayPort']     = PV(prefix + 'NDArrayPort')        
             self.control_pvs['CBPreCount']        = PV(prefix + 'PreCount')
             self.control_pvs['CBPostCount']       = PV(prefix + 'PostCount')
-            self.control_pvs['CBCapture']         = PV(prefix + 'Capture')
+            self.control_pvs['CBCapture']         = PV(prefix + 'Capture')            
+            self.control_pvs['CBCaptureRBV']      = PV(prefix + 'Capture_RBV')
             self.control_pvs['CBTrigger']         = PV(prefix + 'Trigger')
             self.control_pvs['CBTriggerRBV']      = PV(prefix + 'Trigger_RBV')
+            self.control_pvs['CBCurrentQtyRBV']   = PV(prefix + 'CurrentQty_RBV')            
             self.control_pvs['CBEnableCallbacks'] = PV(prefix + 'EnableCallbacks')
+            self.control_pvs['CBStatusMessage']   = PV(prefix + 'StatusMessage')
+
 
         self.epics_pvs = {**self.config_pvs, **self.control_pvs}
         # Wait 1 second for all PVs to connect
