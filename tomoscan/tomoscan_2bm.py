@@ -49,21 +49,23 @@ class TomoScan2BM(TomoScan):
 
         This does the following:
 
-        - Opens the 2-BM-A front-end shutter.
+        - Checks if we are in testing mode. If we are, do nothing else opens the 2-BM-A front-end shutter.
 
         """
-
-        # Open 2-BM-A front-end shutter
-        if not self.epics_pvs['OpenShutter'] is None:
-            pv = self.epics_pvs['OpenShutter']
-            value = self.epics_pvs['OpenShutterValue'].get(as_string=True)
-            status = self.epics_pvs['ShutterStatus'].get(as_string=True)
-            log.info('shutter status: %s', status)
-            log.info('open shutter: %s, value: %s', pv, value)
-            self.epics_pvs['OpenShutter'].put(value, wait=True)
-            self.wait_pv(self.epics_pvs['ShutterStatus'], 1)
-            status = self.epics_pvs['ShutterStatus'].get(as_string=True)
-            log.info('shutter status: %s', status)
+        if self.epics_pvs['Testing'].get():
+            log.warning('In testing mode, so not opening shutters.')
+        else:
+            # Open 2-BM-A front-end shutter
+            if not self.epics_pvs['OpenShutter'] is None:
+                pv = self.epics_pvs['OpenShutter']
+                value = self.epics_pvs['OpenShutterValue'].get(as_string=True)
+                status = self.epics_pvs['ShutterStatus'].get(as_string=True)
+                log.info('shutter status: %s', status)
+                log.info('open shutter: %s, value: %s', pv, value)
+                self.epics_pvs['OpenShutter'].put(value, wait=True)
+                self.wait_pv(self.epics_pvs['ShutterStatus'], 1)
+                status = self.epics_pvs['ShutterStatus'].get(as_string=True)
+                log.info('shutter status: %s', status)
 
     def open_shutter(self):
         """Opens the shutters to collect flat fields or projections.
@@ -87,18 +89,20 @@ class TomoScan2BM(TomoScan):
         - Closes the 2-BM-A front-end shutter.
 
         """
-
-        # Close 2-BM-A front-end shutter
-        if not self.epics_pvs['CloseShutter'] is None:
-            pv = self.epics_pvs['CloseShutter']
-            value = self.epics_pvs['CloseShutterValue'].get(as_string=True)
-            status = self.epics_pvs['ShutterStatus'].get(as_string=True)
-            log.info('shutter status: %s', status)
-            log.info('close shutter: %s, value: %s', pv, value)
-            self.epics_pvs['CloseShutter'].put(value, wait=True)
-            self.wait_pv(self.epics_pvs['ShutterStatus'], 0)
-            status = self.epics_pvs['ShutterStatus'].get(as_string=True)
-            log.info('shutter status: %s', status)
+        if self.epics_pvs['Testing'].get():
+            log.warning('In testing mode, so not opening shutters.')
+        else:
+            # Close 2-BM-A front-end shutter
+            if not self.epics_pvs['CloseShutter'] is None:
+                pv = self.epics_pvs['CloseShutter']
+                value = self.epics_pvs['CloseShutterValue'].get(as_string=True)
+                status = self.epics_pvs['ShutterStatus'].get(as_string=True)
+                log.info('shutter status: %s', status)
+                log.info('close shutter: %s, value: %s', pv, value)
+                self.epics_pvs['CloseShutter'].put(value, wait=True)
+                self.wait_pv(self.epics_pvs['ShutterStatus'], 0)
+                status = self.epics_pvs['ShutterStatus'].get(as_string=True)
+                log.info('shutter status: %s', status)
 
     def close_shutter(self):
         """Closes the shutters to collect dark fields.
@@ -179,7 +183,7 @@ class TomoScan2BM(TomoScan):
 
         - Calls the base class method.
         
-        - Checks if we are in testing mode. If we are, do nothing else opens the front-end shutter
+        - Opens the front-end shutter.
 
         - Sets the PSO controller.
 
@@ -191,10 +195,7 @@ class TomoScan2BM(TomoScan):
         # Call the base class method
         super().begin_scan()
         # Opens the front-end shutter
-        if self.epics_pvs['Testing'].get():
-            log.warning('In testing mode, so not opening shutters.')
-        else:
-            self.open_frontend_shutter()
+        self.open_frontend_shutter()
 
         # Confirm angle step is an integer number of encoder pulses
         # Pass the user selected values to the PSO
@@ -283,6 +284,13 @@ class TomoScan2BM(TomoScan):
         self.epics_pvs['RotationSpeed'].put(self.max_rotation_speed)
         # Move the sample in.  Could be out if scan was aborted while taking flat fields
         self.move_sample_in()
+        if self.return_rotation == 'Yes':
+        # Reset rotation position by mod 360 , the actual return 
+        # to start position is handled by super().end_scan()
+            current_angle = self.epics_pvs['Rotation'].get() %360
+            self.epics_pvs['RotationSet'].put('Set', wait=True)
+            self.epics_pvs['Rotation'].put(current_angle, wait=True)
+            self.epics_pvs['RotationSet'].put('Use', wait=True)
         # Call the base class method
         super().end_scan()
         # Close shutter
