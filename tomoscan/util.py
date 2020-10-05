@@ -2,8 +2,10 @@
 Utility module.
 """
 
+import time
 import argparse
 import numpy as np
+import h5py
 
 from tomoscan import log
 
@@ -50,4 +52,15 @@ def as_ndarray(arr, dtype=None, copy=False):
 def as_float32(arr):
     arr = as_ndarray(arr, np.float32)
     return as_dtype(arr, np.float32)
+
+def open_hdf5(file_name, mode):
+    while(True):  # hdf5 file may be locked with writing acquired projections
+        try:
+            hdf_file = h5py.File(file_name, mode)
+            break
+        except OSError:
+            print('locked hdf5')
+            time.sleep(0.01)   
+    return hdf_file         
+
 

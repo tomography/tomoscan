@@ -1,12 +1,12 @@
 
 file {
-	name="/local/user2bmb/conda/tomoscan/tomoScanApp/op/adl/tomoScan_2BM.adl"
+	name="/home/beams/7BMB/epics/synApps/support/tomoscan/tomoScanApp/op/adl/tomoScan_7BM.adl"
 	version=030111
 }
 display {
 	object {
-		x=561
-		y=184
+		x=571
+		y=192
 		width=640
 		height=210
 	}
@@ -108,7 +108,7 @@ text {
 	"basic attribute" {
 		clr=54
 	}
-	textix="2-BM Tomography   $(P)$(R)"
+	textix="7-BM Tomography   $(P)$(R)"
 	align="horiz. centered"
 }
 "related display" {
@@ -200,12 +200,12 @@ text {
 	}
 	display[0] {
 		label="Experiment Information"
-		name="$(BEAMLINE)_stream.adl"
-		args="BEAMLINE=$(BEAMLINE), P=$(P), R=$(R), PH=2bmbSP1:, RH=HDF1:, CB=CB1:"
+		name="$(BEAMLINE)_pso.adl"
+		args="P=$(P),R=$(R)"
 	}
 	clr=14
 	bclr=51
-	label="Stream"
+	label="Aerotech PSO"
 }
 "related display" {
 	object {

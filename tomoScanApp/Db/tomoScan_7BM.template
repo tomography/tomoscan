@@ -1,24 +1,67 @@
-# Database for EPICS PVS for tomography data collection software at APS 2-BM
-# It contains the PVs that are required by the tomoscan_13bm derived class,
+# Database for EPICS PVS for tomography data collection software at APS 7-BM
+# It contains the PVs that are required by the tomoscan_7bm derived class,
 # as well as additional PVs used for metadata about the scan that are stored
 # both in the configuration files written by tomoscan, and in the
 # files written by areaDetector file plugin.
 
+################
+# PSO parameters
+################
 
-############
-# PSO Prefix
-############
-
-record(stringout, "$(P)$(R)PSOPVPrefix")
+record(ao, "$(P)$(R)startTaxi") 
 {
-   field(VAL,  "$(PSO)")
+    field(DESC, "start position with taxi")
+    field(EGU, "degrees")
+    field(PREC, "5")
+}
+
+record(ao, "$(P)$(R)endTaxi") 
+{
+    field(DESC, "end position with taxi")
+    field(EGU, "degrees")
+    field(PREC, "5")
+}
+
+record(longout, "$(P)$(R)EncoderPulsesPerStep") 
+{
+    field(DESC, "Encoder pulses per projection")
+    field(VAL, "6400")
+    field(DRVL, "0")
+    field(DRVH, "$(PSO_ENC_PER_ROTATION)")
+}
+
+record(stringout, "$(P)$(R)PSOAsynPVName")
+{
+    field(VAL,  "$(ASYN_RECORD)")
+}
+
+record(stringout, "$(P)$(R)PSOAxisName")
+{
+    field(VAL, "$(PSO_AXIS_NAME)")
+}
+
+record(ao, "$(P)$(R)PSOPulsesPerRotation") 
+{
+    field(DESC, "Number of encoder counts per revolution")
+    field(VAL, "$(PSO_ENC_PER_ROTATION)")
+    field(DRVL, "0")
+    field(DRVH, "1000000000")
+}
+
+record(longout, "$(P)$(R)PSOEncoderInput") 
+{
+    field(DESC, "Encoder input")
+    field(VAL, "$(PSO_ENC_INPUT)")
+    field(DRVL, "0")
+    field(DRVH, "4")
 }
 
 ####################
 # Energy information
 ####################
 
-record(ao, "$(P)$(R)Energy") {
+record(ao, "$(P)$(R)Energy")
+{
     field(SCAN, "Passive")
     field(DTYP, "Soft Channel")
     field(PREC, 2)
@@ -130,12 +173,12 @@ record(stringout, "$(P)$(R)UserName")
    field(VAL,  "Unknown")
 }
 
-record(waveform, "$(P)$(R)UserInstitution") 
+record(waveform, "$(P)$(R)UserInstitution")
 {
-    field(SCAN, "Passive")
-    field(DTYP, "Soft Channel")
-    field(NELM, "256")
-    field(FTVL, "CHAR")
+   field(SCAN, "Passive")
+   field(DTYP, "Soft Channel")
+   field(NELM, "256")
+   field(FTVL, "CHAR")
 }
 
 record(stringout, "$(P)$(R)UserBadge")
@@ -153,12 +196,12 @@ record(stringout, "$(P)$(R)ProposalNumber")
    field(VAL,  "Unknown")
 }
 
-record(waveform, "$(P)$(R)ProposalTitle") 
+record(waveform, "$(P)$(R)ProposalTitle")
 {
-    field(SCAN, "Passive")
-    field(DTYP, "Soft Channel")
-    field(NELM, "256")
-    field(FTVL, "CHAR")
+   field(SCAN, "Passive")
+   field(DTYP, "Soft Channel")
+   field(NELM, "256")
+   field(FTVL, "CHAR")
 }
 
 record(stringout, "$(P)$(R)ESAFNumber")
@@ -220,109 +263,11 @@ record(stringout, "$(P)$(R)OpenFastShutterValue")
    field(VAL,  "$(OPEN_FAST_VALUE)")
 }
 
-################
-# Stream control
-################
+#########################
+# Camera External Trigger
+#########################
 
-record(busy,"$(P)$(R)StreamCapture")
+record(stringout, "$(P)$(R)ExternalTriggerSource")
 {
-   field(ZNAM,"Done")
-   field(ZSV, "NO_ALARM")
-   field(ONAM,"Capture")
-   field(OSV, "MINOR")
-   field(VAL, "0")
-}
-
-record(longout, "$(P)$(R)StreamNumCapture")
-{
-   field(LOPR, "0")
-   field(HOPR, "1000000")
-}
-
-record(longout, "$(P)$(R)StreamNumCapture_RBV")
-{
-}
-
-record(longout, "$(P)$(R)StreamNumCaptured_RBV")
-{
-}
-
-record(busy,"$(P)$(R)StreamRetakeFlat")
-{
-   field(ZNAM,"Done")
-   field(ZSV, "NO_ALARM")
-   field(ONAM,"Capture")
-   field(OSV, "MINOR")
-   field(VAL, "0")
-}
-
-record(busy,"$(P)$(R)StreamRetakeDark")
-{
-   field(ZNAM,"Done")
-   field(ZSV, "NO_ALARM")
-   field(ONAM,"Capture")
-   field(OSV, "MINOR")
-   field(VAL, "0")
-}
-
-record(longout, "$(P)$(R)StreamPreCount")
-{
-   field(LOPR, "0")
-   field(HOPR, "4000")
-}
-
-record(mbbo, "$(P)$(R)StreamBinning")
-{
-   field(ZRVL, "0")
-   field(ZRST, "1x")
-   field(ONVL, "1")
-   field(ONST, "2x")
-   field(TWVL, "2")
-   field(TWST, "4x")
-}
-
-record(waveform,"$(P)$(R)StreamMessage") 
-{
-   field(FTVL, "UCHAR")
-   field(NELM, "256")
-}
-
-
-
-
-
-################
-# Shutter status
-################
-
-record(stringout, "$(P)$(R)ShutterStatusPVName")
-{
-   field(VAL,  "$(SHUTTER_STATUS)")
-}
-
-######################
-# Pva Plugin PV Prefix
-######################
-
-record(stringout, "$(P)$(R)PvaPluginPVPrefix")
-{
-   field(VAL,  "$(PVA_PLUGIN)")
-}
-
-######################
-# Roi Plugin PV Prefix
-######################
-
-record(stringout, "$(P)$(R)RoiPluginPVPrefix")
-{
-   field(VAL,  "$(ROI_PLUGIN)")
-}
-
-#####################
-# Cb Plugin PV Prefix
-#####################
-
-record(stringout, "$(P)$(R)CbPluginPVPrefix")
-{
-   field(VAL,  "$(CB_PLUGIN)")
+    field(VAL, "Line2")
 }

@@ -613,6 +613,27 @@ PSO Prefix
     - stringout
     - Contains the prefix for the PSO, e.g. 2bma:PSOFly2:
 
+Pva, Roi and Cb Plugin PV Prefixes
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. cssclass:: table-bordered table-striped table-hover
+.. list-table::
+  :header-rows: 1
+  :widths: 5 5 90
+
+  * - Record name
+    - Record type
+    - Description
+  * - $(P)$(R)PvaPluginPVPrefix
+    - stringout
+    - Contains the prefix for the Pva plugin, e.g. 2bmbSP1:Pva1:
+  * - $(P)$(R)RoiPluginPVPrefix
+    - stringout
+    - Contains the prefix for the ROI plugin, e.g. 2bmbSP1:ROI1:
+  * - $(P)$(R)CbPluginPVPrefix
+    - stringout
+    - Contains the prefix for the CB plugin, e.g. 2bmbSP1:CB1:
+
 Energy information
 ^^^^^^^^^^^^^^^^^^
 
@@ -651,6 +672,314 @@ Beam status information
   * - $(P)$(R)BeamReadyValue
     - stringout
     - Contains the value of the beam ready PV when beam is ready.
+  * - $(P)$(R)Testing
+    - stringout
+    - Enable testing mode 'Yes'.
+
+Optics information
+^^^^^^^^^^^^^^^^^^
+
+.. cssclass:: table-bordered table-striped table-hover
+.. list-table::
+  :header-rows: 1
+  :widths: 5 5 90
+
+  * - Record name
+    - Record type
+    - Description
+  * - $(P)$(R)ScintillatorType
+    - stringout
+    - Contains the type of scintillator being used.
+  * - $(P)$(R)ScintillatorThickness
+    - ao
+    - Contains the thickness of the scintillator in microns.
+  * - $(P)$(R)ImagePixelSize
+    - ao
+    - Contains the pixel size on the sample in microns (i.e. includes objective magnification)
+  * - $(P)$(R)DetectorPixelSize
+    - ao
+    - Contains the pixel size of the detector.
+  * - $(P)$(R)CameraObjective
+    - stringout
+    - Description of the camera objective
+  * - $(P)$(R)CameraTubeLength
+    - stringout
+    - Description of the camera objective
+
+Sample information
+^^^^^^^^^^^^^^^^^^
+
+.. cssclass:: table-bordered table-striped table-hover
+.. list-table::
+  :header-rows: 1
+  :widths: 5 5 90
+
+  * - Record name
+    - Record type
+    - Description
+  * - $(P)$(R)SampleName
+    - stringout
+    - Name of the sample
+  * - $(P)$(R)SampleDescription1
+    - stringout
+    - Description of the sample, part 1
+  * - $(P)$(R)SampleDescription2
+    - stringout
+    - Description of the sample, part 2
+  * - $(P)$(R)SampleDescription3
+    - stringout
+    - Description of the sample, part 3
+
+User information
+^^^^^^^^^^^^^^^^
+
+.. cssclass:: table-bordered table-striped table-hover
+.. list-table::
+  :header-rows: 1
+  :widths: 5 5 90
+
+  * - Record name
+    - Record type
+    - Description
+  * - $(P)$(R)UserName
+    - stringout
+    - User name
+  * - $(P)$(R)UserInstitution
+    - stringout
+    - User institution
+  * - $(P)$(R)UserBadge
+    - stringout
+    - User badge number
+  * - $(P)$(R)UserEmail
+    - stringout
+    - User email address
+  * - $(P)$(R)ProposalNumber
+    - stringout
+    - Proposal number
+  * - $(P)$(R)ProposalTitle
+    - stringout
+    - Proposal title
+  * - $(P)$(R)ESAFNumber
+    - stringout
+    - Experiment Safety Approval Form number
+  * - $(P)$(R)UserInfoUpdate
+    - stringout
+    - Date and time of the last synchronization of the user information with the APS scheduling system
+
+Data management information
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. cssclass:: table-bordered table-striped table-hover
+.. list-table::
+  :header-rows: 1
+  :widths: 5 5 90
+
+  * - Record name
+    - Record type
+    - Description
+  * - $(P)$(R)DetectorTopDir
+    - stringout
+    - Top directory from where the raw data will be saved.
+  * - $(P)$(R)UserLastName
+    - stringout
+    - User last name, automatically updated from the APS scheduling system, e.g. decarlo
+  * - $(P)$(R)ExperimentYearMonth
+    - stringout
+    - Experiment year and month, automatically updated from the APS scheduling system, e.g. 2020-04
+  * - $(P)$(R)RemoteAnalysisDir
+    - stringout
+    - Remote analysis location where to transfer the raw data for analysis, e.g tomo@handyn:/local/data/
+
+Front-end shutter status
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. cssclass:: table-bordered table-striped table-hover
+.. list-table::
+  :header-rows: 1
+  :widths: 5 5 90
+
+  * - Record name
+    - Record type
+    - Description
+  * - $(P)$(R)ShutterStatusPVName
+    - stringout
+    - Contains the name of the PV to read the front-end shutter status
+
+Fast shutter control
+^^^^^^^^^^^^^^^^^^^^
+
+.. cssclass:: table-bordered table-striped table-hover
+.. list-table::
+  :header-rows: 1
+  :widths: 5 5 90
+
+  * - Record name
+    - Record type
+    - Description
+  * - $(P)$(R)CloseFastShutterPVName
+    - stringout
+    - Contains the name of the PV to close the fast shutter
+  * - $(P)$(R)CloseFastShutterValue
+    - stringout
+    - Contains the value to write to close the fast shutter
+  * - $(P)$(R)OpenFastShutterPVName
+    - stringout
+    - Contains the name of the PV to open the fast shutter
+  * - $(P)$(R)OpenFastShutterValue
+    - stringout
+    - Contains the value to write to open the fast shutter
+
+Stream control
+^^^^^^^^^^^^^^
+
+.. cssclass:: table-bordered table-striped table-hover
+.. list-table::
+  :header-rows: 1
+  :widths: 5 5 90
+
+  * - Record name
+    - Record type
+    - Description
+  * - $(P)$(R)StreamRetakeFlat
+    - busy
+    - Stream retake flat. Choices are 'No' and 'Yes'. When 'Yes' a new set of flat field images will be collected and used for reconstructing the following projections
+  * - $(P)$(R)StreamRetakeDark
+    - busy
+    - Stream retake dark. Choices are 'No' and 'Yes'. When 'Yes' a new set of dark field images will be collected and used for reconstructing the following projections
+  * - $(P)$(R)StreamPreCount
+    - longout
+    - Streaming pre-count are the number of projections pre-capture that are stored in a buffer. At the end of capturing these images are added to the data file
+  * - $(P)$(R)StreamCapture
+    - busy 
+    - In streaming mode, set to "Capture" to start the projection saving
+  * - $(P)$(R)StreamNumCapture    
+    - longout
+    - In streaming mode, set the number of projections to save when capture is set
+  * - $(P)$(R)StreamNumCapture_RBV  
+    - longout
+    - Number of images set to be captured in streaming mode
+  * - $(P)$(R)StreamBinning    
+    - mbbo
+    - In streaming mode, set the binnig scale for projections and streamed reconstruction. Captured data are always not binned and saved at full size
+  * - $(P)$(R)StreamMessage
+    - waveform
+    - Stream message
+  * - $(P)$(R)StreamNumCaptured_RBV 
+    - longout
+    - Number of imaged captured in streaming mode
+
+tomoScan_2BM_settings.req
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This is the autosave request file for tomoScan_2BM.template
+:doc:`tomoScan_2BM_settings.req`.
+
+It has the same usage and type of content as tomoScan_settings.req described above, except that it
+contains the PVs for the derived class TomoScan2BM.
+
+medm files
+~~~~~~~~~~
+
+tomoScan_2BM.adl
+^^^^^^^^^^^^^^^^
+
+The following is the MEDM screen :download:`tomoScan_2BM.adl <../../tomoScanApp/op/adl/tomoScan_2BM.adl>`.  
+This screen contains the PVs for the TomoScan_2BM derived class.  If the BeamReadyPV is changed then tomoscan must be restarted.
+
+.. image:: img/tomoScan_2BM.png
+    :width: 75%
+    :align: center
+
+Beamline 7-BM
+-------------
+
+These are the files that are specific to the TomoScan7BM derived class used at APS beamline 7-BM.
+
+tomoScan_7BM.template
+~~~~~~~~~~~~~~~~~~~~~
+
+This is database file for the TomoScan7BM derived class
+:doc:`tomoScan_7BM.template`.
+
+The following tables list all of the records in the tomoScan_7BM.template file.
+This file is used for records needed by the tomoscan_7bm derived class, and also
+for metadata PVs that should be saved in the tomoscan configuration file and files 
+written by the areaDetector file plugins.
+
+PSO Parameters
+^^^^^^^^^^^^^^
+
+.. cssclass:: table-bordered table-striped table-hover
+.. list-table::
+  :header-rows: 1
+  :widths: 5 5 90
+
+  * - Record name
+    - Record type
+    - Description
+  * - $(P)$(R)startTaxi
+    - ao
+    - Start position with taxi
+  * - $(P)$(R)endTaxi
+    - ao
+    - End position with taxi
+  * - $(P)$(R)EncoderPulsesPerStep
+    - longout
+    - Encoder pulses per projection
+  * - $(P)$(R)PSOAsynPVName
+    - stringout
+    - PSO asyn PV name
+  * - $(P)$(R)PSOAxisName
+    - stringout
+    - PSO axis name
+  * - $(P)$(R)PSOEncoderInput
+    - longout
+    - Encoder input
+  * - (P)$(R)PSOPulsesPerRotation
+    - ao
+    - Number of encoder counts per revolution
+
+Energy information
+^^^^^^^^^^^^^^^^^^
+
+.. cssclass:: table-bordered table-striped table-hover
+.. list-table::
+  :header-rows: 1
+  :widths: 5 5 90
+
+  * - Record name
+    - Record type
+    - Description
+  * - $(P)$(R)Energy
+    - mbbo
+    - Contains the energy of the beamline.
+  * - $(P)$(R)EnergyMode
+    - mbbo
+    - Contains the energy mode of the beamline, e.g. 'Mono', 'Pink', 'White'.
+  * - $(P)$(R)Filters
+    - stringout
+    - Contains the material and thickness of the filters manually set in the beam path, e.g. Al 1mm; Glass 5mm.
+
+Beam status information
+^^^^^^^^^^^^^^^^^^^^^^^
+
+.. cssclass:: table-bordered table-striped table-hover
+.. list-table::
+  :header-rows: 1
+  :widths: 5 5 90
+
+  * - Record name
+    - Record type
+    - Description
+  * - $(P)$(R)BeamReadyPVName
+    - stringout
+    - Contains the name of the PV that indicates if beam is ready, e.g. ACIS:ShutterPermit
+  * - $(P)$(R)BeamReadyValue
+    - stringout
+    - Contains the value of the beam ready PV when beam is ready.
+  * - $(P)$(R)Testing
+    - stringout
+    - Enable testing mode 'Yes'.
 
 Optics information
 ^^^^^^^^^^^^^^^^^^
@@ -790,71 +1119,24 @@ Fast shutter control
     - stringout
     - Contains the value to write to open the fast shutter
 
-Streaming analysis information
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-.. cssclass:: table-bordered table-striped table-hover
-.. list-table::
-  :header-rows: 1
-  :widths: 5 5 90
-
-  * - Record name
-    - Record type
-    - Description
-  * - $(P)$(R)StreamStatus
-    - bo
-    - Flag storing the  streaming status
-  * - $(P)$(R)StreamBufferSize
-    - longout
-    - Stream buffer size
-  * - $(P)$(R)StreamBinning
-    - mbbo
-    - Flag controlling whether the streaming reconstruction is binned 0, 2, 4 times
-  * - $(P)$(R)StreamRingRemoval
-    - bo
-    - Flag controlling whether the streaming reconstruction applies ring removal
-  * - $(P)$(R)StreamPaganin
-    - bo
-    - Flag controlling whether the streaming reconstruction applies paganin
-  * - $(P)$(R)StreamPaganinAlpha
-    - ao
-    - Paganin alpha coefficient
-  * - $(P)$(R)StreamCenter
-    - ao
-    - Rotation center for streaming reconstruction
-  * - $(P)$(R)StreamFilterType
-    - mbbo
-    - Filter type for streaming reconstruction, 'Parzen', 'Shepp-logan', 'Ramp', 'Butterworth'
-  * - $(P)$(R)StreamOrthoX
-    - longout
-    - Ortho slice in the X direction for streaming reconstruction
-  * - $(P)$(R)StreamOrthoY
-    - longout
-    - Ortho slice in the Y direction for streaming reconstruction
-  * - $(P)$(R)StreamOrthoZ
-    - longout
-    - Ortho slice in the Z direction for streaming reconstruction
-
-
-
-tomoScan_2BM_settings.req
+tomoScan_7BM_settings.req
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-This is the autosave request file for tomoScan_2BM.template
-:doc:`tomoScan_2BM_settings.req`.
+This is the autosave request file for tomoScan_7BM.template
+:doc:`tomoScan_7BM_settings.req`.
 
 It has the same usage and type of content as tomoScan_settings.req described above, except that it
-contains the PVs for the derived class TomoScan2BM.
+contains the PVs for the derived class TomoScan7BM.
 
 medm files
 ~~~~~~~~~~
 
-tomoScan_2BM.adl
+tomoScan_7BM.adl
 ^^^^^^^^^^^^^^^^
 
-The following is the MEDM screen :download:`tomoScan_2BM.adl <../../tomoScanApp/op/adl/tomoScan_2BM.adl>`.  
-This screen contains the PVs for the TomoScan_2BM derived class.  If the BeamReadyPV is changed then tomoscan must be restarted.
+The following is the MEDM screen :download:`tomoScan_7BM.adl <../../tomoScanApp/op/adl/tomoScan_7BM.adl>`.  
+This screen contains the PVs for the TomoScan_7BM derived class.  If the BeamReadyPV is changed then tomoscan must be restarted.
 
-.. image:: img/tomoScan_2BM.png
+.. image:: img/tomoScan_7BM.png
     :width: 75%
     :align: center
