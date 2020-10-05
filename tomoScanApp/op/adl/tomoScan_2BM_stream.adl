@@ -1,14 +1,14 @@
 
 file {
-	name="/local/user2bmb/conda/tomoscan/tomoScanApp/op/adl/tomoScan_2BM_stream.adl"
+	name="/local/user2bmb/epics/synApps/support/tomoscan/tomoScanApp/op/adl/./tomoScan_2BM_stream.adl"
 	version=030111
 }
 display {
 	object {
-		x=482
-		y=1140
-		width=700
-		height=220
+		x=702
+		y=342
+		width=620
+		height=175
 	}
 	clr=14
 	bclr=4
@@ -91,59 +91,34 @@ rectangle {
 	object {
 		x=0
 		y=5
-		width=600
+		width=620
 		height=30
 	}
 	"basic attribute" {
 		clr=2
 	}
 }
-text {
-	object {
-		x=5
-		y=170
-		width=170
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="Images collected"
-	align="horiz. right"
-}
 "text update" {
 	object {
-		x=185
-		y=170
+		x=350
+		y=95
 		width=300
 		height=20
 	}
 	monitor {
-		chan="$(P)$(R)ImagesCollected"
+		chan="$(P)$(R)StreamMessage"
 		clr=54
 		bclr=4
 	}
+	format="string"
 	limits {
 	}
 }
 text {
 	object {
-		x=5
-		y=120
-		width=170
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="Retake flat"
-	align="horiz. right"
-}
-text {
-	object {
 		x=0
 		y=5
-		width=600
+		width=620
 		height=30
 	}
 	"basic attribute" {
@@ -218,7 +193,7 @@ text {
 	"basic attribute" {
 		clr=14
 	}
-	textix="Capture"
+	textix="Capture proj"
 	align="horiz. right"
 }
 "message button" {
@@ -261,7 +236,7 @@ text {
 	"basic attribute" {
 		clr=14
 	}
-	textix="Retake dark"
+	textix="Retake fields"
 	align="horiz. right"
 }
 menu {
@@ -287,7 +262,7 @@ text {
 	"basic attribute" {
 		clr=14
 	}
-	textix="Binning"
+	textix="Broadcast binning"
 	align="horiz. right"
 }
 "message button" {
@@ -302,13 +277,13 @@ text {
 		clr=14
 		bclr=51
 	}
-	label="Start"
+	label="Dark"
 	press_msg="1"
 }
 "message button" {
 	object {
-		x=185
-		y=120
+		x=267
+		y=95
 		width=80
 		height=20
 	}
@@ -317,18 +292,18 @@ text {
 		clr=14
 		bclr=51
 	}
-	label="Start"
+	label="Flat"
 	press_msg="1"
 }
 "text update" {
 	object {
-		x=531
-		y=70
+		x=535
+		y=121
 		width=80
 		height=20
 	}
 	monitor {
-		chan="$(P)$(R)StreamNumCapture_RBV"
+		chan="$(P)$(R)StreamNumTotalCaptured"
 		clr=54
 		bclr=4
 	}
@@ -337,13 +312,13 @@ text {
 }
 "text update" {
 	object {
-		x=615
-		y=70
+		x=269
+		y=45
 		width=80
 		height=20
 	}
 	monitor {
-		chan="$(P)$(R)StreamNumCaptured_RBV"
+		chan="$(P)$(R)StreamPreCounted"
 		clr=54
 		bclr=4
 	}
@@ -352,13 +327,13 @@ text {
 }
 "text update" {
 	object {
-		x=185
-		y=195
+		x=350
+		y=45
 		width=300
 		height=20
 	}
 	monitor {
-		chan="$(P)$(R)StreamMessage"
+		chan="$(P)$(R)StreamCBStatusMessage"
 		clr=54
 		bclr=4
 	}
@@ -369,13 +344,57 @@ text {
 text {
 	object {
 		x=5
-		y=195
+		y=121
 		width=170
 		height=20
 	}
 	"basic attribute" {
 		clr=14
 	}
-	textix="Message"
+	textix="File name"
 	align="horiz. right"
+}
+"text update" {
+	object {
+		x=185
+		y=121
+		width=275
+		height=20
+	}
+	monitor {
+		chan="$(P)$(R)StreamFileName"
+		clr=54
+		bclr=4
+	}
+	format="string"
+	limits {
+	}
+}
+text {
+	object {
+		x=446
+		y=121
+		width=80
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="# Proj"
+	align="horiz. right"
+}
+"text update" {
+	object {
+		x=535
+		y=70
+		width=80
+		height=20
+	}
+	monitor {
+		chan="$(P)$(R)StreamNumCaptured"
+		clr=54
+		bclr=4
+	}
+	limits {
+	}
 }
