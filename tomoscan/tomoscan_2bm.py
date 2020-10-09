@@ -30,7 +30,8 @@ class TomoScan2BM(TomoScan):
         super().__init__(pv_files, macros)
         # Set the detector running in FreeRun mode
         self.set_trigger_mode('FreeRun', 1)
-        
+        self.epics_pvs['CamAcquire'].put('Acquire') ###
+        self.wait_pv(self.epics_pvs['CamAcquire'], 1) ###
         # Set data directory
         file_path = self.epics_pvs['DetectorTopDir'].get(as_string=True) + self.epics_pvs['ExperimentYearMonth'].get(as_string=True) + os.path.sep + self.epics_pvs['UserLastName'].get(as_string=True) + os.path.sep
         self.epics_pvs['FilePath'].put(file_path, wait=True)
@@ -130,12 +131,14 @@ class TomoScan2BM(TomoScan):
             Number of images to collect.  Ignored if trigger_mode="FreeRun".
             This is used to set the ``NumImages`` PV of the camera.
         """
+        self.epics_pvs['CamAcquire'].put('Done') ###
+        self.wait_pv(self.epics_pvs['CamAcquire'], 0) ###
         log.info('set trigger mode: %s', trigger_mode)
         if trigger_mode == 'FreeRun':
             self.epics_pvs['CamImageMode'].put('Continuous', wait=True)
             self.epics_pvs['CamTriggerMode'].put('Off', wait=True)
             self.wait_pv(self.epics_pvs['CamTriggerMode'], 0)
-            self.epics_pvs['CamAcquire'].put('Acquire')
+            # self.epics_pvs['CamAcquire'].put('Acquire')
         elif trigger_mode == 'Internal':
             self.epics_pvs['CamTriggerMode'].put('Off', wait=True)
             self.wait_pv(self.epics_pvs['CamTriggerMode'], 0)
@@ -280,6 +283,8 @@ class TomoScan2BM(TomoScan):
         self.save_configuration(config_file_root + '.config')
         # Put the camera back in FreeRun mode and acquiring
         self.set_trigger_mode('FreeRun', 1)
+        self.epics_pvs['CamAcquire'].put('Acquire') ####
+        self.wait_pv(self.epics_pvs['CamAcquire'], 1) ####
         # Set the rotation speed to maximum
         self.epics_pvs['RotationSpeed'].put(self.max_rotation_speed)
         # Move the sample in.  Could be out if scan was aborted while taking flat fields
