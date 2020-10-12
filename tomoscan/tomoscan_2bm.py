@@ -29,9 +29,9 @@ class TomoScan2BM(TomoScan):
     def __init__(self, pv_files, macros):
         super().__init__(pv_files, macros)
         # Set the detector running in FreeRun mode
-        self.set_trigger_mode('FreeRun', 1)
-        self.epics_pvs['CamAcquire'].put('Acquire') ###
-        self.wait_pv(self.epics_pvs['CamAcquire'], 1) ###
+        # self.set_trigger_mode('FreeRun', 1)
+        # self.epics_pvs['CamAcquire'].put('Acquire') ###
+        # self.wait_pv(self.epics_pvs['CamAcquire'], 1) ###
         # Set data directory
         file_path = self.epics_pvs['DetectorTopDir'].get(as_string=True) + self.epics_pvs['ExperimentYearMonth'].get(as_string=True) + os.path.sep + self.epics_pvs['UserLastName'].get(as_string=True) + os.path.sep
         self.epics_pvs['FilePath'].put(file_path, wait=True)
@@ -44,6 +44,8 @@ class TomoScan2BM(TomoScan):
 
         # Disable over writing warning
         self.epics_pvs['OverwriteWarning'].put('Yes')
+
+        log.setup_custom_logger("./tomoscan.log")
 
     def open_frontend_shutter(self):
         """Opens the shutters to collect flat fields or projections.
@@ -142,7 +144,7 @@ class TomoScan2BM(TomoScan):
         elif trigger_mode == 'Internal':
             self.epics_pvs['CamTriggerMode'].put('Off', wait=True)
             self.wait_pv(self.epics_pvs['CamTriggerMode'], 0)
-            self.epics_pvs['CamImageMode'].put('Multiple')
+            self.epics_pvs['CamImageMode'].put('Multiple')            
             self.epics_pvs['CamNumImages'].put(num_images, wait=True)
         else: # set camera to external triggering
             # These are just in case the scan aborted with the camera in another state
@@ -151,7 +153,7 @@ class TomoScan2BM(TomoScan):
             self.epics_pvs['CamTriggerOverlap'].put('ReadOut', wait=True)
             self.epics_pvs['CamExposureMode'].put('Timed', wait=True)
 
-            self.epics_pvs['CamImageMode'].put('Multiple')
+            self.epics_pvs['CamImageMode'].put('Multiple')            
             self.epics_pvs['CamArrayCallbacks'].put('Enable')
             self.epics_pvs['CamFrameRateEnable'].put(0)
 
@@ -282,9 +284,9 @@ class TomoScan2BM(TomoScan):
         config_file_root = os.path.splitext(full_file_name)[0]
         self.save_configuration(config_file_root + '.config')
         # Put the camera back in FreeRun mode and acquiring
-        self.set_trigger_mode('FreeRun', 1)
-        self.epics_pvs['CamAcquire'].put('Acquire') ####
-        self.wait_pv(self.epics_pvs['CamAcquire'], 1) ####
+        # self.set_trigger_mode('FreeRun', 1)
+        # self.epics_pvs['CamAcquire'].put('Acquire') ####
+        # self.wait_pv(self.epics_pvs['CamAcquire'], 1) ####
         # Set the rotation speed to maximum
         self.epics_pvs['RotationSpeed'].put(self.max_rotation_speed)
         # Move the sample in.  Could be out if scan was aborted while taking flat fields
@@ -395,7 +397,7 @@ class TomoScan2BM(TomoScan):
         # Taxi before starting capture
         self.epics_pvs['PSOtaxi'].put(1, wait=True)
         self.wait_pv(self.epics_pvs['PSOtaxi'], 0)
-
+        
         self.set_trigger_mode('PSOExternal', self.num_angles)
         # Start the camera
         self.epics_pvs['CamAcquire'].put('Acquire')
