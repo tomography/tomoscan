@@ -152,11 +152,17 @@ class TomoScanStream2BM(TomoScan):
             self.epics_pvs['CamNumImages'].put(num_images, wait=True)
         else: # set camera to external triggering
             # These are just in case the scan aborted with the camera in another state
-            self.epics_pvs['CamTriggerMode'].put('Off', wait=True)
-            self.epics_pvs['CamTriggerSource'].put('Line2', wait=True)
-            self.epics_pvs['CamTriggerOverlap'].put('ReadOut', wait=True)
-            self.epics_pvs['CamExposureMode'].put('Timed', wait=True)
+             # These are just in case the scan aborted with the camera in another state 
+            camera_model = self.epics_pvs['CamModel'].get(as_string=True)
+            if(camera_model=='Oryx ORX-10G-51S5M'):# 2bma            
+                self.epics_pvs['CamTriggerMode'].put('Off', wait=True)   # VN: For FLIR we first switch to Off and then change overlap. any reason of that?                                                 
+                self.epics_pvs['CamTriggerSource'].put('Line2', wait=True)
+            elif(camera_model=='Grasshopper3 GS3-U3-23S6M'):# 2bmb            
+                self.epics_pvs['CamTriggerMode'].put('On', wait=True)     # VN: For PG we need to switch to On to be able to switch to readout overlap mode                                                               
+                self.epics_pvs['CamTriggerSource'].put('Line0', wait=True)
+                self.epics_pvs['CamTriggerOverlap'].put('ReadOut', wait=True)
 
+            self.epics_pvs['CamExposureMode'].put('Timed', wait=True)
             self.epics_pvs['CamImageMode'].put('Multiple')
             self.epics_pvs['CamArrayCallbacks'].put('Enable')
             self.epics_pvs['CamFrameRateEnable'].put(0)
@@ -192,7 +198,7 @@ class TomoScanStream2BM(TomoScan):
         self.epics_pvs['PSOendPos'].put(self.rotation_stop, wait=True)
         self.wait_pv(self.epics_pvs['PSOendPos'], self.rotation_stop)
         # Compute and set the motor speed
-        time_per_angle = self.compute_frame_time()
+        time_per_angle = self.compute_frame_time()+7.2/1000
         motor_speed = self.rotation_step / time_per_angle
         self.epics_pvs['PSOslewSpeed'].put(motor_speed)
         self.wait_pv(self.epics_pvs['PSOslewSpeed'], motor_speed)
@@ -328,7 +334,7 @@ class TomoScanStream2BM(TomoScan):
         # wait for acquire to finish
         # wait_camera_done instead of the wait_pv enabled the counter update
         # self.wait_pv(self.epics_pvs['PSOfly'], 0)
-        time_per_angle = self.compute_frame_time()
+        time_per_angle = self.compute_frame_time()+7.2/1000
         collection_time = self.num_angles * time_per_angle
         
         self.wait_camera_done(collection_time + 60.)

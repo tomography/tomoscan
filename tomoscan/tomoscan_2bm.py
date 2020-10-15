@@ -147,12 +147,16 @@ class TomoScan2BM(TomoScan):
             self.epics_pvs['CamImageMode'].put('Multiple')            
             self.epics_pvs['CamNumImages'].put(num_images, wait=True)
         else: # set camera to external triggering
-            # These are just in case the scan aborted with the camera in another state
-            self.epics_pvs['CamTriggerMode'].put('Off', wait=True)
-            self.epics_pvs['CamTriggerSource'].put('Line2', wait=True)
+            # These are just in case the scan aborted with the camera in another state 
+            camera_model = self.epics_pvs['CamModel'].get(as_string=True)
+            if(camera_model=='Oryx ORX-10G-51S5M'):# 2bma            
+                self.epics_pvs['CamTriggerMode'].put('Off', wait=True)   # VN: For FLIR we first switch to Off and then change overlap. any reason of that?                                                 
+                self.epics_pvs['CamTriggerSource'].put('Line2', wait=True)
+            elif(camera_model=='Grasshopper3 GS3-U3-23S6M'):# 2bmb            
+                self.epics_pvs['CamTriggerMode'].put('On', wait=True)     # VN: For PG we need to switch to On to be able to switch to readout overlap mode                                                               
+                self.epics_pvs['CamTriggerSource'].put('Line0', wait=True)
             self.epics_pvs['CamTriggerOverlap'].put('ReadOut', wait=True)
             self.epics_pvs['CamExposureMode'].put('Timed', wait=True)
-
             self.epics_pvs['CamImageMode'].put('Multiple')            
             self.epics_pvs['CamArrayCallbacks'].put('Enable')
             self.epics_pvs['CamFrameRateEnable'].put(0)
@@ -201,7 +205,7 @@ class TomoScan2BM(TomoScan):
         super().begin_scan()
         # Opens the front-end shutter
         self.open_frontend_shutter()
-
+        
         # Confirm angle step is an integer number of encoder pulses
         # Pass the user selected values to the PSO
         self.epics_pvs['PSOstartPos'].put(self.rotation_start, wait=True)
@@ -209,7 +213,7 @@ class TomoScan2BM(TomoScan):
         self.epics_pvs['PSOendPos'].put(self.rotation_stop+self.rotation_step, wait=True)
         self.wait_pv(self.epics_pvs['PSOendPos'], self.rotation_stop+self.rotation_step)
         # Compute and set the motor speed
-        time_per_angle = self.compute_frame_time()
+        time_per_angle = self.compute_frame_time()#+7.2/1000   ##no overlap mode -> time_per_angle=exposure+readout
         motor_speed = self.rotation_step / time_per_angle
         self.epics_pvs['PSOslewSpeed'].put(motor_speed)
         self.wait_pv(self.epics_pvs['PSOslewSpeed'], motor_speed)
@@ -239,7 +243,7 @@ class TomoScan2BM(TomoScan):
         # # Create theta array
         self.theta = []
         self.theta = self.epics_pvs['ThetaArray'].get(count=int(self.num_angles))
-
+        print(self.theta,self.num_angles)
         # Compute total number of frames to capture
         self.total_images = self.num_angles
         if self.dark_field_mode != 'None':
