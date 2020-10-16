@@ -66,7 +66,8 @@ class TomoScan2BM(TomoScan):
                 log.info('shutter status: %s', status)
                 log.info('open shutter: %s, value: %s', pv, value)
                 self.epics_pvs['OpenShutter'].put(value, wait=True)
-                self.wait_pv(self.epics_pvs['ShutterStatus'], 1)
+                self.wait_frontend_shutter_open()
+                # self.wait_pv(self.epics_pvs['ShutterStatus'], 1)
                 status = self.epics_pvs['ShutterStatus'].get(as_string=True)
                 log.info('shutter status: %s', status)
 
@@ -372,6 +373,45 @@ class TomoScan2BM(TomoScan):
                 time.sleep(.01)
             else:
                 return True
+
+    def wait_frontend_shutter_open(self, timeout=-1):
+        """Waits for the front end shutter to open, or for ``abort_scan()`` to be called.
+
+        While waiting this method periodically tries to open the shutter..
+
+        Parameters
+        ----------
+        timeout : float
+            The maximum number of seconds to wait before raising a ShutterTimeoutError exception.
+
+        Raises
+        ------
+        ScanAbortError
+            If ``abort_scan()`` is called
+        ShutterTimeoutError
+            If the open shutter has not completed within timeout value.
+        """
+
+        start_time = time.time()
+        pv = self.epics_pvs['OpenShutter']
+        value = self.epics_pvs['OpenShutterValue'].get(as_string = True)
+        log.info('open shutter: %s, value: %s', pv, value)
+        elapsed_time = 0
+        while True:
+            if self.epics_pvs['ShutterStatus'].get() == int(value):
+                log.warning("Shutter is open in %f s", elapsed_time)
+                return
+            if not self.scan_is_running:
+                raise ScanAbortError
+            value = self.epics_pvs['OpenShutterValue'].get()
+            time.sleep(1.0)
+            current_time = time.time()
+            elapsed_time = current_time - start_time
+            log.warning("Waiting on shutter to open: %f s", elapsed_time)
+            self.epics_pvs['OpenShutter'].put(value, wait=True)
+            if timeout > 0:
+                if elapsed_time >= timeout:
+                    raise ShutterTimeoutError()
 
     def collect_projections(self):
         """Collects projections in fly scan mode.
