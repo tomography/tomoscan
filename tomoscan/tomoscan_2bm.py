@@ -402,7 +402,7 @@ class TomoScan2BM(TomoScan):
                 log.warning("Shutter is open in %f s", elapsed_time)
                 return
             if not self.scan_is_running:
-                raise ScanAbortError
+                exit()
             value = self.epics_pvs['OpenShutterValue'].get()
             time.sleep(1.0)
             current_time = time.time()
@@ -411,7 +411,7 @@ class TomoScan2BM(TomoScan):
             self.epics_pvs['OpenShutter'].put(value, wait=True)
             if timeout > 0:
                 if elapsed_time >= timeout:
-                    raise ShutterTimeoutError()
+                   exit()
 
     def collect_projections(self):
         """Collects projections in fly scan mode.
