@@ -176,7 +176,7 @@ def single_scan(args, ts):
     if args.testing:
         log.warning('testing mode')
     else: 
-        ts['StartScan'].put(1, wait=True, timeout=3600)
+        ts['StartScan'].put(1, wait=True, timeout=-1)
     dtime = (time.time() - tic_01)/60.
     log.info('single scan time: %3.3f minutes', dtime)
 
