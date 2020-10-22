@@ -840,33 +840,43 @@ Stream control
   * - Record name
     - Record type
     - Description
+  * - $(P)$(R)StreamCapture
+    - busy
+    - In streaming mode, set to "Capture" to start the projection saving
+  * - $(P)$(R)StreamNumCapture
+    - longout
+    - In streaming mode, set the number of projections to save when capture is set
+  * - $(P)$(R)StreamNumCaptured
+    - longout
+    - Number of imaged captured in streaming mode
+  * - $(P)$(R)StreamNumTotalCaptured
+    - longout
+    - Total number of imaged captured in streaming mode
   * - $(P)$(R)StreamRetakeFlat
-    - busy
-    - Stream retake flat. Choices are 'No' and 'Yes'. When 'Yes' a new set of flat field images will be collected and used for reconstructing the following projections
+    - busy,
+    - Stream retake flat. Choices are 'Done' and 'Capture'. When 'Capture' a new set of flat field images will be collected and used for reconstructing the following projections
   * - $(P)$(R)StreamRetakeDark
-    - busy
-    - Stream retake dark. Choices are 'No' and 'Yes'. When 'Yes' a new set of dark field images will be collected and used for reconstructing the following projections
+    - busy  
+    - Stream retake dark. Choices are 'Done' and 'Capture'. When 'Capture' a new set of dark field images will be collected and used for reconstructing the following projections
   * - $(P)$(R)StreamPreCount
     - longout
     - Streaming pre-count are the number of projections pre-capture that are stored in a buffer. At the end of capturing these images are added to the data file
-  * - $(P)$(R)StreamCapture
-    - busy 
-    - In streaming mode, set to "Capture" to start the projection saving
-  * - $(P)$(R)StreamNumCapture    
+  * - $(P)$(R)StreamPreCounted
     - longout
-    - In streaming mode, set the number of projections to save when capture is set
-  * - $(P)$(R)StreamNumCapture_RBV  
-    - longout
-    - Number of images set to be captured in streaming mode
-  * - $(P)$(R)StreamBinning    
+    - Streaming pre-counted are the number of projections pre-capture that have been in a buffer. At the end of capturing these images are added to the data file
+  * - $(P)$(R)StreamBinning
     - mbbo
     - In streaming mode, set the binnig scale for projections and streamed reconstruction. Captured data are always not binned and saved at full size
-  * - $(P)$(R)StreamMessage
+  * - $(P)$(R)StreamMessage 
+    - waveform  
+    - Stream status message
+  * - $(P)$(R)StreamCBStatusMessage 
+    - waveform 
+    - Stream sircular buffer status message
+  * - $(P)$(R)StreamFileName 
     - waveform
-    - Stream message
-  * - $(P)$(R)StreamNumCaptured_RBV 
-    - longout
-    - Number of imaged captured in streaming mode
+    - Stream file name
+
 
 tomoScan_2BM_settings.req
 ~~~~~~~~~~~~~~~~~~~~~~~~~
