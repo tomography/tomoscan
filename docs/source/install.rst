@@ -11,6 +11,8 @@ To build a minimal synApp::
     $ mkdir ~/epics
     $ cd epics
 
+.. warning:: Make sure the disk partition hosting ~/epics is not larger than 2 TB. See `tech talk <https://epics.anl.gov/tech-talk/2017/msg00046.php>`_ and  `Diamond Data Storage <https://epics.anl.gov/meetings/2012-10/program/1023-A3_Diamond_Data_Storage.pdf>`_ document.
+
 
 - Download in ~/epics `assemble_synApps <https://github.com/EPICS-synApps/support/blob/master/assemble_synApps.sh>`_.sh
 - Edit the assemble_synApps.sh script as follows:
