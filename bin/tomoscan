@@ -104,7 +104,7 @@ def run_scan(args):
                 scan(args, ts_pvs)
             log.warning('%s scan end', args.scan_type)
         else:
-            log.error('Server %s is busy', args.tomoscan_prefix)
+            log.error('Server %s is busy. Please run a scan manually first.', args.tomoscan_prefix)
     else:
         log.error('Server %s is not runnig', args.tomoscan_prefix)
 
