@@ -32,9 +32,6 @@ class TomoScan2BM(TomoScan):
         # self.set_trigger_mode('FreeRun', 1)
         # self.epics_pvs['CamAcquire'].put('Acquire') ###
         # self.wait_pv(self.epics_pvs['CamAcquire'], 1) ###
-        # Set data directory
-        file_path = self.epics_pvs['DetectorTopDir'].get(as_string=True) + self.epics_pvs['ExperimentYearMonth'].get(as_string=True) + os.path.sep + self.epics_pvs['UserLastName'].get(as_string=True) + os.path.sep
-        self.epics_pvs['FilePath'].put(file_path, wait=True)
 
         # Enable auto-increment on file writer
         self.epics_pvs['FPAutoIncrement'].put('Yes')
@@ -193,6 +190,8 @@ class TomoScan2BM(TomoScan):
 
         - Calls the base class method.
         
+        - Set data directory.
+        
         - Opens the front-end shutter.
 
         - Sets the PSO controller.
@@ -206,6 +205,10 @@ class TomoScan2BM(TomoScan):
         super().begin_scan()
         # Opens the front-end shutter
         self.open_frontend_shutter()
+
+        # Set data directory
+        file_path = self.epics_pvs['DetectorTopDir'].get(as_string=True) + self.epics_pvs['ExperimentYearMonth'].get(as_string=True) + os.path.sep + self.epics_pvs['UserLastName'].get(as_string=True) + os.path.sep
+        self.epics_pvs['FilePath'].put(file_path, wait=True)
         
         # Confirm angle step is an integer number of encoder pulses
         # Pass the user selected values to the PSO
