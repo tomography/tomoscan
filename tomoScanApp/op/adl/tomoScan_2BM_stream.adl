@@ -1,14 +1,14 @@
 
 file {
-	name="/local/user2bmb/conda/tomoscan/tomoScanApp/op/adl/tomoScan_2BM_stream.adl"
+	name="/local/user2bmb/epics/synApps/support/tomoscan/tomoScanApp/op/adl/./tomoScan_2BM_stream.adl"
 	version=030111
 }
 display {
 	object {
-		x=890
-		y=467
-		width=600
-		height=325
+		x=702
+		y=342
+		width=620
+		height=175
 	}
 	clr=14
 	bclr=4
@@ -91,72 +91,34 @@ rectangle {
 	object {
 		x=0
 		y=5
-		width=600
+		width=620
 		height=30
 	}
 	"basic attribute" {
 		clr=2
 	}
 }
-text {
-	object {
-		x=40
-		y=95
-		width=170
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="Images collected"
-	align="horiz. right"
-}
 "text update" {
 	object {
-		x=220
+		x=350
 		y=95
 		width=300
 		height=20
 	}
 	monitor {
-		chan="$(P)$(R)ImagesCollected"
+		chan="$(P)$(R)StreamMessage"
 		clr=54
 		bclr=4
 	}
+	format="string"
 	limits {
 	}
-}
-"choice button" {
-	object {
-		x=220
-		y=267
-		width=80
-		height=50
-	}
-	control {
-		chan="$(P)$(R)StreamRetakeFlat"
-		clr=14
-		bclr=4
-	}
-}
-text {
-	object {
-		x=40
-		y=282
-		width=170
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="Retake flat"
-	align="horiz. right"
 }
 text {
 	object {
 		x=0
 		y=5
-		width=600
+		width=620
 		height=30
 	}
 	"basic attribute" {
@@ -167,7 +129,7 @@ text {
 }
 "text entry" {
 	object {
-		x=220
+		x=185
 		y=45
 		width=80
 		height=20
@@ -182,7 +144,7 @@ text {
 }
 text {
 	object {
-		x=40
+		x=5
 		y=45
 		width=170
 		height=20
@@ -195,7 +157,7 @@ text {
 }
 text {
 	object {
-		x=385
+		x=350
 		y=70
 		width=90
 		height=20
@@ -208,10 +170,10 @@ text {
 }
 "text entry" {
 	object {
-		x=480
+		x=445
 		y=70
 		width=80
-		height=22
+		height=20
 	}
 	control {
 		chan="$(P)$(R)StreamNumCapture"
@@ -223,7 +185,7 @@ text {
 }
 text {
 	object {
-		x=40
+		x=5
 		y=70
 		width=170
 		height=20
@@ -231,12 +193,12 @@ text {
 	"basic attribute" {
 		clr=14
 	}
-	textix="Capture"
+	textix="Capture proj"
 	align="horiz. right"
 }
 "message button" {
 	object {
-		x=220
+		x=185
 		y=70
 		width=80
 		height=20
@@ -251,7 +213,7 @@ text {
 }
 "message button" {
 	object {
-		x=302
+		x=267
 		y=70
 		width=80
 		height=20
@@ -263,4 +225,176 @@ text {
 	}
 	label="Stop"
 	press_msg="0"
+}
+text {
+	object {
+		x=5
+		y=95
+		width=170
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Retake fields"
+	align="horiz. right"
+}
+menu {
+	object {
+		x=185
+		y=145
+		width=80
+		height=20
+	}
+	control {
+		chan="$(P)$(R)StreamBinning"
+		clr=14
+		bclr=51
+	}
+}
+text {
+	object {
+		x=5
+		y=145
+		width=170
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Broadcast binning"
+	align="horiz. right"
+}
+"message button" {
+	object {
+		x=185
+		y=95
+		width=80
+		height=20
+	}
+	control {
+		chan="$(P)$(R)StreamRetakeDark"
+		clr=14
+		bclr=51
+	}
+	label="Dark"
+	press_msg="1"
+}
+"message button" {
+	object {
+		x=267
+		y=95
+		width=80
+		height=20
+	}
+	control {
+		chan="$(P)$(R)StreamRetakeFlat"
+		clr=14
+		bclr=51
+	}
+	label="Flat"
+	press_msg="1"
+}
+"text update" {
+	object {
+		x=535
+		y=121
+		width=80
+		height=20
+	}
+	monitor {
+		chan="$(P)$(R)StreamNumTotalCaptured"
+		clr=54
+		bclr=4
+	}
+	limits {
+	}
+}
+"text update" {
+	object {
+		x=269
+		y=45
+		width=80
+		height=20
+	}
+	monitor {
+		chan="$(P)$(R)StreamPreCounted"
+		clr=54
+		bclr=4
+	}
+	limits {
+	}
+}
+"text update" {
+	object {
+		x=350
+		y=45
+		width=300
+		height=20
+	}
+	monitor {
+		chan="$(P)$(R)StreamCBStatusMessage"
+		clr=54
+		bclr=4
+	}
+	format="string"
+	limits {
+	}
+}
+text {
+	object {
+		x=5
+		y=121
+		width=170
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="File name"
+	align="horiz. right"
+}
+"text update" {
+	object {
+		x=185
+		y=121
+		width=275
+		height=20
+	}
+	monitor {
+		chan="$(P)$(R)StreamFileName"
+		clr=54
+		bclr=4
+	}
+	format="string"
+	limits {
+	}
+}
+text {
+	object {
+		x=446
+		y=121
+		width=80
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="# Proj"
+	align="horiz. right"
+}
+"text update" {
+	object {
+		x=535
+		y=70
+		width=80
+		height=20
+	}
+	monitor {
+		chan="$(P)$(R)StreamNumCaptured"
+		clr=54
+		bclr=4
+	}
+	limits {
+	}
 }

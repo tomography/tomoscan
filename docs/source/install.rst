@@ -11,6 +11,8 @@ To build a minimal synApp::
     $ mkdir ~/epics
     $ cd epics
 
+.. warning:: Make sure the disk partition hosting ~/epics is not larger than 2 TB. See `tech talk <https://epics.anl.gov/tech-talk/2017/msg00046.php>`_ and  `Diamond Data Storage <https://epics.anl.gov/meetings/2012-10/program/1023-A3_Diamond_Data_Storage.pdf>`_ document.
+
 
 - Download in ~/epics `assemble_synApps <https://github.com/EPICS-synApps/support/blob/master/assemble_synApps.sh>`_.sh
 - Edit the assemble_synApps.sh script as follows:
@@ -68,7 +70,7 @@ Testing the installation
     $ start_IOC
     $ start_medm
 
-Bemaline customization
+Beamline customization
 ----------------------
 
 tomoScan
@@ -99,7 +101,7 @@ add here custom PVs required to run tomography at your beamline.
     - file "tomoScan_settings.req", P=$(P), R=$(R)
     - file "tomoScan_2BM_settings.req", P=$(P), R=$(R)
 
-- Edit iocBoot/iocTomoScan_2BM/st.cmd to match the name you want to assing to the TomoScan ioc
+- Edit iocBoot/iocTomoScan_2BM/st.cmd to match the name you want to assign to the TomoScan ioc
     - epicsEnvSet("P", "2bma:")
     - epicsEnvSet("R", "TomoScan:")
 

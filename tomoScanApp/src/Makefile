@@ -24,7 +24,7 @@ tomoScanApp_SRCS_vxWorks += -nil-
 
 tomoScanApp_LIBS += autosave
 tomoScanApp_LIBS += busy
-#tomoScanApp_LIBS += asyn
+# tomoScanApp_LIBS += asyn
 
 # Finally link IOC to the EPICS Base libraries
 tomoScanApp_LIBS += $(EPICS_BASE_IOC_LIBS)

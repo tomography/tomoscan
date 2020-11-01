@@ -243,7 +243,7 @@ def write(config_file, args=None, sections=None):
             else:
                 value = opts['default'] if opts['default'] is not None else ''
 
-            prefix = '# ' if value is '' else ''
+            prefix = '# ' if value == '' else ''
 
             if name != 'config':
                 config.set(section, prefix + name, str(value))

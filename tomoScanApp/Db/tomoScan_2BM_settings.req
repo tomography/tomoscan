@@ -81,7 +81,16 @@ $(P)$(R)CbPluginPVPrefix
 $(P)$(R)StreamCapture
 $(P)$(R)StreamNumCapture
 $(P)$(R)StreamRetakeFlat
+$(P)$(R)StreamRetakeDark
 $(P)$(R)StreamPreCount
+$(P)$(R)StreamBinning
+$(P)$(R)StreamMessage
+$(P)$(R)StreamNumCapture
+$(P)$(R)StreamNumCaptured
+$(P)$(R)StreamNumTotalCaptured
+$(P)$(R)StreamCBStatusMessage
+$(P)$(R)StreamFileName
+$(P)$(R)StreamPreCounted
 
 ################
 # Shutter status
