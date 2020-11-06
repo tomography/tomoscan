@@ -834,9 +834,9 @@ class TomoScan():
 
         # We need to use the actual exposure time that the camera is using, not the requested time
         exposure = self.epics_pvs['CamAcquireTimeRBV'].value
-        # Add 1 or 5 ms to exposure time for margin
+        # Add some extra time to exposure time for margin.  These values are empirical.
         if exposure > 2.3:
-            frame_time = exposure + .005
+            frame_time = exposure + .01
         elif exposure > 1.0:
             frame_time = exposure + .002
         else:
