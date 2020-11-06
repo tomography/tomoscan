@@ -4,7 +4,7 @@
   <x>562</x>
   <y>124</y>
   <width>565</width>
-  <height>680</height>
+  <height>705</height>
   <background_color>
     <color red="187" green="187" blue="187">
     </color>
@@ -25,418 +25,8 @@
       </color>
     </background_color>
   </widget>
-  <widget type="rectangle" version="2.0.0">
-    <name>rectangle #9</name>
-    <x>5</x>
-    <y>470</y>
-    <width>555</width>
-    <height>205</height>
-    <line_width>1</line_width>
-    <line_color>
-      <color red="0" green="0" blue="0">
-      </color>
-    </line_color>
-    <background_color>
-      <color red="0" green="0" blue="0">
-      </color>
-    </background_color>
-    <transparent>true</transparent>
-  </widget>
   <widget type="group" version="2.0.0">
-    <name>composite #12</name>
-    <x>10</x>
-    <y>475</y>
-    <width>545</width>
-    <height>20</height>
-    <style>3</style>
-    <transparent>true</transparent>
-    <widget type="label" version="2.0.0">
-      <name>text #15</name>
-      <text>User Information</text>
-      <x>148</x>
-      <width>249</width>
-      <font>
-        <font family="Liberation Sans" style="REGULAR" size="16.0">
-        </font>
-      </font>
-      <foreground_color>
-        <color red="10" green="0" blue="184">
-        </color>
-      </foreground_color>
-      <horizontal_alignment>1</horizontal_alignment>
-    </widget>
-    <widget type="rectangle" version="2.0.0">
-      <name>rectangle #18</name>
-      <width>545</width>
-      <line_color>
-        <color red="218" green="218" blue="218">
-        </color>
-      </line_color>
-      <background_color>
-        <color red="218" green="218" blue="218">
-        </color>
-      </background_color>
-    </widget>
-    <widget type="label" version="2.0.0">
-      <name>text #21</name>
-      <text>User Information</text>
-      <x>148</x>
-      <width>249</width>
-      <font>
-        <font family="Liberation Sans" style="REGULAR" size="16.0">
-        </font>
-      </font>
-      <foreground_color>
-        <color red="10" green="0" blue="184">
-        </color>
-      </foreground_color>
-      <horizontal_alignment>1</horizontal_alignment>
-    </widget>
-  </widget>
-  <widget type="group" version="2.0.0">
-    <name>composite #24</name>
-    <x>10</x>
-    <y>500</y>
-    <width>545</width>
-    <height>170</height>
-    <style>3</style>
-    <transparent>true</transparent>
-    <widget type="group" version="2.0.0">
-      <name>composite #27</name>
-      <x>155</x>
-      <width>390</width>
-      <height>170</height>
-      <style>3</style>
-      <transparent>true</transparent>
-      <widget type="textentry" version="3.0.0">
-        <name>text entry #30</name>
-        <pv_name>$(P)$(R)UserInstitution</pv_name>
-        <y>25</y>
-        <width>390</width>
-        <font>
-          <font family="Liberation Sans" style="REGULAR" size="16.0">
-          </font>
-        </font>
-        <background_color>
-          <color red="115" green="223" blue="255">
-          </color>
-        </background_color>
-        <format>6</format>
-        <show_units>false</show_units>
-        <border_alarm_sensitive>false</border_alarm_sensitive>
-      </widget>
-      <widget type="textentry" version="3.0.0">
-        <name>text entry #34</name>
-        <pv_name>$(P)$(R)UserName</pv_name>
-        <width>390</width>
-        <font>
-          <font family="Liberation Sans" style="REGULAR" size="16.0">
-          </font>
-        </font>
-        <background_color>
-          <color red="115" green="223" blue="255">
-          </color>
-        </background_color>
-        <format>6</format>
-        <show_units>false</show_units>
-        <border_alarm_sensitive>false</border_alarm_sensitive>
-      </widget>
-      <widget type="textentry" version="3.0.0">
-        <name>text entry #38</name>
-        <pv_name>$(P)$(R)UserEmail</pv_name>
-        <y>75</y>
-        <width>390</width>
-        <font>
-          <font family="Liberation Sans" style="REGULAR" size="16.0">
-          </font>
-        </font>
-        <background_color>
-          <color red="115" green="223" blue="255">
-          </color>
-        </background_color>
-        <format>6</format>
-        <show_units>false</show_units>
-        <border_alarm_sensitive>false</border_alarm_sensitive>
-      </widget>
-      <widget type="textentry" version="3.0.0">
-        <name>text entry #42</name>
-        <pv_name>$(P)$(R)ProposalNumber</pv_name>
-        <y>100</y>
-        <width>390</width>
-        <font>
-          <font family="Liberation Sans" style="REGULAR" size="16.0">
-          </font>
-        </font>
-        <background_color>
-          <color red="115" green="223" blue="255">
-          </color>
-        </background_color>
-        <format>6</format>
-        <show_units>false</show_units>
-        <border_alarm_sensitive>false</border_alarm_sensitive>
-      </widget>
-      <widget type="textentry" version="3.0.0">
-        <name>text entry #46</name>
-        <pv_name>$(P)$(R)ProposalTitle</pv_name>
-        <y>125</y>
-        <width>390</width>
-        <font>
-          <font family="Liberation Sans" style="REGULAR" size="16.0">
-          </font>
-        </font>
-        <background_color>
-          <color red="115" green="223" blue="255">
-          </color>
-        </background_color>
-        <format>6</format>
-        <show_units>false</show_units>
-        <border_alarm_sensitive>false</border_alarm_sensitive>
-      </widget>
-      <widget type="textentry" version="3.0.0">
-        <name>text entry #50</name>
-        <pv_name>$(P)$(R)ESAFNumber</pv_name>
-        <y>150</y>
-        <width>390</width>
-        <font>
-          <font family="Liberation Sans" style="REGULAR" size="16.0">
-          </font>
-        </font>
-        <background_color>
-          <color red="115" green="223" blue="255">
-          </color>
-        </background_color>
-        <format>6</format>
-        <show_units>false</show_units>
-        <border_alarm_sensitive>false</border_alarm_sensitive>
-      </widget>
-      <widget type="textentry" version="3.0.0">
-        <name>text entry #54</name>
-        <pv_name>$(P)$(R)UserBadge</pv_name>
-        <y>50</y>
-        <width>390</width>
-        <font>
-          <font family="Liberation Sans" style="REGULAR" size="16.0">
-          </font>
-        </font>
-        <background_color>
-          <color red="115" green="223" blue="255">
-          </color>
-        </background_color>
-        <format>6</format>
-        <show_units>false</show_units>
-        <border_alarm_sensitive>false</border_alarm_sensitive>
-      </widget>
-    </widget>
-    <widget type="group" version="2.0.0">
-      <name>composite #58</name>
-      <width>150</width>
-      <height>170</height>
-      <style>3</style>
-      <transparent>true</transparent>
-      <widget type="label" version="2.0.0">
-        <name>text #61</name>
-        <text>User name</text>
-        <x>60</x>
-        <width>90</width>
-        <font>
-          <font family="Liberation Sans" style="REGULAR" size="16.0">
-          </font>
-        </font>
-        <auto_size>true</auto_size>
-      </widget>
-      <widget type="label" version="2.0.0">
-        <name>text #64</name>
-        <text>Institution</text>
-        <x>40</x>
-        <y>25</y>
-        <width>110</width>
-        <font>
-          <font family="Liberation Sans" style="REGULAR" size="16.0">
-          </font>
-        </font>
-        <auto_size>true</auto_size>
-      </widget>
-      <widget type="label" version="2.0.0">
-        <name>text #67</name>
-        <text>User e-mail</text>
-        <x>40</x>
-        <y>75</y>
-        <width>110</width>
-        <font>
-          <font family="Liberation Sans" style="REGULAR" size="16.0">
-          </font>
-        </font>
-        <auto_size>true</auto_size>
-      </widget>
-      <widget type="label" version="2.0.0">
-        <name>text #70</name>
-        <text>ANL badge #</text>
-        <x>40</x>
-        <y>50</y>
-        <width>110</width>
-        <font>
-          <font family="Liberation Sans" style="REGULAR" size="16.0">
-          </font>
-        </font>
-        <auto_size>true</auto_size>
-      </widget>
-      <widget type="label" version="2.0.0">
-        <name>text #73</name>
-        <text>APS proposal #</text>
-        <x>10</x>
-        <y>100</y>
-        <width>140</width>
-        <font>
-          <font family="Liberation Sans" style="REGULAR" size="16.0">
-          </font>
-        </font>
-        <auto_size>true</auto_size>
-      </widget>
-      <widget type="label" version="2.0.0">
-        <name>text #76</name>
-        <text>APS prop. title</text>
-        <y>125</y>
-        <width>150</width>
-        <font>
-          <font family="Liberation Sans" style="REGULAR" size="16.0">
-          </font>
-        </font>
-        <auto_size>true</auto_size>
-      </widget>
-      <widget type="label" version="2.0.0">
-        <name>text #79</name>
-        <text>APS ESAF #</text>
-        <x>50</x>
-        <y>150</y>
-        <font>
-          <font family="Liberation Sans" style="REGULAR" size="16.0">
-          </font>
-        </font>
-        <auto_size>true</auto_size>
-      </widget>
-    </widget>
-  </widget>
-  <widget type="rectangle" version="2.0.0">
-    <name>rectangle #82</name>
-    <x>5</x>
-    <y>360</y>
-    <width>555</width>
-    <height>105</height>
-    <line_width>1</line_width>
-    <line_color>
-      <color red="0" green="0" blue="0">
-      </color>
-    </line_color>
-    <background_color>
-      <color red="0" green="0" blue="0">
-      </color>
-    </background_color>
-    <transparent>true</transparent>
-  </widget>
-  <widget type="group" version="2.0.0">
-    <name>composite #85</name>
-    <x>175</x>
-    <y>390</y>
-    <width>380</width>
-    <height>70</height>
-    <style>3</style>
-    <transparent>true</transparent>
-    <widget type="textentry" version="3.0.0">
-      <name>text entry #88</name>
-      <pv_name>$(P)$(R)BeamReadyValue</pv_name>
-      <y>50</y>
-      <width>380</width>
-      <font>
-        <font family="Liberation Sans" style="REGULAR" size="16.0">
-        </font>
-      </font>
-      <background_color>
-        <color red="115" green="223" blue="255">
-        </color>
-      </background_color>
-      <format>6</format>
-      <show_units>false</show_units>
-      <border_alarm_sensitive>false</border_alarm_sensitive>
-    </widget>
-    <widget type="textentry" version="3.0.0">
-      <name>text entry #92</name>
-      <pv_name>$(P)$(R)BeamReadyPVName</pv_name>
-      <y>25</y>
-      <width>380</width>
-      <font>
-        <font family="Liberation Sans" style="REGULAR" size="16.0">
-        </font>
-      </font>
-      <background_color>
-        <color red="115" green="223" blue="255">
-        </color>
-      </background_color>
-      <format>6</format>
-      <show_units>false</show_units>
-      <border_alarm_sensitive>false</border_alarm_sensitive>
-    </widget>
-    <widget type="textentry" version="3.0.0">
-      <name>text entry #96</name>
-      <pv_name>$(P)$(R)MCSPVPrefix</pv_name>
-      <width>380</width>
-      <font>
-        <font family="Liberation Sans" style="REGULAR" size="16.0">
-        </font>
-      </font>
-      <background_color>
-        <color red="115" green="223" blue="255">
-        </color>
-      </background_color>
-      <format>6</format>
-      <show_units>false</show_units>
-      <border_alarm_sensitive>false</border_alarm_sensitive>
-    </widget>
-  </widget>
-  <widget type="group" version="2.0.0">
-    <name>composite #100</name>
-    <x>10</x>
-    <y>390</y>
-    <width>160</width>
-    <height>70</height>
-    <style>3</style>
-    <transparent>true</transparent>
-    <widget type="label" version="2.0.0">
-      <name>text #103</name>
-      <text>SIS MCS prefix</text>
-      <x>20</x>
-      <width>140</width>
-      <font>
-        <font family="Liberation Sans" style="REGULAR" size="16.0">
-        </font>
-      </font>
-      <horizontal_alignment>2</horizontal_alignment>
-    </widget>
-    <widget type="label" version="2.0.0">
-      <name>text #106</name>
-      <text>Beam ready PV</text>
-      <x>30</x>
-      <y>25</y>
-      <width>130</width>
-      <font>
-        <font family="Liberation Sans" style="REGULAR" size="16.0">
-        </font>
-      </font>
-      <auto_size>true</auto_size>
-    </widget>
-    <widget type="label" version="2.0.0">
-      <name>text #109</name>
-      <text>Beam ready value</text>
-      <y>50</y>
-      <width>160</width>
-      <font>
-        <font family="Liberation Sans" style="REGULAR" size="16.0">
-        </font>
-      </font>
-      <auto_size>true</auto_size>
-    </widget>
-  </widget>
-  <widget type="group" version="2.0.0">
-    <name>composite #112</name>
+    <name>composite #9</name>
     <x>10</x>
     <y>45</y>
     <width>545</width>
@@ -444,7 +34,7 @@
     <style>3</style>
     <transparent>true</transparent>
     <widget type="rectangle" version="2.0.0">
-      <name>rectangle #115</name>
+      <name>rectangle #12</name>
       <width>545</width>
       <line_color>
         <color red="218" green="218" blue="218">
@@ -456,7 +46,7 @@
       </background_color>
     </widget>
     <widget type="label" version="2.0.0">
-      <name>text #118</name>
+      <name>text #15</name>
       <text>Sample Information</text>
       <x>133</x>
       <width>281</width>
@@ -472,7 +62,7 @@
     </widget>
   </widget>
   <widget type="group" version="2.0.0">
-    <name>composite #121</name>
+    <name>composite #18</name>
     <x>20</x>
     <y>70</y>
     <width>535</width>
@@ -480,13 +70,13 @@
     <style>3</style>
     <transparent>true</transparent>
     <widget type="group" version="2.0.0">
-      <name>composite #124</name>
+      <name>composite #21</name>
       <width>140</width>
       <height>95</height>
       <style>3</style>
       <transparent>true</transparent>
       <widget type="label" version="2.0.0">
-        <name>text #127</name>
+        <name>text #24</name>
         <text>Sample name</text>
         <x>30</x>
         <width>110</width>
@@ -497,7 +87,7 @@
         <auto_size>true</auto_size>
       </widget>
       <widget type="label" version="2.0.0">
-        <name>text #130</name>
+        <name>text #27</name>
         <text>Description #1</text>
         <y>25</y>
         <width>140</width>
@@ -508,7 +98,7 @@
         <auto_size>true</auto_size>
       </widget>
       <widget type="label" version="2.0.0">
-        <name>text #133</name>
+        <name>text #30</name>
         <text>Description #2</text>
         <y>50</y>
         <width>140</width>
@@ -519,7 +109,7 @@
         <auto_size>true</auto_size>
       </widget>
       <widget type="label" version="2.0.0">
-        <name>text #136</name>
+        <name>text #33</name>
         <text>Description #3</text>
         <y>75</y>
         <width>140</width>
@@ -531,14 +121,14 @@
       </widget>
     </widget>
     <widget type="group" version="2.0.0">
-      <name>composite #139</name>
+      <name>composite #36</name>
       <x>145</x>
       <width>390</width>
       <height>95</height>
       <style>3</style>
       <transparent>true</transparent>
       <widget type="textentry" version="3.0.0">
-        <name>text entry #142</name>
+        <name>text entry #39</name>
         <pv_name>$(P)$(R)SampleName</pv_name>
         <width>390</width>
         <font>
@@ -554,7 +144,7 @@
         <border_alarm_sensitive>false</border_alarm_sensitive>
       </widget>
       <widget type="textentry" version="3.0.0">
-        <name>text entry #146</name>
+        <name>text entry #43</name>
         <pv_name>$(P)$(R)SampleDescription1</pv_name>
         <y>25</y>
         <width>390</width>
@@ -571,7 +161,7 @@
         <border_alarm_sensitive>false</border_alarm_sensitive>
       </widget>
       <widget type="textentry" version="3.0.0">
-        <name>text entry #150</name>
+        <name>text entry #47</name>
         <pv_name>$(P)$(R)SampleDescription2</pv_name>
         <y>50</y>
         <width>390</width>
@@ -588,7 +178,7 @@
         <border_alarm_sensitive>false</border_alarm_sensitive>
       </widget>
       <widget type="textentry" version="3.0.0">
-        <name>text entry #154</name>
+        <name>text entry #51</name>
         <pv_name>$(P)$(R)SampleDescription3</pv_name>
         <y>75</y>
         <width>390</width>
@@ -607,7 +197,7 @@
     </widget>
   </widget>
   <widget type="rectangle" version="2.0.0">
-    <name>rectangle #158</name>
+    <name>rectangle #55</name>
     <x>5</x>
     <y>40</y>
     <width>555</width>
@@ -624,202 +214,7 @@
     <transparent>true</transparent>
   </widget>
   <widget type="group" version="2.0.0">
-    <name>composite #161</name>
-    <x>30</x>
-    <y>205</y>
-    <width>525</width>
-    <height>145</height>
-    <style>3</style>
-    <transparent>true</transparent>
-    <widget type="group" version="2.0.0">
-      <name>composite #164</name>
-      <x>295</x>
-      <width>230</width>
-      <height>145</height>
-      <style>3</style>
-      <transparent>true</transparent>
-      <widget type="textentry" version="3.0.0">
-        <name>text entry #167</name>
-        <pv_name>$(P)$(R)ScintillatorThickness</pv_name>
-        <y>25</y>
-        <width>230</width>
-        <font>
-          <font family="Liberation Sans" style="REGULAR" size="16.0">
-          </font>
-        </font>
-        <background_color>
-          <color red="115" green="223" blue="255">
-          </color>
-        </background_color>
-        <format>6</format>
-        <show_units>false</show_units>
-        <border_alarm_sensitive>false</border_alarm_sensitive>
-      </widget>
-      <widget type="textentry" version="3.0.0">
-        <name>text entry #171</name>
-        <pv_name>$(P)$(R)ScintillatorType</pv_name>
-        <width>230</width>
-        <font>
-          <font family="Liberation Sans" style="REGULAR" size="16.0">
-          </font>
-        </font>
-        <background_color>
-          <color red="115" green="223" blue="255">
-          </color>
-        </background_color>
-        <format>6</format>
-        <show_units>false</show_units>
-        <border_alarm_sensitive>false</border_alarm_sensitive>
-      </widget>
-      <widget type="textentry" version="3.0.0">
-        <name>text entry #175</name>
-        <pv_name>$(P)$(R)DetectorPixelSize</pv_name>
-        <y>75</y>
-        <width>230</width>
-        <font>
-          <font family="Liberation Sans" style="REGULAR" size="16.0">
-          </font>
-        </font>
-        <background_color>
-          <color red="115" green="223" blue="255">
-          </color>
-        </background_color>
-        <format>6</format>
-        <show_units>false</show_units>
-        <border_alarm_sensitive>false</border_alarm_sensitive>
-      </widget>
-      <widget type="textentry" version="3.0.0">
-        <name>text entry #179</name>
-        <pv_name>$(P)$(R)CameraObjective</pv_name>
-        <y>100</y>
-        <width>230</width>
-        <font>
-          <font family="Liberation Sans" style="REGULAR" size="16.0">
-          </font>
-        </font>
-        <background_color>
-          <color red="115" green="223" blue="255">
-          </color>
-        </background_color>
-        <format>6</format>
-        <show_units>false</show_units>
-        <border_alarm_sensitive>false</border_alarm_sensitive>
-      </widget>
-      <widget type="textentry" version="3.0.0">
-        <name>text entry #183</name>
-        <pv_name>$(P)$(R)CameraTubeLength</pv_name>
-        <y>125</y>
-        <width>230</width>
-        <font>
-          <font family="Liberation Sans" style="REGULAR" size="16.0">
-          </font>
-        </font>
-        <background_color>
-          <color red="115" green="223" blue="255">
-          </color>
-        </background_color>
-        <format>6</format>
-        <show_units>false</show_units>
-        <border_alarm_sensitive>false</border_alarm_sensitive>
-      </widget>
-      <widget type="textentry" version="3.0.0">
-        <name>text entry #187</name>
-        <pv_name>$(P)$(R)ImagePixelSize</pv_name>
-        <y>50</y>
-        <width>230</width>
-        <font>
-          <font family="Liberation Sans" style="REGULAR" size="16.0">
-          </font>
-        </font>
-        <background_color>
-          <color red="115" green="223" blue="255">
-          </color>
-        </background_color>
-        <format>6</format>
-        <show_units>false</show_units>
-        <border_alarm_sensitive>false</border_alarm_sensitive>
-      </widget>
-    </widget>
-    <widget type="group" version="2.0.0">
-      <name>composite #191</name>
-      <width>290</width>
-      <height>145</height>
-      <style>3</style>
-      <transparent>true</transparent>
-      <widget type="label" version="2.0.0">
-        <name>text #194</name>
-        <text>Scintillator type</text>
-        <x>120</x>
-        <width>170</width>
-        <font>
-          <font family="Liberation Sans" style="REGULAR" size="16.0">
-          </font>
-        </font>
-        <auto_size>true</auto_size>
-      </widget>
-      <widget type="label" version="2.0.0">
-        <name>text #197</name>
-        <text>Scint. thickness (microns)</text>
-        <x>30</x>
-        <y>25</y>
-        <width>260</width>
-        <font>
-          <font family="Liberation Sans" style="REGULAR" size="16.0">
-          </font>
-        </font>
-        <auto_size>true</auto_size>
-      </widget>
-      <widget type="label" version="2.0.0">
-        <name>text #200</name>
-        <text>Detector pixel size (microns)</text>
-        <y>75</y>
-        <width>290</width>
-        <font>
-          <font family="Liberation Sans" style="REGULAR" size="16.0">
-          </font>
-        </font>
-        <auto_size>true</auto_size>
-      </widget>
-      <widget type="label" version="2.0.0">
-        <name>text #203</name>
-        <text>Image pixel size (microns)</text>
-        <x>30</x>
-        <y>50</y>
-        <width>260</width>
-        <font>
-          <font family="Liberation Sans" style="REGULAR" size="16.0">
-          </font>
-        </font>
-        <auto_size>true</auto_size>
-      </widget>
-      <widget type="label" version="2.0.0">
-        <name>text #206</name>
-        <text>Camera objective</text>
-        <x>130</x>
-        <y>100</y>
-        <width>160</width>
-        <font>
-          <font family="Liberation Sans" style="REGULAR" size="16.0">
-          </font>
-        </font>
-        <auto_size>true</auto_size>
-      </widget>
-      <widget type="label" version="2.0.0">
-        <name>text #209</name>
-        <text>Tube length (mm)</text>
-        <x>130</x>
-        <y>125</y>
-        <width>160</width>
-        <font>
-          <font family="Liberation Sans" style="REGULAR" size="16.0">
-          </font>
-        </font>
-        <auto_size>true</auto_size>
-      </widget>
-    </widget>
-  </widget>
-  <widget type="group" version="2.0.0">
-    <name>composite #212</name>
+    <name>composite #58</name>
     <x>10</x>
     <y>180</y>
     <width>545</width>
@@ -827,7 +222,7 @@
     <style>3</style>
     <transparent>true</transparent>
     <widget type="rectangle" version="2.0.0">
-      <name>rectangle #215</name>
+      <name>rectangle #61</name>
       <width>545</width>
       <line_color>
         <color red="218" green="218" blue="218">
@@ -839,7 +234,7 @@
       </background_color>
     </widget>
     <widget type="label" version="2.0.0">
-      <name>text #218</name>
+      <name>text #64</name>
       <text>Configuration Information</text>
       <x>78</x>
       <width>390</width>
@@ -855,11 +250,11 @@
     </widget>
   </widget>
   <widget type="rectangle" version="2.0.0">
-    <name>rectangle #221</name>
+    <name>rectangle #67</name>
     <x>5</x>
     <y>175</y>
     <width>555</width>
-    <height>180</height>
+    <height>205</height>
     <line_width>1</line_width>
     <line_color>
       <color red="0" green="0" blue="0">
@@ -872,7 +267,7 @@
     <transparent>true</transparent>
   </widget>
   <widget type="label" version="2.0.0">
-    <name>text #224</name>
+    <name>text #70</name>
     <text>13-BM Tomography   $(P)$(R)</text>
     <y>5</y>
     <width>565</width>
@@ -887,34 +282,662 @@
     </foreground_color>
     <horizontal_alignment>1</horizontal_alignment>
   </widget>
-  <widget type="rectangle" version="2.0.0">
-    <name>rectangle #227</name>
-    <x>10</x>
-    <y>365</y>
-    <width>545</width>
-    <line_color>
-      <color red="218" green="218" blue="218">
-      </color>
-    </line_color>
-    <background_color>
-      <color red="218" green="218" blue="218">
-      </color>
-    </background_color>
-  </widget>
-  <widget type="label" version="2.0.0">
-    <name>text #230</name>
-    <text>Epics Process Variables</text>
-    <x>167</x>
-    <y>365</y>
-    <width>230</width>
-    <font>
-      <font family="Liberation Sans" style="REGULAR" size="16.0">
+  <widget type="group" version="2.0.0">
+    <name>composite #73</name>
+    <x>5</x>
+    <y>385</y>
+    <width>555</width>
+    <height>315</height>
+    <style>3</style>
+    <transparent>true</transparent>
+    <widget type="rectangle" version="2.0.0">
+      <name>rectangle #76</name>
+      <y>110</y>
+      <width>555</width>
+      <height>205</height>
+      <line_width>1</line_width>
+      <line_color>
+        <color red="0" green="0" blue="0">
+        </color>
+      </line_color>
+      <background_color>
+        <color red="0" green="0" blue="0">
+        </color>
+      </background_color>
+      <transparent>true</transparent>
+    </widget>
+    <widget type="group" version="2.0.0">
+      <name>composite #79</name>
+      <x>5</x>
+      <y>115</y>
+      <width>545</width>
+      <height>20</height>
+      <style>3</style>
+      <transparent>true</transparent>
+      <widget type="label" version="2.0.0">
+        <name>text #82</name>
+        <text>User Information</text>
+        <x>148</x>
+        <width>249</width>
+        <font>
+          <font family="Liberation Sans" style="REGULAR" size="16.0">
+          </font>
+        </font>
+        <foreground_color>
+          <color red="10" green="0" blue="184">
+          </color>
+        </foreground_color>
+        <horizontal_alignment>1</horizontal_alignment>
+      </widget>
+      <widget type="rectangle" version="2.0.0">
+        <name>rectangle #85</name>
+        <width>545</width>
+        <line_color>
+          <color red="218" green="218" blue="218">
+          </color>
+        </line_color>
+        <background_color>
+          <color red="218" green="218" blue="218">
+          </color>
+        </background_color>
+      </widget>
+      <widget type="label" version="2.0.0">
+        <name>text #88</name>
+        <text>User Information</text>
+        <x>148</x>
+        <width>249</width>
+        <font>
+          <font family="Liberation Sans" style="REGULAR" size="16.0">
+          </font>
+        </font>
+        <foreground_color>
+          <color red="10" green="0" blue="184">
+          </color>
+        </foreground_color>
+        <horizontal_alignment>1</horizontal_alignment>
+      </widget>
+    </widget>
+    <widget type="group" version="2.0.0">
+      <name>composite #91</name>
+      <x>5</x>
+      <y>140</y>
+      <width>545</width>
+      <height>170</height>
+      <style>3</style>
+      <transparent>true</transparent>
+      <widget type="group" version="2.0.0">
+        <name>composite #94</name>
+        <x>155</x>
+        <width>390</width>
+        <height>170</height>
+        <style>3</style>
+        <transparent>true</transparent>
+        <widget type="textentry" version="3.0.0">
+          <name>text entry #97</name>
+          <pv_name>$(P)$(R)UserInstitution</pv_name>
+          <y>25</y>
+          <width>390</width>
+          <font>
+            <font family="Liberation Sans" style="REGULAR" size="16.0">
+            </font>
+          </font>
+          <background_color>
+            <color red="115" green="223" blue="255">
+            </color>
+          </background_color>
+          <format>6</format>
+          <show_units>false</show_units>
+          <border_alarm_sensitive>false</border_alarm_sensitive>
+        </widget>
+        <widget type="textentry" version="3.0.0">
+          <name>text entry #101</name>
+          <pv_name>$(P)$(R)UserName</pv_name>
+          <width>390</width>
+          <font>
+            <font family="Liberation Sans" style="REGULAR" size="16.0">
+            </font>
+          </font>
+          <background_color>
+            <color red="115" green="223" blue="255">
+            </color>
+          </background_color>
+          <format>6</format>
+          <show_units>false</show_units>
+          <border_alarm_sensitive>false</border_alarm_sensitive>
+        </widget>
+        <widget type="textentry" version="3.0.0">
+          <name>text entry #105</name>
+          <pv_name>$(P)$(R)UserEmail</pv_name>
+          <y>75</y>
+          <width>390</width>
+          <font>
+            <font family="Liberation Sans" style="REGULAR" size="16.0">
+            </font>
+          </font>
+          <background_color>
+            <color red="115" green="223" blue="255">
+            </color>
+          </background_color>
+          <format>6</format>
+          <show_units>false</show_units>
+          <border_alarm_sensitive>false</border_alarm_sensitive>
+        </widget>
+        <widget type="textentry" version="3.0.0">
+          <name>text entry #109</name>
+          <pv_name>$(P)$(R)ProposalNumber</pv_name>
+          <y>100</y>
+          <width>390</width>
+          <font>
+            <font family="Liberation Sans" style="REGULAR" size="16.0">
+            </font>
+          </font>
+          <background_color>
+            <color red="115" green="223" blue="255">
+            </color>
+          </background_color>
+          <format>6</format>
+          <show_units>false</show_units>
+          <border_alarm_sensitive>false</border_alarm_sensitive>
+        </widget>
+        <widget type="textentry" version="3.0.0">
+          <name>text entry #113</name>
+          <pv_name>$(P)$(R)ProposalTitle</pv_name>
+          <y>125</y>
+          <width>390</width>
+          <font>
+            <font family="Liberation Sans" style="REGULAR" size="16.0">
+            </font>
+          </font>
+          <background_color>
+            <color red="115" green="223" blue="255">
+            </color>
+          </background_color>
+          <format>6</format>
+          <show_units>false</show_units>
+          <border_alarm_sensitive>false</border_alarm_sensitive>
+        </widget>
+        <widget type="textentry" version="3.0.0">
+          <name>text entry #117</name>
+          <pv_name>$(P)$(R)ESAFNumber</pv_name>
+          <y>150</y>
+          <width>390</width>
+          <font>
+            <font family="Liberation Sans" style="REGULAR" size="16.0">
+            </font>
+          </font>
+          <background_color>
+            <color red="115" green="223" blue="255">
+            </color>
+          </background_color>
+          <format>6</format>
+          <show_units>false</show_units>
+          <border_alarm_sensitive>false</border_alarm_sensitive>
+        </widget>
+        <widget type="textentry" version="3.0.0">
+          <name>text entry #121</name>
+          <pv_name>$(P)$(R)UserBadge</pv_name>
+          <y>50</y>
+          <width>390</width>
+          <font>
+            <font family="Liberation Sans" style="REGULAR" size="16.0">
+            </font>
+          </font>
+          <background_color>
+            <color red="115" green="223" blue="255">
+            </color>
+          </background_color>
+          <format>6</format>
+          <show_units>false</show_units>
+          <border_alarm_sensitive>false</border_alarm_sensitive>
+        </widget>
+      </widget>
+      <widget type="group" version="2.0.0">
+        <name>composite #125</name>
+        <width>150</width>
+        <height>170</height>
+        <style>3</style>
+        <transparent>true</transparent>
+        <widget type="label" version="2.0.0">
+          <name>text #128</name>
+          <text>User name</text>
+          <x>60</x>
+          <width>90</width>
+          <font>
+            <font family="Liberation Sans" style="REGULAR" size="16.0">
+            </font>
+          </font>
+          <auto_size>true</auto_size>
+        </widget>
+        <widget type="label" version="2.0.0">
+          <name>text #131</name>
+          <text>Institution</text>
+          <x>40</x>
+          <y>25</y>
+          <width>110</width>
+          <font>
+            <font family="Liberation Sans" style="REGULAR" size="16.0">
+            </font>
+          </font>
+          <auto_size>true</auto_size>
+        </widget>
+        <widget type="label" version="2.0.0">
+          <name>text #134</name>
+          <text>User e-mail</text>
+          <x>40</x>
+          <y>75</y>
+          <width>110</width>
+          <font>
+            <font family="Liberation Sans" style="REGULAR" size="16.0">
+            </font>
+          </font>
+          <auto_size>true</auto_size>
+        </widget>
+        <widget type="label" version="2.0.0">
+          <name>text #137</name>
+          <text>ANL badge #</text>
+          <x>40</x>
+          <y>50</y>
+          <width>110</width>
+          <font>
+            <font family="Liberation Sans" style="REGULAR" size="16.0">
+            </font>
+          </font>
+          <auto_size>true</auto_size>
+        </widget>
+        <widget type="label" version="2.0.0">
+          <name>text #140</name>
+          <text>APS proposal #</text>
+          <x>10</x>
+          <y>100</y>
+          <width>140</width>
+          <font>
+            <font family="Liberation Sans" style="REGULAR" size="16.0">
+            </font>
+          </font>
+          <auto_size>true</auto_size>
+        </widget>
+        <widget type="label" version="2.0.0">
+          <name>text #143</name>
+          <text>APS prop. title</text>
+          <y>125</y>
+          <width>150</width>
+          <font>
+            <font family="Liberation Sans" style="REGULAR" size="16.0">
+            </font>
+          </font>
+          <auto_size>true</auto_size>
+        </widget>
+        <widget type="label" version="2.0.0">
+          <name>text #146</name>
+          <text>APS ESAF #</text>
+          <x>50</x>
+          <y>150</y>
+          <font>
+            <font family="Liberation Sans" style="REGULAR" size="16.0">
+            </font>
+          </font>
+          <auto_size>true</auto_size>
+        </widget>
+      </widget>
+    </widget>
+    <widget type="rectangle" version="2.0.0">
+      <name>rectangle #149</name>
+      <width>555</width>
+      <height>105</height>
+      <line_width>1</line_width>
+      <line_color>
+        <color red="0" green="0" blue="0">
+        </color>
+      </line_color>
+      <background_color>
+        <color red="0" green="0" blue="0">
+        </color>
+      </background_color>
+      <transparent>true</transparent>
+    </widget>
+    <widget type="group" version="2.0.0">
+      <name>composite #152</name>
+      <x>170</x>
+      <y>30</y>
+      <width>380</width>
+      <height>70</height>
+      <style>3</style>
+      <transparent>true</transparent>
+      <widget type="textentry" version="3.0.0">
+        <name>text entry #155</name>
+        <pv_name>$(P)$(R)BeamReadyValue</pv_name>
+        <y>50</y>
+        <width>380</width>
+        <font>
+          <font family="Liberation Sans" style="REGULAR" size="16.0">
+          </font>
+        </font>
+        <background_color>
+          <color red="115" green="223" blue="255">
+          </color>
+        </background_color>
+        <format>6</format>
+        <show_units>false</show_units>
+        <border_alarm_sensitive>false</border_alarm_sensitive>
+      </widget>
+      <widget type="textentry" version="3.0.0">
+        <name>text entry #159</name>
+        <pv_name>$(P)$(R)BeamReadyPVName</pv_name>
+        <y>25</y>
+        <width>380</width>
+        <font>
+          <font family="Liberation Sans" style="REGULAR" size="16.0">
+          </font>
+        </font>
+        <background_color>
+          <color red="115" green="223" blue="255">
+          </color>
+        </background_color>
+        <format>6</format>
+        <show_units>false</show_units>
+        <border_alarm_sensitive>false</border_alarm_sensitive>
+      </widget>
+      <widget type="textentry" version="3.0.0">
+        <name>text entry #163</name>
+        <pv_name>$(P)$(R)MCSPVPrefix</pv_name>
+        <width>380</width>
+        <font>
+          <font family="Liberation Sans" style="REGULAR" size="16.0">
+          </font>
+        </font>
+        <background_color>
+          <color red="115" green="223" blue="255">
+          </color>
+        </background_color>
+        <format>6</format>
+        <show_units>false</show_units>
+        <border_alarm_sensitive>false</border_alarm_sensitive>
+      </widget>
+    </widget>
+    <widget type="group" version="2.0.0">
+      <name>composite #167</name>
+      <x>5</x>
+      <y>30</y>
+      <width>160</width>
+      <height>70</height>
+      <style>3</style>
+      <transparent>true</transparent>
+      <widget type="label" version="2.0.0">
+        <name>text #170</name>
+        <text>SIS MCS prefix</text>
+        <x>20</x>
+        <width>140</width>
+        <font>
+          <font family="Liberation Sans" style="REGULAR" size="16.0">
+          </font>
+        </font>
+        <horizontal_alignment>2</horizontal_alignment>
+      </widget>
+      <widget type="label" version="2.0.0">
+        <name>text #173</name>
+        <text>Beam ready PV</text>
+        <x>30</x>
+        <y>25</y>
+        <width>130</width>
+        <font>
+          <font family="Liberation Sans" style="REGULAR" size="16.0">
+          </font>
+        </font>
+        <auto_size>true</auto_size>
+      </widget>
+      <widget type="label" version="2.0.0">
+        <name>text #176</name>
+        <text>Beam ready value</text>
+        <y>50</y>
+        <width>160</width>
+        <font>
+          <font family="Liberation Sans" style="REGULAR" size="16.0">
+          </font>
+        </font>
+        <auto_size>true</auto_size>
+      </widget>
+    </widget>
+    <widget type="rectangle" version="2.0.0">
+      <name>rectangle #179</name>
+      <x>5</x>
+      <y>5</y>
+      <width>545</width>
+      <line_color>
+        <color red="218" green="218" blue="218">
+        </color>
+      </line_color>
+      <background_color>
+        <color red="218" green="218" blue="218">
+        </color>
+      </background_color>
+    </widget>
+    <widget type="label" version="2.0.0">
+      <name>text #182</name>
+      <text>Epics Process Variables</text>
+      <x>162</x>
+      <y>5</y>
+      <width>230</width>
+      <font>
+        <font family="Liberation Sans" style="REGULAR" size="16.0">
+        </font>
       </font>
-    </font>
-    <foreground_color>
-      <color red="10" green="0" blue="184">
-      </color>
-    </foreground_color>
-    <auto_size>true</auto_size>
+      <foreground_color>
+        <color red="10" green="0" blue="184">
+        </color>
+      </foreground_color>
+      <auto_size>true</auto_size>
+    </widget>
+  </widget>
+  <widget type="group" version="2.0.0">
+    <name>composite #185</name>
+    <x>30</x>
+    <y>205</y>
+    <width>290</width>
+    <height>170</height>
+    <style>3</style>
+    <transparent>true</transparent>
+    <widget type="label" version="2.0.0">
+      <name>text #188</name>
+      <text>Scintillator type</text>
+      <x>120</x>
+      <width>170</width>
+      <font>
+        <font family="Liberation Sans" style="REGULAR" size="16.0">
+        </font>
+      </font>
+      <auto_size>true</auto_size>
+    </widget>
+    <widget type="label" version="2.0.0">
+      <name>text #191</name>
+      <text>Scint. thickness (microns)</text>
+      <x>30</x>
+      <y>25</y>
+      <width>260</width>
+      <font>
+        <font family="Liberation Sans" style="REGULAR" size="16.0">
+        </font>
+      </font>
+      <auto_size>true</auto_size>
+    </widget>
+    <widget type="label" version="2.0.0">
+      <name>text #194</name>
+      <text>Detector pixel size (microns)</text>
+      <y>75</y>
+      <width>290</width>
+      <font>
+        <font family="Liberation Sans" style="REGULAR" size="16.0">
+        </font>
+      </font>
+      <auto_size>true</auto_size>
+    </widget>
+    <widget type="label" version="2.0.0">
+      <name>text #197</name>
+      <text>Image pixel size (microns)</text>
+      <x>30</x>
+      <y>50</y>
+      <width>260</width>
+      <font>
+        <font family="Liberation Sans" style="REGULAR" size="16.0">
+        </font>
+      </font>
+      <auto_size>true</auto_size>
+    </widget>
+    <widget type="label" version="2.0.0">
+      <name>text #200</name>
+      <text>Camera objective</text>
+      <x>130</x>
+      <y>100</y>
+      <width>160</width>
+      <font>
+        <font family="Liberation Sans" style="REGULAR" size="16.0">
+        </font>
+      </font>
+      <auto_size>true</auto_size>
+    </widget>
+    <widget type="label" version="2.0.0">
+      <name>text #203</name>
+      <text>Tube length (mm)</text>
+      <x>130</x>
+      <y>125</y>
+      <width>160</width>
+      <font>
+        <font family="Liberation Sans" style="REGULAR" size="16.0">
+        </font>
+      </font>
+      <auto_size>true</auto_size>
+    </widget>
+    <widget type="label" version="2.0.0">
+      <name>text #206</name>
+      <text>Energy mode</text>
+      <x>180</x>
+      <y>150</y>
+      <width>110</width>
+      <font>
+        <font family="Liberation Sans" style="REGULAR" size="16.0">
+        </font>
+      </font>
+      <horizontal_alignment>2</horizontal_alignment>
+    </widget>
+  </widget>
+  <widget type="group" version="2.0.0">
+    <name>composite #209</name>
+    <x>325</x>
+    <y>205</y>
+    <width>230</width>
+    <height>170</height>
+    <style>3</style>
+    <transparent>true</transparent>
+    <widget type="textentry" version="3.0.0">
+      <name>text entry #212</name>
+      <pv_name>$(P)$(R)ScintillatorThickness</pv_name>
+      <y>25</y>
+      <width>230</width>
+      <font>
+        <font family="Liberation Sans" style="REGULAR" size="16.0">
+        </font>
+      </font>
+      <background_color>
+        <color red="115" green="223" blue="255">
+        </color>
+      </background_color>
+      <format>6</format>
+      <show_units>false</show_units>
+      <border_alarm_sensitive>false</border_alarm_sensitive>
+    </widget>
+    <widget type="textentry" version="3.0.0">
+      <name>text entry #216</name>
+      <pv_name>$(P)$(R)ScintillatorType</pv_name>
+      <width>230</width>
+      <font>
+        <font family="Liberation Sans" style="REGULAR" size="16.0">
+        </font>
+      </font>
+      <background_color>
+        <color red="115" green="223" blue="255">
+        </color>
+      </background_color>
+      <format>6</format>
+      <show_units>false</show_units>
+      <border_alarm_sensitive>false</border_alarm_sensitive>
+    </widget>
+    <widget type="textentry" version="3.0.0">
+      <name>text entry #220</name>
+      <pv_name>$(P)$(R)DetectorPixelSize</pv_name>
+      <y>75</y>
+      <width>230</width>
+      <font>
+        <font family="Liberation Sans" style="REGULAR" size="16.0">
+        </font>
+      </font>
+      <background_color>
+        <color red="115" green="223" blue="255">
+        </color>
+      </background_color>
+      <format>6</format>
+      <show_units>false</show_units>
+      <border_alarm_sensitive>false</border_alarm_sensitive>
+    </widget>
+    <widget type="textentry" version="3.0.0">
+      <name>text entry #224</name>
+      <pv_name>$(P)$(R)CameraObjective</pv_name>
+      <y>100</y>
+      <width>230</width>
+      <font>
+        <font family="Liberation Sans" style="REGULAR" size="16.0">
+        </font>
+      </font>
+      <background_color>
+        <color red="115" green="223" blue="255">
+        </color>
+      </background_color>
+      <format>6</format>
+      <show_units>false</show_units>
+      <border_alarm_sensitive>false</border_alarm_sensitive>
+    </widget>
+    <widget type="textentry" version="3.0.0">
+      <name>text entry #228</name>
+      <pv_name>$(P)$(R)CameraTubeLength</pv_name>
+      <y>125</y>
+      <width>230</width>
+      <font>
+        <font family="Liberation Sans" style="REGULAR" size="16.0">
+        </font>
+      </font>
+      <background_color>
+        <color red="115" green="223" blue="255">
+        </color>
+      </background_color>
+      <format>6</format>
+      <show_units>false</show_units>
+      <border_alarm_sensitive>false</border_alarm_sensitive>
+    </widget>
+    <widget type="textentry" version="3.0.0">
+      <name>text entry #232</name>
+      <pv_name>$(P)$(R)ImagePixelSize</pv_name>
+      <y>50</y>
+      <width>230</width>
+      <font>
+        <font family="Liberation Sans" style="REGULAR" size="16.0">
+        </font>
+      </font>
+      <background_color>
+        <color red="115" green="223" blue="255">
+        </color>
+      </background_color>
+      <format>6</format>
+      <show_units>false</show_units>
+      <border_alarm_sensitive>false</border_alarm_sensitive>
+    </widget>
+    <widget type="combo" version="2.0.0">
+      <name>menu #236</name>
+      <pv_name>$(P)$(R)EnergyMode</pv_name>
+      <y>150</y>
+      <height>20</height>
+      <background_color>
+        <color red="187" green="187" blue="187">
+        </color>
+      </background_color>
+      <border_alarm_sensitive>false</border_alarm_sensitive>
+    </widget>
   </widget>
 </display>

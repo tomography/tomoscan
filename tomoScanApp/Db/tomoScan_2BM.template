@@ -53,6 +53,12 @@ record(stringout, "$(P)$(R)BeamReadyValue")
    field(VAL,  "$(READY_VALUE)")
 }
 
+record(bo, "$(P)$(R)Testing")
+{
+   field(ZNAM, "No")
+   field(ONAM, "Yes")
+}
+
 ####################
 # Optics information
 ####################
@@ -214,72 +220,95 @@ record(stringout, "$(P)$(R)OpenFastShutterValue")
    field(VAL,  "$(OPEN_FAST_VALUE)")
 }
 
-############################
-# Streaming analysis control
-############################
+################
+# Stream control
+################
 
-record(bo, "$(P)$(R)StreamStatus")
+record(busy,"$(P)$(R)StreamCapture")
 {
-   field(ZNAM, "Off")
-   field(ONAM, "On")
+   field(ZNAM,"Done")
+   field(ZSV, "NO_ALARM")
+   field(ONAM,"Capture")
+   field(OSV, "MINOR")
+   field(VAL, "0")
 }
 
-record(longout, "$(P)$(R)StreamBufferSize")
-{
-}
-
-record(ao, "$(P)$(R)StreamCenter")
-{
-   field(PREC, "3")
-   field(HOPR, "2448")
-}
-
-record(mbbo, "$(P)$(R)StreamFilterType")
-{
-   field(ZRVL, "0")
-   field(ZRST, "Parzen")
-   field(ONVL, "1")
-   field(ONST, "Shepp-logan")
-   field(TWVL, "2")
-   field(TWST, "Ramp")
-   field(THVL, "3")
-   field(THST, "Butterworth")
-}
-
-record(longout, "$(P)$(R)StreamOrthoX")
+record(longout, "$(P)$(R)StreamNumCapture")
 {
    field(LOPR, "0")
-   field(HOPR, "2448")
+   field(HOPR, "1000000")
 }
 
-record(longout, "$(P)$(R)StreamOrthoY")
+record(longout, "$(P)$(R)StreamNumCaptured")
 {
    field(LOPR, "0")
-   field(HOPR, "2448")
+   field(HOPR, "1000000")
 }
 
-record(longout, "$(P)$(R)StreamOrthoZ")
+record(longout, "$(P)$(R)StreamNumTotalCaptured")
 {
    field(LOPR, "0")
-   field(HOPR, "2448")
+   field(HOPR, "1000000")
 }
 
-record(bo, "$(P)$(R)StreamRetakeFlat")
+record(busy,"$(P)$(R)StreamRetakeFlat")
 {
-   field(ZNAM, "No")
-   field(ONAM, "Yes")
+   field(ZNAM,"Done")
+   field(ZSV, "NO_ALARM")
+   field(ONAM,"Capture")
+   field(OSV, "MINOR")
+   field(VAL, "0")
 }
 
-record(ao, "$(P)$(R)StreamReconTime")
+record(busy,"$(P)$(R)StreamRetakeDark")
 {
-   field(PREC, "5")
+   field(ZNAM,"Done")
+   field(ZSV, "NO_ALARM")
+   field(ONAM,"Capture")
+   field(OSV, "MINOR")
+   field(VAL, "0")
 }
 
 record(longout, "$(P)$(R)StreamPreCount")
 {
    field(LOPR, "0")
-   field(HOPR, "4000")
+   field(HOPR, "20000")
 }
+
+record(longout, "$(P)$(R)StreamPreCounted")
+{
+   field(LOPR, "0")
+   field(HOPR, "20000")
+}
+
+record(mbbo, "$(P)$(R)StreamBinning")
+{
+   field(ZRVL, "0")
+   field(ZRST, "1x")
+   field(ONVL, "1")
+   field(ONST, "2x")
+   field(TWVL, "2")
+   field(TWST, "4x")
+}
+
+record(waveform,"$(P)$(R)StreamMessage") 
+{
+   field(FTVL, "UCHAR")
+   field(NELM, "256")
+}
+
+record(waveform,"$(P)$(R)StreamCBStatusMessage") 
+{
+   field(FTVL, "UCHAR")
+   field(NELM, "256")
+}
+
+record(waveform,"$(P)$(R)StreamFileName") 
+{
+   field(FTVL, "UCHAR")
+   field(NELM, "256")
+}
+
 
 ################
 # Shutter status

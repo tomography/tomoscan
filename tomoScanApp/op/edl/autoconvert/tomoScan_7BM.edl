@@ -1,0 +1,333 @@
+4 0 1
+beginScreenProperties
+major 4
+minor 0
+release 1
+x 571
+y 192
+w 640
+h 210
+font "helvetica-medium-r-18.0"
+ctlFont "helvetica-bold-r-10.0"
+btnFont "helvetica-medium-r-18.0"
+fgColor rgb 0 0 0
+bgColor rgb 47872 47872 47872
+textColor rgb 0 0 0
+ctlFgColor1 rgb 64256 62208 18944
+ctlFgColor2 rgb 60928 46592 11008
+ctlBgColor1 rgb 52480 24832 0
+ctlBgColor2 rgb 65280 45056 65280
+topShadowColor rgb 44544 19968 48128
+botShadowColor rgb 13312 13056 34304
+showGrid
+snapToGrid
+gridSize 4
+endScreenProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 0
+y 5
+w 639
+h 29
+lineColor rgb 55808 55808 55808
+fill
+fillColor rgb 55808 55808 55808
+lineWidth 0
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 0
+y 5
+w 640
+h 30
+font "utopia-medium-r-24.0"
+fontAlign "center"
+fgColor rgb 2560 0 47104
+bgColor index 3
+useDisplayBg
+value {
+  "7-BM Tomography   $(P)$(R)"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 338
+y 164
+w 150
+h 30
+font "utopia-medium-r-24.0"
+fontAlign "center"
+fgColor rgb 0 0 0
+bgColor index 3
+useDisplayBg
+value {
+  "Testing"
+}
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 10
+y 44
+w 280
+h 30
+fgColor rgb 0 0 0
+bgColor rgb 29440 57088 65280
+topShadowColor rgb 55808 55808 55808
+botShadowColor rgb 17920 17920 17920
+font "helvetica-medium-r-18.0"
+icon
+buttonLabel "Sample"
+numPvs 2
+numDsps 1
+displayFileName {
+  0 "$(BEAMLINE)_sample.edl"
+}
+menuLabel {
+  0 "Sample Information"
+}
+symbols {
+  0 "P=$(P),R=$(R),BEAMLINE=$(BEAMLINE)"
+}
+replaceSymbols {
+  0 1
+}
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 10
+y 84
+w 280
+h 30
+fgColor rgb 0 0 0
+bgColor rgb 29440 57088 65280
+topShadowColor rgb 55808 55808 55808
+botShadowColor rgb 17920 17920 17920
+font "helvetica-medium-r-18.0"
+icon
+buttonLabel "Experiment"
+numPvs 2
+numDsps 1
+displayFileName {
+  0 "$(BEAMLINE)_experiment.edl"
+}
+menuLabel {
+  0 "Experiment Information"
+}
+symbols {
+  0 "P=$(P),R=$(R)"
+}
+replaceSymbols {
+  0 1
+}
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 10
+y 164
+w 280
+h 30
+fgColor rgb 0 0 0
+bgColor rgb 29440 57088 65280
+topShadowColor rgb 55808 55808 55808
+botShadowColor rgb 17920 17920 17920
+font "helvetica-medium-r-18.0"
+icon
+buttonLabel "Energy & Filters"
+numPvs 2
+numDsps 1
+displayFileName {
+  0 "$(BEAMLINE)_energy.edl"
+}
+menuLabel {
+  0 "Energy Information"
+}
+symbols {
+  0 "P=$(P),R=$(R)"
+}
+replaceSymbols {
+  0 1
+}
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 10
+y 124
+w 280
+h 30
+fgColor rgb 0 0 0
+bgColor rgb 29440 57088 65280
+topShadowColor rgb 55808 55808 55808
+botShadowColor rgb 17920 17920 17920
+font "helvetica-medium-r-18.0"
+icon
+buttonLabel "Data Management"
+numPvs 2
+numDsps 1
+displayFileName {
+  0 "$(BEAMLINE)_dm.edl"
+}
+menuLabel {
+  0 "Data Management"
+}
+symbols {
+  0 "P=$(P),R=$(R)"
+}
+replaceSymbols {
+  0 1
+}
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 335
+y 44
+w 280
+h 30
+fgColor rgb 0 0 0
+bgColor rgb 29440 57088 65280
+topShadowColor rgb 55808 55808 55808
+botShadowColor rgb 17920 17920 17920
+font "helvetica-medium-r-18.0"
+icon
+buttonLabel "Optics"
+numPvs 2
+numDsps 1
+displayFileName {
+  0 "$(BEAMLINE)_optics.edl"
+}
+menuLabel {
+  0 "Optics Information"
+}
+symbols {
+  0 "P=$(P),R=$(R)"
+}
+replaceSymbols {
+  0 1
+}
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 335
+y 84
+w 280
+h 30
+fgColor rgb 0 0 0
+bgColor rgb 29440 57088 65280
+topShadowColor rgb 55808 55808 55808
+botShadowColor rgb 17920 17920 17920
+font "helvetica-medium-r-18.0"
+icon
+buttonLabel "Aerotech PSO"
+numPvs 2
+numDsps 1
+displayFileName {
+  0 "$(BEAMLINE)_pso.edl"
+}
+menuLabel {
+  0 "Experiment Information"
+}
+symbols {
+  0 "P=$(P),R=$(R)"
+}
+replaceSymbols {
+  0 1
+}
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 335
+y 124
+w 280
+h 30
+fgColor rgb 0 0 0
+bgColor rgb 29440 57088 65280
+topShadowColor rgb 55808 55808 55808
+botShadowColor rgb 17920 17920 17920
+font "helvetica-medium-r-18.0"
+icon
+buttonLabel "Other PVs"
+numPvs 2
+numDsps 1
+displayFileName {
+  0 "$(BEAMLINE)_otherpvs.edl"
+}
+menuLabel {
+  0 "Data Management"
+}
+symbols {
+  0 "P=$(P),R=$(R)"
+}
+replaceSymbols {
+  0 1
+}
+endObjectProperties
+
+# (Menu Button)
+object activeMenuButtonClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 494
+y 164
+w 120
+h 30
+fgColor rgb 0 0 0
+bgColor rgb 29440 57088 65280
+inconsistentColor rgb 17920 17920 17920
+topShadowColor rgb 55808 55808 55808
+botShadowColor rgb 17920 17920 17920
+controlPv "$(P)$(R)Testing"
+indicatorPv "$(P)$(R)Testing"
+font "helvetica-medium-r-18.0"
+endObjectProperties
+

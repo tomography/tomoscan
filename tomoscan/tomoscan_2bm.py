@@ -13,7 +13,6 @@ from tomoscan import TomoScan
 from tomoscan import log
 
 EPSILON = .001
-TESTING = True
 
 class TomoScan2BM(TomoScan):
     """Derived class used for tomography scanning with EPICS at APS beamline 2-BM-A
@@ -30,11 +29,9 @@ class TomoScan2BM(TomoScan):
     def __init__(self, pv_files, macros):
         super().__init__(pv_files, macros)
         # Set the detector running in FreeRun mode
-        self.set_trigger_mode('FreeRun', 1)
-        
-        # Set data directory
-        file_path = self.epics_pvs['DetectorTopDir'].get(as_string=True) + self.epics_pvs['ExperimentYearMonth'].get(as_string=True) + os.path.sep + self.epics_pvs['UserLastName'].get(as_string=True) + os.path.sep
-        self.epics_pvs['FilePath'].put(file_path, wait=True)
+        # self.set_trigger_mode('FreeRun', 1)
+        # self.epics_pvs['CamAcquire'].put('Acquire') ###
+        # self.wait_pv(self.epics_pvs['CamAcquire'], 1) ###
 
         # Enable auto-increment on file writer
         self.epics_pvs['FPAutoIncrement'].put('Yes')
@@ -45,26 +42,31 @@ class TomoScan2BM(TomoScan):
         # Disable over writing warning
         self.epics_pvs['OverwriteWarning'].put('Yes')
 
+        log.setup_custom_logger("./tomoscan.log")
+
     def open_frontend_shutter(self):
         """Opens the shutters to collect flat fields or projections.
 
         This does the following:
 
-        - Opens the 2-BM-A front-end shutter.
+        - Checks if we are in testing mode. If we are, do nothing else opens the 2-BM-A front-end shutter.
 
         """
-
-        # Open 2-BM-A front-end shutter
-        if not self.epics_pvs['OpenShutter'] is None:
-            pv = self.epics_pvs['OpenShutter']
-            value = self.epics_pvs['OpenShutterValue'].get(as_string=True)
-            status = self.epics_pvs['ShutterStatus'].get(as_string=True)
-            log.info('shutter status: %s', status)
-            log.info('open shutter: %s, value: %s', pv, value)
-            self.epics_pvs['OpenShutter'].put(value, wait=True)
-            self.wait_pv(self.epics_pvs['ShutterStatus'], 1)
-            status = self.epics_pvs['ShutterStatus'].get(as_string=True)
-            log.info('shutter status: %s', status)
+        if self.epics_pvs['Testing'].get():
+            log.warning('In testing mode, so not opening shutters.')
+        else:
+            # Open 2-BM-A front-end shutter
+            if not self.epics_pvs['OpenShutter'] is None:
+                pv = self.epics_pvs['OpenShutter']
+                value = self.epics_pvs['OpenShutterValue'].get(as_string=True)
+                status = self.epics_pvs['ShutterStatus'].get(as_string=True)
+                log.info('shutter status: %s', status)
+                log.info('open shutter: %s, value: %s', pv, value)
+                self.epics_pvs['OpenShutter'].put(value, wait=True)
+                self.wait_frontend_shutter_open()
+                # self.wait_pv(self.epics_pvs['ShutterStatus'], 1)
+                status = self.epics_pvs['ShutterStatus'].get(as_string=True)
+                log.info('shutter status: %s', status)
 
     def open_shutter(self):
         """Opens the shutters to collect flat fields or projections.
@@ -88,18 +90,20 @@ class TomoScan2BM(TomoScan):
         - Closes the 2-BM-A front-end shutter.
 
         """
-
-        # Close 2-BM-A front-end shutter
-        if not self.epics_pvs['CloseShutter'] is None:
-            pv = self.epics_pvs['CloseShutter']
-            value = self.epics_pvs['CloseShutterValue'].get(as_string=True)
-            status = self.epics_pvs['ShutterStatus'].get(as_string=True)
-            log.info('shutter status: %s', status)
-            log.info('close shutter: %s, value: %s', pv, value)
-            self.epics_pvs['CloseShutter'].put(value, wait=True)
-            self.wait_pv(self.epics_pvs['ShutterStatus'], 0)
-            status = self.epics_pvs['ShutterStatus'].get(as_string=True)
-            log.info('shutter status: %s', status)
+        if self.epics_pvs['Testing'].get():
+            log.warning('In testing mode, so not opening shutters.')
+        else:
+            # Close 2-BM-A front-end shutter
+            if not self.epics_pvs['CloseShutter'] is None:
+                pv = self.epics_pvs['CloseShutter']
+                value = self.epics_pvs['CloseShutterValue'].get(as_string=True)
+                status = self.epics_pvs['ShutterStatus'].get(as_string=True)
+                log.info('shutter status: %s', status)
+                log.info('close shutter: %s, value: %s', pv, value)
+                self.epics_pvs['CloseShutter'].put(value, wait=True)
+                self.wait_pv(self.epics_pvs['ShutterStatus'], 0)
+                status = self.epics_pvs['ShutterStatus'].get(as_string=True)
+                log.info('shutter status: %s', status)
 
     def close_shutter(self):
         """Closes the shutters to collect dark fields.
@@ -127,25 +131,31 @@ class TomoScan2BM(TomoScan):
             Number of images to collect.  Ignored if trigger_mode="FreeRun".
             This is used to set the ``NumImages`` PV of the camera.
         """
+        self.epics_pvs['CamAcquire'].put('Done') ###
+        self.wait_pv(self.epics_pvs['CamAcquire'], 0) ###
         log.info('set trigger mode: %s', trigger_mode)
         if trigger_mode == 'FreeRun':
             self.epics_pvs['CamImageMode'].put('Continuous', wait=True)
             self.epics_pvs['CamTriggerMode'].put('Off', wait=True)
             self.wait_pv(self.epics_pvs['CamTriggerMode'], 0)
-            self.epics_pvs['CamAcquire'].put('Acquire')
+            # self.epics_pvs['CamAcquire'].put('Acquire')
         elif trigger_mode == 'Internal':
             self.epics_pvs['CamTriggerMode'].put('Off', wait=True)
             self.wait_pv(self.epics_pvs['CamTriggerMode'], 0)
-            self.epics_pvs['CamImageMode'].put('Multiple')
+            self.epics_pvs['CamImageMode'].put('Multiple')            
             self.epics_pvs['CamNumImages'].put(num_images, wait=True)
         else: # set camera to external triggering
-            # These are just in case the scan aborted with the camera in another state
-            self.epics_pvs['CamTriggerMode'].put('Off', wait=True)
-            self.epics_pvs['CamTriggerSource'].put('Line2', wait=True)
+            # These are just in case the scan aborted with the camera in another state 
+            camera_model = self.epics_pvs['CamModel'].get(as_string=True)
+            if(camera_model=='Oryx ORX-10G-51S5M'):# 2bma            
+                self.epics_pvs['CamTriggerMode'].put('Off', wait=True)   # VN: For FLIR we first switch to Off and then change overlap. any reason of that?                                                 
+                self.epics_pvs['CamTriggerSource'].put('Line2', wait=True)
+            elif(camera_model=='Grasshopper3 GS3-U3-23S6M'):# 2bmb            
+                self.epics_pvs['CamTriggerMode'].put('On', wait=True)     # VN: For PG we need to switch to On to be able to switch to readout overlap mode                                                               
+                self.epics_pvs['CamTriggerSource'].put('Line0', wait=True)
             self.epics_pvs['CamTriggerOverlap'].put('ReadOut', wait=True)
             self.epics_pvs['CamExposureMode'].put('Timed', wait=True)
-
-            self.epics_pvs['CamImageMode'].put('Multiple')
+            self.epics_pvs['CamImageMode'].put('Multiple')            
             self.epics_pvs['CamArrayCallbacks'].put('Enable')
             self.epics_pvs['CamFrameRateEnable'].put(0)
 
@@ -180,7 +190,9 @@ class TomoScan2BM(TomoScan):
 
         - Calls the base class method.
         
-        - Opens the front-end shutter
+        - Set data directory.
+        
+        - Opens the front-end shutter.
 
         - Sets the PSO controller.
 
@@ -192,9 +204,12 @@ class TomoScan2BM(TomoScan):
         # Call the base class method
         super().begin_scan()
         # Opens the front-end shutter
-        if not TESTING:
-            self.open_frontend_shutter()
+        self.open_frontend_shutter()
 
+        # Set data directory
+        file_path = self.epics_pvs['DetectorTopDir'].get(as_string=True) + self.epics_pvs['ExperimentYearMonth'].get(as_string=True) + os.path.sep + self.epics_pvs['UserLastName'].get(as_string=True) + os.path.sep
+        self.epics_pvs['FilePath'].put(file_path, wait=True)
+        
         # Confirm angle step is an integer number of encoder pulses
         # Pass the user selected values to the PSO
         self.epics_pvs['PSOstartPos'].put(self.rotation_start, wait=True)
@@ -202,7 +217,7 @@ class TomoScan2BM(TomoScan):
         self.epics_pvs['PSOendPos'].put(self.rotation_stop+self.rotation_step, wait=True)
         self.wait_pv(self.epics_pvs['PSOendPos'], self.rotation_stop+self.rotation_step)
         # Compute and set the motor speed
-        time_per_angle = self.compute_frame_time()
+        time_per_angle = self.compute_frame_time()#+7.2/1000   ##no overlap mode -> time_per_angle=exposure+readout
         motor_speed = self.rotation_step / time_per_angle
         self.epics_pvs['PSOslewSpeed'].put(motor_speed)
         self.wait_pv(self.epics_pvs['PSOslewSpeed'], motor_speed)
@@ -232,7 +247,7 @@ class TomoScan2BM(TomoScan):
         # # Create theta array
         self.theta = []
         self.theta = self.epics_pvs['ThetaArray'].get(count=int(self.num_angles))
-
+        print(self.theta,self.num_angles)
         # Compute total number of frames to capture
         self.total_images = self.num_angles
         if self.dark_field_mode != 'None':
@@ -277,11 +292,20 @@ class TomoScan2BM(TomoScan):
         config_file_root = os.path.splitext(full_file_name)[0]
         self.save_configuration(config_file_root + '.config')
         # Put the camera back in FreeRun mode and acquiring
-        self.set_trigger_mode('FreeRun', 1)
+        # self.set_trigger_mode('FreeRun', 1)
+        # self.epics_pvs['CamAcquire'].put('Acquire') ####
+        # self.wait_pv(self.epics_pvs['CamAcquire'], 1) ####
         # Set the rotation speed to maximum
         self.epics_pvs['RotationSpeed'].put(self.max_rotation_speed)
         # Move the sample in.  Could be out if scan was aborted while taking flat fields
         self.move_sample_in()
+        if self.return_rotation == 'Yes':
+        # Reset rotation position by mod 360 , the actual return 
+        # to start position is handled by super().end_scan()
+            current_angle = self.epics_pvs['Rotation'].get() %360
+            self.epics_pvs['RotationSet'].put('Set', wait=True)
+            self.epics_pvs['Rotation'].put(current_angle, wait=True)
+            self.epics_pvs['RotationSet'].put('Use', wait=True)
         # Call the base class method
         super().end_scan()
         # Close shutter
@@ -353,6 +377,45 @@ class TomoScan2BM(TomoScan):
             else:
                 return True
 
+    def wait_frontend_shutter_open(self, timeout=-1):
+        """Waits for the front end shutter to open, or for ``abort_scan()`` to be called.
+
+        While waiting this method periodically tries to open the shutter..
+
+        Parameters
+        ----------
+        timeout : float
+            The maximum number of seconds to wait before raising a ShutterTimeoutError exception.
+
+        Raises
+        ------
+        ScanAbortError
+            If ``abort_scan()`` is called
+        ShutterTimeoutError
+            If the open shutter has not completed within timeout value.
+        """
+
+        start_time = time.time()
+        pv = self.epics_pvs['OpenShutter']
+        value = self.epics_pvs['OpenShutterValue'].get(as_string = True)
+        log.info('open shutter: %s, value: %s', pv, value)
+        elapsed_time = 0
+        while True:
+            if self.epics_pvs['ShutterStatus'].get() == int(value):
+                log.warning("Shutter is open in %f s", elapsed_time)
+                return
+            if not self.scan_is_running:
+                exit()
+            value = self.epics_pvs['OpenShutterValue'].get()
+            time.sleep(1.0)
+            current_time = time.time()
+            elapsed_time = current_time - start_time
+            log.warning("Waiting on shutter to open: %f s", elapsed_time)
+            self.epics_pvs['OpenShutter'].put(value, wait=True)
+            if timeout > 0:
+                if elapsed_time >= timeout:
+                   exit()
+
     def collect_projections(self):
         """Collects projections in fly scan mode.
 
@@ -381,7 +444,7 @@ class TomoScan2BM(TomoScan):
         # Taxi before starting capture
         self.epics_pvs['PSOtaxi'].put(1, wait=True)
         self.wait_pv(self.epics_pvs['PSOtaxi'], 0)
-
+        
         self.set_trigger_mode('PSOExternal', self.num_angles)
         # Start the camera
         self.epics_pvs['CamAcquire'].put('Acquire')

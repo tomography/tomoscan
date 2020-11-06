@@ -20,6 +20,7 @@ $(P)$(R)Filters
 #########################
 $(P)$(R)BeamReadyPVName
 $(P)$(R)BeamReadyValue
+$(P)$(R)Testing
 
 ####################
 # Optics information
@@ -74,19 +75,22 @@ $(P)$(R)PvaPluginPVPrefix
 $(P)$(R)RoiPluginPVPrefix
 $(P)$(R)CbPluginPVPrefix
 
-############################
-# Streaming analysis control
-############################
-$(P)$(R)StreamStatus
-$(P)$(R)StreamBufferSize
-$(P)$(R)StreamCenter
-$(P)$(R)StreamFilterType
-$(P)$(R)StreamOrthoX
-$(P)$(R)StreamOrthoY
-$(P)$(R)StreamOrthoZ
+#################
+# Stream control
+#################
+$(P)$(R)StreamCapture
+$(P)$(R)StreamNumCapture
 $(P)$(R)StreamRetakeFlat
-$(P)$(R)StreamReconTime
+$(P)$(R)StreamRetakeDark
 $(P)$(R)StreamPreCount
+$(P)$(R)StreamBinning
+$(P)$(R)StreamMessage
+$(P)$(R)StreamNumCapture
+$(P)$(R)StreamNumCaptured
+$(P)$(R)StreamNumTotalCaptured
+$(P)$(R)StreamCBStatusMessage
+$(P)$(R)StreamFileName
+$(P)$(R)StreamPreCounted
 
 ################
 # Shutter status

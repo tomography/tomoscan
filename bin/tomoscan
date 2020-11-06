@@ -104,7 +104,7 @@ def run_scan(args):
                 scan(args, ts_pvs)
             log.warning('%s scan end', args.scan_type)
         else:
-            log.error('Server %s is busy', args.tomoscan_prefix)
+            log.error('Server %s is busy. Please run a scan manually first.', args.tomoscan_prefix)
     else:
         log.error('Server %s is not runnig', args.tomoscan_prefix)
 
@@ -176,7 +176,7 @@ def single_scan(args, ts):
     if args.testing:
         log.warning('testing mode')
     else: 
-        ts['StartScan'].put(1, wait=True, timeout=3600)
+        ts['StartScan'].put(1, wait=True, timeout=360000) # -1 - no timeout means timeout=0
     dtime = (time.time() - tic_01)/60.
     log.info('single scan time: %3.3f minutes', dtime)
 
