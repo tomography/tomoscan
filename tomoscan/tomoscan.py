@@ -791,7 +791,6 @@ class TomoScan():
 
         # Stop the rotation motor
         self.epics_pvs['RotationStop'].put(1)
-        time.sleep(1.0)
         # Stop the file plugin
         self.epics_pvs['FPCapture'].put('Done')
 
