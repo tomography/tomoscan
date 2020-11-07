@@ -773,13 +773,26 @@ class TomoScan():
         self.epics_pvs['FrameType'].put('Projection')
 
     def abort_scan(self):
-        """Aborts a scan that is running.
+        """Aborts a scan that is running and performs the operations 
+        needed when a scan is aborted.
 
-        Sets a flag that is checked in ``wait_camera_done()``.
-        If ``wait_camera_done()`` finds the flag set then it raises a ScanAbortError exception.
+        This does the following:
+
+        - Sets scan_is_running, a flag that is checked in ``wait_camera_done()``.
+          If ``wait_camera_done()`` finds the flag set then it raises a 
+          ScanAbortError exception.
+
+        - Stops the rotation motor.
+
+        - Stops the file saving plugin.
         """
 
         self.scan_is_running = False
+
+        # Stop the rotation motor
+        self.epics_pvs['RotationStop'].put(1)
+        # Stop the file plugin
+        self.epics_pvs['FPCapture'].put('Done')
 
     def compute_frame_time(self):
         """Computes the time to collect and readout an image from the camera.
