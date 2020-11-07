@@ -124,17 +124,9 @@ class TomoScan13BM(TomoScan):
 
         This does the following:
 
-        - Stops the rotation motor.
-
-        - Stops the file saving plugin.
-
         - Calls the base class method.
         """
-        # Stop the rotation motor
-        self.epics_pvs['RotationStop'].put(1)
-        time.sleep(1.0)
-        # Stop the file plugin
-        self.epics_pvs['FPCapture'].put('Done')
+
         # Call the base class method
         super().abort_scan()
         

@@ -340,15 +340,16 @@ class TomoScanStream2BM(TomoScan):
         self.wait_camera_done(collection_time + 60.)
 
     def abort_scan(self):
-        """Aborts a scan that is running,
-        Stop rotation and calls abort() 
+        """Performs the operations needed when a scan is aborted.
+
+        This does the following:
+
+        - Calls the base class method.
         """
 
         log.info('Stream abort')
-        # Stop the rotary stage
-        self.epics_pvs['RotationStop'].put(1)
-        self.wait_pv(self.epics_pvs['RotationDmov'], 0)
         
+        # Call the base class method        
         super().abort_scan()
                 
 
