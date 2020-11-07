@@ -3,8 +3,8 @@ beginScreenProperties
 major 4
 minor 0
 release 1
-x 561
-y 184
+x 571
+y 192
 w 640
 h 210
 font "helvetica-medium-r-18.0"
@@ -56,7 +56,7 @@ fgColor rgb 2560 0 47104
 bgColor index 3
 useDisplayBg
 value {
-  "2-BM Tomography   $(P)$(R)"
+  "7-BM Tomography   $(P)$(R)"
 }
 endObjectProperties
 
@@ -261,17 +261,17 @@ topShadowColor rgb 55808 55808 55808
 botShadowColor rgb 17920 17920 17920
 font "helvetica-medium-r-18.0"
 icon
-buttonLabel "Stream"
+buttonLabel "Aerotech PSO"
 numPvs 2
 numDsps 1
 displayFileName {
-  0 "$(BEAMLINE)_stream.edl"
+  0 "$(BEAMLINE)_pso.edl"
 }
 menuLabel {
   0 "Experiment Information"
 }
 symbols {
-  0 "BEAMLINE=$(BEAMLINE),P=$(P),R=$(R),PH=2bmbSP1:,RH=HDF1:,CB=CB1:"
+  0 "P=$(P),R=$(R)"
 }
 replaceSymbols {
   0 1

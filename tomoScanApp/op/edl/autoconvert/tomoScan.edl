@@ -3,8 +3,8 @@ beginScreenProperties
 major 4
 minor 0
 release 1
-x 252
-y 72
+x 242
+y 64
 w 700
 h 825
 font "helvetica-medium-r-18.0"
@@ -346,7 +346,7 @@ beginObjectProperties
 major 4
 minor 1
 release 1
-x 75
+x 35
 y 260
 w 130
 h 20
@@ -365,7 +365,7 @@ beginObjectProperties
 major 4
 minor 7
 release 0
-x 215
+x 170
 y 260
 w 100
 h 20
@@ -391,7 +391,7 @@ beginObjectProperties
 major 4
 minor 7
 release 0
-x 215
+x 170
 y 285
 w 100
 h 20
@@ -417,7 +417,7 @@ beginObjectProperties
 major 4
 minor 1
 release 1
-x 65
+x 25
 y 285
 w 140
 h 20
@@ -436,7 +436,7 @@ beginObjectProperties
 major 4
 minor 1
 release 1
-x 55
+x 15
 y 310
 w 150
 h 20
@@ -455,7 +455,7 @@ beginObjectProperties
 major 4
 minor 1
 release 1
-x 410
+x 300
 y 285
 w 140
 h 20
@@ -474,7 +474,7 @@ beginObjectProperties
 major 4
 minor 7
 release 0
-x 555
+x 445
 y 285
 w 100
 h 20
@@ -500,7 +500,7 @@ beginObjectProperties
 major 4
 minor 7
 release 0
-x 555
+x 445
 y 260
 w 100
 h 20
@@ -526,7 +526,7 @@ beginObjectProperties
 major 4
 minor 1
 release 1
-x 420
+x 310
 y 260
 w 130
 h 20
@@ -545,9 +545,9 @@ beginObjectProperties
 major 4
 minor 7
 release 0
-x 615
+x 575
 y 335
-w 70
+w 100
 h 20
 controlPv "$(P)$(R)NumFlatFields"
 format "decimal"
@@ -571,16 +571,17 @@ beginObjectProperties
 major 4
 minor 1
 release 1
-x 380
+x 440
 y 335
-w 230
+w 130
 h 20
 font "helvetica-medium-r-14.0"
+fontAlign "right"
 fgColor rgb 0 0 0
 bgColor index 3
 useDisplayBg
 value {
-  "# Images per flat field"
+  "# Flat fields"
 }
 endObjectProperties
 
@@ -812,30 +813,18 @@ newPos
 objType "controls"
 endObjectProperties
 
-# (Group)
-object activeGroupClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 360
-y 310
-w 295
-h 20
-
-beginGroup
-
 # (Static Text)
 object activeXTextClass
 beginObjectProperties
 major 4
 minor 1
 release 1
-x 360
+x 380
 y 310
 w 190
 h 20
 font "helvetica-medium-r-14.0"
+fontAlign "right"
 fgColor rgb 0 0 0
 bgColor index 3
 useDisplayBg
@@ -843,11 +832,6 @@ value {
   "Collect flat fields"
 }
 endObjectProperties
-
-endGroup
-
-endObjectProperties
-
 
 # (Static Text)
 object activeXTextClass
@@ -974,19 +958,6 @@ fastUpdate
 newPos
 objType "controls"
 endObjectProperties
-
-# (Group)
-object activeGroupClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 5
-y 555
-w 690
-h 265
-
-beginGroup
 
 # (Rectangle)
 object activeRectangleClass
@@ -1438,11 +1409,6 @@ newPos
 objType "controls"
 endObjectProperties
 
-endGroup
-
-endObjectProperties
-
-
 # (Static Text)
 object activeXTextClass
 beginObjectProperties
@@ -1595,6 +1561,52 @@ value {
   "Overwrite warning:"
 }
 endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 35
+y 335
+w 130
+h 20
+font "helvetica-medium-r-14.0"
+fontAlign "right"
+fgColor rgb 0 0 0
+bgColor index 3
+useDisplayBg
+value {
+  "Flat exposure"
+}
+endObjectProperties
+
+# (Text Control)
+object activeXTextDspClass
+beginObjectProperties
+major 4
+minor 7
+release 0
+x 275
+y 335
+w 100
+h 20
+controlPv "$(P)$(R)FlatExposureTime"
+format "decimal"
+font "helvetica-medium-r-12.0"
+fontAlign "left"
+fgColor rgb 0 0 0
+bgColor rgb 29440 57088 65280
+editable
+motifWidget
+limitsFromDb
+nullColor rgb 60928 46592 11008
+smartRefresh
+fastUpdate
+newPos
+objType "controls"
+endObjectProperties
 # (Group)
 object activeGroupClass
 beginObjectProperties
@@ -1655,7 +1667,7 @@ menuLabel {
   0 "Beamline-specific display"
 }
 symbols {
-  0 "P=$(P),R=$(R)"
+  0 "P=$(P),R=$(R),BEAMLINE=$(BEAMLINE)"
 }
 replaceSymbols {
   0 1
@@ -1700,7 +1712,7 @@ beginObjectProperties
 major 4
 minor 0
 release 0
-x 215
+x 170
 y 310
 w 100
 h 20
@@ -1714,75 +1726,13 @@ indicatorPv "$(P)$(R)FlatFieldAxis"
 font "helvetica-medium-r-12.0"
 endObjectProperties
 
-# (Message Button)
-object activeMessageButtonClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 190
-y 335
-w 120
-h 20
-fgColor rgb 0 0 0
-onColor rgb 29440 57088 65280
-offColor rgb 29440 57088 65280
-topShadowColor rgb 65280 65280 65280
-botShadowColor rgb 0 0 0
-controlPv "$(P)$(R)MoveSampleOut"
-pressValue "1"
-releaseValue "0"
-onLabel "Move Sample Out"
-offLabel "Move Sample Out"
-3d
-useEnumNumeric
-font "helvetica-medium-r-12.0"
-endObjectProperties
-
-# (Message Button)
-object activeMessageButtonClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 40
-y 335
-w 120
-h 20
-fgColor rgb 0 0 0
-onColor rgb 29440 57088 65280
-offColor rgb 29440 57088 65280
-topShadowColor rgb 65280 65280 65280
-botShadowColor rgb 0 0 0
-controlPv "$(P)$(R)MoveSampleIn"
-pressValue "1"
-releaseValue "0"
-onLabel "Move Sample In"
-offLabel "Move Sample In"
-3d
-useEnumNumeric
-font "helvetica-medium-r-12.0"
-endObjectProperties
-# (Group)
-object activeGroupClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 360
-y 310
-w 295
-h 20
-
-beginGroup
-
 # (Menu Button)
 object activeMenuButtonClass
 beginObjectProperties
 major 4
 minor 0
 release 0
-x 555
+x 575
 y 310
 w 100
 h 20
@@ -1795,11 +1745,6 @@ controlPv "$(P)$(R)FlatFieldMode"
 indicatorPv "$(P)$(R)FlatFieldMode"
 font "helvetica-medium-r-12.0"
 endObjectProperties
-
-endGroup
-
-endObjectProperties
-
 
 # (Menu Button)
 object activeMenuButtonClass
@@ -1840,18 +1785,6 @@ controlPv "$(P)$(R)ReturnRotation"
 indicatorPv "$(P)$(R)ReturnRotation"
 font "helvetica-medium-r-12.0"
 endObjectProperties
-# (Group)
-object activeGroupClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 5
-y 555
-w 690
-h 265
-
-beginGroup
 
 # (Message Button)
 object activeMessageButtonClass
@@ -1903,11 +1836,6 @@ useEnumNumeric
 font "helvetica-medium-r-12.0"
 endObjectProperties
 
-endGroup
-
-endObjectProperties
-
-
 # (Menu Button)
 object activeMenuButtonClass
 beginObjectProperties
@@ -1925,6 +1853,76 @@ topShadowColor rgb 55808 55808 55808
 botShadowColor rgb 17920 17920 17920
 controlPv "$(P)$(R)OverwriteWarning"
 indicatorPv "$(P)$(R)OverwriteWarning"
+font "helvetica-medium-r-12.0"
+endObjectProperties
+
+# (Message Button)
+object activeMessageButtonClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 565
+y 260
+w 120
+h 20
+fgColor rgb 0 0 0
+onColor rgb 29440 57088 65280
+offColor rgb 29440 57088 65280
+topShadowColor rgb 65280 65280 65280
+botShadowColor rgb 0 0 0
+controlPv "$(P)$(R)MoveSampleIn"
+pressValue "1"
+releaseValue 
+onLabel "Move Sample In"
+offLabel "Move Sample In"
+3d
+useEnumNumeric
+font "helvetica-medium-r-12.0"
+endObjectProperties
+
+# (Message Button)
+object activeMessageButtonClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 565
+y 285
+w 120
+h 20
+fgColor rgb 0 0 0
+onColor rgb 29440 57088 65280
+offColor rgb 29440 57088 65280
+topShadowColor rgb 65280 65280 65280
+botShadowColor rgb 0 0 0
+controlPv "$(P)$(R)MoveSampleOut"
+pressValue "1"
+releaseValue 
+onLabel "Move Sample Out"
+offLabel "Move Sample Out"
+3d
+useEnumNumeric
+font "helvetica-medium-r-12.0"
+endObjectProperties
+
+# (Menu Button)
+object activeMenuButtonClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 170
+y 335
+w 100
+h 20
+fgColor rgb 0 0 0
+bgColor rgb 29440 57088 65280
+inconsistentColor rgb 17920 17920 17920
+topShadowColor rgb 55808 55808 55808
+botShadowColor rgb 17920 17920 17920
+controlPv "$(P)$(R)DifferentFlatExposure"
+indicatorPv "$(P)$(R)DifferentFlatExposure"
 font "helvetica-medium-r-12.0"
 endObjectProperties
 

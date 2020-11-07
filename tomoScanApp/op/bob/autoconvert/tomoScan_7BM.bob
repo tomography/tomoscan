@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <display version="2.0.0">
-  <name>tomoScan_2BM</name>
-  <x>561</x>
-  <y>184</y>
+  <name>tomoScan_7BM</name>
+  <x>571</x>
+  <y>192</y>
   <width>640</width>
   <height>210</height>
   <background_color>
@@ -27,7 +27,7 @@
   </widget>
   <widget type="label" version="2.0.0">
     <name>text #9</name>
-    <text>2-BM Tomography   $(P)$(R)</text>
+    <text>7-BM Tomography   $(P)$(R)</text>
     <y>5</y>
     <width>640</width>
     <height>30</height>
@@ -135,17 +135,12 @@
     <name>related display #27</name>
     <actions>
       <action type="open_display">
-        <file>$(BEAMLINE)_stream.opi</file>
-        <macros>
-          <CB>CB1:</CB>
-          <PH>2bmbSP1:</PH>
-          <RH>HDF1:</RH>
-        </macros>
+        <file>$(BEAMLINE)_pso.opi</file>
         <target>tab</target>
         <description>Experiment Information</description>
       </action>
     </actions>
-    <text>Stream</text>
+    <text>Aerotech PSO</text>
     <x>335</x>
     <y>84</y>
     <width>280</width>

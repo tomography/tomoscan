@@ -119,6 +119,25 @@ class TomoScan13BM(TomoScan):
         self.epics_pvs['FPNumCapture'].put(self.total_images, wait=True)
         self.epics_pvs['FPCapture'].put('Capture')
 
+    def abort_scan(self):
+        """Performs the operations needed when a scan is aborted.
+
+        This does the following:
+
+        - Stops the rotation motor.
+
+        - Stops the file saving plugin.
+
+        - Calls the base class method.
+        """
+        # Stop the rotation motor
+        self.epics_pvs['RotationStop'].put(1)
+        time.sleep(1.0)
+        # Stop the file plugin
+        self.epics_pvs['FPCapture'].put('Done')
+        # Call the base class method
+        super().abort_scan()
+        
     def end_scan(self):
         """Performs the operations needed at the very end of a scan.
 
@@ -209,6 +228,8 @@ class TomoScan13BM(TomoScan):
         steps_per_deg = abs(round(1./self.rotation_resolution, 0))
         motor_speed = math.floor((speed * steps_per_deg)) / steps_per_deg
         self.epics_pvs['RotationSpeed'].put(motor_speed)
+        # Need to read back the actual motor speed because the requested speed might be outside the allowed range
+        motor_speed = self.epics_pvs['RotationSpeed'].get()
         # Set the external prescale according to the step size, use motor resolution
         # steps per degree (user unit)
         self.epics_pvs['MCSStopAll'].put(1, wait=True)
@@ -226,5 +247,7 @@ class TomoScan13BM(TomoScan):
         time.sleep(0.5)
         # Start the rotation motor
         self.epics_pvs['Rotation'].put(self.rotation_stop)
-        collection_time = self.num_angles * time_per_angle
-        self.wait_camera_done(collection_time + 60.)
+        camera_time = self.num_angles * time_per_angle
+        rotation_time = abs(self.rotation_start - self.rotation_stop) / motor_speed
+        collection_time = max(camera_time, rotation_time)
+        self.wait_camera_done(collection_time*1.1 + 60.)
