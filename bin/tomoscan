@@ -118,11 +118,11 @@ def scan(args, ts):
     elif (args.scan_type == 'mosaic'):
         start_y = args.vertical_start
         step_size_y = args.vertical_step_size       
-        end_y = start_y+ (step_size_y * args.vertical_steps)
+        end_y = start_y + (step_size_y * args.vertical_steps) + 1e-6
 
         start_x = args.horizontal_start
         step_size_x = args.horizontal_step_size       
-        end_x = start_x + (step_size_x * args.horizontal_steps)
+        end_x = start_x + (step_size_x * args.horizontal_steps) + 1e-6
 
         log.info('vertical positions (mm): %s', np.arange(start_y, end_y, step_size_y))
         for i in np.arange(start_y, end_y, step_size_y):
@@ -147,7 +147,7 @@ def scan(args, ts):
         if (args.scan_type == 'horizontal'):
             start = args.horizontal_start
             step_size = args.horizontal_step_size       
-            end = start + (step_size * args.horizontal_steps)
+            end = start + (step_size * args.horizontal_steps) + 1e-6
             log.info('horizontal positions (mm): %s', np.arange(start, end, step_size))
             if flat_field_axis in ('Y') or flat_field_mode == 'None':
                 pv = "SampleX"
@@ -156,7 +156,7 @@ def scan(args, ts):
         elif (args.scan_type == 'vertical'):
             start = args.vertical_start
             step_size = args.vertical_step_size
-            end = start + (step_size * args.vertical_steps)
+            end = start + (step_size * args.vertical_steps) + 1e-6
             log.info('vertical positions (mm): %s', np.arange(start, end, step_size))
             if flat_field_axis in ('X') or flat_field_mode == 'None':
                 pv = "SampleY"
