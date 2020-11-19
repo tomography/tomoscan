@@ -117,23 +117,23 @@ def scan(args, ts):
         single_scan(args, ts)
     elif (args.scan_type == 'mosaic'):
         start_y = args.vertical_start
-        step_size_y = args.vertical_step_size       
-        end_y = start_y+ (step_size_y * args.vertical_steps)
+        step_size_y = args.vertical_step_size  
+        steps_y = args.vertical_steps
 
         start_x = args.horizontal_start
-        step_size_x = args.horizontal_step_size       
-        end_x = start_x + (step_size_x * args.horizontal_steps)
+        step_size_x = args.horizontal_step_size
+        steps_x = args.horizontal_steps  
 
-        log.info('vertical positions (mm): %s', np.arange(start_y, end_y, step_size_y))
-        for i in np.arange(start_y, end_y, step_size_y):
+        log.info('vertical positions (mm): %s', np.linspace(start_y, end_y, steps_y))
+        for i in np.linspace(start_y, end_y, steps_y):
             log.warning('%s stage start position: %3.3f mm', 'SampleInY', i)
             if flat_field_axis in ('X') or flat_field_mode == 'None':
                 pv_y = "SampleY"
             else:
                 pv_y = "SampleInY"
             ts[pv_y].put(i, wait=True)
-            log.info('horizontal positions (mm): %s', np.arange(start_x, end_x, step_size_x))
-            for j in np.arange(start_x, end_x, step_size_x):
+            log.info('horizontal positions (mm): %s', np.linspace(start_x, end_x, steps_x))
+            for j in np.linspace(start_x, end_x, steps_x):
                 log.warning('%s stage start position: %3.3f mm', 'SampleInX', j)
                 if flat_field_axis in ('Y') or flat_field_mode == 'None':
                     pv_x = "SampleX"
@@ -147,8 +147,8 @@ def scan(args, ts):
         if (args.scan_type == 'horizontal'):
             start = args.horizontal_start
             step_size = args.horizontal_step_size       
-            end = start + (step_size * args.horizontal_steps)
-            log.info('horizontal positions (mm): %s', np.arange(start, end, step_size))
+            steps = args.horizontal_steps
+            log.info('horizontal positions (mm): %s', np.linspace(start, end, steps))
             if flat_field_axis in ('Y') or flat_field_mode == 'None':
                 pv = "SampleX"
             else:
@@ -156,13 +156,13 @@ def scan(args, ts):
         elif (args.scan_type == 'vertical'):
             start = args.vertical_start
             step_size = args.vertical_step_size
-            end = start + (step_size * args.vertical_steps)
-            log.info('vertical positions (mm): %s', np.arange(start, end, step_size))
+            steps = args.vertical_steps
+            log.info('vertical positions (mm): %s', np.linspace(start, end, steps))
             if flat_field_axis in ('X') or flat_field_mode == 'None':
                 pv = "SampleY"
             else:
                 pv = "SampleInY"
-        for i in np.arange(start, end, step_size):
+        for i in np.linspace(start, end, steps):
             log.warning('%s stage start position: %3.3f mm', pv, i)
             ts[pv].put(i, wait=True, timeout=600)
             single_scan(args, ts)
