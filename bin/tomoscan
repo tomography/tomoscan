@@ -119,10 +119,12 @@ def scan(args, ts):
         start_y = args.vertical_start
         step_size_y = args.vertical_step_size  
         steps_y = args.vertical_steps
+        end_y = start_y + (step_size_y * steps_y) 
 
         start_x = args.horizontal_start
         step_size_x = args.horizontal_step_size
         steps_x = args.horizontal_steps  
+        end_x = start_x + (step_size_x * steps_x)
 
         log.info('vertical positions (mm): %s', np.linspace(start_y, end_y, steps_y))
         for i in np.linspace(start_y, end_y, steps_y):
@@ -148,6 +150,7 @@ def scan(args, ts):
             start = args.horizontal_start
             step_size = args.horizontal_step_size       
             steps = args.horizontal_steps
+            end = start + (step_size * steps)
             log.info('horizontal positions (mm): %s', np.linspace(start, end, steps))
             if flat_field_axis in ('Y') or flat_field_mode == 'None':
                 pv = "SampleX"
@@ -157,6 +160,7 @@ def scan(args, ts):
             start = args.vertical_start
             step_size = args.vertical_step_size
             steps = args.vertical_steps
+            end = start + (step_size * steps)
             log.info('vertical positions (mm): %s', np.linspace(start, end, steps))
             if flat_field_axis in ('X') or flat_field_mode == 'None':
                 pv = "SampleY"
