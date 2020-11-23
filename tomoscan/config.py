@@ -113,7 +113,7 @@ SECTIONS['vertical'] = {
         'help': "Vertical step size (mm)"},
     'vertical-steps': {
         'default': 1,
-        'type': float,
+        'type': util.positive_int,
         'help': "Number of vertical steps"},
     }
 
@@ -128,7 +128,7 @@ SECTIONS['horizontal'] = {
         'help': "Horizontal step size (mm)"},
     'horizontal-steps': {
         'default': 1,
-        'type': float,
+        'type': util.positive_int,
         'help': "Number of horizontal steps"},
     }
 
