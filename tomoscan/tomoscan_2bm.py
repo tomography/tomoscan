@@ -201,14 +201,15 @@ class TomoScan2BM(TomoScan):
         - Turns on data capture.
         """
         log.info('begin scan')
-        # Call the base class method
-        super().begin_scan()
-        # Opens the front-end shutter
-        self.open_frontend_shutter()
 
         # Set data directory
         file_path = self.epics_pvs['DetectorTopDir'].get(as_string=True) + self.epics_pvs['ExperimentYearMonth'].get(as_string=True) + os.path.sep + self.epics_pvs['UserLastName'].get(as_string=True) + os.path.sep
         self.epics_pvs['FilePath'].put(file_path, wait=True)
+
+        # Call the base class method
+        super().begin_scan()
+        # Opens the front-end shutter
+        self.open_frontend_shutter()
         
         # Confirm angle step is an integer number of encoder pulses
         # Pass the user selected values to the PSO
