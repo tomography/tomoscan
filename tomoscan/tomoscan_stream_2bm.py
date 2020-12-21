@@ -2,7 +2,7 @@
 .. _tomoStream: https://tomostream.readthedocs.io
 .. _circular buffer plugin: https://cars9.uchicago.edu/software/epics/NDPluginCircularBuff.html
 .. _AreaDetector: https://areadetector.github.io/master/index.html
-.. _stream: https://mytomoscan.readthedocs.io/en/latest/tomoScanApp.html#id7
+.. _stream: https://tomoscan.readthedocs.io/en/latest/tomoScanApp.html#tomoscan-2bm-stream-adl
 
 Software for tomography stream scanning with EPICS at APS beamline 2-BM
 
