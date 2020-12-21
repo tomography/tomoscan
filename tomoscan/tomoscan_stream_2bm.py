@@ -2,6 +2,7 @@
 .. _tomoStream: https://tomostream.readthedocs.io
 .. _circular buffer plugin: https://cars9.uchicago.edu/software/epics/NDPluginCircularBuff.html
 .. _AreaDetector: https://areadetector.github.io/master/index.html
+.. _stream: https://mytomoscan.readthedocs.io/en/latest/tomoScanApp.html#id7
 
 Software for tomography stream scanning with EPICS at APS beamline 2-BM
 
@@ -13,8 +14,8 @@ This class support `tomoStream`_ by providing:
     performed without stopping rotation of the stage. Dark-flat field images can also be binned setting the binning \
     parameter in ROI1 plugin.
 - On-demand capturing to an hdf5 file
-    | The capturing/saving to an hdf5 file can be done on-demand by pressing the Capture proj button in the `tomoStream`_  control\
-    screen. Whenever capturing is done, dark/flat fields from the temporarily hdf5 file are added to the file containing \
+    | The capturing/saving to an hdf5 file can be done on-demand by pressing the Capture proj button in the `Stream`_\
+    MEDM control screen. Whenever capturing is done, dark/flat fields from the temporarily hdf5 file are added to the file containing \
     the projections and the experimental meta data. In addition, the `circular buffer plugin`_ (CB1) of `AreaDetector`_ \
     is used to store a set of projections acquired before capturing is started. This allows to save projections containing \
     information about the sample right before a sample change is detected. Data from the circular buffer is also added to \
