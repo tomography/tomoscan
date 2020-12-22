@@ -309,6 +309,10 @@ record(waveform,"$(P)$(R)StreamFileName")
    field(NELM, "256")
 }
 
+record(stringout, "$(P)$(R)PvaStreamPVPrefix")
+{
+   field(VAL,  "$(PVA_STREAM)")
+}
 
 ################
 # Shutter status

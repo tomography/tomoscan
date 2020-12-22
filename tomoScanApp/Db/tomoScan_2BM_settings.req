@@ -91,6 +91,7 @@ $(P)$(R)StreamNumTotalCaptured
 $(P)$(R)StreamCBStatusMessage
 $(P)$(R)StreamFileName
 $(P)$(R)StreamPreCounted
+$(P)$(R)PvaStreamPVPrefix
 
 ################
 # Shutter status

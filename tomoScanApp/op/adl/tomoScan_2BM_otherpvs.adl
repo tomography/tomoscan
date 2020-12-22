@@ -1,14 +1,14 @@
 
 file {
-	name="/local/user2bmb/conda/tomoscan/tomoScanApp/op/adl/tomoScan_2BM_otherpvs.adl"
+	name="/local/user2bmb/epics/synApps/support/tomoscan/tomoScanApp/op/adl/tomoScan_2BM_otherpvs.adl"
 	version=030111
 }
 display {
 	object {
-		x=109
-		y=156
+		x=94
+		y=699
 		width=640
-		height=325
+		height=350
 	}
 	clr=14
 	bclr=4
@@ -423,6 +423,35 @@ text {
 	}
 	control {
 		chan="$(P)$(R)ShutterStatusPVName"
+		clr=14
+		bclr=51
+	}
+	format="string"
+	limits {
+	}
+}
+text {
+	object {
+		x=89
+		y=315
+		width=160
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Dark/flat Stream Prefix"
+	align="horiz. right"
+}
+"text entry" {
+	object {
+		x=254
+		y=315
+		width=380
+		height=20
+	}
+	control {
+		chan="$(P)$(R)PvaStreamPVPrefix"
 		clr=14
 		bclr=51
 	}

@@ -54,6 +54,11 @@ class TomoScanStream2BM(TomoScan):
 
     def __init__(self, pv_files, macros):
         super().__init__(pv_files, macros)
+        # Shall we put this in the base class?
+        # also we need an error checking to confirm the EPICS IOC run provides the PvaStream prefix
+        prefix = self.pv_prefixes['PvaStream']
+        self.pva_dark = prefix + 'dark'
+        self.pva_flat = prefix + 'flat'
         # Set the detector in idle
         self.set_trigger_mode('Internal', 1)
         
@@ -400,12 +405,12 @@ class TomoScanStream2BM(TomoScan):
         self.pv_dark = pvaccess.PvObject({'value': [pvaccess.pvaccess.ScalarType.FLOAT], 
             'sizex': pvaccess.pvaccess.ScalarType.INT, 
             'sizey': pvaccess.pvaccess.ScalarType.INT})
-        self.server_dark = pvaccess.PvaServer('2bma:TomoScan:StreamDarkFields', self.pv_dark)
+        self.server_dark = pvaccess.PvaServer(self.pva_dark, self.pv_dark)
 
         self.pv_flat = pvaccess.PvObject({'value': [pvaccess.pvaccess.ScalarType.FLOAT], 
             'sizex': pvaccess.pvaccess.ScalarType.INT, 
             'sizey': pvaccess.pvaccess.ScalarType.INT})
-        self.server_flat = pvaccess.PvaServer('2bma:TomoScan:StreamFlatFields', self.pv_flat)
+        self.server_flat = pvaccess.PvaServer(self.pva_flat, self.pv_flat)
     
 
     def begin_stream(self):
