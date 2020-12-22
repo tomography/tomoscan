@@ -217,21 +217,18 @@ class TomoScan():
         # Wait 1 second for all PVs to connect
         time.sleep(1)
         self.check_pvs_connected()
-        # control_pvs['PVAStreamFlat'] and self.control_pvs['PVAStreamDark']
-        # need to figure out how to check pva is connected so the line below can be moved 
-        # above the self.check_pvs_connected() check
-
+        # Setting the pva servers to broadcast dark and flat fields
         if 'PvaStream' in self.pv_prefixes:
             prefix = self.pv_prefixes['PvaStream']
-            self.pv_dark = pvaccess.PvObject({'value': [pvaccess.pvaccess.ScalarType.FLOAT], 
+            self.pv_object_dark = pvaccess.PvObject({'value': [pvaccess.pvaccess.ScalarType.FLOAT], 
                 'sizex': pvaccess.pvaccess.ScalarType.INT, 
                 'sizey': pvaccess.pvaccess.ScalarType.INT})
-            self.control_pvs['PVAStreamDark'] = pvaccess.PvaServer(prefix + 'dark', self.pv_dark)
+            self.pva_stream_dark = pvaccess.PvaServer(prefix + 'dark', self.pv_object_dark)
 
-            self.pv_flat = pvaccess.PvObject({'value': [pvaccess.pvaccess.ScalarType.FLOAT], 
+            self.pv_object_flat = pvaccess.PvObject({'value': [pvaccess.pvaccess.ScalarType.FLOAT], 
                 'sizex': pvaccess.pvaccess.ScalarType.INT, 
                 'sizey': pvaccess.pvaccess.ScalarType.INT})
-            self.control_pvs['PVAStreamFlat'] = pvaccess.PvaServer(prefix + 'flat', self.pv_flat)
+            self.pva_stream_flat = pvaccess.PvaServer(prefix + 'flat', self.pv_object_flat)
 
         # Configure callbacks on a few PVs
         for epics_pv in ('MoveSampleIn', 'MoveSampleOut', 'StartScan', 'AbortScan', 'ExposureTime',
