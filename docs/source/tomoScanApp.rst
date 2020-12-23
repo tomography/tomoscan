@@ -876,6 +876,9 @@ Stream control
   * - $(P)$(R)StreamFileName 
     - waveform
     - Stream file name
+  * - $(P)$(R)PvaStreamPVPrefix
+    - stringout
+    - Contains the prefix for the PVA server broadcasting dark and flat images in streaming mode, e.g. 2bmb:TonoScan:Stream:
 
 
 tomoScan_2BM_settings.req
@@ -897,6 +900,16 @@ The following is the MEDM screen :download:`tomoScan_2BM.adl <../../tomoScanApp/
 This screen contains the PVs for the TomoScan_2BM derived class.  If the BeamReadyPV is changed then tomoscan must be restarted.
 
 .. image:: img/tomoScan_2BM.png
+    :width: 75%
+    :align: center
+
+tomoScan_2BM_stream.adl
+^^^^^^^^^^^^^^^^^^^^^^^
+
+The following is the MEDM screen :download:`tomoScan_2BM_stream.adl <../../tomoScanApp/op/adl/tomoScan_2BM_stream.adl>`.  
+This screen contains the additonal PVs used by the TomoScan_stream_2BM derived class.  
+
+.. image:: img/tomoScan_2BM_stream.png
     :width: 75%
     :align: center
 

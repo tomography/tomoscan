@@ -1,9 +1,31 @@
-"""Software for tomography scanning with EPICS at APS beamline 2-BM-A
+"""
+.. _tomoStream: https://tomostream.readthedocs.io
+.. _circular buffer plugin: https://cars9.uchicago.edu/software/epics/NDPluginCircularBuff.html
+.. _AreaDetector: https://areadetector.github.io/master/index.html
+.. _stream: https://tomoscan.readthedocs.io/en/latest/tomoScanApp.html#tomoscan-2bm-stream-adl
 
-   Classes
-   -------
-   TomoScan2BM
-     Derived class for tomography scanning with EPICS at APS beamline 2-BM-A
+Software for tomography stream scanning with EPICS at APS beamline 2-BM
+
+This class support `tomoStream`_ by providing:
+
+- Dark-flat field image PVs broadcasting
+    | Dark-flat field images are broadcasted using PVaccess. Dark-flat field images are also saved in a temporary \
+    hdf5 file that are re-written whenever new flat/dark fields are acquired. Acquisition of dark and flat fields is \
+    performed without stopping rotation of the stage. Dark-flat field images can also be binned setting the binning \
+    parameter in ROI1 plugin.
+- On-demand capturing to an hdf5 file
+    | The capturing/saving to an hdf5 file can be done on-demand by pressing the Capture proj button in the `Stream`_\
+    MEDM control screen. Whenever capturing is done, dark/flat fields from the temporarily hdf5 file are added to the file containing \
+    the projections and the experimental meta data. In addition, the `circular buffer plugin`_ (CB1) of `AreaDetector`_ \
+    is used to store a set of projections acquired before capturing is started. This allows to save projections containing \
+    information about the sample right before a sample change is detected. Data from the circular buffer is also added to \
+    the hdf5 after capturing is done. The resulting hdf5 file has the same format as in regular single tomoscan file. 
+
+
+Classes
+-------
+    TomoScan2BM
+        Derived class for tomography scanning with EPICS at APS beamline 2-BM-A
 """
 import os
 import time
@@ -375,15 +397,6 @@ class TomoScanStream2BM(TomoScan):
         self.epics_pvs['CBEnableCallbacks'].put('Enable')
         self.epics_pvs['FPEnableCallbacks'].put('Enable')
         
-        self.pv_dark = pvaccess.PvObject({'value': [pvaccess.pvaccess.ScalarType.FLOAT], 
-            'sizex': pvaccess.pvaccess.ScalarType.INT, 
-            'sizey': pvaccess.pvaccess.ScalarType.INT})
-        self.server_dark = pvaccess.PvaServer('2bma:TomoScan:StreamDarkFields', self.pv_dark)
-
-        self.pv_flat = pvaccess.PvObject({'value': [pvaccess.pvaccess.ScalarType.FLOAT], 
-            'sizex': pvaccess.pvaccess.ScalarType.INT, 
-            'sizey': pvaccess.pvaccess.ScalarType.INT})
-        self.server_flat = pvaccess.PvaServer('2bma:TomoScan:StreamFlatFields', self.pv_flat)
     
 
     def begin_stream(self):
