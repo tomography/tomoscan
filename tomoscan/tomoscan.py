@@ -220,15 +220,15 @@ class TomoScan():
         # Setting the pva servers to broadcast dark and flat fields
         if 'PvaStream' in self.pv_prefixes:
             prefix = self.pv_prefixes['PvaStream']
-            self.pv_object_dark = pvaccess.PvObject({'value': [pvaccess.pvaccess.ScalarType.FLOAT], 
+            self.pva_stream_dark = pvaccess.PvObject({'value': [pvaccess.pvaccess.ScalarType.FLOAT], 
                 'sizex': pvaccess.pvaccess.ScalarType.INT, 
                 'sizey': pvaccess.pvaccess.ScalarType.INT})
-            self.pva_stream_dark = pvaccess.PvaServer(prefix + 'dark', self.pv_object_dark)
+            self.pva_server_dark = pvaccess.PvaServer(prefix + 'dark', self.pva_stream_dark)
 
-            self.pv_object_flat = pvaccess.PvObject({'value': [pvaccess.pvaccess.ScalarType.FLOAT], 
+            self.pva_stream_flat = pvaccess.PvObject({'value': [pvaccess.pvaccess.ScalarType.FLOAT], 
                 'sizex': pvaccess.pvaccess.ScalarType.INT, 
                 'sizey': pvaccess.pvaccess.ScalarType.INT})
-            self.pva_stream_flat = pvaccess.PvaServer(prefix + 'flat', self.pv_object_flat)
+            self.pva_server_flat = pvaccess.PvaServer(prefix + 'flat', self.pva_stream_flat)
 
         # Configure callbacks on a few PVs
         for epics_pv in ('MoveSampleIn', 'MoveSampleOut', 'StartScan', 'AbortScan', 'ExposureTime',
