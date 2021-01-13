@@ -813,9 +813,9 @@ class TomoScanStream2BM(TomoScan):
         for k in range(self.epics_pvs['StreamBinning'].get() ):
             data = 0.5*(data[:, ::2]+data[:, 1::2])
             data = 0.5*(data[::2, :]+data[1::2, :])
-        self.pv_dark['value'] = data.flatten()
-        self.pv_dark['sizex'] = data.shape[1] 
-        self.pv_dark['sizey'] = data.shape[0]          
+        self.pva_stream_dark['value'] = data.flatten()
+        self.pva_stream_dark['sizex'] = data.shape[1] 
+        self.pva_stream_dark['sizey'] = data.shape[0]          
         
     def broadcast_flat(self):
         """Broadcast flat fields
@@ -833,9 +833,9 @@ class TomoScanStream2BM(TomoScan):
         for k in range(self.epics_pvs['StreamBinning'].get() ):
             data = 0.5*(data[:, ::2]+data[:, 1::2])
             data = 0.5*(data[::2, :]+data[1::2, :])
-        self.pv_flat['value'] = data.flatten()
-        self.pv_flat['sizex'] = data.shape[1] 
-        self.pv_flat['sizey'] = data.shape[0]          
+        self.pva_stream_flat['value'] = data.flatten()
+        self.pva_stream_flat['sizex'] = data.shape[1] 
+        self.pva_stream_flat['sizey'] = data.shape[0]          
         
     def change_cbqty(self):
         """Update current number of elements in the circular buffer """
