@@ -249,16 +249,6 @@ class TomoScan2BM(TomoScan):
         self.theta = []
         self.theta = self.epics_pvs['ThetaArray'].get(count=int(self.num_angles))
         print(self.theta,self.num_angles)
-        # Compute total number of frames to capture
-        self.total_images = self.num_angles
-        if self.dark_field_mode != 'None':
-            self.total_images += self.num_dark_fields
-        if self.dark_field_mode == 'Both':
-            self.total_images += self.num_dark_fields
-        if self.flat_field_mode != 'None':
-            self.total_images += self.num_flat_fields
-        if self.flat_field_mode == 'Both':
-            self.total_images += self.num_flat_fields
         # Set the total number of frames to capture and start capture on file plugin
         self.epics_pvs['FPNumCapture'].put(self.total_images, wait=True)
         self.epics_pvs['FPCapture'].put('Capture')
