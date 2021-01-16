@@ -13,7 +13,7 @@ from pathlib import Path
 import numpy as np
 from epics import PV
 
-from tomoscan_pso import TomoScanPSO
+from tomoscan import TomoScanPSO
 from tomoscan import log
 
 EPSILON = .001
