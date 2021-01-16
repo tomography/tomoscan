@@ -12,7 +12,7 @@ import os
 from tomoscan_pso import TomoScanPSO
 from tomoscan import log
 
-class TomoScan13BM(TomoScanPSO):
+class TomoScan13BM_PSO(TomoScanPSO):
     """Derived class used for tomography scanning with EPICS at APS beamline 13-BM-D
        using the Aerotech A3200 and NDrive as the rotation stage and trigger source
 
