@@ -1,0 +1,2 @@
+# Use this line to run the locally built tomoScanApp
+../../bin/linux-x86_64/tomoScanApp st.cmd
