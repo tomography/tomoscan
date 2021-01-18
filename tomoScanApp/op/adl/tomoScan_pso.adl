@@ -1,12 +1,12 @@
 
 file {
-	name="/home/beams/7BMB/epics/synApps/support/tomoscan/tomoScanApp/op/adl/tomoScan_7BM_pso.adl"
-	version=030111
+	name="/home/epics/support/tomoscan/tomoScanApp/op/adl/tomoScan_pso.adl"
+	version=030109
 }
 display {
 	object {
-		x=34
-		y=124
+		x=201
+		y=144
 		width=640
 		height=225
 	}
@@ -90,7 +90,7 @@ display {
 rectangle {
 	object {
 		x=0
-		y=5
+		y=6
 		width=640
 		height=30
 	}
@@ -101,9 +101,9 @@ rectangle {
 text {
 	object {
 		x=0
-		y=5
+		y=9
 		width=640
-		height=30
+		height=25
 	}
 	"basic attribute" {
 		clr=54
@@ -119,7 +119,7 @@ text {
 		height=20
 	}
 	control {
-		chan="$(P)$(R)startTaxi"
+		chan="$(P)$(R)PSOStartTaxi"
 		clr=14
 		bclr=51
 	}
@@ -135,7 +135,7 @@ text {
 		height=20
 	}
 	control {
-		chan="$(P)$(R)endTaxi"
+		chan="$(P)$(R)PSOEndTaxi"
 		clr=14
 		bclr=51
 	}
