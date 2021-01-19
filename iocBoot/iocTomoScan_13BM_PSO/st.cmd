@@ -9,11 +9,6 @@ epicsEnvSet("R", "TS1:")
 dbLoadDatabase "../../dbd/tomoScanApp.dbd"
 tomoScanApp_registerRecordDeviceDriver pdbbase
 
-# Use these lines to run the xxx application on APSshare.
-#dbLoadDatabase "/APSshare/epics/synApps_6_1/support/xxx-R6-1/dbd/iocxxxLinux.dbd"
-#iocxxxLinux_registerRecordDeviceDriver pdbbase
-
-
 dbLoadTemplate("tomoScan.substitutions")
 
 < save_restore.cmd
