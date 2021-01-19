@@ -225,26 +225,19 @@ class TomoScanPSO(TomoScan):
 
         # Make sure the PSO control is off
         asynRec.put('PSOCONTROL %s RESET' % pso_axis, wait=True, timeout=10.0)
-        time.sleep(0.05)
         # Set the output to occur from the I/O terminal on the controller
         asynRec.put('PSOOUTPUT %s CONTROL 1' % pso_axis, wait=True, timeout=10.0)
-        time.sleep(0.05)
         # Set a pulse 10 us long, 20 us total duration, so 10 us on, 10 us off
         asynRec.put('PSOPULSE %s TIME 20,10' % pso_axis, wait=True, timeout=10.0)
-        time.sleep(0.05)
         # Set the pulses to only occur in a specific window
         asynRec.put('PSOOUTPUT %s PULSE WINDOW MASK' % pso_axis, wait=True, timeout=10.0)
-        time.sleep(0.05)
         # Set which encoder we will use.  3 = the MXH (encoder multiplier) input, which is what we generally want
         asynRec.put('PSOTRACK %s INPUT %d' % (pso_axis, pso_input), wait=True, timeout=10.0)
-        time.sleep(0.05)
         # Set the distance between pulses.  Do this in encoder counts.
         asynRec.put('PSODISTANCE %s FIXED %d' % (pso_axis,
                              self.epics_pvs['EncoderPulsesPerStep'].get()), wait=True, timeout=10.0)
-        time.sleep(0.05)
         # Which encoder is being used to calculate whether we are in the window.  1 for single axis
         asynRec.put('PSOWINDOW %s 1 INPUT %d' % (pso_axis, pso_input), wait=True, timeout=10.0)
-        time.sleep(0.05)
 
         # Calculate window function parameters.  Must be in encoder counts, and is 
         # referenced from the stage location where we arm the PSO.  We are at that point now.
@@ -260,7 +253,6 @@ class TomoScanPSO(TomoScan):
             window_start = window_end - range_length
         asynRec.put('PSOWINDOW %s 1 RANGE %d,%d' % (pso_axis, window_start-5, window_end+5), wait=True, timeout=10.0)
         # Arm the PSO
-        time.sleep(0.05)
         asynRec.put('PSOCONTROL %s ARM' % pso_axis, wait=True, timeout=10.0)
 
     def cleanup_PSO(self):
