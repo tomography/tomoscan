@@ -4,10 +4,10 @@
 <widget class="QMainWindow" name="MainWindow">
     <property name="geometry">
         <rect>
-            <x>94</x>
-            <y>699</y>
+            <x>201</x>
+            <y>144</y>
             <width>640</width>
-            <height>350</height>
+            <height>225</height>
         </rect>
     </property>
     <property name="styleSheet">
@@ -113,7 +113,7 @@ border-radius: 2px;
             <property name="geometry">
                 <rect>
                     <x>0</x>
-                    <y>5</y>
+                    <y>6</y>
                     <width>640</width>
                     <height>30</height>
                 </rect>
@@ -158,7 +158,7 @@ border-radius: 2px;
                 </color>
             </property>
             <property name="text">
-                <string>$(P)$(R)   Other PVs</string>
+                <string>$(P)$(R)   PSO</string>
             </property>
             <property name="fontScaleMode">
                 <enum>ESimpleLabel::WidthAndHeight</enum>
@@ -169,17 +169,17 @@ border-radius: 2px;
             <property name="geometry">
                 <rect>
                     <x>0</x>
-                    <y>4</y>
+                    <y>9</y>
                     <width>640</width>
-                    <height>30</height>
+                    <height>25</height>
                 </rect>
             </property>
         </widget>
         <widget class="caTextEntry" name="caTextEntry_0">
             <property name="geometry">
                 <rect>
-                    <x>254</x>
-                    <y>40</y>
+                    <x>244</x>
+                    <y>42</y>
                     <width>380</width>
                     <height>20</height>
                 </rect>
@@ -188,7 +188,7 @@ border-radius: 2px;
                 <enum>caLineEdit::WidthAndHeight</enum>
             </property>
             <property name="channel">
-                <string>$(P)$(R)BeamReadyPVName</string>
+                <string>$(P)$(R)PSOStartTaxi</string>
             </property>
             <property name="foreground">
                 <color alpha="255">
@@ -229,8 +229,8 @@ border-radius: 2px;
         <widget class="caTextEntry" name="caTextEntry_1">
             <property name="geometry">
                 <rect>
-                    <x>254</x>
-                    <y>65</y>
+                    <x>244</x>
+                    <y>67</y>
                     <width>380</width>
                     <height>20</height>
                 </rect>
@@ -239,7 +239,7 @@ border-radius: 2px;
                 <enum>caLineEdit::WidthAndHeight</enum>
             </property>
             <property name="channel">
-                <string>$(P)$(R)BeamReadyValue</string>
+                <string>$(P)$(R)PSOEndTaxi</string>
             </property>
             <property name="foreground">
                 <color alpha="255">
@@ -296,7 +296,7 @@ border-radius: 2px;
                 </color>
             </property>
             <property name="text">
-                <string>Beam ready value</string>
+                <string>Rotation end taxi</string>
             </property>
             <property name="fontScaleMode">
                 <enum>ESimpleLabel::WidthAndHeight</enum>
@@ -306,8 +306,8 @@ border-radius: 2px;
             </property>
             <property name="geometry">
                 <rect>
-                    <x>89</x>
-                    <y>65</y>
+                    <x>79</x>
+                    <y>67</y>
                     <width>160</width>
                     <height>20</height>
                 </rect>
@@ -332,7 +332,7 @@ border-radius: 2px;
                 </color>
             </property>
             <property name="text">
-                <string>Beam ready PV</string>
+                <string>Rotation start taxi</string>
             </property>
             <property name="fontScaleMode">
                 <enum>ESimpleLabel::WidthAndHeight</enum>
@@ -342,8 +342,8 @@ border-radius: 2px;
             </property>
             <property name="geometry">
                 <rect>
-                    <x>119</x>
-                    <y>40</y>
+                    <x>109</x>
+                    <y>42</y>
                     <width>130</width>
                     <height>20</height>
                 </rect>
@@ -368,7 +368,7 @@ border-radius: 2px;
                 </color>
             </property>
             <property name="text">
-                <string>Open fast shutter value</string>
+                <string>PSO asyn PV</string>
             </property>
             <property name="fontScaleMode">
                 <enum>ESimpleLabel::WidthAndHeight</enum>
@@ -378,8 +378,8 @@ border-radius: 2px;
             </property>
             <property name="geometry">
                 <rect>
-                    <x>89</x>
-                    <y>115</y>
+                    <x>79</x>
+                    <y>117</y>
                     <width>160</width>
                     <height>20</height>
                 </rect>
@@ -388,8 +388,8 @@ border-radius: 2px;
         <widget class="caTextEntry" name="caTextEntry_2">
             <property name="geometry">
                 <rect>
-                    <x>254</x>
-                    <y>115</y>
+                    <x>244</x>
+                    <y>117</y>
                     <width>380</width>
                     <height>20</height>
                 </rect>
@@ -398,7 +398,7 @@ border-radius: 2px;
                 <enum>caLineEdit::WidthAndHeight</enum>
             </property>
             <property name="channel">
-                <string>$(P)$(R)OpenFastShutterValue</string>
+                <string>$(P)$(R)PSOAsynPVName</string>
             </property>
             <property name="foreground">
                 <color alpha="255">
@@ -455,7 +455,7 @@ border-radius: 2px;
                 </color>
             </property>
             <property name="text">
-                <string>Open fast shutter PV</string>
+                <string>Encoder pulses per step</string>
             </property>
             <property name="fontScaleMode">
                 <enum>ESimpleLabel::WidthAndHeight</enum>
@@ -465,8 +465,8 @@ border-radius: 2px;
             </property>
             <property name="geometry">
                 <rect>
-                    <x>119</x>
-                    <y>90</y>
+                    <x>109</x>
+                    <y>92</y>
                     <width>130</width>
                     <height>20</height>
                 </rect>
@@ -475,8 +475,8 @@ border-radius: 2px;
         <widget class="caTextEntry" name="caTextEntry_3">
             <property name="geometry">
                 <rect>
-                    <x>254</x>
-                    <y>90</y>
+                    <x>244</x>
+                    <y>92</y>
                     <width>380</width>
                     <height>20</height>
                 </rect>
@@ -485,7 +485,7 @@ border-radius: 2px;
                 <enum>caLineEdit::WidthAndHeight</enum>
             </property>
             <property name="channel">
-                <string>$(P)$(R)OpenFastShutterPVName</string>
+                <string>$(P)$(R)EncoderPulsesPerStep</string>
             </property>
             <property name="foreground">
                 <color alpha="255">
@@ -542,7 +542,7 @@ border-radius: 2px;
                 </color>
             </property>
             <property name="text">
-                <string>Close fast shutter PV</string>
+                <string>PSO axis name</string>
             </property>
             <property name="fontScaleMode">
                 <enum>ESimpleLabel::WidthAndHeight</enum>
@@ -552,8 +552,8 @@ border-radius: 2px;
             </property>
             <property name="geometry">
                 <rect>
-                    <x>119</x>
-                    <y>140</y>
+                    <x>109</x>
+                    <y>142</y>
                     <width>130</width>
                     <height>20</height>
                 </rect>
@@ -578,7 +578,7 @@ border-radius: 2px;
                 </color>
             </property>
             <property name="text">
-                <string>Close fast shutter value</string>
+                <string>PSO encoder input</string>
             </property>
             <property name="fontScaleMode">
                 <enum>ESimpleLabel::WidthAndHeight</enum>
@@ -588,8 +588,8 @@ border-radius: 2px;
             </property>
             <property name="geometry">
                 <rect>
-                    <x>89</x>
-                    <y>165</y>
+                    <x>79</x>
+                    <y>167</y>
                     <width>160</width>
                     <height>20</height>
                 </rect>
@@ -598,8 +598,8 @@ border-radius: 2px;
         <widget class="caTextEntry" name="caTextEntry_4">
             <property name="geometry">
                 <rect>
-                    <x>254</x>
-                    <y>165</y>
+                    <x>244</x>
+                    <y>167</y>
                     <width>380</width>
                     <height>20</height>
                 </rect>
@@ -608,7 +608,7 @@ border-radius: 2px;
                 <enum>caLineEdit::WidthAndHeight</enum>
             </property>
             <property name="channel">
-                <string>$(P)$(R)CloseFastShutterValue</string>
+                <string>$(P)$(R)PSOEncoderInput</string>
             </property>
             <property name="foreground">
                 <color alpha="255">
@@ -649,8 +649,8 @@ border-radius: 2px;
         <widget class="caTextEntry" name="caTextEntry_5">
             <property name="geometry">
                 <rect>
-                    <x>254</x>
-                    <y>140</y>
+                    <x>244</x>
+                    <y>142</y>
                     <width>380</width>
                     <height>20</height>
                 </rect>
@@ -659,7 +659,7 @@ border-radius: 2px;
                 <enum>caLineEdit::WidthAndHeight</enum>
             </property>
             <property name="channel">
-                <string>$(P)$(R)CloseFastShutterPVName</string>
+                <string>$(P)$(R)PSOAxisName</string>
             </property>
             <property name="foreground">
                 <color alpha="255">
@@ -716,7 +716,7 @@ border-radius: 2px;
                 </color>
             </property>
             <property name="text">
-                <string>PSO prefix</string>
+                <string>Encoder pulses per rev</string>
             </property>
             <property name="fontScaleMode">
                 <enum>ESimpleLabel::WidthAndHeight</enum>
@@ -726,9 +726,9 @@ border-radius: 2px;
             </property>
             <property name="geometry">
                 <rect>
-                    <x>109</x>
-                    <y>190</y>
-                    <width>140</width>
+                    <x>79</x>
+                    <y>193</y>
+                    <width>160</width>
                     <height>20</height>
                 </rect>
             </property>
@@ -736,8 +736,8 @@ border-radius: 2px;
         <widget class="caTextEntry" name="caTextEntry_6">
             <property name="geometry">
                 <rect>
-                    <x>254</x>
-                    <y>190</y>
+                    <x>244</x>
+                    <y>193</y>
                     <width>380</width>
                     <height>20</height>
                 </rect>
@@ -746,442 +746,7 @@ border-radius: 2px;
                 <enum>caLineEdit::WidthAndHeight</enum>
             </property>
             <property name="channel">
-                <string>$(P)$(R)PSOPVPrefix</string>
-            </property>
-            <property name="foreground">
-                <color alpha="255">
-                    <red>0</red>
-                    <green>0</green>
-                    <blue>0</blue>
-                </color>
-            </property>
-            <property name="background">
-                <color alpha="255">
-                    <red>115</red>
-                    <green>223</green>
-                    <blue>255</blue>
-                </color>
-            </property>
-            <property name="limitsMode">
-                <enum>caLineEdit::Channel</enum>
-            </property>
-            <property name="limitsMode">
-                <enum>caLineEdit::Channel</enum>
-            </property>
-            <property name="precisionMode">
-                <enum>caLineEdit::Channel</enum>
-            </property>
-            <property name="minValue">
-                <double>0.0</double>
-            </property>
-            <property name="maxValue">
-                <double>1.0</double>
-            </property>
-            <property name="colorMode">
-                <enum>caLineEdit::Static</enum>
-            </property>
-            <property name="formatType">
-                <enum>string</enum>
-            </property>
-        </widget>
-        <widget class="caLabel" name="caLabel_8">
-            <property name="frameShape">
-                <enum>QFrame::NoFrame</enum>
-            </property>
-            <property name="foreground">
-                <color alpha="255">
-                    <red>0</red>
-                    <green>0</green>
-                    <blue>0</blue>
-                </color>
-            </property>
-            <property name="background">
-                <color alpha="0">
-                    <red>0</red>
-                    <green>0</green>
-                    <blue>0</blue>
-                </color>
-            </property>
-            <property name="text">
-                <string>Shutter status PV</string>
-            </property>
-            <property name="fontScaleMode">
-                <enum>ESimpleLabel::WidthAndHeight</enum>
-            </property>
-            <property name="alignment">
-                <set>Qt::AlignAbsolute|Qt::AlignRight|Qt::AlignVCenter</set>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>119</x>
-                    <y>215</y>
-                    <width>130</width>
-                    <height>20</height>
-                </rect>
-            </property>
-        </widget>
-        <widget class="caLabel" name="caLabel_9">
-            <property name="frameShape">
-                <enum>QFrame::NoFrame</enum>
-            </property>
-            <property name="foreground">
-                <color alpha="255">
-                    <red>0</red>
-                    <green>0</green>
-                    <blue>0</blue>
-                </color>
-            </property>
-            <property name="background">
-                <color alpha="0">
-                    <red>0</red>
-                    <green>0</green>
-                    <blue>0</blue>
-                </color>
-            </property>
-            <property name="text">
-                <string>Pva plugin prefix</string>
-            </property>
-            <property name="fontScaleMode">
-                <enum>ESimpleLabel::WidthAndHeight</enum>
-            </property>
-            <property name="alignment">
-                <set>Qt::AlignAbsolute|Qt::AlignRight|Qt::AlignVCenter</set>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>119</x>
-                    <y>240</y>
-                    <width>130</width>
-                    <height>20</height>
-                </rect>
-            </property>
-        </widget>
-        <widget class="caLabel" name="caLabel_10">
-            <property name="frameShape">
-                <enum>QFrame::NoFrame</enum>
-            </property>
-            <property name="foreground">
-                <color alpha="255">
-                    <red>0</red>
-                    <green>0</green>
-                    <blue>0</blue>
-                </color>
-            </property>
-            <property name="background">
-                <color alpha="0">
-                    <red>0</red>
-                    <green>0</green>
-                    <blue>0</blue>
-                </color>
-            </property>
-            <property name="text">
-                <string>Roi plugin prefix</string>
-            </property>
-            <property name="fontScaleMode">
-                <enum>ESimpleLabel::WidthAndHeight</enum>
-            </property>
-            <property name="alignment">
-                <set>Qt::AlignAbsolute|Qt::AlignRight|Qt::AlignVCenter</set>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>89</x>
-                    <y>265</y>
-                    <width>160</width>
-                    <height>20</height>
-                </rect>
-            </property>
-        </widget>
-        <widget class="caLabel" name="caLabel_11">
-            <property name="frameShape">
-                <enum>QFrame::NoFrame</enum>
-            </property>
-            <property name="foreground">
-                <color alpha="255">
-                    <red>0</red>
-                    <green>0</green>
-                    <blue>0</blue>
-                </color>
-            </property>
-            <property name="background">
-                <color alpha="0">
-                    <red>0</red>
-                    <green>0</green>
-                    <blue>0</blue>
-                </color>
-            </property>
-            <property name="text">
-                <string>Cb plugin prefix</string>
-            </property>
-            <property name="fontScaleMode">
-                <enum>ESimpleLabel::WidthAndHeight</enum>
-            </property>
-            <property name="alignment">
-                <set>Qt::AlignAbsolute|Qt::AlignRight|Qt::AlignVCenter</set>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>119</x>
-                    <y>290</y>
-                    <width>130</width>
-                    <height>20</height>
-                </rect>
-            </property>
-        </widget>
-        <widget class="caTextEntry" name="caTextEntry_7">
-            <property name="geometry">
-                <rect>
-                    <x>254</x>
-                    <y>290</y>
-                    <width>380</width>
-                    <height>20</height>
-                </rect>
-            </property>
-            <property name="fontScaleMode">
-                <enum>caLineEdit::WidthAndHeight</enum>
-            </property>
-            <property name="channel">
-                <string>$(P)$(R)CbPluginPVPrefix</string>
-            </property>
-            <property name="foreground">
-                <color alpha="255">
-                    <red>0</red>
-                    <green>0</green>
-                    <blue>0</blue>
-                </color>
-            </property>
-            <property name="background">
-                <color alpha="255">
-                    <red>115</red>
-                    <green>223</green>
-                    <blue>255</blue>
-                </color>
-            </property>
-            <property name="limitsMode">
-                <enum>caLineEdit::Channel</enum>
-            </property>
-            <property name="limitsMode">
-                <enum>caLineEdit::Channel</enum>
-            </property>
-            <property name="precisionMode">
-                <enum>caLineEdit::Channel</enum>
-            </property>
-            <property name="minValue">
-                <double>0.0</double>
-            </property>
-            <property name="maxValue">
-                <double>1.0</double>
-            </property>
-            <property name="colorMode">
-                <enum>caLineEdit::Static</enum>
-            </property>
-            <property name="formatType">
-                <enum>string</enum>
-            </property>
-        </widget>
-        <widget class="caTextEntry" name="caTextEntry_8">
-            <property name="geometry">
-                <rect>
-                    <x>254</x>
-                    <y>265</y>
-                    <width>380</width>
-                    <height>20</height>
-                </rect>
-            </property>
-            <property name="fontScaleMode">
-                <enum>caLineEdit::WidthAndHeight</enum>
-            </property>
-            <property name="channel">
-                <string>$(P)$(R)RoiPluginPVPrefix</string>
-            </property>
-            <property name="foreground">
-                <color alpha="255">
-                    <red>0</red>
-                    <green>0</green>
-                    <blue>0</blue>
-                </color>
-            </property>
-            <property name="background">
-                <color alpha="255">
-                    <red>115</red>
-                    <green>223</green>
-                    <blue>255</blue>
-                </color>
-            </property>
-            <property name="limitsMode">
-                <enum>caLineEdit::Channel</enum>
-            </property>
-            <property name="limitsMode">
-                <enum>caLineEdit::Channel</enum>
-            </property>
-            <property name="precisionMode">
-                <enum>caLineEdit::Channel</enum>
-            </property>
-            <property name="minValue">
-                <double>0.0</double>
-            </property>
-            <property name="maxValue">
-                <double>1.0</double>
-            </property>
-            <property name="colorMode">
-                <enum>caLineEdit::Static</enum>
-            </property>
-            <property name="formatType">
-                <enum>string</enum>
-            </property>
-        </widget>
-        <widget class="caTextEntry" name="caTextEntry_9">
-            <property name="geometry">
-                <rect>
-                    <x>254</x>
-                    <y>240</y>
-                    <width>380</width>
-                    <height>20</height>
-                </rect>
-            </property>
-            <property name="fontScaleMode">
-                <enum>caLineEdit::WidthAndHeight</enum>
-            </property>
-            <property name="channel">
-                <string>$(P)$(R)PvaPluginPVPrefix</string>
-            </property>
-            <property name="foreground">
-                <color alpha="255">
-                    <red>0</red>
-                    <green>0</green>
-                    <blue>0</blue>
-                </color>
-            </property>
-            <property name="background">
-                <color alpha="255">
-                    <red>115</red>
-                    <green>223</green>
-                    <blue>255</blue>
-                </color>
-            </property>
-            <property name="limitsMode">
-                <enum>caLineEdit::Channel</enum>
-            </property>
-            <property name="limitsMode">
-                <enum>caLineEdit::Channel</enum>
-            </property>
-            <property name="precisionMode">
-                <enum>caLineEdit::Channel</enum>
-            </property>
-            <property name="minValue">
-                <double>0.0</double>
-            </property>
-            <property name="maxValue">
-                <double>1.0</double>
-            </property>
-            <property name="colorMode">
-                <enum>caLineEdit::Static</enum>
-            </property>
-            <property name="formatType">
-                <enum>string</enum>
-            </property>
-        </widget>
-        <widget class="caTextEntry" name="caTextEntry_10">
-            <property name="geometry">
-                <rect>
-                    <x>254</x>
-                    <y>215</y>
-                    <width>380</width>
-                    <height>20</height>
-                </rect>
-            </property>
-            <property name="fontScaleMode">
-                <enum>caLineEdit::WidthAndHeight</enum>
-            </property>
-            <property name="channel">
-                <string>$(P)$(R)ShutterStatusPVName</string>
-            </property>
-            <property name="foreground">
-                <color alpha="255">
-                    <red>0</red>
-                    <green>0</green>
-                    <blue>0</blue>
-                </color>
-            </property>
-            <property name="background">
-                <color alpha="255">
-                    <red>115</red>
-                    <green>223</green>
-                    <blue>255</blue>
-                </color>
-            </property>
-            <property name="limitsMode">
-                <enum>caLineEdit::Channel</enum>
-            </property>
-            <property name="limitsMode">
-                <enum>caLineEdit::Channel</enum>
-            </property>
-            <property name="precisionMode">
-                <enum>caLineEdit::Channel</enum>
-            </property>
-            <property name="minValue">
-                <double>0.0</double>
-            </property>
-            <property name="maxValue">
-                <double>1.0</double>
-            </property>
-            <property name="colorMode">
-                <enum>caLineEdit::Static</enum>
-            </property>
-            <property name="formatType">
-                <enum>string</enum>
-            </property>
-        </widget>
-        <widget class="caLabel" name="caLabel_12">
-            <property name="frameShape">
-                <enum>QFrame::NoFrame</enum>
-            </property>
-            <property name="foreground">
-                <color alpha="255">
-                    <red>0</red>
-                    <green>0</green>
-                    <blue>0</blue>
-                </color>
-            </property>
-            <property name="background">
-                <color alpha="0">
-                    <red>0</red>
-                    <green>0</green>
-                    <blue>0</blue>
-                </color>
-            </property>
-            <property name="text">
-                <string>Dark/flat Stream Prefix</string>
-            </property>
-            <property name="fontScaleMode">
-                <enum>ESimpleLabel::WidthAndHeight</enum>
-            </property>
-            <property name="alignment">
-                <set>Qt::AlignAbsolute|Qt::AlignRight|Qt::AlignVCenter</set>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>89</x>
-                    <y>315</y>
-                    <width>160</width>
-                    <height>20</height>
-                </rect>
-            </property>
-        </widget>
-        <widget class="caTextEntry" name="caTextEntry_11">
-            <property name="geometry">
-                <rect>
-                    <x>254</x>
-                    <y>315</y>
-                    <width>380</width>
-                    <height>20</height>
-                </rect>
-            </property>
-            <property name="fontScaleMode">
-                <enum>caLineEdit::WidthAndHeight</enum>
-            </property>
-            <property name="channel">
-                <string>$(P)$(R)PvaStreamPVPrefix</string>
+                <string>$(P)$(R)PSOPulsesPerRotation</string>
             </property>
             <property name="foreground">
                 <color alpha="255">
@@ -1228,11 +793,6 @@ border-radius: 2px;
         <zorder>caLabel_5</zorder>
         <zorder>caLabel_6</zorder>
         <zorder>caLabel_7</zorder>
-        <zorder>caLabel_8</zorder>
-        <zorder>caLabel_9</zorder>
-        <zorder>caLabel_10</zorder>
-        <zorder>caLabel_11</zorder>
-        <zorder>caLabel_12</zorder>
         <zorder>caTextEntry_0</zorder>
         <zorder>caTextEntry_1</zorder>
         <zorder>caTextEntry_2</zorder>
@@ -1240,11 +800,6 @@ border-radius: 2px;
         <zorder>caTextEntry_4</zorder>
         <zorder>caTextEntry_5</zorder>
         <zorder>caTextEntry_6</zorder>
-        <zorder>caTextEntry_7</zorder>
-        <zorder>caTextEntry_8</zorder>
-        <zorder>caTextEntry_9</zorder>
-        <zorder>caTextEntry_10</zorder>
-        <zorder>caTextEntry_11</zorder>
     </widget>
 </widget>
 </ui>

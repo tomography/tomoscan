@@ -3,10 +3,10 @@ beginScreenProperties
 major 4
 minor 0
 release 1
-x 94
-y 699
+x 201
+y 144
 w 640
-h 350
+h 225
 font "helvetica-medium-r-18.0"
 ctlFont "helvetica-bold-r-10.0"
 btnFont "helvetica-medium-r-18.0"
@@ -31,7 +31,7 @@ major 4
 minor 0
 release 0
 x 0
-y 5
+y 6
 w 639
 h 29
 lineColor rgb 55808 55808 55808
@@ -47,16 +47,16 @@ major 4
 minor 1
 release 1
 x 0
-y 4
+y 9
 w 640
-h 30
-font "utopia-medium-r-24.0"
+h 25
+font "helvetica-medium-r-18.0"
 fontAlign "center"
 fgColor rgb 2560 0 47104
 bgColor index 3
 useDisplayBg
 value {
-  "$(P)$(R)   Other PVs"
+  "$(P)$(R)   PSO"
 }
 endObjectProperties
 
@@ -66,11 +66,11 @@ beginObjectProperties
 major 4
 minor 7
 release 0
-x 254
-y 40
+x 244
+y 42
 w 380
 h 20
-controlPv "$(P)$(R)BeamReadyPVName"
+controlPv "$(P)$(R)PSOStartTaxi"
 format "string"
 font "helvetica-medium-r-12.0"
 fontAlign "left"
@@ -92,11 +92,11 @@ beginObjectProperties
 major 4
 minor 7
 release 0
-x 254
-y 65
+x 244
+y 67
 w 380
 h 20
-controlPv "$(P)$(R)BeamReadyValue"
+controlPv "$(P)$(R)PSOEndTaxi"
 format "string"
 font "helvetica-medium-r-12.0"
 fontAlign "left"
@@ -118,8 +118,8 @@ beginObjectProperties
 major 4
 minor 1
 release 1
-x 89
-y 65
+x 79
+y 67
 w 160
 h 20
 font "helvetica-medium-r-14.0"
@@ -128,7 +128,7 @@ fgColor rgb 0 0 0
 bgColor index 3
 useDisplayBg
 value {
-  "Beam ready value"
+  "Rotation end taxi"
 }
 endObjectProperties
 
@@ -138,8 +138,8 @@ beginObjectProperties
 major 4
 minor 1
 release 1
-x 119
-y 40
+x 109
+y 42
 w 130
 h 20
 font "helvetica-medium-r-14.0"
@@ -148,7 +148,7 @@ fgColor rgb 0 0 0
 bgColor index 3
 useDisplayBg
 value {
-  "Beam ready PV"
+  "Rotation start taxi"
 }
 endObjectProperties
 
@@ -158,9 +158,9 @@ beginObjectProperties
 major 4
 minor 1
 release 1
-x 85
-y 115
-w 164
+x 79
+y 117
+w 160
 h 20
 font "helvetica-medium-r-14.0"
 fontAlign "right"
@@ -168,7 +168,7 @@ fgColor rgb 0 0 0
 bgColor index 3
 useDisplayBg
 value {
-  "Open fast shutter value"
+  "PSO asyn PV"
 }
 endObjectProperties
 
@@ -178,11 +178,11 @@ beginObjectProperties
 major 4
 minor 7
 release 0
-x 254
-y 115
+x 244
+y 117
 w 380
 h 20
-controlPv "$(P)$(R)OpenFastShutterValue"
+controlPv "$(P)$(R)PSOAsynPVName"
 format "string"
 font "helvetica-medium-r-12.0"
 fontAlign "left"
@@ -204,9 +204,9 @@ beginObjectProperties
 major 4
 minor 1
 release 1
-x 100
-y 90
-w 149
+x 67
+y 92
+w 172
 h 20
 font "helvetica-medium-r-14.0"
 fontAlign "right"
@@ -214,7 +214,7 @@ fgColor rgb 0 0 0
 bgColor index 3
 useDisplayBg
 value {
-  "Open fast shutter PV"
+  "Encoder pulses per step"
 }
 endObjectProperties
 
@@ -224,103 +224,11 @@ beginObjectProperties
 major 4
 minor 7
 release 0
-x 254
-y 90
+x 244
+y 92
 w 380
 h 20
-controlPv "$(P)$(R)OpenFastShutterPVName"
-format "string"
-font "helvetica-medium-r-12.0"
-fontAlign "left"
-fgColor rgb 0 0 0
-bgColor rgb 29440 57088 65280
-editable
-motifWidget
-limitsFromDb
-nullColor rgb 60928 46592 11008
-smartRefresh
-fastUpdate
-newPos
-objType "controls"
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 1
-x 98
-y 140
-w 151
-h 20
-font "helvetica-medium-r-14.0"
-fontAlign "right"
-fgColor rgb 0 0 0
-bgColor index 3
-useDisplayBg
-value {
-  "Close fast shutter PV"
-}
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 1
-x 83
-y 165
-w 166
-h 20
-font "helvetica-medium-r-14.0"
-fontAlign "right"
-fgColor rgb 0 0 0
-bgColor index 3
-useDisplayBg
-value {
-  "Close fast shutter value"
-}
-endObjectProperties
-
-# (Text Control)
-object activeXTextDspClass
-beginObjectProperties
-major 4
-minor 7
-release 0
-x 254
-y 165
-w 380
-h 20
-controlPv "$(P)$(R)CloseFastShutterValue"
-format "string"
-font "helvetica-medium-r-12.0"
-fontAlign "left"
-fgColor rgb 0 0 0
-bgColor rgb 29440 57088 65280
-editable
-motifWidget
-limitsFromDb
-nullColor rgb 60928 46592 11008
-smartRefresh
-fastUpdate
-newPos
-objType "controls"
-endObjectProperties
-
-# (Text Control)
-object activeXTextDspClass
-beginObjectProperties
-major 4
-minor 7
-release 0
-x 254
-y 140
-w 380
-h 20
-controlPv "$(P)$(R)CloseFastShutterPVName"
+controlPv "$(P)$(R)EncoderPulsesPerStep"
 format "string"
 font "helvetica-medium-r-12.0"
 fontAlign "left"
@@ -343,53 +251,7 @@ major 4
 minor 1
 release 1
 x 109
-y 190
-w 140
-h 20
-font "helvetica-medium-r-14.0"
-fontAlign "right"
-fgColor rgb 0 0 0
-bgColor index 3
-useDisplayBg
-value {
-  "PSO prefix"
-}
-endObjectProperties
-
-# (Text Control)
-object activeXTextDspClass
-beginObjectProperties
-major 4
-minor 7
-release 0
-x 254
-y 190
-w 380
-h 20
-controlPv "$(P)$(R)PSOPVPrefix"
-format "string"
-font "helvetica-medium-r-12.0"
-fontAlign "left"
-fgColor rgb 0 0 0
-bgColor rgb 29440 57088 65280
-editable
-motifWidget
-limitsFromDb
-nullColor rgb 60928 46592 11008
-smartRefresh
-fastUpdate
-newPos
-objType "controls"
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 1
-x 119
-y 215
+y 142
 w 130
 h 20
 font "helvetica-medium-r-14.0"
@@ -398,7 +260,7 @@ fgColor rgb 0 0 0
 bgColor index 3
 useDisplayBg
 value {
-  "Shutter status PV"
+  "PSO axis name"
 }
 endObjectProperties
 
@@ -408,28 +270,8 @@ beginObjectProperties
 major 4
 minor 1
 release 1
-x 119
-y 240
-w 130
-h 20
-font "helvetica-medium-r-14.0"
-fontAlign "right"
-fgColor rgb 0 0 0
-bgColor index 3
-useDisplayBg
-value {
-  "Pva plugin prefix"
-}
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 1
-x 89
-y 265
+x 79
+y 167
 w 160
 h 20
 font "helvetica-medium-r-14.0"
@@ -438,27 +280,7 @@ fgColor rgb 0 0 0
 bgColor index 3
 useDisplayBg
 value {
-  "Roi plugin prefix"
-}
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 1
-x 119
-y 290
-w 130
-h 20
-font "helvetica-medium-r-14.0"
-fontAlign "right"
-fgColor rgb 0 0 0
-bgColor index 3
-useDisplayBg
-value {
-  "Cb plugin prefix"
+  "PSO encoder input"
 }
 endObjectProperties
 
@@ -468,11 +290,11 @@ beginObjectProperties
 major 4
 minor 7
 release 0
-x 254
-y 290
+x 244
+y 167
 w 380
 h 20
-controlPv "$(P)$(R)CbPluginPVPrefix"
+controlPv "$(P)$(R)PSOEncoderInput"
 format "string"
 font "helvetica-medium-r-12.0"
 fontAlign "left"
@@ -494,63 +316,11 @@ beginObjectProperties
 major 4
 minor 7
 release 0
-x 254
-y 265
+x 244
+y 142
 w 380
 h 20
-controlPv "$(P)$(R)RoiPluginPVPrefix"
-format "string"
-font "helvetica-medium-r-12.0"
-fontAlign "left"
-fgColor rgb 0 0 0
-bgColor rgb 29440 57088 65280
-editable
-motifWidget
-limitsFromDb
-nullColor rgb 60928 46592 11008
-smartRefresh
-fastUpdate
-newPos
-objType "controls"
-endObjectProperties
-
-# (Text Control)
-object activeXTextDspClass
-beginObjectProperties
-major 4
-minor 7
-release 0
-x 254
-y 240
-w 380
-h 20
-controlPv "$(P)$(R)PvaPluginPVPrefix"
-format "string"
-font "helvetica-medium-r-12.0"
-fontAlign "left"
-fgColor rgb 0 0 0
-bgColor rgb 29440 57088 65280
-editable
-motifWidget
-limitsFromDb
-nullColor rgb 60928 46592 11008
-smartRefresh
-fastUpdate
-newPos
-objType "controls"
-endObjectProperties
-
-# (Text Control)
-object activeXTextDspClass
-beginObjectProperties
-major 4
-minor 7
-release 0
-x 254
-y 215
-w 380
-h 20
-controlPv "$(P)$(R)ShutterStatusPVName"
+controlPv "$(P)$(R)PSOAxisName"
 format "string"
 font "helvetica-medium-r-12.0"
 fontAlign "left"
@@ -572,9 +342,9 @@ beginObjectProperties
 major 4
 minor 1
 release 1
-x 89
-y 315
-w 160
+x 74
+y 193
+w 165
 h 20
 font "helvetica-medium-r-14.0"
 fontAlign "right"
@@ -582,7 +352,7 @@ fgColor rgb 0 0 0
 bgColor index 3
 useDisplayBg
 value {
-  "Dark/flat Stream Prefix"
+  "Encoder pulses per rev"
 }
 endObjectProperties
 
@@ -592,11 +362,11 @@ beginObjectProperties
 major 4
 minor 7
 release 0
-x 254
-y 315
+x 244
+y 193
 w 380
 h 20
-controlPv "$(P)$(R)PvaStreamPVPrefix"
+controlPv "$(P)$(R)PSOPulsesPerRotation"
 format "string"
 font "helvetica-medium-r-12.0"
 fontAlign "left"
