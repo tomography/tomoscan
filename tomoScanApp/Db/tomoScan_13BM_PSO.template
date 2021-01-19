@@ -1,0 +1,6 @@
+# Database for EPICS PVS for tomography data collection software at APS 13-BM-D
+# This is for the PSO setup. 
+# It does not currently have any PVs other than those in the base class template files.
+
+include "tomoScan_13BM.template"
+
