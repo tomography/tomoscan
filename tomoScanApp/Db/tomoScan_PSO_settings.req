@@ -3,10 +3,11 @@
 
 # This is the file for the TomoScanPSO derived class.
 
-$(P)$(R)PSOStartTaxi
-$(P)$(R)PSOEndTaxi
 $(P)$(R)EncoderPulsesPerStep
 $(P)$(R)PSOAsynPVName
 $(P)$(R)PSOAxisName
 $(P)$(R)PSOEncoderInput
 $(P)$(R)PSOPulsesPerRotation
+#controlPV $(P)$(R)PSOStartTaxi_RBV
+#controlPV $(P)$(R)PSOEndTaxi_RBV
+
