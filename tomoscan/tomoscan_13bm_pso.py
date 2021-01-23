@@ -4,7 +4,7 @@
    -------
    TomoScan13BM
      Derived class for tomography scanning with EPICS at APS beamline 13-BM-D
-     
+     using the Aerotech A3200 and NDrive as the rotation stage and trigger source  
 """
 import time
 import math
