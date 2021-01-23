@@ -1,8 +1,6 @@
 # Database for EPICS PVS for tomography data collection software at APS 13-BM-D
 # It contains the MCS PV that is required by the tomoscan_13bm derived class.
 
-include "tomoScan_13BM.template"
-
 ################
 # SIS MCS Prefix
 ################
