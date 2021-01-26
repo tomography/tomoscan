@@ -356,7 +356,7 @@ class TomoScanStream2BM(TomoScan):
         # wait for acquire to finish
         # wait_camera_done instead of the wait_pv enabled the counter update
         # self.wait_pv(self.epics_pvs['PSOfly'], 0)
-        time_per_angle = self.compute_frame_time()+7.2/1000
+        time_per_angle = self.compute_frame_time() # +7.2/1000
         collection_time = self.num_angles * time_per_angle
         
         self.wait_camera_done(collection_time + 60.)
