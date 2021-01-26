@@ -178,8 +178,7 @@ class TomoScanStream2BM(TomoScan):
             elif(camera_model=='Grasshopper3 GS3-U3-23S6M'):# 2bmb            
                 self.epics_pvs['CamTriggerMode'].put('On', wait=True)     # VN: For PG we need to switch to On to be able to switch to readout overlap mode                                                               
                 self.epics_pvs['CamTriggerSource'].put('Line0', wait=True)
-                self.epics_pvs['CamTriggerOverlap'].put('ReadOut', wait=True)
-
+            self.epics_pvs['CamTriggerOverlap'].put('ReadOut', wait=True)
             self.epics_pvs['CamExposureMode'].put('Timed', wait=True)
             self.epics_pvs['CamImageMode'].put('Multiple')
             self.epics_pvs['CamArrayCallbacks'].put('Enable')
@@ -271,9 +270,7 @@ class TomoScanStream2BM(TomoScan):
 
         - Closes shutter.
         """
-        log.info('tomoscan_stream_2bm: end scan')
-        log.info('end scan')
-        
+        log.info('tomoscan_stream_2bm: end scan')       
         self.end_stream()
 
         # Put the camera back in FreeRun mode and acquiring

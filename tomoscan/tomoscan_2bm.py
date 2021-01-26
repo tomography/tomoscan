@@ -28,10 +28,8 @@ class TomoScan2BM(TomoScan):
 
     def __init__(self, pv_files, macros):
         super().__init__(pv_files, macros)
-        # Set the detector running in FreeRun mode
-        # self.set_trigger_mode('FreeRun', 1)
-        # self.epics_pvs['CamAcquire'].put('Acquire') ###
-        # self.wait_pv(self.epics_pvs['CamAcquire'], 1) ###
+        # Set the detector in idle
+        self.set_trigger_mode('Internal', 1)
 
         # Enable auto-increment on file writer
         self.epics_pvs['FPAutoIncrement'].put('Yes')
@@ -218,7 +216,7 @@ class TomoScan2BM(TomoScan):
         self.epics_pvs['PSOendPos'].put(self.rotation_stop+self.rotation_step, wait=True)
         self.wait_pv(self.epics_pvs['PSOendPos'], self.rotation_stop+self.rotation_step)
         # Compute and set the motor speed
-        time_per_angle = self.compute_frame_time() #+7.2/1000   ##no overlap mode -> time_per_angle=exposure+readout
+        time_per_angle = self.compute_frame_time() +7.2/1000   ##no overlap mode -> time_per_angle=exposure+readout
         motor_speed = self.rotation_step / time_per_angle
         self.epics_pvs['PSOslewSpeed'].put(motor_speed)
         self.wait_pv(self.epics_pvs['PSOslewSpeed'], motor_speed)
