@@ -188,10 +188,10 @@ class TomoScan2BM(TomoScan):
 
         This does the following:
 
-        - Calls the base class method.
-        
         - Set data directory.
-        
+
+        - Calls the base class method.
+                
         - Opens the front-end shutter.
 
         - Sets the PSO controller.
@@ -218,7 +218,7 @@ class TomoScan2BM(TomoScan):
         self.epics_pvs['PSOendPos'].put(self.rotation_stop+self.rotation_step, wait=True)
         self.wait_pv(self.epics_pvs['PSOendPos'], self.rotation_stop+self.rotation_step)
         # Compute and set the motor speed
-        time_per_angle = self.compute_frame_time()#+7.2/1000   ##no overlap mode -> time_per_angle=exposure+readout
+        time_per_angle = self.compute_frame_time() #+7.2/1000   ##no overlap mode -> time_per_angle=exposure+readout
         motor_speed = self.rotation_step / time_per_angle
         self.epics_pvs['PSOslewSpeed'].put(motor_speed)
         self.wait_pv(self.epics_pvs['PSOslewSpeed'], motor_speed)

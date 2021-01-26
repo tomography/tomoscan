@@ -24,8 +24,8 @@ This class support `tomoStream`_ by providing:
 
 Classes
 -------
-    TomoScan2BM
-        Derived class for tomography scanning with EPICS at APS beamline 2-BM-A
+    TomoScanStream2BM
+        Derived class for tomography scanning in streaming mode with EPICS at APS beamline 2-BM-A
 """
 import os
 import time
@@ -41,7 +41,7 @@ import pvaccess
 EPSILON = .001
 
 class TomoScanStream2BM(TomoScan):
-    """Derived class used for tomography scanning with EPICS at APS beamline 2-BM-A
+    """Derived class used for tomography scanning in streamaing mode with EPICS at APS beamline 2-BM-A
 
     Parameters
     ----------
@@ -57,10 +57,6 @@ class TomoScanStream2BM(TomoScan):
         # Set the detector in idle
         self.set_trigger_mode('Internal', 1)
         
-        # Set data directory
-        file_path = self.epics_pvs['DetectorTopDir'].get(as_string=True) + self.epics_pvs['ExperimentYearMonth'].get(as_string=True) + os.path.sep + self.epics_pvs['UserLastName'].get(as_string=True) + os.path.sep
-        self.epics_pvs['FilePath'].put(file_path, wait=True)
-
         # Enable auto-increment on file writer
         self.epics_pvs['FPAutoIncrement'].put('Yes')
 
@@ -198,6 +194,8 @@ class TomoScanStream2BM(TomoScan):
 
         This does the following:
 
+        - Set data directory.
+
         - Calls the base class method.
 
         - Opens the front-end shutter.
@@ -208,6 +206,11 @@ class TomoScanStream2BM(TomoScan):
 
         """
         log.info('begin scan')
+
+        # Set data directory
+        file_path = self.epics_pvs['DetectorTopDir'].get(as_string=True) + self.epics_pvs['ExperimentYearMonth'].get(as_string=True) + os.path.sep + self.epics_pvs['UserLastName'].get(as_string=True) + os.path.sep
+        self.epics_pvs['FilePath'].put(file_path, wait=True)
+
         # Call the base class method
         super().begin_scan()
         # Opens the front-end shutter
