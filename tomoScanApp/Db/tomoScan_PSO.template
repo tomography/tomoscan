@@ -5,21 +5,31 @@
 # PSO parameters
 ################
 
-record(ai, "$(P)$(R)PSOStartTaxi_RBV") 
+record(mbbo, "$(P)$(R)PSOControllerModel") 
+{
+    field(DESC, "Aerotech controller model")
+    field(ZRVL, "0")
+    field(ZRST, "Ensemble")
+    field(ONVL, "1")
+    field(ONST, "A3200")
+    field(VAL,  "$(PSO_MODEL)")
+}
+
+record(ai, "$(P)$(R)PSOStartTaxi") 
 {
     field(DESC, "Start position with taxi")
     field(EGU,  "degrees")
     field(PREC, "5")
 }
 
-record(ai, "$(P)$(R)PSOEndTaxi_RBV") 
+record(ai, "$(P)$(R)PSOEndTaxi") 
 {
     field(DESC, "End position with taxi")
     field(EGU,  "degrees")
     field(PREC, "5")
 }
 
-record(longout, "$(P)$(R)EncoderPulsesPerStep") 
+record(longout, "$(P)$(R)PSOEncoderPulsesPerStep") 
 {
     field(DESC, "Encoder pulses per projection")
     field(VAL,  "6400")
@@ -27,9 +37,15 @@ record(longout, "$(P)$(R)EncoderPulsesPerStep")
     field(DRVH, "$(PSO_ENC_PER_ROTATION)")
 }
 
-record(stringout, "$(P)$(R)PSOAsynPVName")
+record(asyn, "$(P)$(R)PSOCommand")
 {
-    field(VAL,  "$(PSO_ASYN_RECORD).AOUT")
+    field(PORT, "$(PSO_PORT)")
+    field(ADDR, "0")
+    field(OMAX, "256")
+    field(IMAX, "256")
+    field(OFMT, "Hybrid")
+    field(IFMT, "Hybrid")
+    field(TMOD, "Write/Read")
 }
 
 record(stringout, "$(P)$(R)PSOAxisName")
