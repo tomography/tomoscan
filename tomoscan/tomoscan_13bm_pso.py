@@ -30,3 +30,34 @@ class TomoScan13BM_PSO(TomoScanPSO):
 
         # Set the detector running in FreeRun mode
         self.set_trigger_mode('FreeRun', 1)
+
+    def set_trigger_mode(self, trigger_mode, num_images):
+        """Sets the trigger mode of the camera.
+
+        Parameters
+        ----------
+        trigger_mode : str
+            Choices are: "FreeRun", "Internal", or "PSOExternal"
+
+        num_images : int
+            Number of images to collect.  Ignored if trigger_mode="FreeRun".
+            This is used to set the ``NumImages`` PV of the camera.
+        """
+        log.info('set trigger mode: %s', trigger_mode)
+        # Stop acquisition if we are acquiring
+        self.epics_pvs['CamAcquire'].put('Done', wait=True)
+        if trigger_mode == 'FreeRun':
+            self.epics_pvs['CamImageMode'].put('Continuous', wait=True)
+            self.epics_pvs['CamTriggerMode'].put('Off', wait=True)
+            self.epics_pvs['CamAcquire'].put('Acquire')
+        elif trigger_mode == 'Internal':
+            self.epics_pvs['CamTriggerMode'].put('Off', wait=True)
+            self.epics_pvs['CamImageMode'].put('Multiple')
+            self.epics_pvs['CamNumImages'].put(num_images, wait=True)
+        else: # set camera to external triggering
+            self.epics_pvs['CamImageMode'].put('Multiple', wait=True)
+            self.epics_pvs['CamNumImages'].put(num_images, wait=True)
+            self.epics_pvs['CamTriggerMode'].put('On', wait=True)
+            self.epics_pvs['CamExposureMode'].put('Timed', wait=True)
+            self.epics_pvs['CamTriggerOverlap'].put('ReadOut', wait=True)
+ 
