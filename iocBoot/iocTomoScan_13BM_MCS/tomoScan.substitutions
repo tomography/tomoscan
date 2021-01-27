@@ -5,9 +5,16 @@ pattern
 {TSTest:, TS1:, 13BMDPG1:, 13BMDPG1:HDF1:, 13BMD:m38, 13BMD:m85, 13BMD:m90, 13BMA:CloseBMDShutter.PROC,    1,        13BMA:OpenBMDShutter.PROC,      1}
 }
 
+file "$(TOP)/db/tomoScan_13BM_MCS.template"
+{
+pattern
+{  P,      R,      MCS}
+{TSTest:, TS1: 13BMD:SIS1:}
+}
+
 file "$(TOP)/db/tomoScan_13BM.template"
 {
 pattern
-{  P,      R,      MCS,         BEAM_READY,      READY_VALUE,}
-{TSTest:, TS1:, 13BMD:SIS1:, 13BMA:mono_pid1Locked,     1,}
+{  P,      R,       BEAM_READY,      READY_VALUE,}
+{TSTest:, TS1:, 13BMA:mono_pid1Locked,     1,}
 }
