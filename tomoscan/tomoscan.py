@@ -530,12 +530,10 @@ class TomoScan():
             The exposure time to use. If None then the value of the ``FlatExposureTime`` PV is used.
         """
 
-        print(self.epics_pvs['DifferentFlatExposure'].get(as_string=True))
         if self.epics_pvs['DifferentFlatExposure'].get(as_string=True) == 'Same':
             self.set_exposure_time(exposure_time)
             return
         if exposure_time is None:
-            print(self.epics_pvs['FlatExposureTime'].value)
             exposure_time = self.epics_pvs['FlatExposureTime'].value
         self.epics_pvs['CamAcquireTime'].put(exposure_time, wait=True, timeout = 10.)
 
