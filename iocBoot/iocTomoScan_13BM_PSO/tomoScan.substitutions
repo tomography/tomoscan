@@ -8,11 +8,18 @@ pattern
 file "$(TOP)/db/tomoScan_PSO.template"
 {
 pattern
-{  P,      R,   PSO_ASYN_RECORD, PSO_AXIS_NAME, PSO_ENC_INPUT, PSO_ENC_PER_ROTATION}
-{TSTest:, TS1:, 13BMD:HEX1:ASYN,      THETA,            3,            360000000}
+{  P,      R,   PSO_MODEL, PSO_PORT, PSO_AXIS_NAME, PSO_ENC_INPUT, PSO_ENC_PER_ROTATION}
+{TSTest:, TS1:,    1,      PSO_PORT,      THETA,         2,            236799999}
 }
 
 file "$(TOP)/db/tomoScan_13BM_PSO.template"
+{
+pattern
+{  P,      R}
+{TSTest:, TS1:}
+}
+
+file "$(TOP)/db/tomoScan_13BM.template"
 {
 pattern
 {  P,      R,      BEAM_READY,         READY_VALUE,}
