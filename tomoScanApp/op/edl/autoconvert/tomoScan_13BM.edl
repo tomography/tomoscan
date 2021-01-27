@@ -1234,19 +1234,6 @@ endGroup
 endObjectProperties
 
 
-# (Group)
-object activeGroupClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 5
-y 385
-w 555
-h 130
-
-beginGroup
-
 # (Rectangle)
 object activeRectangleClass
 beginObjectProperties
@@ -1260,26 +1247,6 @@ h 130
 lineColor rgb 0 0 0
 fillColor rgb 0 0 0
 lineWidth 0
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 1
-x 30
-y 415
-w 140
-h 20
-font "helvetica-medium-r-14.0"
-fontAlign "right"
-fgColor rgb 0 0 0
-bgColor index 3
-useDisplayBg
-value {
-  "SIS MCS prefix"
-}
 endObjectProperties
 
 # (Rectangle)
@@ -1315,32 +1282,6 @@ useDisplayBg
 value {
   "Epics Process Variables"
 }
-endObjectProperties
-
-# (Text Control)
-object activeXTextDspClass
-beginObjectProperties
-major 4
-minor 7
-release 0
-x 175
-y 415
-w 380
-h 20
-controlPv "$(P)$(R)MCSPVPrefix"
-format "string"
-font "helvetica-medium-r-12.0"
-fontAlign "left"
-fgColor rgb 0 0 0
-bgColor rgb 29440 57088 65280
-editable
-motifWidget
-limitsFromDb
-nullColor rgb 60928 46592 11008
-smartRefresh
-fastUpdate
-newPos
-objType "controls"
 endObjectProperties
 
 # (Static Text)
@@ -1453,10 +1394,25 @@ value {
 }
 endObjectProperties
 
-endGroup
-
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 80
+y 415
+w 90
+h 20
+font "helvetica-medium-r-14.0"
+fontAlign "right"
+fgColor rgb 0 0 0
+bgColor index 3
+useDisplayBg
+value {
+  "MCS setup"
+}
 endObjectProperties
-
 # (Group)
 object activeGroupClass
 beginObjectProperties
@@ -1681,18 +1637,6 @@ endGroup
 
 endObjectProperties
 
-# (Group)
-object activeGroupClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 5
-y 385
-w 555
-h 130
-
-beginGroup
 
 # (Related Display)
 object relatedDisplayClass
@@ -1727,8 +1671,36 @@ replaceSymbols {
 }
 endObjectProperties
 
-endGroup
-
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 176
+y 415
+w 100
+h 20
+fgColor rgb 0 0 0
+bgColor rgb 29440 57088 65280
+topShadowColor rgb 55808 55808 55808
+botShadowColor rgb 17920 17920 17920
+font "helvetica-medium-r-12.0"
+icon
+buttonLabel "MCS setup"
+numPvs 2
+numDsps 1
+displayFileName {
+  0 "tomoScan_13BM_mcs.edl"
+}
+menuLabel {
+  0 "PSO setup"
+}
+symbols {
+  0 "P=$(P),R=$(R)"
+}
+replaceSymbols {
+  0 1
+}
 endObjectProperties
-
 

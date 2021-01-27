@@ -792,178 +792,171 @@
       </widget>
     </widget>
   </widget>
-  <widget type="group" version="2.0.0">
-    <name>composite #203</name>
+  <widget type="rectangle" version="2.0.0">
+    <name>rectangle #203</name>
     <x>5</x>
     <y>385</y>
     <width>555</width>
     <height>130</height>
-    <style>3</style>
+    <line_width>1</line_width>
+    <line_color>
+      <color red="0" green="0" blue="0">
+      </color>
+    </line_color>
+    <background_color>
+      <color red="0" green="0" blue="0">
+      </color>
+    </background_color>
     <transparent>true</transparent>
-    <widget type="rectangle" version="2.0.0">
-      <name>rectangle #206</name>
-      <width>555</width>
-      <height>130</height>
-      <line_width>1</line_width>
-      <line_color>
-        <color red="0" green="0" blue="0">
-        </color>
-      </line_color>
-      <background_color>
-        <color red="0" green="0" blue="0">
-        </color>
-      </background_color>
-      <transparent>true</transparent>
-    </widget>
-    <widget type="label" version="2.0.0">
-      <name>text #209</name>
-      <text>SIS MCS prefix</text>
-      <x>25</x>
-      <y>30</y>
-      <width>140</width>
-      <font>
-        <font family="Liberation Sans" style="REGULAR" size="16.0">
-        </font>
+  </widget>
+  <widget type="rectangle" version="2.0.0">
+    <name>rectangle #206</name>
+    <x>10</x>
+    <y>390</y>
+    <width>545</width>
+    <line_color>
+      <color red="218" green="218" blue="218">
+      </color>
+    </line_color>
+    <background_color>
+      <color red="218" green="218" blue="218">
+      </color>
+    </background_color>
+  </widget>
+  <widget type="label" version="2.0.0">
+    <name>text #209</name>
+    <text>Epics Process Variables</text>
+    <x>167</x>
+    <y>390</y>
+    <width>230</width>
+    <font>
+      <font family="Liberation Sans" style="REGULAR" size="16.0">
       </font>
-      <horizontal_alignment>2</horizontal_alignment>
-    </widget>
-    <widget type="rectangle" version="2.0.0">
-      <name>rectangle #212</name>
-      <x>5</x>
-      <y>5</y>
-      <width>545</width>
-      <line_color>
-        <color red="218" green="218" blue="218">
-        </color>
-      </line_color>
-      <background_color>
-        <color red="218" green="218" blue="218">
-        </color>
-      </background_color>
-    </widget>
-    <widget type="label" version="2.0.0">
-      <name>text #215</name>
-      <text>Epics Process Variables</text>
-      <x>162</x>
-      <y>5</y>
-      <width>230</width>
-      <font>
-        <font family="Liberation Sans" style="REGULAR" size="16.0">
-        </font>
+    </font>
+    <foreground_color>
+      <color red="10" green="0" blue="184">
+      </color>
+    </foreground_color>
+    <auto_size>true</auto_size>
+  </widget>
+  <widget type="label" version="2.0.0">
+    <name>text #212</name>
+    <text>Beam ready PV</text>
+    <x>40</x>
+    <y>465</y>
+    <width>130</width>
+    <font>
+      <font family="Liberation Sans" style="REGULAR" size="16.0">
       </font>
-      <foreground_color>
-        <color red="10" green="0" blue="184">
-        </color>
-      </foreground_color>
-      <auto_size>true</auto_size>
-    </widget>
-    <widget type="textentry" version="3.0.0">
-      <name>text entry #218</name>
-      <pv_name>$(P)$(R)MCSPVPrefix</pv_name>
-      <x>170</x>
-      <y>30</y>
-      <width>380</width>
-      <font>
-        <font family="Liberation Sans" style="REGULAR" size="16.0">
-        </font>
+    </font>
+    <auto_size>true</auto_size>
+  </widget>
+  <widget type="label" version="2.0.0">
+    <name>text #215</name>
+    <text>Beam ready value</text>
+    <x>10</x>
+    <y>490</y>
+    <width>160</width>
+    <font>
+      <font family="Liberation Sans" style="REGULAR" size="16.0">
       </font>
-      <background_color>
-        <color red="115" green="223" blue="255">
-        </color>
-      </background_color>
-      <format>6</format>
-      <show_units>false</show_units>
-      <border_alarm_sensitive>false</border_alarm_sensitive>
-    </widget>
-    <widget type="label" version="2.0.0">
-      <name>text #222</name>
-      <text>Beam ready PV</text>
-      <x>35</x>
-      <y>80</y>
-      <width>130</width>
-      <font>
-        <font family="Liberation Sans" style="REGULAR" size="16.0">
-        </font>
+    </font>
+    <auto_size>true</auto_size>
+  </widget>
+  <widget type="textentry" version="3.0.0">
+    <name>text entry #218</name>
+    <pv_name>$(P)$(R)BeamReadyValue</pv_name>
+    <x>175</x>
+    <y>490</y>
+    <width>380</width>
+    <font>
+      <font family="Liberation Sans" style="REGULAR" size="16.0">
       </font>
-      <auto_size>true</auto_size>
-    </widget>
-    <widget type="label" version="2.0.0">
-      <name>text #225</name>
-      <text>Beam ready value</text>
-      <x>5</x>
-      <y>105</y>
-      <width>160</width>
-      <font>
-        <font family="Liberation Sans" style="REGULAR" size="16.0">
-        </font>
+    </font>
+    <background_color>
+      <color red="115" green="223" blue="255">
+      </color>
+    </background_color>
+    <format>6</format>
+    <show_units>false</show_units>
+    <border_alarm_sensitive>false</border_alarm_sensitive>
+  </widget>
+  <widget type="textentry" version="3.0.0">
+    <name>text entry #222</name>
+    <pv_name>$(P)$(R)BeamReadyPVName</pv_name>
+    <x>175</x>
+    <y>465</y>
+    <width>380</width>
+    <font>
+      <font family="Liberation Sans" style="REGULAR" size="16.0">
       </font>
-      <auto_size>true</auto_size>
-    </widget>
-    <widget type="textentry" version="3.0.0">
-      <name>text entry #228</name>
-      <pv_name>$(P)$(R)BeamReadyValue</pv_name>
-      <x>170</x>
-      <y>105</y>
-      <width>380</width>
-      <font>
-        <font family="Liberation Sans" style="REGULAR" size="16.0">
-        </font>
+    </font>
+    <background_color>
+      <color red="115" green="223" blue="255">
+      </color>
+    </background_color>
+    <format>6</format>
+    <show_units>false</show_units>
+    <border_alarm_sensitive>false</border_alarm_sensitive>
+  </widget>
+  <widget type="label" version="2.0.0">
+    <name>text #226</name>
+    <text>PSO setup</text>
+    <x>80</x>
+    <y>440</y>
+    <width>90</width>
+    <font>
+      <font family="Liberation Sans" style="REGULAR" size="16.0">
       </font>
-      <background_color>
-        <color red="115" green="223" blue="255">
-        </color>
-      </background_color>
-      <format>6</format>
-      <show_units>false</show_units>
-      <border_alarm_sensitive>false</border_alarm_sensitive>
-    </widget>
-    <widget type="textentry" version="3.0.0">
-      <name>text entry #232</name>
-      <pv_name>$(P)$(R)BeamReadyPVName</pv_name>
-      <x>170</x>
-      <y>80</y>
-      <width>380</width>
-      <font>
-        <font family="Liberation Sans" style="REGULAR" size="16.0">
-        </font>
+    </font>
+    <horizontal_alignment>2</horizontal_alignment>
+  </widget>
+  <widget type="action_button" version="3.0.0">
+    <name>related display #229</name>
+    <actions>
+      <action type="open_display">
+        <file>tomoScan_pso.opi</file>
+        <target>tab</target>
+        <description>PSO setup</description>
+      </action>
+    </actions>
+    <text>PSO setup</text>
+    <x>176</x>
+    <y>440</y>
+    <height>20</height>
+    <background_color>
+      <color red="115" green="223" blue="255">
+      </color>
+    </background_color>
+  </widget>
+  <widget type="label" version="2.0.0">
+    <name>text #232</name>
+    <text>MCS setup</text>
+    <x>80</x>
+    <y>415</y>
+    <width>90</width>
+    <font>
+      <font family="Liberation Sans" style="REGULAR" size="16.0">
       </font>
-      <background_color>
-        <color red="115" green="223" blue="255">
-        </color>
-      </background_color>
-      <format>6</format>
-      <show_units>false</show_units>
-      <border_alarm_sensitive>false</border_alarm_sensitive>
-    </widget>
-    <widget type="label" version="2.0.0">
-      <name>text #236</name>
-      <text>PSO setup</text>
-      <x>75</x>
-      <y>55</y>
-      <width>90</width>
-      <font>
-        <font family="Liberation Sans" style="REGULAR" size="16.0">
-        </font>
-      </font>
-      <horizontal_alignment>2</horizontal_alignment>
-    </widget>
-    <widget type="action_button" version="3.0.0">
-      <name>related display #239</name>
-      <actions>
-        <action type="open_display">
-          <file>tomoScan_pso.opi</file>
-          <target>tab</target>
-          <description>PSO setup</description>
-        </action>
-      </actions>
-      <text>PSO setup</text>
-      <x>171</x>
-      <y>55</y>
-      <height>20</height>
-      <background_color>
-        <color red="115" green="223" blue="255">
-        </color>
-      </background_color>
-    </widget>
+    </font>
+    <horizontal_alignment>2</horizontal_alignment>
+  </widget>
+  <widget type="action_button" version="3.0.0">
+    <name>related display #235</name>
+    <actions>
+      <action type="open_display">
+        <file>tomoScan_13BM_mcs.opi</file>
+        <target>tab</target>
+        <description>PSO setup</description>
+      </action>
+    </actions>
+    <text>MCS setup</text>
+    <x>176</x>
+    <y>415</y>
+    <height>20</height>
+    <background_color>
+      <color red="115" green="223" blue="255">
+      </color>
+    </background_color>
   </widget>
 </display>
