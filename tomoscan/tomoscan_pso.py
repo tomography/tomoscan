@@ -169,7 +169,7 @@ class TomoScanPSO(TomoScan):
         # Start the camera
         self.epics_pvs['CamAcquire'].put('Acquire')
         # Need to wait a short time for AcquireBusy to change to 1
-        time.sleep(0.1)
+        time.sleep(0.5)
         log.info('start fly scan')
 
         # Start fly scan
@@ -201,7 +201,7 @@ class TomoScanPSO(TomoScan):
         elif (pso_model == 'A3200'):
           pso_command.put('PSOOUTPUT %s CONTROL 0 1' % pso_axis, wait=True, timeout=10.0)
          # Set a pulse 10 us long, 20 us total duration, so 10 us on, 10 us off
-        pso_command.put('PSOPULSE %s TIME 20,10' % pso_axis, wait=True, timeout=10.0)
+        pso_command.put('PSOPULSE %s TIME 200,100' % pso_axis, wait=True, timeout=10.0)
         # Set the pulses to only occur in a specific window
         pso_command.put('PSOOUTPUT %s PULSE WINDOW MASK' % pso_axis, wait=True, timeout=10.0)
         # Set which encoder we will use.  3 = the MXH (encoder multiplier) input, which is what we generally want
