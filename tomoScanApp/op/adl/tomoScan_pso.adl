@@ -8,7 +8,7 @@ display {
 		x=705
 		y=49
 		width=450
-		height=275
+		height=300
 	}
 	clr=14
 	bclr=4
@@ -188,76 +188,49 @@ text {
 	"basic attribute" {
 		clr=14
 	}
-	textix="Encoder pulses per rev"
+	textix="Encoder counts per rev"
 	align="horiz. right"
 }
-composite {
+text {
 	object {
 		x=10
-		y=220
-		width=435
-		height=45
+		y=245
+		width=120
+		height=20
 	}
-	"composite name"=""
-	children {
-		text {
-			object {
-				x=10
-				y=245
-				width=120
-				height=20
-			}
-			"basic attribute" {
-				clr=14
-			}
-			textix="PSO response"
-			align="horiz. right"
-		}
-		text {
-			object {
-				x=20
-				y=220
-				width=110
-				height=20
-			}
-			"basic attribute" {
-				clr=14
-			}
-			textix="PSO command"
-			align="horiz. right"
-		}
-		"text entry" {
-			object {
-				x=135
-				y=225
-				width=310
-				height=14
-			}
-			control {
-				chan="$(P)$(R)PSOCommand.BOUT"
-				clr=14
-				bclr=51
-			}
-			format="string"
-			limits {
-			}
-		}
-		"text update" {
-			object {
-				x=135
-				y=248
-				width=310
-				height=14
-			}
-			monitor {
-				chan="$(P)$(R)PSOCommand.BINP"
-				clr=54
-				bclr=4
-			}
-			format="string"
-			limits {
-			}
-		}
+	"basic attribute" {
+		clr=14
+	}
+	textix="PSO response"
+	align="horiz. right"
+}
+text {
+	object {
+		x=20
+		y=220
+		width=110
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="PSO command"
+	align="horiz. right"
+}
+"text update" {
+	object {
+		x=135
+		y=248
+		width=310
+		height=14
+	}
+	monitor {
+		chan="$(P)$(R)PSOCommand.BINP"
+		clr=54
+		bclr=4
+	}
+	format="string"
+	limits {
 	}
 }
 text {
@@ -373,6 +346,51 @@ text {
 		clr=54
 		bclr=4
 	}
+	limits {
+	}
+}
+text {
+	object {
+		x=130
+		y=270
+		width=110
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="asyn record"
+	align="horiz. right"
+}
+"related display" {
+	object {
+		x=245
+		y=272
+		width=120
+		height=20
+	}
+	display[0] {
+		label="asyn recrod"
+		name="asynRecord.adl"
+		args="P=$(P), R=$(R)PSOCommand"
+	}
+	clr=14
+	bclr=51
+	label="asyn record"
+}
+"text entry" {
+	object {
+		x=135
+		y=223
+		width=310
+		height=14
+	}
+	control {
+		chan="$(P)$(R)PSOCommand.BOUT"
+		clr=14
+		bclr=51
+	}
+	format="string"
 	limits {
 	}
 }

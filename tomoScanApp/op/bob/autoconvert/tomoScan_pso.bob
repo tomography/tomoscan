@@ -4,7 +4,7 @@
   <x>705</x>
   <y>49</y>
   <width>450</width>
-  <height>275</height>
+  <height>300</height>
   <background_color>
     <color red="187" green="187" blue="187">
     </color>
@@ -113,7 +113,7 @@
   </widget>
   <widget type="label" version="2.0.0">
     <name>text #28</name>
-    <text>Encoder pulses per rev</text>
+    <text>Encoder counts per rev</text>
     <x>20</x>
     <y>170</y>
     <width>220</width>
@@ -123,73 +123,51 @@
     </font>
     <horizontal_alignment>2</horizontal_alignment>
   </widget>
-  <widget type="group" version="2.0.0">
-    <name>composite #31</name>
+  <widget type="label" version="2.0.0">
+    <name>text #31</name>
+    <text>PSO response</text>
     <x>10</x>
-    <y>220</y>
-    <width>435</width>
-    <height>45</height>
-    <style>3</style>
-    <transparent>true</transparent>
-    <widget type="label" version="2.0.0">
-      <name>text #34</name>
-      <text>PSO response</text>
-      <y>25</y>
-      <width>120</width>
-      <font>
-        <font family="Liberation Sans" style="REGULAR" size="16.0">
-        </font>
+    <y>245</y>
+    <width>120</width>
+    <font>
+      <font family="Liberation Sans" style="REGULAR" size="16.0">
       </font>
-      <horizontal_alignment>2</horizontal_alignment>
-    </widget>
-    <widget type="label" version="2.0.0">
-      <name>text #37</name>
-      <text>PSO command</text>
-      <x>10</x>
-      <width>110</width>
-      <font>
-        <font family="Liberation Sans" style="REGULAR" size="16.0">
-        </font>
-      </font>
-      <horizontal_alignment>2</horizontal_alignment>
-    </widget>
-    <widget type="textentry" version="3.0.0">
-      <name>text entry #40</name>
-      <pv_name>$(P)$(R)PSOCommand.BOUT</pv_name>
-      <x>125</x>
-      <y>5</y>
-      <width>310</width>
-      <height>14</height>
-      <background_color>
-        <color red="115" green="223" blue="255">
-        </color>
-      </background_color>
-      <format>6</format>
-      <show_units>false</show_units>
-      <border_alarm_sensitive>false</border_alarm_sensitive>
-    </widget>
-    <widget type="textupdate" version="2.0.0">
-      <name>text update #44</name>
-      <pv_name>$(P)$(R)PSOCommand.BINP</pv_name>
-      <x>125</x>
-      <y>28</y>
-      <width>310</width>
-      <height>14</height>
-      <foreground_color>
-        <color red="10" green="0" blue="184">
-        </color>
-      </foreground_color>
-      <background_color>
-        <color red="187" green="187" blue="187">
-        </color>
-      </background_color>
-      <format>6</format>
-      <show_units>false</show_units>
-      <border_alarm_sensitive>false</border_alarm_sensitive>
-    </widget>
+    </font>
+    <horizontal_alignment>2</horizontal_alignment>
   </widget>
   <widget type="label" version="2.0.0">
-    <name>text #48</name>
+    <name>text #34</name>
+    <text>PSO command</text>
+    <x>20</x>
+    <y>220</y>
+    <width>110</width>
+    <font>
+      <font family="Liberation Sans" style="REGULAR" size="16.0">
+      </font>
+    </font>
+    <horizontal_alignment>2</horizontal_alignment>
+  </widget>
+  <widget type="textupdate" version="2.0.0">
+    <name>text update #37</name>
+    <pv_name>$(P)$(R)PSOCommand.BINP</pv_name>
+    <x>135</x>
+    <y>248</y>
+    <width>310</width>
+    <height>14</height>
+    <foreground_color>
+      <color red="10" green="0" blue="184">
+      </color>
+    </foreground_color>
+    <background_color>
+      <color red="187" green="187" blue="187">
+      </color>
+    </background_color>
+    <format>6</format>
+    <show_units>false</show_units>
+    <border_alarm_sensitive>false</border_alarm_sensitive>
+  </widget>
+  <widget type="label" version="2.0.0">
+    <name>text #41</name>
     <text>Rotation end taxi</text>
     <x>70</x>
     <y>70</y>
@@ -201,7 +179,7 @@
     <horizontal_alignment>2</horizontal_alignment>
   </widget>
   <widget type="textupdate" version="2.0.0">
-    <name>text update #51</name>
+    <name>text update #44</name>
     <pv_name>$(P)$(R)PSOEndTaxi</pv_name>
     <x>245</x>
     <y>70</y>
@@ -223,7 +201,7 @@
     <border_alarm_sensitive>false</border_alarm_sensitive>
   </widget>
   <widget type="label" version="2.0.0">
-    <name>text #55</name>
+    <name>text #48</name>
     <text>Controller model</text>
     <x>80</x>
     <y>195</y>
@@ -235,7 +213,7 @@
     <horizontal_alignment>2</horizontal_alignment>
   </widget>
   <widget type="textupdate" version="2.0.0">
-    <name>text update #58</name>
+    <name>text update #51</name>
     <pv_name>$(P)$(R)PSOControllerModel</pv_name>
     <x>245</x>
     <y>195</y>
@@ -257,7 +235,7 @@
     <border_alarm_sensitive>false</border_alarm_sensitive>
   </widget>
   <widget type="textupdate" version="2.0.0">
-    <name>text update #62</name>
+    <name>text update #55</name>
     <pv_name>$(P)$(R)PSOEncoderCountsPerStep</pv_name>
     <x>245</x>
     <y>95</y>
@@ -279,7 +257,7 @@
     <border_alarm_sensitive>false</border_alarm_sensitive>
   </widget>
   <widget type="textupdate" version="2.0.0">
-    <name>text update #66</name>
+    <name>text update #59</name>
     <pv_name>$(P)$(R)PSOAxisName</pv_name>
     <x>245</x>
     <y>120</y>
@@ -301,7 +279,7 @@
     <border_alarm_sensitive>false</border_alarm_sensitive>
   </widget>
   <widget type="textupdate" version="2.0.0">
-    <name>text update #70</name>
+    <name>text update #63</name>
     <pv_name>$(P)$(R)PSOEncoderInput</pv_name>
     <x>245</x>
     <y>145</y>
@@ -323,7 +301,7 @@
     <border_alarm_sensitive>false</border_alarm_sensitive>
   </widget>
   <widget type="textupdate" version="2.0.0">
-    <name>text update #74</name>
+    <name>text update #67</name>
     <pv_name>$(P)$(R)PSOCountsPerRotation</pv_name>
     <x>245</x>
     <y>170</y>
@@ -341,6 +319,55 @@
       </color>
     </background_color>
     <format>1</format>
+    <show_units>false</show_units>
+    <border_alarm_sensitive>false</border_alarm_sensitive>
+  </widget>
+  <widget type="label" version="2.0.0">
+    <name>text #71</name>
+    <text>asyn record</text>
+    <x>130</x>
+    <y>270</y>
+    <width>110</width>
+    <font>
+      <font family="Liberation Sans" style="REGULAR" size="16.0">
+      </font>
+    </font>
+    <horizontal_alignment>2</horizontal_alignment>
+  </widget>
+  <widget type="action_button" version="3.0.0">
+    <name>related display #74</name>
+    <actions>
+      <action type="open_display">
+        <file>asynRecord.opi</file>
+        <macros>
+          <R>$(R)PSOCommand</R>
+        </macros>
+        <target>tab</target>
+        <description>asyn recrod</description>
+      </action>
+    </actions>
+    <text>asyn record</text>
+    <x>245</x>
+    <y>272</y>
+    <width>120</width>
+    <height>20</height>
+    <background_color>
+      <color red="115" green="223" blue="255">
+      </color>
+    </background_color>
+  </widget>
+  <widget type="textentry" version="3.0.0">
+    <name>text entry #77</name>
+    <pv_name>$(P)$(R)PSOCommand.BOUT</pv_name>
+    <x>135</x>
+    <y>223</y>
+    <width>310</width>
+    <height>14</height>
+    <background_color>
+      <color red="115" green="223" blue="255">
+      </color>
+    </background_color>
+    <format>6</format>
     <show_units>false</show_units>
     <border_alarm_sensitive>false</border_alarm_sensitive>
   </widget>

@@ -6,7 +6,7 @@ release 1
 x 705
 y 49
 w 450
-h 275
+h 300
 font "helvetica-medium-r-18.0"
 ctlFont "helvetica-bold-r-10.0"
 btnFont "helvetica-medium-r-18.0"
@@ -180,22 +180,9 @@ fgColor rgb 0 0 0
 bgColor index 3
 useDisplayBg
 value {
-  "Encoder pulses per rev"
+  "Encoder counts per rev"
 }
 endObjectProperties
-
-# (Group)
-object activeGroupClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 10
-y 220
-w 435
-h 45
-
-beginGroup
 
 # (Static Text)
 object activeXTextClass
@@ -237,32 +224,6 @@ value {
 }
 endObjectProperties
 
-# (Text Control)
-object activeXTextDspClass
-beginObjectProperties
-major 4
-minor 7
-release 0
-x 135
-y 225
-w 310
-h 14
-controlPv "$(P)$(R)PSOCommand.BOUT"
-format "string"
-font "helvetica-bold-r-12.0"
-fontAlign "left"
-fgColor rgb 0 0 0
-bgColor rgb 29440 57088 65280
-editable
-motifWidget
-limitsFromDb
-nullColor rgb 60928 46592 11008
-smartRefresh
-fastUpdate
-newPos
-objType "controls"
-endObjectProperties
-
 # (Text Monitor)
 object activeXTextDspClass:noedit
 beginObjectProperties
@@ -286,11 +247,6 @@ fastUpdate
 newPos
 objType "controls"
 endObjectProperties
-
-endGroup
-
-endObjectProperties
-
 
 # (Static Text)
 object activeXTextClass
@@ -475,21 +431,83 @@ fastUpdate
 newPos
 objType "controls"
 endObjectProperties
-# (Group)
-object activeGroupClass
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 130
+y 270
+w 110
+h 20
+font "helvetica-medium-r-14.0"
+fontAlign "right"
+fgColor rgb 0 0 0
+bgColor index 3
+useDisplayBg
+value {
+  "asyn record"
+}
+endObjectProperties
+
+# (Text Control)
+object activeXTextDspClass
+beginObjectProperties
+major 4
+minor 7
+release 0
+x 135
+y 223
+w 310
+h 14
+controlPv "$(P)$(R)PSOCommand.BOUT"
+format "string"
+font "helvetica-bold-r-12.0"
+fontAlign "left"
+fgColor rgb 0 0 0
+bgColor rgb 29440 57088 65280
+editable
+motifWidget
+limitsFromDb
+nullColor rgb 60928 46592 11008
+smartRefresh
+fastUpdate
+newPos
+objType "controls"
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
 beginObjectProperties
 major 4
 minor 0
 release 0
-x 10
-y 220
-w 435
-h 45
-
-beginGroup
-
-endGroup
-
+x 245
+y 272
+w 120
+h 20
+fgColor rgb 0 0 0
+bgColor rgb 29440 57088 65280
+topShadowColor rgb 55808 55808 55808
+botShadowColor rgb 17920 17920 17920
+font "helvetica-medium-r-12.0"
+icon
+buttonLabel "asyn record"
+numPvs 2
+numDsps 1
+displayFileName {
+  0 "asynRecord.edl"
+}
+menuLabel {
+  0 "asyn recrod"
+}
+symbols {
+  0 "P=$(P),R=$(R)PSOCommand"
+}
+replaceSymbols {
+  0 1
+}
 endObjectProperties
-
 
