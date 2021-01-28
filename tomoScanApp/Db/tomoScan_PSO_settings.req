@@ -4,10 +4,11 @@
 # This is the file for the TomoScanPSO derived class.
 
 #controlPV $(P)$(R)PSOControllerModel
-#controlPV $(P)$(R)PSOEncoderPulsesPerStep
+#controlPV $(P)$(R)PSOEncoderCountsPerStep
 #controlPV $(P)$(R)PSOAxisName
 #controlPV $(P)$(R)PSOEncoderInput
-#controlPV $(P)$(R)PSOPulsesPerRotation
+#controlPV $(P)$(R)PSOCountsPerRotation
 #controlPV $(P)$(R)PSOStartTaxi
 #controlPV $(P)$(R)PSOEndTaxi
 #controlPV $(P)$(R)PSOCommand.BOUT
+#controlPV $(P)$(R)PSOCommand.BINP
