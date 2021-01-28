@@ -50,6 +50,12 @@ record(stringin, "$(P)$(R)PSOAxisName")
     field(VAL,  "$(PSO_AXIS_NAME)")
 }
 
+# This is a signed number, and must be negative if the encoder direction and motor direction
+# in the controller are different.
+# On the A3200 this value is read from the controller in the constructor,
+# and includes the correct sign.  This overrides the value in the subsitutions file.
+# However, on the Ensemble this value must be provided in the substitutions file
+
 record(ai, "$(P)$(R)PSOCountsPerRotation") 
 {
     field(DESC, "Number of encoder counts per revolution")
@@ -60,4 +66,3 @@ record(longin, "$(P)$(R)PSOEncoderInput")
     field(DESC, "Encoder input")
     field(VAL,  "$(PSO_ENC_INPUT)")
 }
-
