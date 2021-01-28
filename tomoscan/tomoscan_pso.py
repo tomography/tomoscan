@@ -27,6 +27,13 @@ class TomoScanPSO(TomoScan):
     def __init__(self, pv_files, macros):
         super().__init__(pv_files, macros)
 
+        # Read the number of encoder counts per rotation of the rotation stage
+        pso_axis = self.epics_pvs['PSOAxisName'].get(as_string=True)
+        self.epics_pvs['PSOCommand.BOUT'].put("UNITSTOCOUNTS(%s, 360.0)" % pso_axis, wait=True, timeout=10.0)
+        reply = self.epics_pvs['PSOCommand.BINP'].get(as_string=True)
+        counts_per_rotation = float(reply[1:])
+        print('counts_per_rotation', counts_per_rotation)
+        self.epics_pvs['PSOCountsPerRotation'].put(counts_per_rotation)
 
     def collect_static_frames(self, num_frames):
         """Collects num_frames images in "Internal" trigger mode for dark fields and flat fields.
@@ -181,7 +188,7 @@ class TomoScanPSO(TomoScan):
     def program_PSO(self):
         '''Performs programming of PSO output on the Aerotech driver.
         '''
-        overall_sense, user_direction = self._compute_senses()
+        # overall_sense, user_direction = self._compute_senses()
         pso_command = self.epics_pvs['PSOCommand.BOUT']
         pso_model = self.epics_pvs['PSOControllerModel'].get(as_string=True)
         pso_axis = self.epics_pvs['PSOAxisName'].get(as_string=True)
@@ -195,28 +202,27 @@ class TomoScanPSO(TomoScan):
         # Make sure the PSO control is off
         pso_command.put('PSOCONTROL %s RESET' % pso_axis, wait=True, timeout=10.0)
         # Set the output to occur from the I/O terminal on the controller
-        
         if (pso_model == 'Ensemble'):
-          pso_command.put('PSOOUTPUT %s CONTROL 1' % pso_axis, wait=True, timeout=10.0)
+            pso_command.put('PSOOUTPUT %s CONTROL 1' % pso_axis, wait=True, timeout=10.0)
         elif (pso_model == 'A3200'):
-          pso_command.put('PSOOUTPUT %s CONTROL 0 1' % pso_axis, wait=True, timeout=10.0)
+            pso_command.put('PSOOUTPUT %s CONTROL 0 1' % pso_axis, wait=True, timeout=10.0)
          # Set a pulse 10 us long, 20 us total duration, so 10 us on, 10 us off
         pso_command.put('PSOPULSE %s TIME 200,100' % pso_axis, wait=True, timeout=10.0)
         # Set the pulses to only occur in a specific window
         pso_command.put('PSOOUTPUT %s PULSE WINDOW MASK' % pso_axis, wait=True, timeout=10.0)
         # Set which encoder we will use.  3 = the MXH (encoder multiplier) input, which is what we generally want
         pso_command.put('PSOTRACK %s INPUT %d' % (pso_axis, pso_input), wait=True, timeout=10.0)
-        # Set the distance between pulses.  Do this in encoder counts.
-        pso_command.put('PSODISTANCE %s FIXED %d' % (pso_axis,
-                             self.epics_pvs['PSOEncoderPulsesPerStep'].get()), wait=True, timeout=10.0)
+        # Set the distance between pulses.  Use UNITSTOCOUNTS to convert to encoder counts.
+        pso_command.put('PSODISTANCE %s FIXED UNITSTOCOUNTS(%d, %f)' % 
+                        (pso_axis, pso_axis, self.rotation_step), wait=True, timeout=10.0)
         # Which encoder is being used to calculate whether we are in the window.  1 for single axis
         pso_command.put('PSOWINDOW %s 1 INPUT %d' % (pso_axis, pso_input), wait=True, timeout=10.0)
 
         # Calculate window function parameters.  Must be in encoder counts, and is 
         # referenced from the stage location where we arm the PSO.  We are at that point now.
         # We want pulses to start at start - delta/2, end at end + delta/2.  
-        range_start = -round(self.epics_pvs['PSOEncoderPulsesPerStep'].get()/ 2) * overall_sense
-        range_length = self.epics_pvs['PSOEncoderPulsesPerStep'].get() * self.num_angles
+        range_start = -round(self.epics_pvs['PSOEncoderCountsPerStep'].get()/ 2) * overall_sense
+        range_length = self.epics_pvs['PSOEncoderCountsPerStep'].get() * self.num_angles
         # The start of the PSO window must be < end.  Handle this.
         if overall_sense > 0:
             window_start = range_start
@@ -237,29 +243,27 @@ class TomoScanPSO(TomoScan):
         pso_command = self.epics_pvs['PSOCommand.BOUT']
         pso_axis = self.epics_pvs['PSOAxisName'].get(as_string=True)
         if (pso_model == 'Ensemble'):
-          pso_command.put('PSOWINDOW %s OFF' % pso_axis, wait=True)
+            pso_command.put('PSOWINDOW %s OFF' % pso_axis, wait=True)
         elif (pso_model == 'A3200'):
-          pso_command.put('PSOWINDOW %s 1 OFF' % pso_axis, wait=True)
+            pso_command.put('PSOWINDOW %s 1 OFF' % pso_axis, wait=True)
         pso_command.put('PSOCONTROL %s OFF' % pso_axis, wait=True)
 
     def _compute_senses(self):
-        '''Computes whether this motion will be increasing or decreasing encoder counts.
+        '''Computes whether this motion will be increasing or decreasing dial units.
         
         user direction, overall sense.
         '''
-        # Encoder direction compared to dial coordinates.  Hard code this; could ask controller
-        encoder_dir = 1
         # Get motor direction (dial vs. user); convert (0,1) = (pos, neg) to (1, -1)
         motor_dir = 1 - int(self.epics_pvs['RotationDirection'].get()) * 2
         # Figure out whether motion is in positive or negative direction in user coordinates
         user_direction = 1 if self.rotation_stop > self.rotation_start else -1
-        # Figure out overall sense: +1 if motion in + encoder direction, -1 otherwise
-        return user_direction * motor_dir * encoder_dir, user_direction
+        # Figure out overall sense: +1 if motion in + dial units direction, -1 otherwise
+        return user_direction * motor_dir, user_direction
         
     def compute_positions_PSO(self):
         '''Computes several parameters describing the fly scan motion.
         Computes the spacing between points, ensuring it is an integer number
-        of encoder pulses.
+        of encoder counts.
         Uses this spacing to recalculate the end of the scan, if necessary.
         Computes the taxi distance at the beginning and end of scan to allow
         the stage to accelerate to speed.
@@ -270,14 +274,14 @@ class TomoScanPSO(TomoScan):
         accel_dist = motor_accl_time / 2.0 * float(self.motor_speed) 
 
         # Compute the actual delta to keep each interval an integer number of encoder counts
-        encoder_multiply = float(self.epics_pvs['PSOPulsesPerRotation'].get()) / 360.
+        encoder_multiply = float(self.epics_pvs['PSOCountsPerRotation'].get()) / 360.
         raw_delta_encoder_counts = self.rotation_step * encoder_multiply
         delta_encoder_counts = round(raw_delta_encoder_counts)
         if abs(raw_delta_encoder_counts - delta_encoder_counts) > 1e-4:
-            log.warning('  *** *** *** Requested scan would have used a non-integer number of encoder pulses.')
-            log.warning('  *** *** *** Calculated # of encoder pulses per step = {0:9.4f}'.format(raw_delta_encoder_counts))
+            log.warning('  *** *** *** Requested scan would have used a non-integer number of encoder counts.')
+            log.warning('  *** *** *** Calculated # of encoder counts per step = {0:9.4f}'.format(raw_delta_encoder_counts))
             log.warning('  *** *** *** Instead, using {0:d}'.format(delta_encoder_counts))
-        self.epics_pvs['PSOEncoderPulsesPerStep'].put(delta_encoder_counts)
+        self.epics_pvs['PSOEncoderCountsPerStep'].put(delta_encoder_counts)
         # Change the rotation step Python variable and PV
         self.rotation_step = delta_encoder_counts / encoder_multiply
         self.epics_pvs['RotationStep'].put(self.rotation_step)
