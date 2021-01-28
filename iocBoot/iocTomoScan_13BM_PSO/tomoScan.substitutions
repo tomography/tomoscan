@@ -5,11 +5,12 @@ pattern
 {TSTest:, TS1:, 13BMDPG1:, 13BMDPG1:HDF1:, 13BMD:m119, 13BMD:m114, 13BMD:m115, 13BMA:CloseBMDShutter.PROC,    1,        13BMA:OpenBMDShutter.PROC,      1}
 }
 
+# For the A3200 the Python code will read the PSO_ENC_PER_ROTATION from the controller, so we set it to 0
 file "$(TOP)/db/tomoScan_PSO.template"
 {
 pattern
 {  P,      R,   PSO_MODEL, PSO_PORT, PSO_AXIS_NAME, PSO_ENC_INPUT, PSO_ENC_PER_ROTATION}
-{TSTest:, TS1:,    1,      PSO_PORT,      THETA,         2,            236799999}
+{TSTest:, TS1:,    1,      PSO_PORT,      THETA,         2,             0}
 }
 
 file "$(TOP)/db/tomoScan_13BM_PSO.template"
