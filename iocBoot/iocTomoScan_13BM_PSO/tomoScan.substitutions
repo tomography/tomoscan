@@ -2,7 +2,7 @@ file "$(TOP)/db/tomoScan.template"
 {
 pattern
 {  P,      R,    CAMERA,    FILE_PLUGIN,   ROTATION,   SAMPLE_X,    SAMPLE_Y,      CLOSE_SHUTTER,        CLOSE_VALUE,        OPEN_SHUTTER,         OPEN_VALUE}
-{TSTest:, TS1:, 13BMDPG1:, 13BMDPG1:HDF1:, 13BMD:m119, 13BMD:m113, 13BMD:m115, 13BMA:CloseBMDShutter.PROC,    1,        13BMA:OpenBMDShutter.PROC,      1}
+{TSTest:, TS1:, 13BMDPG1:, 13BMDPG1:HDF1:, 13BMD:m119, 13BMD:m114, 13BMD:m115, 13BMA:CloseBMDShutter.PROC,    1,        13BMA:OpenBMDShutter.PROC,      1}
 }
 
 file "$(TOP)/db/tomoScan_PSO.template"
