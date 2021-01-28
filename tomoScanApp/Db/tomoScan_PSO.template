@@ -5,7 +5,7 @@
 # PSO parameters
 ################
 
-record(mbbo, "$(P)$(R)PSOControllerModel") 
+record(mbbi, "$(P)$(R)PSOControllerModel") 
 {
     field(DESC, "Aerotech controller model")
     field(ZRVL, "0")
@@ -29,12 +29,9 @@ record(ai, "$(P)$(R)PSOEndTaxi")
     field(PREC, "5")
 }
 
-record(longout, "$(P)$(R)PSOEncoderPulsesPerStep") 
+record(longin, "$(P)$(R)PSOEncoderCountsPerStep") 
 {
-    field(DESC, "Encoder pulses per projection")
-    field(VAL,  "6400")
-    field(DRVL, "0")
-    field(DRVH, "$(PSO_ENC_PER_ROTATION)")
+    field(DESC, "Encoder counts per projection")
 }
 
 record(asyn, "$(P)$(R)PSOCommand")
@@ -48,24 +45,19 @@ record(asyn, "$(P)$(R)PSOCommand")
     field(TMOD, "Write/Read")
 }
 
-record(stringout, "$(P)$(R)PSOAxisName")
+record(stringin, "$(P)$(R)PSOAxisName")
 {
     field(VAL,  "$(PSO_AXIS_NAME)")
 }
 
-record(ao, "$(P)$(R)PSOPulsesPerRotation") 
+record(ai, "$(P)$(R)PSOCountsPerRotation") 
 {
     field(DESC, "Number of encoder counts per revolution")
-    field(VAL,  "$(PSO_ENC_PER_ROTATION)")
-    field(DRVL, "0")
-    field(DRVH, "1000000000")
 }
 
-record(longout, "$(P)$(R)PSOEncoderInput") 
+record(longin, "$(P)$(R)PSOEncoderInput") 
 {
     field(DESC, "Encoder input")
     field(VAL,  "$(PSO_ENC_INPUT)")
-    field(DRVL, "0")
-    field(DRVH, "4")
 }
 
