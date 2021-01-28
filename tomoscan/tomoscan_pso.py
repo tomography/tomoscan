@@ -27,13 +27,15 @@ class TomoScanPSO(TomoScan):
     def __init__(self, pv_files, macros):
         super().__init__(pv_files, macros)
 
-        # Read the number of encoder counts per rotation of the rotation stage
-        pso_axis = self.epics_pvs['PSOAxisName'].get(as_string=True)
-        self.epics_pvs['PSOCommand.BOUT'].put("UNITSTOCOUNTS(%s, 360.0)" % pso_axis, wait=True, timeout=10.0)
-        reply = self.epics_pvs['PSOCommand.BINP'].get(as_string=True)
-        counts_per_rotation = float(reply[1:])
-        print('counts_per_rotation', counts_per_rotation)
-        self.epics_pvs['PSOCountsPerRotation'].put(counts_per_rotation)
+        # On the A3200 we can read the number of encoder counts per rotation from the controller
+        # Unfortunately the Ensemble does not support this
+        pso_model = self.epics_pvs['PSOControllerModel'].get(as_string=True)
+        if (pso_model == 'A3200'):
+            pso_axis = self.epics_pvs['PSOAxisName'].get(as_string=True)
+            self.epics_pvs['PSOCommand.BOUT'].put("UNITSTOCOUNTS(%s, 360.0)" % pso_axis, wait=True, timeout=10.0)
+            reply = self.epics_pvs['PSOCommand.BINP'].get(as_string=True)
+            counts_per_rotation = float(reply[1:])
+            self.epics_pvs['PSOCountsPerRotation'].put(counts_per_rotation)
 
     def collect_static_frames(self, num_frames):
         """Collects num_frames images in "Internal" trigger mode for dark fields and flat fields.
@@ -188,7 +190,7 @@ class TomoScanPSO(TomoScan):
     def program_PSO(self):
         '''Performs programming of PSO output on the Aerotech driver.
         '''
-        # overall_sense, user_direction = self._compute_senses()
+        overall_sense, user_direction = self._compute_senses()
         pso_command = self.epics_pvs['PSOCommand.BOUT']
         pso_model = self.epics_pvs['PSOControllerModel'].get(as_string=True)
         pso_axis = self.epics_pvs['PSOAxisName'].get(as_string=True)
@@ -212,9 +214,9 @@ class TomoScanPSO(TomoScan):
         pso_command.put('PSOOUTPUT %s PULSE WINDOW MASK' % pso_axis, wait=True, timeout=10.0)
         # Set which encoder we will use.  3 = the MXH (encoder multiplier) input, which is what we generally want
         pso_command.put('PSOTRACK %s INPUT %d' % (pso_axis, pso_input), wait=True, timeout=10.0)
-        # Set the distance between pulses.  Use UNITSTOCOUNTS to convert to encoder counts.
-        pso_command.put('PSODISTANCE %s FIXED UNITSTOCOUNTS(%d, %f)' % 
-                        (pso_axis, pso_axis, self.rotation_step), wait=True, timeout=10.0)
+        # Set the distance between pulses. Do this in encoder counts.
+        pso_command.put('PSODISTANCE %s FIXED %d' % (pso_axis, 
+                        self.epics_pvs['PSOEncoderCountsPerStep'].get()) , wait=True, timeout=10.0)
         # Which encoder is being used to calculate whether we are in the window.  1 for single axis
         pso_command.put('PSOWINDOW %s 1 INPUT %d' % (pso_axis, pso_input), wait=True, timeout=10.0)
 
@@ -249,16 +251,18 @@ class TomoScanPSO(TomoScan):
         pso_command.put('PSOCONTROL %s OFF' % pso_axis, wait=True)
 
     def _compute_senses(self):
-        '''Computes whether this motion will be increasing or decreasing dial units.
+        '''Computes whether this motion will be increasing or decreasing encoder counts.
         
         user direction, overall sense.
         '''
+        # Encoder direction compared to dial coordinates
+        encoder_dir = 1 if self.epics_pvs['PSOEncoderCountsPerStep'].get() > 0 else -1
         # Get motor direction (dial vs. user); convert (0,1) = (pos, neg) to (1, -1)
-        motor_dir = 1 - int(self.epics_pvs['RotationDirection'].get()) * 2
+        motor_dir = 1 if self.epics_pvs['RotationDirection'].get() == 0 else -1
         # Figure out whether motion is in positive or negative direction in user coordinates
         user_direction = 1 if self.rotation_stop > self.rotation_start else -1
-        # Figure out overall sense: +1 if motion in + dial units direction, -1 otherwise
-        return user_direction * motor_dir, user_direction
+        # Figure out overall sense: +1 if motion in + encoder direction, -1 otherwise
+        return user_direction * motor_dir * encoder_dir, user_direction
         
     def compute_positions_PSO(self):
         '''Computes several parameters describing the fly scan motion.
