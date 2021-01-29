@@ -903,13 +903,13 @@ This screen contains the PVs for the TomoScan_2BM derived class.  If the BeamRea
     :width: 75%
     :align: center
 
-tomoScan_2BM_stream.adl
-^^^^^^^^^^^^^^^^^^^^^^^
+tomoScanStream.adl
+^^^^^^^^^^^^^^^^^^
 
-The following is the MEDM screen :download:`tomoScan_2BM_stream.adl <../../tomoScanApp/op/adl/tomoScan_2BM_stream.adl>`.  
-This screen contains the additonal PVs used by the TomoScan_stream_2BM derived class.  
+The following is the MEDM screen :download:`tomoScanStream.adl <../../tomoScanApp/op/adl/tomoScanStream.adl>`.  
+This screen contains the additonal PVs used by the tomoScanStream derived class.  
 
-.. image:: img/tomoScan_2BM_stream.png
+.. image:: img/tomoScanStream.png
     :width: 75%
     :align: center
 
