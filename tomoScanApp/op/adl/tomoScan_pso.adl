@@ -8,7 +8,7 @@ display {
 		x=705
 		y=49
 		width=450
-		height=300
+		height=325
 	}
 	clr=14
 	bclr=4
@@ -154,87 +154,6 @@ text {
 }
 text {
 	object {
-		x=110
-		y=120
-		width=130
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="PSO axis name"
-	align="horiz. right"
-}
-text {
-	object {
-		x=70
-		y=145
-		width=170
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="PSO encoder input"
-	align="horiz. right"
-}
-text {
-	object {
-		x=20
-		y=170
-		width=220
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="Encoder counts per rev"
-	align="horiz. right"
-}
-text {
-	object {
-		x=10
-		y=245
-		width=120
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="PSO response"
-	align="horiz. right"
-}
-text {
-	object {
-		x=20
-		y=220
-		width=110
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="PSO command"
-	align="horiz. right"
-}
-"text update" {
-	object {
-		x=135
-		y=248
-		width=310
-		height=14
-	}
-	monitor {
-		chan="$(P)$(R)PSOCommand.BINP"
-		clr=54
-		bclr=4
-	}
-	format="string"
-	limits {
-	}
-}
-text {
-	object {
 		x=70
 		y=70
 		width=170
@@ -261,34 +180,6 @@ text {
 	limits {
 	}
 }
-text {
-	object {
-		x=80
-		y=195
-		width=160
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="Controller model"
-	align="horiz. right"
-}
-"text update" {
-	object {
-		x=245
-		y=195
-		width=200
-		height=20
-	}
-	monitor {
-		chan="$(P)$(R)PSOControllerModel"
-		clr=54
-		bclr=4
-	}
-	limits {
-	}
-}
 "text update" {
 	object {
 		x=245
@@ -304,10 +195,107 @@ text {
 	limits {
 	}
 }
+text {
+	object {
+		x=110
+		y=145
+		width=130
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="PSO axis name"
+	align="horiz. right"
+}
+text {
+	object {
+		x=70
+		y=170
+		width=170
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="PSO encoder input"
+	align="horiz. right"
+}
+text {
+	object {
+		x=20
+		y=195
+		width=220
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Encoder counts per rev"
+	align="horiz. right"
+}
+text {
+	object {
+		x=10
+		y=270
+		width=120
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="PSO response"
+	align="horiz. right"
+}
+"text update" {
+	object {
+		x=135
+		y=273
+		width=310
+		height=14
+	}
+	monitor {
+		chan="$(P)$(R)PSOCommand.BINP"
+		clr=54
+		bclr=4
+	}
+	format="string"
+	limits {
+	}
+}
+text {
+	object {
+		x=80
+		y=220
+		width=160
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Controller model"
+	align="horiz. right"
+}
 "text update" {
 	object {
 		x=245
-		y=120
+		y=220
+		width=200
+		height=20
+	}
+	monitor {
+		chan="$(P)$(R)PSOControllerModel"
+		clr=54
+		bclr=4
+	}
+	format="string"
+	limits {
+	}
+}
+"text update" {
+	object {
+		x=245
+		y=145
 		width=200
 		height=20
 	}
@@ -316,13 +304,14 @@ text {
 		clr=54
 		bclr=4
 	}
+	format="string"
 	limits {
 	}
 }
 "text update" {
 	object {
 		x=245
-		y=145
+		y=170
 		width=200
 		height=20
 	}
@@ -337,7 +326,7 @@ text {
 "text update" {
 	object {
 		x=245
-		y=170
+		y=195
 		width=200
 		height=20
 	}
@@ -352,7 +341,7 @@ text {
 text {
 	object {
 		x=130
-		y=270
+		y=295
 		width=110
 		height=20
 	}
@@ -365,7 +354,7 @@ text {
 "related display" {
 	object {
 		x=245
-		y=272
+		y=295
 		width=120
 		height=20
 	}
@@ -378,10 +367,23 @@ text {
 	bclr=51
 	label="asyn record"
 }
+text {
+	object {
+		x=20
+		y=245
+		width=110
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="PSO command"
+	align="horiz. right"
+}
 "text entry" {
 	object {
 		x=135
-		y=223
+		y=248
 		width=310
 		height=14
 	}
@@ -391,6 +393,34 @@ text {
 		bclr=51
 	}
 	format="string"
+	limits {
+	}
+}
+text {
+	object {
+		x=20
+		y=120
+		width=220
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Pulse width (microsec)"
+	align="horiz. right"
+}
+"text entry" {
+	object {
+		x=245
+		y=120
+		width=80
+		height=20
+	}
+	control {
+		chan="$(P)$(R)PSOPulseWidth"
+		clr=14
+		bclr=51
+	}
 	limits {
 	}
 }

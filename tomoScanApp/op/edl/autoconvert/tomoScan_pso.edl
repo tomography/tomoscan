@@ -6,7 +6,7 @@ release 1
 x 705
 y 49
 w 450
-h 300
+h 325
 font "helvetica-medium-r-18.0"
 ctlFont "helvetica-bold-r-10.0"
 btnFont "helvetica-medium-r-18.0"
@@ -130,130 +130,6 @@ beginObjectProperties
 major 4
 minor 1
 release 1
-x 110
-y 120
-w 130
-h 20
-font "helvetica-medium-r-14.0"
-fontAlign "right"
-fgColor rgb 0 0 0
-bgColor index 3
-useDisplayBg
-value {
-  "PSO axis name"
-}
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 1
-x 70
-y 145
-w 170
-h 20
-font "helvetica-medium-r-14.0"
-fontAlign "right"
-fgColor rgb 0 0 0
-bgColor index 3
-useDisplayBg
-value {
-  "PSO encoder input"
-}
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 1
-x 20
-y 170
-w 220
-h 20
-font "helvetica-medium-r-14.0"
-fontAlign "right"
-fgColor rgb 0 0 0
-bgColor index 3
-useDisplayBg
-value {
-  "Encoder counts per rev"
-}
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 1
-x 10
-y 245
-w 120
-h 20
-font "helvetica-medium-r-14.0"
-fontAlign "right"
-fgColor rgb 0 0 0
-bgColor index 3
-useDisplayBg
-value {
-  "PSO response"
-}
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 1
-x 20
-y 220
-w 110
-h 20
-font "helvetica-medium-r-14.0"
-fontAlign "right"
-fgColor rgb 0 0 0
-bgColor index 3
-useDisplayBg
-value {
-  "PSO command"
-}
-endObjectProperties
-
-# (Text Monitor)
-object activeXTextDspClass:noedit
-beginObjectProperties
-major 4
-minor 7
-release 0
-x 135
-y 248
-w 310
-h 14
-controlPv "$(P)$(R)PSOCommand.BINP"
-format "string"
-font "helvetica-medium-r-12.0"
-fontAlign "left"
-fgColor rgb 2560 0 47104
-bgColor rgb 47872 47872 47872
-limitsFromDb
-nullColor rgb 60928 46592 11008
-smartRefresh
-fastUpdate
-newPos
-objType "controls"
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 1
 x 70
 y 70
 w 170
@@ -292,50 +168,6 @@ newPos
 objType "controls"
 endObjectProperties
 
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 1
-x 80
-y 195
-w 160
-h 20
-font "helvetica-medium-r-14.0"
-fontAlign "right"
-fgColor rgb 0 0 0
-bgColor index 3
-useDisplayBg
-value {
-  "Controller model"
-}
-endObjectProperties
-
-# (Text Monitor)
-object activeXTextDspClass:noedit
-beginObjectProperties
-major 4
-minor 7
-release 0
-x 245
-y 195
-w 200
-h 20
-controlPv "$(P)$(R)PSOControllerModel"
-format "decimal"
-font "helvetica-medium-r-14.0"
-fontAlign "left"
-fgColor rgb 2560 0 47104
-bgColor rgb 47872 47872 47872
-limitsFromDb
-nullColor rgb 60928 46592 11008
-smartRefresh
-fastUpdate
-newPos
-objType "controls"
-endObjectProperties
-
 # (Text Monitor)
 object activeXTextDspClass:noedit
 beginObjectProperties
@@ -360,6 +192,130 @@ newPos
 objType "controls"
 endObjectProperties
 
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 110
+y 145
+w 130
+h 20
+font "helvetica-medium-r-14.0"
+fontAlign "right"
+fgColor rgb 0 0 0
+bgColor index 3
+useDisplayBg
+value {
+  "PSO axis name"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 70
+y 170
+w 170
+h 20
+font "helvetica-medium-r-14.0"
+fontAlign "right"
+fgColor rgb 0 0 0
+bgColor index 3
+useDisplayBg
+value {
+  "PSO encoder input"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 20
+y 195
+w 220
+h 20
+font "helvetica-medium-r-14.0"
+fontAlign "right"
+fgColor rgb 0 0 0
+bgColor index 3
+useDisplayBg
+value {
+  "Encoder counts per rev"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 10
+y 270
+w 120
+h 20
+font "helvetica-medium-r-14.0"
+fontAlign "right"
+fgColor rgb 0 0 0
+bgColor index 3
+useDisplayBg
+value {
+  "PSO response"
+}
+endObjectProperties
+
+# (Text Monitor)
+object activeXTextDspClass:noedit
+beginObjectProperties
+major 4
+minor 7
+release 0
+x 135
+y 273
+w 310
+h 14
+controlPv "$(P)$(R)PSOCommand.BINP"
+format "string"
+font "helvetica-medium-r-12.0"
+fontAlign "left"
+fgColor rgb 2560 0 47104
+bgColor rgb 47872 47872 47872
+limitsFromDb
+nullColor rgb 60928 46592 11008
+smartRefresh
+fastUpdate
+newPos
+objType "controls"
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 80
+y 220
+w 160
+h 20
+font "helvetica-medium-r-14.0"
+fontAlign "right"
+fgColor rgb 0 0 0
+bgColor index 3
+useDisplayBg
+value {
+  "Controller model"
+}
+endObjectProperties
+
 # (Text Monitor)
 object activeXTextDspClass:noedit
 beginObjectProperties
@@ -367,11 +323,11 @@ major 4
 minor 7
 release 0
 x 245
-y 120
+y 220
 w 200
 h 20
-controlPv "$(P)$(R)PSOAxisName"
-format "decimal"
+controlPv "$(P)$(R)PSOControllerModel"
+format "string"
 font "helvetica-medium-r-14.0"
 fontAlign "left"
 fgColor rgb 2560 0 47104
@@ -392,6 +348,30 @@ minor 7
 release 0
 x 245
 y 145
+w 200
+h 20
+controlPv "$(P)$(R)PSOAxisName"
+format "string"
+font "helvetica-medium-r-14.0"
+fontAlign "left"
+fgColor rgb 2560 0 47104
+bgColor rgb 47872 47872 47872
+limitsFromDb
+nullColor rgb 60928 46592 11008
+smartRefresh
+fastUpdate
+newPos
+objType "controls"
+endObjectProperties
+
+# (Text Monitor)
+object activeXTextDspClass:noedit
+beginObjectProperties
+major 4
+minor 7
+release 0
+x 245
+y 170
 w 200
 h 20
 controlPv "$(P)$(R)PSOEncoderInput"
@@ -415,7 +395,7 @@ major 4
 minor 7
 release 0
 x 245
-y 170
+y 195
 w 200
 h 20
 controlPv "$(P)$(R)PSOCountsPerRotation"
@@ -439,7 +419,7 @@ major 4
 minor 1
 release 1
 x 130
-y 270
+y 295
 w 110
 h 20
 font "helvetica-medium-r-14.0"
@@ -452,6 +432,26 @@ value {
 }
 endObjectProperties
 
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 20
+y 245
+w 110
+h 20
+font "helvetica-medium-r-14.0"
+fontAlign "right"
+fgColor rgb 0 0 0
+bgColor index 3
+useDisplayBg
+value {
+  "PSO command"
+}
+endObjectProperties
+
 # (Text Control)
 object activeXTextDspClass
 beginObjectProperties
@@ -459,12 +459,58 @@ major 4
 minor 7
 release 0
 x 135
-y 223
+y 248
 w 310
 h 14
 controlPv "$(P)$(R)PSOCommand.BOUT"
 format "string"
 font "helvetica-bold-r-12.0"
+fontAlign "left"
+fgColor rgb 0 0 0
+bgColor rgb 29440 57088 65280
+editable
+motifWidget
+limitsFromDb
+nullColor rgb 60928 46592 11008
+smartRefresh
+fastUpdate
+newPos
+objType "controls"
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 20
+y 120
+w 220
+h 20
+font "helvetica-medium-r-14.0"
+fontAlign "right"
+fgColor rgb 0 0 0
+bgColor index 3
+useDisplayBg
+value {
+  "Pulse width (microsec)"
+}
+endObjectProperties
+
+# (Text Control)
+object activeXTextDspClass
+beginObjectProperties
+major 4
+minor 7
+release 0
+x 245
+y 120
+w 80
+h 20
+controlPv "$(P)$(R)PSOPulseWidth"
+format "decimal"
+font "helvetica-medium-r-12.0"
 fontAlign "left"
 fgColor rgb 0 0 0
 bgColor rgb 29440 57088 65280
@@ -485,7 +531,7 @@ major 4
 minor 0
 release 0
 x 245
-y 272
+y 295
 w 120
 h 20
 fgColor rgb 0 0 0
