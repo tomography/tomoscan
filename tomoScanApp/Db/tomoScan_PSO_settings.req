@@ -3,6 +3,7 @@
 
 # This is the file for the TomoScanPSO derived class.
 
+$(P)$(R)PSOPulseWidth
 #controlPV $(P)$(R)PSOControllerModel
 #controlPV $(P)$(R)PSOEncoderCountsPerStep
 #controlPV $(P)$(R)PSOAxisName

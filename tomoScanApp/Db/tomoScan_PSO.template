@@ -66,3 +66,10 @@ record(longin, "$(P)$(R)PSOEncoderInput")
     field(DESC, "Encoder input")
     field(VAL,  "$(PSO_ENC_INPUT)")
 }
+
+record(ao, "$(P)$(R)PSOPulseWidth") 
+{
+    field(DESC, "Output pulse width in microseconds")
+    field(VAL,  "10")
+}
+
