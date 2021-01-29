@@ -108,7 +108,7 @@ text {
 	"basic attribute" {
 		clr=54
 	}
-	textix="2-BM Tomography   $(P)$(R)"
+	textix="$(P)$(R)"
 	align="horiz. centered"
 }
 "related display" {

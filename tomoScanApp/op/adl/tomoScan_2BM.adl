@@ -1,6 +1,6 @@
 
 file {
-	name="/local/user2bmb/epics_test/synApps/support/tomoscan/tomoScanApp/op/adl/tomoScanStream_2BM.adl"
+	name="/local/user2bmb/epics_test/synApps/support/tomoscan/tomoScanApp/op/adl/tomoScan_2BM.adl"
 	version=030111
 }
 display {
@@ -108,7 +108,7 @@ text {
 	"basic attribute" {
 		clr=54
 	}
-	textix="2-BM Tomography   $(P)$(R)"
+	textix="$(P)$(R)"
 	align="horiz. centered"
 }
 "related display" {
