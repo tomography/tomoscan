@@ -5,10 +5,10 @@ file {
 }
 display {
 	object {
-		x=412
-		y=294
+		x=402
+		y=286
 		width=700
-		height=965
+		height=960
 	}
 	clr=14
 	bclr=4
@@ -953,7 +953,7 @@ menu {
 composite {
 	object {
 		x=5
-		y=695
+		y=690
 		width=690
 		height=265
 	}
@@ -962,7 +962,7 @@ composite {
 		rectangle {
 			object {
 				x=5
-				y=695
+				y=690
 				width=690
 				height=70
 			}
@@ -974,7 +974,7 @@ composite {
 		rectangle {
 			object {
 				x=250
-				y=701
+				y=696
 				width=200
 				height=20
 			}
@@ -985,7 +985,7 @@ composite {
 		text {
 			object {
 				x=275
-				y=701
+				y=696
 				width=150
 				height=20
 			}
@@ -998,7 +998,7 @@ composite {
 		rectangle {
 			object {
 				x=305
-				y=775
+				y=770
 				width=90
 				height=20
 			}
@@ -1009,7 +1009,7 @@ composite {
 		text {
 			object {
 				x=314
-				y=775
+				y=770
 				width=72
 				height=20
 			}
@@ -1022,7 +1022,7 @@ composite {
 		"message button" {
 			object {
 				x=250
-				y=735
+				y=730
 				width=120
 				height=20
 			}
@@ -1037,7 +1037,7 @@ composite {
 		"message button" {
 			object {
 				x=375
-				y=735
+				y=730
 				width=120
 				height=20
 			}
@@ -1053,7 +1053,7 @@ composite {
 		text {
 			object {
 				x=15
-				y=735
+				y=730
 				width=130
 				height=20
 			}
@@ -1065,7 +1065,7 @@ composite {
 		"text entry" {
 			object {
 				x=150
-				y=735
+				y=730
 				width=70
 				height=20
 			}
@@ -1080,7 +1080,7 @@ composite {
 		rectangle {
 			object {
 				x=5
-				y=770
+				y=765
 				width=690
 				height=190
 			}
@@ -1092,7 +1092,7 @@ composite {
 		"text update" {
 			object {
 				x=580
-				y=735
+				y=730
 				width=100
 				height=20
 			}
@@ -1109,7 +1109,7 @@ composite {
 		text {
 			object {
 				x=515
-				y=735
+				y=730
 				width=60
 				height=20
 			}
@@ -1121,7 +1121,7 @@ composite {
 		text {
 			object {
 				x=65
-				y=930
+				y=925
 				width=130
 				height=20
 			}
@@ -1133,7 +1133,7 @@ composite {
 		text {
 			object {
 				x=85
-				y=805
+				y=800
 				width=110
 				height=20
 			}
@@ -1145,7 +1145,7 @@ composite {
 		"text update" {
 			object {
 				x=201
-				y=805
+				y=800
 				width=400
 				height=20
 			}
@@ -1161,7 +1161,7 @@ composite {
 		text {
 			object {
 				x=55
-				y=905
+				y=900
 				width=140
 				height=20
 			}
@@ -1173,7 +1173,7 @@ composite {
 		text {
 			object {
 				x=75
-				y=880
+				y=875
 				width=120
 				height=20
 			}
@@ -1185,7 +1185,7 @@ composite {
 		"text update" {
 			object {
 				x=201
-				y=880
+				y=875
 				width=100
 				height=20
 			}
@@ -1201,7 +1201,7 @@ composite {
 		"text update" {
 			object {
 				x=200
-				y=905
+				y=900
 				width=100
 				height=20
 			}
@@ -1217,7 +1217,7 @@ composite {
 		text {
 			object {
 				x=35
-				y=830
+				y=825
 				width=160
 				height=20
 			}
@@ -1229,7 +1229,7 @@ composite {
 		"text update" {
 			object {
 				x=201
-				y=830
+				y=825
 				width=100
 				height=20
 			}
@@ -1245,7 +1245,7 @@ composite {
 		text {
 			object {
 				x=75
-				y=855
+				y=850
 				width=120
 				height=20
 			}
@@ -1257,7 +1257,7 @@ composite {
 		"text update" {
 			object {
 				x=201
-				y=855
+				y=850
 				width=100
 				height=20
 			}
@@ -1273,7 +1273,7 @@ composite {
 		"text update" {
 			object {
 				x=199
-				y=930
+				y=925
 				width=100
 				height=20
 			}
@@ -1289,166 +1289,155 @@ composite {
 		}
 	}
 }
-composite {
+text {
 	object {
-		x=23
-		y=588
-		width=645
-		height=45
+		x=20
+		y=585
+		width=170
+		height=20
 	}
-	"composite name"=""
-	children {
-		text {
-			object {
-				x=23
-				y=588
-				width=170
-				height=20
-			}
-			"basic attribute" {
-				clr=14
-			}
-			textix="# Pre count"
-			align="horiz. right"
-		}
-		"text entry" {
-			object {
-				x=203
-				y=588
-				width=80
-				height=20
-			}
-			control {
-				chan="$(P)$(R)StreamPreCount"
-				clr=14
-				bclr=51
-			}
-			limits {
-			}
-		}
-		"text update" {
-			object {
-				x=287
-				y=588
-				width=80
-				height=20
-			}
-			monitor {
-				chan="$(P)$(R)StreamPreCounted"
-				clr=54
-				bclr=4
-			}
-			limits {
-			}
-		}
-		"text update" {
-			object {
-				x=368
-				y=588
-				width=300
-				height=20
-			}
-			monitor {
-				chan="$(P)$(R)StreamCBStatusMessage"
-				clr=54
-				bclr=4
-			}
-			format="string"
-			limits {
-			}
-		}
-		text {
-			object {
-				x=23
-				y=613
-				width=170
-				height=20
-			}
-			"basic attribute" {
-				clr=14
-			}
-			textix="Capture proj"
-			align="horiz. right"
-		}
-		"message button" {
-			object {
-				x=203
-				y=613
-				width=80
-				height=20
-			}
-			control {
-				chan="$(P)$(R)StreamCapture"
-				clr=14
-				bclr=51
-			}
-			label="Start"
-			press_msg="1"
-		}
-		"message button" {
-			object {
-				x=285
-				y=613
-				width=80
-				height=20
-			}
-			control {
-				chan="$(P)$(R)StreamCapture"
-				clr=14
-				bclr=51
-			}
-			label="Stop"
-			press_msg="0"
-		}
-		text {
-			object {
-				x=368
-				y=613
-				width=90
-				height=20
-			}
-			"basic attribute" {
-				clr=14
-			}
-			textix="# Capture"
-			align="horiz. right"
-		}
-		"text entry" {
-			object {
-				x=463
-				y=613
-				width=80
-				height=20
-			}
-			control {
-				chan="$(P)$(R)StreamNumCapture"
-				clr=14
-				bclr=51
-			}
-			limits {
-			}
-		}
-		"text update" {
-			object {
-				x=553
-				y=613
-				width=80
-				height=20
-			}
-			monitor {
-				chan="$(P)$(R)StreamNumCaptured"
-				clr=54
-				bclr=4
-			}
-			limits {
-			}
-		}
+	"basic attribute" {
+		clr=14
+	}
+	textix="# Pre count"
+	align="horiz. right"
+}
+"text entry" {
+	object {
+		x=200
+		y=585
+		width=80
+		height=20
+	}
+	control {
+		chan="$(P)$(R)StreamPreCount"
+		clr=14
+		bclr=51
+	}
+	limits {
+	}
+}
+"text update" {
+	object {
+		x=285
+		y=585
+		width=80
+		height=20
+	}
+	monitor {
+		chan="$(P)$(R)StreamPreCounted"
+		clr=54
+		bclr=4
+	}
+	limits {
+	}
+}
+"text update" {
+	object {
+		x=380
+		y=585
+		width=300
+		height=20
+	}
+	monitor {
+		chan="$(P)$(R)StreamCBStatusMessage"
+		clr=54
+		bclr=4
+	}
+	format="string"
+	limits {
+	}
+}
+text {
+	object {
+		x=20
+		y=610
+		width=170
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Capture proj"
+	align="horiz. right"
+}
+"message button" {
+	object {
+		x=200
+		y=610
+		width=80
+		height=20
+	}
+	control {
+		chan="$(P)$(R)StreamCapture"
+		clr=14
+		bclr=51
+	}
+	label="Start"
+	press_msg="1"
+}
+"message button" {
+	object {
+		x=285
+		y=610
+		width=80
+		height=20
+	}
+	control {
+		chan="$(P)$(R)StreamCapture"
+		clr=14
+		bclr=51
+	}
+	label="Stop"
+	press_msg="0"
+}
+text {
+	object {
+		x=370
+		y=610
+		width=90
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="# Capture"
+	align="horiz. right"
+}
+"text entry" {
+	object {
+		x=465
+		y=610
+		width=80
+		height=20
+	}
+	control {
+		chan="$(P)$(R)StreamNumCapture"
+		clr=14
+		bclr=51
+	}
+	limits {
+	}
+}
+"text update" {
+	object {
+		x=555
+		y=610
+		width=80
+		height=20
+	}
+	monitor {
+		chan="$(P)$(R)StreamNumCaptured"
+		clr=54
+		bclr=4
+	}
+	limits {
 	}
 }
 rectangle {
 	object {
 		x=223
-		y=561
+		y=560
 		width=260
 		height=20
 	}
@@ -1459,7 +1448,7 @@ rectangle {
 text {
 	object {
 		x=263
-		y=561
+		y=560
 		width=180
 		height=20
 	}
@@ -1469,114 +1458,103 @@ text {
 	textix="Streaming Control"
 	align="horiz. centered"
 }
-composite {
+"text update" {
 	object {
-		x=23
-		y=642
-		width=645
-		height=44
+		x=200
+		y=635
+		width=275
+		height=20
 	}
-	"composite name"=""
-	children {
-		"text update" {
-			object {
-				x=203
-				y=642
-				width=275
-				height=20
-			}
-			monitor {
-				chan="$(P)$(R)StreamFileName"
-				clr=54
-				bclr=4
-			}
-			format="string"
-			limits {
-			}
-		}
-		text {
-			object {
-				x=23
-				y=642
-				width=170
-				height=20
-			}
-			"basic attribute" {
-				clr=14
-			}
-			textix="File name"
-			align="horiz. right"
-		}
-		text {
-			object {
-				x=464
-				y=642
-				width=80
-				height=20
-			}
-			"basic attribute" {
-				clr=14
-			}
-			textix="# Proj"
-			align="horiz. right"
-		}
-		"text update" {
-			object {
-				x=553
-				y=642
-				width=80
-				height=20
-			}
-			monitor {
-				chan="$(P)$(R)StreamNumTotalCaptured"
-				clr=54
-				bclr=4
-			}
-			limits {
-			}
-		}
-		text {
-			object {
-				x=23
-				y=666
-				width=170
-				height=20
-			}
-			"basic attribute" {
-				clr=14
-			}
-			textix="Broadcast binning"
-			align="horiz. right"
-		}
-		menu {
-			object {
-				x=203
-				y=666
-				width=80
-				height=20
-			}
-			control {
-				chan="$(P)$(R)StreamBinning"
-				clr=14
-				bclr=51
-			}
-		}
-		"text update" {
-			object {
-				x=368
-				y=666
-				width=300
-				height=20
-			}
-			monitor {
-				chan="$(P)$(R)StreamMessage"
-				clr=54
-				bclr=4
-			}
-			format="string"
-			limits {
-			}
-		}
+	monitor {
+		chan="$(P)$(R)StreamFileName"
+		clr=54
+		bclr=4
+	}
+	format="string"
+	limits {
+	}
+}
+text {
+	object {
+		x=20
+		y=635
+		width=170
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="File name"
+	align="horiz. right"
+}
+text {
+	object {
+		x=465
+		y=635
+		width=80
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="# Proj"
+	align="horiz. right"
+}
+"text update" {
+	object {
+		x=555
+		y=635
+		width=80
+		height=20
+	}
+	monitor {
+		chan="$(P)$(R)StreamNumTotalCaptured"
+		clr=54
+		bclr=4
+	}
+	limits {
+	}
+}
+text {
+	object {
+		x=20
+		y=660
+		width=170
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Broadcast binning"
+	align="horiz. right"
+}
+menu {
+	object {
+		x=200
+		y=660
+		width=80
+		height=20
+	}
+	control {
+		chan="$(P)$(R)StreamBinning"
+		clr=14
+		bclr=51
+	}
+}
+"text update" {
+	object {
+		x=380
+		y=660
+		width=300
+		height=20
+	}
+	monitor {
+		chan="$(P)$(R)StreamMessage"
+		clr=54
+		bclr=4
+	}
+	format="string"
+	limits {
 	}
 }
 rectangle {
@@ -1584,7 +1562,7 @@ rectangle {
 		x=5
 		y=555
 		width=690
-		height=135
+		height=130
 	}
 	"basic attribute" {
 		clr=14
