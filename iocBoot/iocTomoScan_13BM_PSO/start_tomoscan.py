@@ -6,4 +6,4 @@ from tomoscan.tomoscan_13bm_pso import TomoScan13BM_PSO
 ts = TomoScan13BM_PSO(["../../db/tomoScan_settings.req",
                        "../../db/tomoScan_PSO_settings.req", 
                        "../../db/tomoScan_13BM_settings.req"], 
-                      {"$(P)":"TSTest:", "$(R)":"TS1:"})
+                      {"$(P)":"13BMDPG1:", "$(R)":"TS:"})
