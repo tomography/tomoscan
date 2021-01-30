@@ -4,5 +4,6 @@
 # The -i is needed to keep Python running, otherwise it will create the object and exit
 from tomoscan.tomoscan_2bm import TomoScan2BM
 ts = TomoScan2BM(["../../db/tomoScan_settings.req",
+                  "../../db/tomoScan_PSO_settings.req", 
                   "../../db/tomoScan_2BM_settings.req"], 
                  {"$(P)":"2bma:", "$(R)":"TomoScan:"})
