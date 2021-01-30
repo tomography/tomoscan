@@ -1,7 +1,7 @@
 < envPaths
 
-epicsEnvSet("P", "TSTest:")
-epicsEnvSet("R", "TS1:")
+epicsEnvSet("P", "13BMDPG1:")
+epicsEnvSet("R", "TS:")
 
 ## Register all support components
 
