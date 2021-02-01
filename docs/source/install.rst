@@ -7,10 +7,13 @@ Build EPICS base
 
 .. warning:: Make sure the disk partition hosting ~/epics is not larger than 2 TB. See `tech talk <https://epics.anl.gov/tech-talk/2017/msg00046.php>`_ and  `Diamond Data Storage <https://epics.anl.gov/meetings/2012-10/program/1023-A3_Diamond_Data_Storage.pdf>`_ document.
 
+::
+
     $ mkdir ~/epics
     $ cd epics
     
-- Download EPICS base latest release, i.e. 7.0.3.1., from https://github.com/epics-base/epics-base
+
+- Download EPICS base latest release, i.e. 7.0.3.1., from https://github.com/epics-base/epics-base::
 
     $ git clone https://github.com/epics-base/epics-base.git
     $ cd epics-base
