@@ -18,7 +18,7 @@ To build a minimal synApp::
 - Edit the assemble_synApps.sh script as follows:
     - Set FULL_CLONE=True
     - Set EPICS_BASE to point to the location of EPICS base.  This could be on APSshare (the default), or a local version you built.
-    - For tomoscan you only need BUSY and AUTOSAVE.  You can comment out all of the other modules (ALLENBRADLEY, ALIVE, etc.)
+    - For tomoscan you only need ASYN, BUSY and AUTOSAVE.  You can comment out all of the other modules (ALLENBRADLEY, ALIVE, etc.)
 
 - Run::
 
@@ -28,23 +28,16 @@ To build a minimal synApp::
 
     $ cd synApps/support/
 
-- Edit  busy-R1-7-2/configure/RELEASE to comment out this line::
+- Edit asyn/configure/RELEASE to comment out the lines starting with::
     
-    ASYN=$(SUPPORT)/asyn-4-32).
+    IPAC=$(SUPPORT)/
+    SNCSEQ=$(SUPPORT)/
 
 - Clone the tomoscan module into synApps/support::
     
     $ git clone https://github.com/tomography/tomoscan.git
 
-- Edit tomoscan/configure/RELEASE to comment out this line::
-    
-    ASYN=$(SUPPORT)/asyn-4-38
-
-- Edit tomoscan/tomoScanApp/src/Makefile to comment out this line::
-    
-    tomoScanApp_LIBS += asyn
-
-- Edit configure/RELEASE add this line to the end::
+- Edit support/configure/RELEASE add this line to the end::
     
     TOMOSCAN=$(SUPPORT)/tomoscan
 
@@ -66,7 +59,7 @@ Testing the installation
 
 - Start the epics ioc and associated medm screen with::
 
-    $ cd ~/epics/synApps/support/tomoscan/iocBoot/iocTomoScan_13BM
+    $ cd ~/epics/synApps/support/tomoscan/iocBoot/iocTomoScan_13BM_PSO
     $ start_IOC
     $ start_medm
 
@@ -76,7 +69,7 @@ Beamline customization
 tomoScan
 ~~~~~~~~
 
-Below are the customization steps for 2-BM, you can use these as teplates for your beamline.
+Below are the customization steps for 2-BM, you can use these as templates for your beamline.
 
 - Create in ~/epics/synApps/support/tomoscan/tomoScanApp/Db
     - tomoScan_2BM_settings.req

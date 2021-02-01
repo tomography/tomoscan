@@ -6,7 +6,9 @@ API reference
 .. toctree::
 
    api/tomoscan
-   api/tomoscan_13bm
+   api/tomoscan_pso
+   api/tomoscan_13bm_mcs
+   api/tomoscan_13bm_pso
    api/tomoscan_2bm
    api/tomoscan_stream_2bm
    api/tomoscan_7bm
