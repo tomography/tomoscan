@@ -1,0 +1,20 @@
+file "$(TOP)/db/tomoScan.template"
+{
+pattern
+{  P,      R,      CAMERA,    FILE_PLUGIN,   ROTATION,  SAMPLE_X,  SAMPLE_Y,      CLOSE_SHUTTER,        CLOSE_VALUE,        OPEN_SHUTTER,         OPEN_VALUE}
+{2bmb:, TomoScanStream:, 2bmbPG1:, 2bmbPG1:HDF1:,  2bmb:m100,  2bmb:m63,  2bmb:m57,  2bma:A_shutter:close.VAL,    1,        2bma:A_shutter:open.VAL,      1}
+}
+
+file "$(TOP)/db/tomoScan_2BM.template"
+{
+pattern
+{  P,      R,         PSO,           BEAM_READY,      READY_VALUE,    CLOSE_FAST_SHUTTER,  CLOSE_FAST_VALUE,   OPEN_FAST_SHUTTER,  OPEN_FAST_VALUE,         SHUTTER_STATUS,}
+{2bmb:, TomoScanStream:, 2bmb:PSOFly:,   ACIS:ShutterPermit,    1,             2bmb:m77,               41,                2bmb:m77,             41,           PA:02BM:STA_A_FES_OPEN_PL,}
+}
+
+file "$(TOP)/db/tomoScanStream.template"
+{
+pattern
+{  P,      R,        PVA_PLUGIN,     ROI_PLUGIN,    CB_PLUGIN,   PVA_STREAM,}
+{2bmb:, TomoScanStream:, 2bmbPG1:Pva1:,  2bmbPG1:ROI1:, 2bmbPG1:CB1:, 2bmb:TomoScan:Stream:,}
+}
