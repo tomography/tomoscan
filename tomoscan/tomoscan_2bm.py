@@ -9,7 +9,7 @@ import time
 import os
 import h5py 
 
-from tomoscan import TomoScan
+from tomoscan import TomoScanPSO
 from tomoscan import log
 
 EPSILON = .001
