@@ -5,26 +5,26 @@ Usage
 
 The following Python commands are all that is required to collect a tomography dataset::
 
->>> from tomoscan_13bm import TomoScan13BM
+>>> from tomoscan_13bm_pso import TomoScan13BM_PSO
 
-This line imports the code for class TomoScan13BM.  TomoScan13BM is a class that derives from TomoScan.  
+This line imports the code for class TomoScan13BM_PSO.  TomoScan13BM_PSO is a class that derives from TomoScan_PSO,
+which in turn derives from TomoScan.  
 It implements the logic used for scanning at 13-BM-D, but does not hard-code any EPICS PVs
 for that specific beamline.  
 
-Currently at 13-BM-D the rotation stage is a stepper motor driven by an OMS-58 motor controller.  
-The step pulses from the motor controller are sent to an SIS3820 multi-channel scaler (MCS). 
-The MCS is using in external trigger mode to divide the pulse frequency by N, 
-where N is the number of stepper-motor pulses per rotation step.
+The rotation stage is an air-bearing rotation stage driven by an Aerotech NDrive controller.
+The NDrive is programmed to output PSO trigger pulses at fixed angular increments of the rotation stage.  
 The speed of the rotation motor is set such that the exposure and readout will have just completed
 for image N when the trigger  for image N+1 arrives.
-The MCS is also used to collect the dark-fields and the flat-fields, using its internal trigger mode and a
-dwell time that is equal to the exposure time plus the readout time.
 
 ::
 
->>> ts = TomoScan13BM(["../db/tomoScan_settings.req","../db/tomoScan_13BM_settings.req"], {"$(P)":"TSTest:", "$(R)":"TS1:"})
+ts = TomoScan13BM_PSO(["../../db/tomoScan_settings.req",
+                       "../../db/tomoScan_PSO_settings.req",
+                       "../../db/tomoScan_13BM_settings.req"],
+                      {"$(P)":"13BMDPG1:", "$(R)":"TS:"})
 
-This line creates the TomoScan13BM object.  It takes two arguments that are passed to the 
+This line creates the TomoScan13BM_PSO object.  It takes two arguments that are passed to the 
 TomoScan constructor:
 
 - The first argument is a list of paths to the autosave request files for the databases.

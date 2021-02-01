@@ -1,7 +1,7 @@
 
 file {
-	name="/local/user2bmb/epics/synApps/support/tomoscan/tomoScanApp/op/adl/tomoScan_2BM_otherpvs.adl"
-	version=030111
+	name="/home/epics/support/tomoscan/tomoScanApp/op/adl/tomoScan_2BM_otherpvs.adl"
+	version=030109
 }
 display {
 	object {
@@ -287,35 +287,6 @@ text {
 }
 text {
 	object {
-		x=109
-		y=190
-		width=140
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="PSO prefix"
-	align="horiz. right"
-}
-"text entry" {
-	object {
-		x=254
-		y=190
-		width=380
-		height=20
-	}
-	control {
-		chan="$(P)$(R)PSOPVPrefix"
-		clr=14
-		bclr=51
-	}
-	format="string"
-	limits {
-	}
-}
-text {
-	object {
 		x=119
 		y=215
 		width=130
@@ -458,4 +429,33 @@ text {
 	format="string"
 	limits {
 	}
+}
+text {
+	object {
+		x=159
+		y=190
+		width=90
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="PSO setup"
+	align="horiz. right"
+}
+"related display" {
+	object {
+		x=254
+		y=190
+		width=100
+		height=20
+	}
+	display[0] {
+		label="PSO setup"
+		name="tomoScan_pso.adl"
+		args="P=$(P), R=$(R)"
+	}
+	clr=14
+	bclr=51
+	label="PSO setup"
 }

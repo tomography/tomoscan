@@ -9,12 +9,12 @@ import time
 import os
 import h5py 
 
-from tomoscan import TomoScan
+from tomoscan import TomoScanPSO
 from tomoscan import log
 
 EPSILON = .001
 
-class TomoScan2BM(TomoScan):
+class TomoScan2BM(TomoScanPSO):
     """Derived class used for tomography scanning with EPICS at APS beamline 2-BM-A
 
     Parameters
@@ -163,26 +163,6 @@ class TomoScan2BM(TomoScan):
             self.epics_pvs['CamTriggerMode'].put('On', wait=True)
             self.wait_pv(self.epics_pvs['CamTriggerMode'], 1)
 
-    def collect_static_frames(self, num_frames):
-        """Collects num_frames images in "Internal" trigger mode for dark fields and flat fields.
-
-        Parameters
-        ----------
-        num_frames : int
-            Number of frames to collect.
-        """
-        # This is called when collecting dark fields or flat fields
-
-        log.info('collect static frames: %d', num_frames)
-        self.set_trigger_mode('Internal', num_frames)
-        self.epics_pvs['CamAcquire'].put('Acquire')
-        self.wait_pv(self.epics_pvs['CamAcquire'], 1)
-        # Wait for detector and file plugin to be ready
-        time.sleep(0.5)
-        frame_time = self.compute_frame_time()
-        collection_time = frame_time * num_frames
-        self.wait_camera_done(collection_time + 5.0)
-
     def begin_scan(self):
         """Performs the operations needed at the very start of a scan.
 
@@ -211,57 +191,10 @@ class TomoScan2BM(TomoScan):
         # Opens the front-end shutter
         self.open_frontend_shutter()
         
-        # Confirm angle step is an integer number of encoder pulses
-        # Pass the user selected values to the PSO
-        self.epics_pvs['PSOstartPos'].put(self.rotation_start, wait=True)
-        self.wait_pv(self.epics_pvs['PSOstartPos'], self.rotation_start)
-        self.epics_pvs['PSOendPos'].put(self.rotation_stop+self.rotation_step, wait=True)
-        self.wait_pv(self.epics_pvs['PSOendPos'], self.rotation_stop+self.rotation_step)
-        # Compute and set the motor speed
-        time_per_angle = self.compute_frame_time()#+7.2/1000   ##no overlap mode -> time_per_angle=exposure+readout
-        motor_speed = self.rotation_step / time_per_angle
-        self.epics_pvs['PSOslewSpeed'].put(motor_speed)
-        self.wait_pv(self.epics_pvs['PSOslewSpeed'], motor_speed)
-
-        self.epics_pvs['PSOscanDelta'].put(self.rotation_step, wait=True)
-        self.wait_pv(self.epics_pvs['PSOscanDelta'], self.rotation_step)
-
-        # Get the number of projections and angle steps calculated by the PSO
-        calc_rotation_step = self.epics_pvs['PSOscanDelta'].value
-        calc_num_proj = int(self.epics_pvs['PSOcalcProjections'].value)
-        # If this is different from the user selected values adjust them
-        if calc_rotation_step != self.rotation_step:
-            # This should happen most of the time since rotation_step is rounded down to the closest integer
-            # number of encoder pulses
-            log.warning('PSO changed rotation step from %s to %s', self.rotation_step, calc_rotation_step)
-            self.rotation_step = calc_rotation_step
-        if calc_num_proj != self.num_angles:
-            # This happens rarely an it is a +/-1 change in the number of projections to make sure that
-            # after the rotation_step round down we don't pass the user set rotation_stop
-            log.warning('PSO changed number of projections from %s to %s', self.num_angles, calc_num_proj)
-            self.num_angles = calc_num_proj
-
-        self.epics_pvs['PSOscanControl'].put('Standard')
-        self.wait_pv(self.epics_pvs['PSOscanControl'], 0)
-        time.sleep(1)
-
         # # Create theta array
         self.theta = []
         self.theta = self.epics_pvs['ThetaArray'].get(count=int(self.num_angles))
         print(self.theta,self.num_angles)
-        # Compute total number of frames to capture
-        self.total_images = self.num_angles
-        if self.dark_field_mode != 'None':
-            self.total_images += self.num_dark_fields
-        if self.dark_field_mode == 'Both':
-            self.total_images += self.num_dark_fields
-        if self.flat_field_mode != 'None':
-            self.total_images += self.num_flat_fields
-        if self.flat_field_mode == 'Both':
-            self.total_images += self.num_flat_fields
-        # Set the total number of frames to capture and start capture on file plugin
-        self.epics_pvs['FPNumCapture'].put(self.total_images, wait=True)
-        self.epics_pvs['FPCapture'].put('Capture')
 
     def end_scan(self):
         """Performs the operations needed at the very end of a scan.
@@ -282,27 +215,12 @@ class TomoScan2BM(TomoScan):
 
         - Closes shutter.        
         """
-        log.info('end scan')
-        # Add theta in the hdf file
+         # Add theta in the hdf file
         self.add_theta()
 
-        # Save the configuration
-        # Strip the extension from the FullFileName and add .config
-        full_file_name = self.epics_pvs['FPFullFileName'].get(as_string=True)
-        log.info('data save location: %s', full_file_name)
-        config_file_root = os.path.splitext(full_file_name)[0]
-        self.save_configuration(config_file_root + '.config')
-        # Put the camera back in FreeRun mode and acquiring
-        # self.set_trigger_mode('FreeRun', 1)
-        # self.epics_pvs['CamAcquire'].put('Acquire') ####
-        # self.wait_pv(self.epics_pvs['CamAcquire'], 1) ####
-        # Set the rotation speed to maximum
-        self.epics_pvs['RotationSpeed'].put(self.max_rotation_speed)
-        # Move the sample in.  Could be out if scan was aborted while taking flat fields
-        self.move_sample_in()
         if self.return_rotation == 'Yes':
-        # Reset rotation position by mod 360 , the actual return 
-        # to start position is handled by super().end_scan()
+            # Reset rotation position by mod 360 , the actual return 
+            # to start position is handled by super().end_scan()
             current_angle = self.epics_pvs['Rotation'].get() %360
             self.epics_pvs['RotationSet'].put('Set', wait=True)
             self.epics_pvs['Rotation'].put(current_angle, wait=True)
@@ -333,25 +251,6 @@ class TomoScan2BM(TomoScan):
                 log.error('Add theta aborted')
         else:
             log.error('Failed adding theta. %s file does not exist', full_file_name)
-
-    def collect_dark_fields(self):
-        """Collects dark field images.
-        Calls ``collect_static_frames()`` with the number of images specified
-        by the ``NumDarkFields`` PV.
-        """
-
-        log.info('collect dark fields')
-        super().collect_dark_fields()
-        self.collect_static_frames(self.num_dark_fields)
-
-    def collect_flat_fields(self):
-        """Collects flat field images.
-        Calls ``collect_static_frames()`` with the number of images specified
-        by the ``NumFlatFields`` PV.
-        """
-        log.info('collect flat fields')
-        super().collect_flat_fields()
-        self.collect_static_frames(self.num_flat_fields)
 
     def wait_pv(self, epics_pv, wait_val, timeout=-1):
         """Wait on a pv to be a value until max_timeout (default forever)
@@ -416,46 +315,3 @@ class TomoScan2BM(TomoScan):
             if timeout > 0:
                 if elapsed_time >= timeout:
                    exit()
-
-    def collect_projections(self):
-        """Collects projections in fly scan mode.
-
-        This does the following:
-
-        - Set the rotation motor position specified by the ``RotationStart`` PV in the
-          PSOstartPos.
-
-        - Computes and sets the speed of the rotation motor so that it reaches the next projection
-          angle just after the current exposure and readout are complete.
-
-        - These will be used by the PSO to calculate the Taxi distance and rotary stage acceleration.
-
-        - Starts the file plugin capturing in stream mode.
-
-        - Starts the camera acquiring in external trigger mode.
-
-        - Starts the PSOfly.
-
-        - Wait on the PSO done.
-        """
-
-        log.info('collect projections')
-        super().collect_projections()
-        log.info('taxi before starting capture')
-        # Taxi before starting capture
-        self.epics_pvs['PSOtaxi'].put(1, wait=True)
-        self.wait_pv(self.epics_pvs['PSOtaxi'], 0)
-        
-        self.set_trigger_mode('PSOExternal', self.num_angles)
-        # Start the camera
-        self.epics_pvs['CamAcquire'].put('Acquire')
-        self.wait_pv(self.epics_pvs['CamAcquire'], 1)
-        log.info('start fly scan')
-        # Start fly scan
-        self.epics_pvs['PSOfly'].put(1) #, wait=True)
-        # wait for acquire to finish
-        # wait_camera_done instead of the wait_pv enabled the counter update
-        # self.wait_pv(self.epics_pvs['PSOfly'], 0)
-        time_per_angle = self.compute_frame_time()
-        collection_time = self.num_angles * time_per_angle
-        self.wait_camera_done(collection_time + 60.)

@@ -1,7 +1,7 @@
-:mod:`tomoscan.tomoscan_13bm`
+:mod:`tomoscan.tomoscan_13bm_pso`
 =============================
 
-.. automodule:: tomoscan.tomoscan_13bm
+.. automodule:: tomoscan.tomoscan_13bm_pso
    :members:
    :show-inheritance:
    :undoc-members:
@@ -10,4 +10,4 @@
 
    .. autosummary::
    
-      tomoscan.tomoscan_13bm
+      tomoscan.tomoscan_13bm_pso

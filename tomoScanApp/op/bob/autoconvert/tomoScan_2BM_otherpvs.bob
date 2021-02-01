@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <display version="2.0.0">
   <name>tomoScan_2BM_otherpvs</name>
-  <x>109</x>
-  <y>156</y>
+  <x>94</x>
+  <y>699</y>
   <width>640</width>
-  <height>325</height>
+  <height>350</height>
   <background_color>
     <color red="187" green="187" blue="187">
     </color>
@@ -358,6 +358,36 @@
     <pv_name>$(P)$(R)ShutterStatusPVName</pv_name>
     <x>254</x>
     <y>215</y>
+    <width>380</width>
+    <font>
+      <font family="Liberation Sans" style="REGULAR" size="16.0">
+      </font>
+    </font>
+    <background_color>
+      <color red="115" green="223" blue="255">
+      </color>
+    </background_color>
+    <format>6</format>
+    <show_units>false</show_units>
+    <border_alarm_sensitive>false</border_alarm_sensitive>
+  </widget>
+  <widget type="label" version="2.0.0">
+    <name>text #89</name>
+    <text>Dark/flat Stream Prefix</text>
+    <x>89</x>
+    <y>315</y>
+    <width>160</width>
+    <font>
+      <font family="Liberation Sans" style="REGULAR" size="16.0">
+      </font>
+    </font>
+    <horizontal_alignment>2</horizontal_alignment>
+  </widget>
+  <widget type="textentry" version="3.0.0">
+    <name>text entry #92</name>
+    <pv_name>$(P)$(R)PvaStreamPVPrefix</pv_name>
+    <x>254</x>
+    <y>315</y>
     <width>380</width>
     <font>
       <font family="Liberation Sans" style="REGULAR" size="16.0">

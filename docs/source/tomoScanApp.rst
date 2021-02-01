@@ -7,10 +7,15 @@ tomoScanApp EPICS application
    :hidden:
 
    tomoScan.template
+   tomoScan_PSO.template
    tomoScan_13BM.template
+   tomoScan_13BM_MCS.template
+   tomoScan_13BM_PSO.template
    tomoScan_2BM.template
    tomoScan_settings.req
-   tomoScan_13BM_settings.req
+   tomoScan_PSO_settings.req
+   tomoScan_13BM_MCS_settings.req
+   tomoScan_13BM_PSO_settings.req
    tomoScan_2BM_settings.req
    tomoScan.substitutions
 
@@ -404,6 +409,17 @@ If these PVs are changed tomoscan must be restarted.
 .. image:: img/tomoScanEPICS_PVs.png
     :width: 75%
     :align: center
+
+tomoScan_pso.adl
+~~~~~~~~~~~~~~~~
+
+The following is the MEDM screen :download:`tomoScan_pso.adl <../../tomoScanApp/op/adl/tomoScan_pso.adl>`. 
+It contains the PVs that control the Aerotech PSO pulse control.
+
+.. image:: img/tomoScan_pso.png
+    :width: 75%
+    :align: center
+
 
 Beamline-specific files
 =======================

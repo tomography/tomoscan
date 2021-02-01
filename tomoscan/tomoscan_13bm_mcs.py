@@ -2,8 +2,9 @@
 
    Classes
    -------
-   TomoScan13BM
+   TomoScan13BM_MCS
      Derived class for tomography scanning with EPICS at APS beamline 13-BM-D
+     using the OMS-58 controller step output and the SIS233820 MCS as the trigger source
 """
 import time
 import math
@@ -11,8 +12,9 @@ import os
 from tomoscan import TomoScan
 from tomoscan import log
 
-class TomoScan13BM(TomoScan):
+class TomoScan13BM_MCS(TomoScan):
     """Derived class used for tomography scanning with EPICS at APS beamline 13-BM-D
+       using the OMS-58 controller step output and the SIS233820 MCS as the trigger source
 
     Parameters
     ----------

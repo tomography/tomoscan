@@ -95,6 +95,7 @@ class TomoScan():
         self.control_pvs['RotationStop']       = PV(rotation_pv_name + '.STOP')
         self.control_pvs['RotationDmov']       = PV(rotation_pv_name + '.DMOV')
         self.control_pvs['RotationDirection']  = PV(rotation_pv_name + '.DIR')
+        self.control_pvs['RotationAccelTime']  = PV(rotation_pv_name + '.ACCL')
 
         #Define PVs from the camera IOC that we will need
         prefix = self.pv_prefixes['Camera']
@@ -528,7 +529,7 @@ class TomoScan():
         exposure_time : float, optional
             The exposure time to use. If None then the value of the ``FlatExposureTime`` PV is used.
         """
-        log.info('Flat field exposure time is %s as the projection esposure time', self.epics_pvs['DifferentFlatExposure'].get(as_string=True))
+
         if self.epics_pvs['DifferentFlatExposure'].get(as_string=True) == 'Same':
             self.set_exposure_time(exposure_time)
             return

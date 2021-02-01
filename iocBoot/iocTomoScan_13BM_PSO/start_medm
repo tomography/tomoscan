@@ -1,0 +1,1 @@
+medm -x -macro "P=13BMDPG1:,R=TS:,BEAMLINE=tomoScan_13BM" ../../tomoScanApp/op/adl/tomoScan.adl &
