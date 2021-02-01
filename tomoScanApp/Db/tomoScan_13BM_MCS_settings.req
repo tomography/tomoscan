@@ -1,7 +1,7 @@
 # This file is used by autosave to determine what PVs to save
 # It is also used by tomoScan to determine what PVs to create
 
-# This is the file for the tomoscan_13bm derived class.
+# This is the file for the tomoscan_13bm_mcs derived class.
 
 ################
 # SIS MCS Prefix
