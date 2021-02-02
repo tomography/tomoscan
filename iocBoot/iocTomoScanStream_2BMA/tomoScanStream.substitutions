@@ -10,7 +10,7 @@ file "$(TOP)/db/tomoScan_PSO.template"
 {
 pattern
 {  P,       R,     PSO_MODEL, PSO_PORT, PSO_AXIS_NAME, PSO_ENC_INPUT, PSO_ENC_PER_ROTATION}
-{2bma:, TomoScanStream:,    0,      PSO_PORT,      Z,             3,            -32768000.}
+{2bma:, TomoScanStream:,    0,      PSO_PORT,      X,             3,            -32768000.}
 }
 
 file "$(TOP)/db/tomoScan_2BM.template"
