@@ -5,6 +5,15 @@ pattern
 {2bma:, TomoScan:, 2bmbSP1:, 2bmbSP1:HDF1:,  2bma:m82,  2bma:m49,  2bma:m20,  2bma:A_shutter:close.VAL,    1,        2bma:A_shutter:open.VAL,      1}
 }
 
+# For the Ensemble PSO_ENC_PER_ROTATION is a signed number containing the number of encoder pulses per rotation in positive dial coordinates
+file "$(TOP)/db/tomoScan_PSO.template"
+{
+pattern
+{  P,       R,     PSO_MODEL, PSO_PORT, PSO_AXIS_NAME, PSO_ENC_INPUT, PSO_ENC_PER_ROTATION}
+{2bma:, TomoScan:,    0,      PSO_PORT,      Z,             3,            -32768000.}
+}
+
+
 file "$(TOP)/db/tomoScan_2BM.template"
 {
 pattern

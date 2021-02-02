@@ -1,3 +1,4 @@
 file "tomoScan_settings.req", P=$(P), R=$(R)
+file "tomoScan_PSO_settings.req", P=$(P), R=$(R)
 file "tomoScan_2BM_settings.req", P=$(P), R=$(R)
 file "tomoScanStream_settings.req", P=$(P), R=$(R)

@@ -9,10 +9,12 @@ epicsEnvSet("R", "TomoScanStream:")
 dbLoadDatabase "../../dbd/tomoScanApp.dbd"
 tomoScanApp_registerRecordDeviceDriver pdbbase
 
-# Use these lines to run the xxx application on APSshare.
-#dbLoadDatabase "/APSshare/epics/synApps_6_1/support/xxx-R6-1/dbd/iocxxxLinux.dbd"
-#iocxxxLinux_registerRecordDeviceDriver pdbbase
-
+# Connect to the Aerotech controller
+drvAsynIPPortConfigure("PSO_PORT", "2bm_ensemble", 0, 0, 0)
+asynOctetSetInputEos(PSO_PORT, 0, "\n")
+asynOctetSetOutputEos(PSO_PORT, 0, "\n")
+asynSetTraceIOMask(PSO_PORT, 0, ESCAPE)
+asynSetTraceMask(PSO_PORT, 0, DRIVER|ERROR)
 
 dbLoadTemplate("tomoScanStream.substitutions")
 
