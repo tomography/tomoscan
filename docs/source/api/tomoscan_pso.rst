@@ -1,5 +1,5 @@
 :mod:`tomoscan.tomoscan_pso`
-========================
+============================
 
 .. automodule:: tomoscan.tomoscan_pso
    :members:
