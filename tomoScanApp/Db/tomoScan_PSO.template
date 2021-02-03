@@ -59,6 +59,7 @@ record(stringin, "$(P)$(R)PSOAxisName")
 record(ai, "$(P)$(R)PSOCountsPerRotation") 
 {
     field(DESC, "Number of encoder counts per revolution")
+    field(VAL,  "$(PSO_ENC_PER_ROTATION)")
 }
 
 record(longin, "$(P)$(R)PSOEncoderInput") 
