@@ -126,6 +126,7 @@ class TomoScan():
             self.control_pvs['CamArrayCallbacks']   = PV(camera_prefix + 'ArrayCallbacks')
             self.control_pvs['CamFrameRateEnable']  = PV(camera_prefix + 'FrameRateEnable')
             self.control_pvs['CamTriggerSource']    = PV(camera_prefix + 'TriggerSource')
+            self.control_pvs['CamTriggerSoftware']  = PV(camera_prefix + 'TriggerSoftware')
             if model.find('Grasshopper3') != -1:
                 self.control_pvs['CamVideoMode']    = PV(camera_prefix + 'GC_VideoMode_RBV')
 
@@ -613,6 +614,7 @@ class TomoScan():
                         log.error("File name template: %s not supported", self.file_template)
                         raise TypeError
             if os.path.exists(file_name):
+                self.epics_pvs['ScanStatus'].put('Waiting for overwrite confirmation')
                 reply = pymsgbox.confirm('File ' + file_name + ' exists.  Overwrite?',
                                          'Overwrite file', ['Yes', 'No'])
                 if reply == 'No':
@@ -860,17 +862,14 @@ class TomoScan():
 
         # We need to use the actual exposure time that the camera is using, not the requested time
         exposure = self.epics_pvs['CamAcquireTimeRBV'].value
-        # Add some extra time to exposure time for margin.  These values are empirical.
-        if exposure > 2.3:
-            frame_time = exposure + .01
-        elif exposure > 1.0:
-            frame_time = exposure + .002
-        else:
-            frame_time = exposure + .001
+        # Add some extra time to exposure time for margin.
+        # Adding 0.5% to the exposure time, and at least 1 ms seems to work for FLIR cameras
+        # This is empirical and should be made camera dependent
+        frame_time = exposure * 1.005
 
-        # If the time is less than the readout time then use the readout time
+        # If the time is less than the readout time then use the readout time plus 1 ms.
         if frame_time < readout:
-            frame_time = readout
+            frame_time = readout + .001
         return frame_time
 
     def wait_camera_done(self, timeout):
