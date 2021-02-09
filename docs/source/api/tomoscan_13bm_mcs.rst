@@ -1,5 +1,5 @@
 :mod:`tomoscan.tomoscan_13bm_mcs`
-=============================
+=================================
 
 .. automodule:: tomoscan.tomoscan_13bm_mcs
    :members:

@@ -22,8 +22,9 @@ tomoScanApp EPICS application
 
 tomoscan includes a complete example EPICS application, including:
 
-- A database file and corresponding autosave request file that contain only the PVs required by the tomoscan.py base class.
-- Database files and corresponding autosave request files that contain PVs used by the derived classes.
+- A database file and corresponding autosave request file that contain the PVs required by the tomoscan.py base class.
+- A database file and corresponding autosave request file that contain the PVs required by the tomoscan_pso.py intermediate base class.
+- Database files and corresponding autosave request files that contain PVs used by the beamline-specific derived classes.
 - OPI screens for medm, edm, caQtDM, CSS/Boy, and CSS/Phoebus
 - An example IOC application that can be used to run the above databases.
   The databases are loaded in the IOC with the example substitutions file, 
@@ -218,8 +219,18 @@ Exposure time
     - Description
   * - $(P)$(R)ExposureTime
     - ao
-    - The exposure time in seconds.  Currently the same time is used for dark fields, flat fields, and projections.
+    - The exposure time in seconds.  Currently the same time is used for dark fields and projections.
+      The time for flat fields can be different, and is controlled by the following 2 records.
       Writing to this PV will copy the value to the camera AcquireTime PV.
+  * - $(P)$(R)FlatExposureTime
+    - ao
+    - The exposure time for flat fields in seconds if the value of the $(P)$(R)DifferentFlatExposure
+      record is "Different".  Otherwise $(P)$(R)ExposureTime is also used for flat fields.
+  * - $(P)$(R)DifferentFlatExposure
+    - bo
+    - Controls whether $(P)$(R)ExposureTime or $(P)$(R)FlatExposureTime is used for the flat fields.
+      Choices are "Same" (0) or "Different (1).
+
 
 File path and name control
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -386,6 +397,91 @@ It contains 4 types of PVs:
 
 When the request file is read it is used to construct all of the EPICS PV names that are used by TomoScan.
 This allows TomoScan to avoid having any hard-coded PV names, and makes it easy to port to a new beamline.
+
+Intermediate base class files
+=============================
+The following tables list all of the records in the tomoScan_PSO.template file.
+This class is used when an Aerotech controller runs the rotation stage and
+the PSO output is used to trigger the camera.
+
+tomoScan_PSO.template
+---------------------
+
+This is the database file that contains only the PVs required by the tomoscan_pso.py base class.
+These records cannot be modified at run-time, except for the asyn record.
+Configuration records are set in the tomoScan.subsitutions file for each IOC, and set when the IOC starts.
+Status records contain read-only status information.
+
+:doc:`tomoScan.template`.
+
+PSO configuration
+~~~~~~~~~~~~~~~~~
+
+.. cssclass:: table-bordered table-striped table-hover
+.. list-table::
+  :header-rows: 1
+  :widths: 5 5 5 85
+
+  * - Record name
+    - Record type
+    - Access type
+    - Description
+  * - $(P)$(R)PSOControllerModel
+    - mbbi
+    - Configuration
+    - The Aerotech controller model being used. 
+      This is needed because some PSO commands are controller dependent, and there appears
+      to be no way to query the controller model.
+      The choices are "Ensemble" (0), and "A3200" (1).
+  * - $(P)$(R)PSOPSOStartTaxi
+    - ai
+    - Status
+    - The starting "taxi" position.  The taxi distance is used to allow the rotation stage
+      to accelerate and reach the desired rotation speed before the first projection angle.
+  * - $(P)$(R)PSOPSOEndTaxi
+    - ai
+    - Status
+    - The ending "taxi" position.  The taxi distance is used to allow the rotation stage
+      to deccelerate to 0 after reaching the final projection angle.
+  * - $(P)$(R)PSOEncoderCountsPerStep
+    - longin
+    - Status
+    - The number of encoder counts between projections.
+  * - $(P)$(R)PSOCommand
+    - asyn
+    - Write/read
+    - This record is used to send PSO commands to the Aerotech controller.
+      An EPICS drvAsynIPPort is created in the IOC startup script using the IP address of the
+      Aerotech controller, and this record communicates using that asyn port.
+      The record uses "Hybid" mode for both input and output, so that the strings can be
+      longer than 40 characters.  This means that it uses the .BOUT field for output and
+      the .BINP field for input.
+      The .BOUT field is a text-input widget in the medm screen so the user can type commands
+      directly to the controller for debugging.
+  * - $(P)$(R)PSOAxisName
+    - stringin
+    - Configuration
+    - The name of the rotation axis in the controller.  This is the name that is displayed
+      in the Aerotech Motion Composer software.
+  * - $(P)$(R)PSOCountsPerRotation
+    - ai
+    - Configuration
+    - The number of encoder pulses per 360 degree rotation of the rotation stage.
+      This is a signed number, and must be negative if the encoder direction and motor direction
+      in the controller are different.
+      On the A3200 this value is read from the controller in the constructor,
+      and includes the correct sign.  This overrides the value in the subsitutions file.
+      On the Ensemble this value must be provided in the substitutions file.
+  * - $(P)$(R)PSOEncoderInput
+    - longin
+    - Configuration
+    - Selects which encoder signal is used for the PSO control. This is hardware dependent,
+      and is typically 2 or 3.
+  * - $(P)$(R)PSOPulsWidth
+    - ao
+    - Write/read
+    - Sets the PSO output pulse width in microseconds.  Different cameras may have different
+      requirements for the trigger pulse width, so this value can be modified.
 
 medm files
 ----------
