@@ -4,16 +4,6 @@
 # both in the configuration files written by tomoscan, and in the
 # files written by areaDetector file plugin.
 
-
-############
-# PSO Prefix
-############
-
-record(stringout, "$(P)$(R)PSOPVPrefix")
-{
-   field(VAL,  "$(PSO)")
-}
-
 ####################
 # Energy information
 ####################
