@@ -6,10 +6,10 @@ release 1
 x 1922
 y 22
 w 566
-h 1396
-font "helvetica-medium-r-18.0"
-ctlFont "helvetica-bold-r-10.0"
-btnFont "helvetica-medium-r-18.0"
+h 1181
+font "utopia-medium-r-24.0"
+ctlFont "helvetica-medium-r-8.0"
+btnFont "utopia-medium-r-24.0"
 fgColor rgb 0 0 0
 bgColor rgb 47872 47872 47872
 textColor rgb 0 0 0
@@ -81,7 +81,7 @@ x 0
 y 5
 w 565
 h 25
-font "helvetica-medium-r-18.0"
+font "utopia-medium-r-24.0"
 fontAlign "center"
 fgColor rgb 2560 0 47104
 bgColor index 3
@@ -89,32 +89,6 @@ useDisplayBg
 value {
   "2-BM Tomography   $(P)$(R)"
 }
-endObjectProperties
-
-# (Text Control)
-object activeXTextDspClass
-beginObjectProperties
-major 4
-minor 7
-release 0
-x 175
-y 390
-w 380
-h 20
-controlPv "$(P)$(R)PSOPVPrefix"
-format "string"
-font "helvetica-medium-r-12.0"
-fontAlign "left"
-fgColor rgb 0 0 0
-bgColor rgb 29440 57088 65280
-editable
-motifWidget
-limitsFromDb
-nullColor rgb 60928 46592 11008
-smartRefresh
-fastUpdate
-newPos
-objType "controls"
 endObjectProperties
 
 # (Text Control)
@@ -179,7 +153,7 @@ x 10
 y 440
 w 160
 h 20
-font "helvetica-medium-r-14.0"
+font "helvetica-medium-r-18.0"
 fontAlign "right"
 fgColor rgb 0 0 0
 bgColor index 3
@@ -195,11 +169,11 @@ beginObjectProperties
 major 4
 minor 1
 release 1
-x 40
+x 37
 y 415
-w 130
+w 133
 h 20
-font "helvetica-medium-r-14.0"
+font "helvetica-medium-r-18.0"
 fontAlign "right"
 fgColor rgb 0 0 0
 bgColor index 3
@@ -215,17 +189,17 @@ beginObjectProperties
 major 4
 minor 1
 release 1
-x 30
+x 75
 y 390
-w 140
+w 95
 h 20
-font "helvetica-medium-r-14.0"
+font "helvetica-medium-r-18.0"
 fontAlign "right"
 fgColor rgb 0 0 0
 bgColor index 3
 useDisplayBg
 value {
-  "PSO prefix"
+  "PSO setup"
 }
 endObjectProperties
 
@@ -235,11 +209,11 @@ beginObjectProperties
 major 4
 minor 1
 release 1
-x 6
+x -13
 y 490
-w 164
+w 183
 h 20
-font "helvetica-medium-r-14.0"
+font "helvetica-medium-r-18.0"
 fontAlign "right"
 fgColor rgb 0 0 0
 bgColor index 3
@@ -281,11 +255,11 @@ beginObjectProperties
 major 4
 minor 1
 release 1
-x 21
+x 2
 y 465
-w 149
+w 168
 h 20
-font "helvetica-medium-r-14.0"
+font "helvetica-medium-r-18.0"
 fontAlign "right"
 fgColor rgb 0 0 0
 bgColor index 3
@@ -327,11 +301,11 @@ beginObjectProperties
 major 4
 minor 1
 release 1
-x 19
+x 0
 y 515
-w 151
+w 170
 h 20
-font "helvetica-medium-r-14.0"
+font "helvetica-medium-r-18.0"
 fontAlign "right"
 fgColor rgb 0 0 0
 bgColor index 3
@@ -347,11 +321,11 @@ beginObjectProperties
 major 4
 minor 1
 release 1
-x 4
+x -15
 y 540
-w 166
+w 185
 h 20
-font "helvetica-medium-r-14.0"
+font "helvetica-medium-r-18.0"
 fontAlign "right"
 fgColor rgb 0 0 0
 bgColor index 3
@@ -439,7 +413,7 @@ x 143
 y 365
 w 281
 h 20
-font "helvetica-medium-r-14.0"
+font "helvetica-medium-r-18.0"
 fontAlign "center"
 fgColor rgb 2560 0 47104
 bgColor index 3
@@ -501,7 +475,7 @@ x 88
 y 180
 w 390
 h 20
-font "helvetica-medium-r-14.0"
+font "helvetica-medium-r-18.0"
 fontAlign "center"
 fgColor rgb 2560 0 47104
 bgColor index 3
@@ -552,7 +526,7 @@ x 160
 y 330
 w 160
 h 20
-font "helvetica-medium-r-14.0"
+font "helvetica-medium-r-18.0"
 fontAlign "right"
 fgColor rgb 0 0 0
 bgColor index 3
@@ -572,7 +546,7 @@ x 150
 y 205
 w 170
 h 20
-font "helvetica-medium-r-14.0"
+font "helvetica-medium-r-18.0"
 fontAlign "right"
 fgColor rgb 0 0 0
 bgColor index 3
@@ -592,7 +566,7 @@ x 60
 y 230
 w 260
 h 20
-font "helvetica-medium-r-14.0"
+font "helvetica-medium-r-18.0"
 fontAlign "right"
 fgColor rgb 0 0 0
 bgColor index 3
@@ -612,7 +586,7 @@ x 60
 y 255
 w 260
 h 20
-font "helvetica-medium-r-14.0"
+font "helvetica-medium-r-18.0"
 fontAlign "right"
 fgColor rgb 0 0 0
 bgColor index 3
@@ -632,7 +606,7 @@ x 30
 y 280
 w 290
 h 20
-font "helvetica-medium-r-14.0"
+font "helvetica-medium-r-18.0"
 fontAlign "right"
 fgColor rgb 0 0 0
 bgColor index 3
@@ -652,7 +626,7 @@ x 160
 y 305
 w 160
 h 20
-font "helvetica-medium-r-14.0"
+font "helvetica-medium-r-18.0"
 fontAlign "right"
 fgColor rgb 0 0 0
 bgColor index 3
@@ -902,7 +876,7 @@ x 20
 y 145
 w 140
 h 20
-font "helvetica-medium-r-14.0"
+font "helvetica-medium-r-18.0"
 fontAlign "right"
 fgColor rgb 0 0 0
 bgColor index 3
@@ -918,11 +892,11 @@ beginObjectProperties
 major 4
 minor 1
 release 1
-x 50
+x 44
 y 70
-w 110
+w 116
 h 20
-font "helvetica-medium-r-14.0"
+font "helvetica-medium-r-18.0"
 fontAlign "right"
 fgColor rgb 0 0 0
 bgColor index 3
@@ -942,7 +916,7 @@ x 20
 y 95
 w 140
 h 20
-font "helvetica-medium-r-14.0"
+font "helvetica-medium-r-18.0"
 fontAlign "right"
 fgColor rgb 0 0 0
 bgColor index 3
@@ -962,7 +936,7 @@ x 20
 y 120
 w 140
 h 20
-font "helvetica-medium-r-14.0"
+font "helvetica-medium-r-18.0"
 fontAlign "right"
 fgColor rgb 0 0 0
 bgColor index 3
@@ -1125,11 +1099,11 @@ beginObjectProperties
 major 4
 minor 1
 release 1
-x 40
+x 27
 y 565
-w 130
+w 143
 h 20
-font "helvetica-medium-r-14.0"
+font "helvetica-medium-r-18.0"
 fontAlign "right"
 fgColor rgb 0 0 0
 bgColor index 3
@@ -1175,7 +1149,7 @@ x 143
 y 45
 w 281
 h 20
-font "helvetica-medium-r-14.0"
+font "helvetica-medium-r-18.0"
 fontAlign "center"
 fgColor rgb 2560 0 47104
 bgColor index 3
@@ -1243,11 +1217,11 @@ beginObjectProperties
 major 4
 minor 1
 release 1
-x 70
+x 64
 y 700
-w 90
+w 96
 h 20
-font "helvetica-medium-r-14.0"
+font "helvetica-medium-r-18.0"
 fontAlign "right"
 fgColor rgb 0 0 0
 bgColor index 3
@@ -1267,7 +1241,7 @@ x 50
 y 725
 w 110
 h 20
-font "helvetica-medium-r-14.0"
+font "helvetica-medium-r-18.0"
 fontAlign "right"
 fgColor rgb 0 0 0
 bgColor index 3
@@ -1283,11 +1257,11 @@ beginObjectProperties
 major 4
 minor 1
 release 1
-x 50
+x 48
 y 750
-w 110
+w 112
 h 20
-font "helvetica-medium-r-14.0"
+font "helvetica-medium-r-18.0"
 fontAlign "right"
 fgColor rgb 0 0 0
 bgColor index 3
@@ -1307,7 +1281,7 @@ x 50
 y 775
 w 110
 h 20
-font "helvetica-medium-r-14.0"
+font "helvetica-medium-r-18.0"
 fontAlign "right"
 fgColor rgb 0 0 0
 bgColor index 3
@@ -1327,7 +1301,7 @@ x 20
 y 800
 w 140
 h 20
-font "helvetica-medium-r-14.0"
+font "helvetica-medium-r-18.0"
 fontAlign "right"
 fgColor rgb 0 0 0
 bgColor index 3
@@ -1347,7 +1321,7 @@ x 10
 y 825
 w 150
 h 20
-font "helvetica-medium-r-14.0"
+font "helvetica-medium-r-18.0"
 fontAlign "right"
 fgColor rgb 0 0 0
 bgColor index 3
@@ -1363,11 +1337,11 @@ beginObjectProperties
 major 4
 minor 1
 release 1
-x 60
+x 48
 y 850
-w 100
+w 112
 h 20
-font "helvetica-medium-r-14.0"
+font "helvetica-medium-r-18.0"
 fontAlign "right"
 fgColor rgb 0 0 0
 bgColor index 3
@@ -1383,11 +1357,11 @@ beginObjectProperties
 major 4
 minor 1
 release 1
-x 41
+x 23
 y 875
-w 119
+w 137
 h 20
-font "helvetica-medium-r-14.0"
+font "helvetica-medium-r-18.0"
 fontAlign "right"
 fgColor rgb 0 0 0
 bgColor index 3
@@ -1656,7 +1630,7 @@ x 158
 y 675
 w 249
 h 20
-font "helvetica-medium-r-14.0"
+font "helvetica-medium-r-18.0"
 fontAlign "center"
 fgColor rgb 2560 0 47104
 bgColor index 3
@@ -1692,7 +1666,7 @@ x 158
 y 675
 w 249
 h 20
-font "helvetica-medium-r-14.0"
+font "helvetica-medium-r-18.0"
 fontAlign "center"
 fgColor rgb 2560 0 47104
 bgColor index 3
@@ -1779,7 +1753,7 @@ x 143
 y 910
 w 281
 h 20
-font "helvetica-medium-r-14.0"
+font "helvetica-medium-r-18.0"
 fontAlign "center"
 fgColor rgb 2560 0 47104
 bgColor index 3
@@ -1830,7 +1804,7 @@ x 30
 y 935
 w 140
 h 20
-font "helvetica-medium-r-14.0"
+font "helvetica-medium-r-18.0"
 fontAlign "right"
 fgColor rgb 0 0 0
 bgColor index 3
@@ -1850,7 +1824,7 @@ x 40
 y 960
 w 130
 h 20
-font "helvetica-medium-r-14.0"
+font "helvetica-medium-r-18.0"
 fontAlign "right"
 fgColor rgb 0 0 0
 bgColor index 3
@@ -1866,11 +1840,11 @@ beginObjectProperties
 major 4
 minor 1
 release 1
-x 10
+x -15
 y 985
-w 160
+w 185
 h 20
-font "helvetica-medium-r-14.0"
+font "helvetica-medium-r-18.0"
 fontAlign "right"
 fgColor rgb 0 0 0
 bgColor index 3
@@ -1886,11 +1860,11 @@ beginObjectProperties
 major 4
 minor 1
 release 1
-x 31
+x 10
 y 1010
-w 139
+w 160
 h 20
-font "helvetica-medium-r-14.0"
+font "helvetica-medium-r-18.0"
 fontAlign "right"
 fgColor rgb 0 0 0
 bgColor index 3
@@ -2105,7 +2079,7 @@ x 158
 y 1155
 w 249
 h 20
-font "helvetica-medium-r-14.0"
+font "helvetica-medium-r-18.0"
 fontAlign "center"
 fgColor rgb 2560 0 47104
 bgColor index 3
@@ -2146,7 +2120,7 @@ x 143
 y 1155
 w 281
 h 20
-font "helvetica-medium-r-14.0"
+font "helvetica-medium-r-18.0"
 fontAlign "center"
 fgColor rgb 2560 0 47104
 bgColor index 3
@@ -2275,7 +2249,7 @@ x 30
 y 1070
 w 140
 h 20
-font "helvetica-medium-r-14.0"
+font "helvetica-medium-r-18.0"
 fontAlign "right"
 fgColor rgb 0 0 0
 bgColor index 3
@@ -2295,7 +2269,7 @@ x 30
 y 1095
 w 140
 h 20
-font "helvetica-medium-r-14.0"
+font "helvetica-medium-r-18.0"
 fontAlign "right"
 fgColor rgb 0 0 0
 bgColor index 3
@@ -2315,7 +2289,7 @@ x 30
 y 1120
 w 140
 h 20
-font "helvetica-medium-r-14.0"
+font "helvetica-medium-r-18.0"
 fontAlign "right"
 fgColor rgb 0 0 0
 bgColor index 3
@@ -2361,7 +2335,7 @@ x 143
 y 1045
 w 281
 h 20
-font "helvetica-medium-r-14.0"
+font "helvetica-medium-r-18.0"
 fontAlign "center"
 fgColor rgb 2560 0 47104
 bgColor index 3
@@ -2586,7 +2560,7 @@ x 50
 y 1180
 w 110
 h 20
-font "helvetica-medium-r-14.0"
+font "helvetica-medium-r-18.0"
 fontAlign "right"
 fgColor rgb 0 0 0
 bgColor index 3
@@ -2606,7 +2580,7 @@ x 50
 y 1205
 w 110
 h 20
-font "helvetica-medium-r-14.0"
+font "helvetica-medium-r-18.0"
 fontAlign "right"
 fgColor rgb 0 0 0
 bgColor index 3
@@ -2622,11 +2596,11 @@ beginObjectProperties
 major 4
 minor 1
 release 1
-x 42
+x 24
 y 1230
-w 118
+w 136
 h 20
-font "helvetica-medium-r-14.0"
+font "helvetica-medium-r-18.0"
 fontAlign "right"
 fgColor rgb 0 0 0
 bgColor index 3
@@ -2646,7 +2620,7 @@ x 60
 y 1255
 w 100
 h 20
-font "helvetica-medium-r-14.0"
+font "helvetica-medium-r-18.0"
 fontAlign "right"
 fgColor rgb 0 0 0
 bgColor index 3
@@ -2666,7 +2640,7 @@ x 60
 y 1280
 w 100
 h 20
-font "helvetica-medium-r-14.0"
+font "helvetica-medium-r-18.0"
 fontAlign "right"
 fgColor rgb 0 0 0
 bgColor index 3
@@ -2686,7 +2660,7 @@ x 60
 y 1305
 w 100
 h 20
-font "helvetica-medium-r-14.0"
+font "helvetica-medium-r-18.0"
 fontAlign "right"
 fgColor rgb 0 0 0
 bgColor index 3
@@ -2706,7 +2680,7 @@ x 60
 y 1330
 w 100
 h 20
-font "helvetica-medium-r-14.0"
+font "helvetica-medium-r-18.0"
 fontAlign "right"
 fgColor rgb 0 0 0
 bgColor index 3
@@ -2726,7 +2700,7 @@ x 60
 y 1355
 w 100
 h 20
-font "helvetica-medium-r-14.0"
+font "helvetica-medium-r-18.0"
 fontAlign "right"
 fgColor rgb 0 0 0
 bgColor index 3
@@ -2746,7 +2720,7 @@ x 60
 y 1380
 w 100
 h 20
-font "helvetica-medium-r-14.0"
+font "helvetica-medium-r-18.0"
 fontAlign "right"
 fgColor rgb 0 0 0
 bgColor index 3
@@ -2777,11 +2751,11 @@ beginObjectProperties
 major 4
 minor 1
 release 1
-x 40
+x 33
 y 590
-w 130
+w 137
 h 20
-font "helvetica-medium-r-14.0"
+font "helvetica-medium-r-18.0"
 fontAlign "right"
 fgColor rgb 0 0 0
 bgColor index 3
@@ -2827,7 +2801,7 @@ x 10
 y 615
 w 160
 h 20
-font "helvetica-medium-r-14.0"
+font "helvetica-medium-r-18.0"
 fontAlign "right"
 fgColor rgb 0 0 0
 bgColor index 3
@@ -2869,11 +2843,11 @@ beginObjectProperties
 major 4
 minor 1
 release 1
-x 40
+x 39
 y 640
-w 130
+w 131
 h 20
-font "helvetica-medium-r-14.0"
+font "helvetica-medium-r-18.0"
 fontAlign "right"
 fgColor rgb 0 0 0
 bgColor index 3
@@ -3447,4 +3421,37 @@ endGroup
 
 endObjectProperties
 
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 175
+y 390
+w 100
+h 20
+fgColor rgb 0 0 0
+bgColor rgb 29440 57088 65280
+topShadowColor rgb 55808 55808 55808
+botShadowColor rgb 17920 17920 17920
+font "helvetica-medium-r-12.0"
+icon
+buttonLabel "PSO setup"
+numPvs 2
+numDsps 1
+displayFileName {
+  0 "tomoScan_pso.edl"
+}
+menuLabel {
+  0 "PSO setup"
+}
+symbols {
+  0 "P=$(P),R=$(R)"
+}
+replaceSymbols {
+  0 1
+}
+endObjectProperties
 

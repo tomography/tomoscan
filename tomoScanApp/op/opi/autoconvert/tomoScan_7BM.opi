@@ -400,12 +400,12 @@ $(pv_value)</tooltip>
   <widget typeId="org.csstudio.opibuilder.widgets.ActionButton" version="2.0.0">
     <actions hook="false" hook_all="false">
       <action type="OPEN_DISPLAY">
-        <path>$(BEAMLINE)_pso.opi</path>
+        <path>tomoScan_pso.opi</path>
         <macros>
           <include_parent_macros>true</include_parent_macros>
         </macros>
         <mode>1</mode>
-        <description>Experiment Information</description>
+        <description>Aerotech PSO</description>
       </action>
     </actions>
     <alarm_pulsing>false</alarm_pulsing>

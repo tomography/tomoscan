@@ -7,7 +7,7 @@
             <x>1922</x>
             <y>22</y>
             <width>566</width>
-            <height>1396</height>
+            <height>1181</height>
         </rect>
     </property>
     <property name="styleSheet">
@@ -249,57 +249,6 @@ border-radius: 2px;
             <property name="geometry">
                 <rect>
                     <x>175</x>
-                    <y>390</y>
-                    <width>380</width>
-                    <height>20</height>
-                </rect>
-            </property>
-            <property name="fontScaleMode">
-                <enum>caLineEdit::WidthAndHeight</enum>
-            </property>
-            <property name="channel">
-                <string>$(P)$(R)PSOPVPrefix</string>
-            </property>
-            <property name="foreground">
-                <color alpha="255">
-                    <red>0</red>
-                    <green>0</green>
-                    <blue>0</blue>
-                </color>
-            </property>
-            <property name="background">
-                <color alpha="255">
-                    <red>115</red>
-                    <green>223</green>
-                    <blue>255</blue>
-                </color>
-            </property>
-            <property name="limitsMode">
-                <enum>caLineEdit::Channel</enum>
-            </property>
-            <property name="limitsMode">
-                <enum>caLineEdit::Channel</enum>
-            </property>
-            <property name="precisionMode">
-                <enum>caLineEdit::Channel</enum>
-            </property>
-            <property name="minValue">
-                <double>0.0</double>
-            </property>
-            <property name="maxValue">
-                <double>1.0</double>
-            </property>
-            <property name="colorMode">
-                <enum>caLineEdit::Static</enum>
-            </property>
-            <property name="formatType">
-                <enum>string</enum>
-            </property>
-        </widget>
-        <widget class="caTextEntry" name="caTextEntry_1">
-            <property name="geometry">
-                <rect>
-                    <x>175</x>
                     <y>415</y>
                     <width>380</width>
                     <height>20</height>
@@ -347,7 +296,7 @@ border-radius: 2px;
                 <enum>string</enum>
             </property>
         </widget>
-        <widget class="caTextEntry" name="caTextEntry_2">
+        <widget class="caTextEntry" name="caTextEntry_1">
             <property name="geometry">
                 <rect>
                     <x>175</x>
@@ -489,7 +438,7 @@ border-radius: 2px;
                 </color>
             </property>
             <property name="text">
-                <string>PSO prefix</string>
+                <string>PSO setup</string>
             </property>
             <property name="fontScaleMode">
                 <enum>ESimpleLabel::WidthAndHeight</enum>
@@ -499,9 +448,9 @@ border-radius: 2px;
             </property>
             <property name="geometry">
                 <rect>
-                    <x>30</x>
+                    <x>80</x>
                     <y>390</y>
-                    <width>140</width>
+                    <width>90</width>
                     <height>20</height>
                 </rect>
             </property>
@@ -542,7 +491,7 @@ border-radius: 2px;
                 </rect>
             </property>
         </widget>
-        <widget class="caTextEntry" name="caTextEntry_3">
+        <widget class="caTextEntry" name="caTextEntry_2">
             <property name="geometry">
                 <rect>
                     <x>175</x>
@@ -629,7 +578,7 @@ border-radius: 2px;
                 </rect>
             </property>
         </widget>
-        <widget class="caTextEntry" name="caTextEntry_4">
+        <widget class="caTextEntry" name="caTextEntry_3">
             <property name="geometry">
                 <rect>
                     <x>175</x>
@@ -752,7 +701,7 @@ border-radius: 2px;
                 </rect>
             </property>
         </widget>
-        <widget class="caTextEntry" name="caTextEntry_5">
+        <widget class="caTextEntry" name="caTextEntry_4">
             <property name="geometry">
                 <rect>
                     <x>175</x>
@@ -803,7 +752,7 @@ border-radius: 2px;
                 <enum>string</enum>
             </property>
         </widget>
-        <widget class="caTextEntry" name="caTextEntry_6">
+        <widget class="caTextEntry" name="caTextEntry_5">
             <property name="geometry">
                 <rect>
                     <x>175</x>
@@ -1255,7 +1204,7 @@ border-radius: 2px;
                             <height>147</height>
                         </rect>
                     </property>
-                    <widget class="caTextEntry" name="caTextEntry_7">
+                    <widget class="caTextEntry" name="caTextEntry_6">
                         <property name="geometry">
                             <rect>
                                 <x>0</x>
@@ -1306,7 +1255,7 @@ border-radius: 2px;
                             <enum>string</enum>
                         </property>
                     </widget>
-                    <widget class="caTextEntry" name="caTextEntry_8">
+                    <widget class="caTextEntry" name="caTextEntry_7">
                         <property name="geometry">
                             <rect>
                                 <x>0</x>
@@ -1357,7 +1306,7 @@ border-radius: 2px;
                             <enum>string</enum>
                         </property>
                     </widget>
-                    <widget class="caTextEntry" name="caTextEntry_9">
+                    <widget class="caTextEntry" name="caTextEntry_8">
                         <property name="geometry">
                             <rect>
                                 <x>0</x>
@@ -1408,7 +1357,7 @@ border-radius: 2px;
                             <enum>string</enum>
                         </property>
                     </widget>
-                    <widget class="caTextEntry" name="caTextEntry_10">
+                    <widget class="caTextEntry" name="caTextEntry_9">
                         <property name="geometry">
                             <rect>
                                 <x>0</x>
@@ -1459,7 +1408,7 @@ border-radius: 2px;
                             <enum>string</enum>
                         </property>
                     </widget>
-                    <widget class="caTextEntry" name="caTextEntry_11">
+                    <widget class="caTextEntry" name="caTextEntry_10">
                         <property name="geometry">
                             <rect>
                                 <x>0</x>
@@ -1510,7 +1459,7 @@ border-radius: 2px;
                             <enum>string</enum>
                         </property>
                     </widget>
-                    <widget class="caTextEntry" name="caTextEntry_12">
+                    <widget class="caTextEntry" name="caTextEntry_11">
                         <property name="geometry">
                             <rect>
                                 <x>0</x>
@@ -1773,7 +1722,7 @@ border-radius: 2px;
                         <height>97</height>
                     </rect>
                 </property>
-                <widget class="caTextEntry" name="caTextEntry_13">
+                <widget class="caTextEntry" name="caTextEntry_12">
                     <property name="geometry">
                         <rect>
                             <x>0</x>
@@ -1824,7 +1773,7 @@ border-radius: 2px;
                         <enum>string</enum>
                     </property>
                 </widget>
-                <widget class="caTextEntry" name="caTextEntry_14">
+                <widget class="caTextEntry" name="caTextEntry_13">
                     <property name="geometry">
                         <rect>
                             <x>0</x>
@@ -1875,7 +1824,7 @@ border-radius: 2px;
                         <enum>string</enum>
                     </property>
                 </widget>
-                <widget class="caTextEntry" name="caTextEntry_15">
+                <widget class="caTextEntry" name="caTextEntry_14">
                     <property name="geometry">
                         <rect>
                             <x>0</x>
@@ -1926,7 +1875,7 @@ border-radius: 2px;
                         <enum>string</enum>
                     </property>
                 </widget>
-                <widget class="caTextEntry" name="caTextEntry_16">
+                <widget class="caTextEntry" name="caTextEntry_15">
                     <property name="geometry">
                         <rect>
                             <x>0</x>
@@ -2052,7 +2001,7 @@ border-radius: 2px;
                 </rect>
             </property>
         </widget>
-        <widget class="caTextEntry" name="caTextEntry_17">
+        <widget class="caTextEntry" name="caTextEntry_16">
             <property name="geometry">
                 <rect>
                     <x>175</x>
@@ -2473,7 +2422,7 @@ border-radius: 2px;
                                 <height>197</height>
                             </rect>
                         </property>
-                        <widget class="caTextEntry" name="caTextEntry_18">
+                        <widget class="caTextEntry" name="caTextEntry_17">
                             <property name="geometry">
                                 <rect>
                                     <x>0</x>
@@ -2524,7 +2473,7 @@ border-radius: 2px;
                                 <enum>string</enum>
                             </property>
                         </widget>
-                        <widget class="caTextEntry" name="caTextEntry_19">
+                        <widget class="caTextEntry" name="caTextEntry_18">
                             <property name="geometry">
                                 <rect>
                                     <x>0</x>
@@ -2575,7 +2524,7 @@ border-radius: 2px;
                                 <enum>string</enum>
                             </property>
                         </widget>
-                        <widget class="caTextEntry" name="caTextEntry_20">
+                        <widget class="caTextEntry" name="caTextEntry_19">
                             <property name="geometry">
                                 <rect>
                                     <x>0</x>
@@ -2626,7 +2575,7 @@ border-radius: 2px;
                                 <enum>string</enum>
                             </property>
                         </widget>
-                        <widget class="caTextEntry" name="caTextEntry_21">
+                        <widget class="caTextEntry" name="caTextEntry_20">
                             <property name="geometry">
                                 <rect>
                                     <x>0</x>
@@ -2677,7 +2626,7 @@ border-radius: 2px;
                                 <enum>string</enum>
                             </property>
                         </widget>
-                        <widget class="caTextEntry" name="caTextEntry_22">
+                        <widget class="caTextEntry" name="caTextEntry_21">
                             <property name="geometry">
                                 <rect>
                                     <x>0</x>
@@ -2728,7 +2677,7 @@ border-radius: 2px;
                                 <enum>string</enum>
                             </property>
                         </widget>
-                        <widget class="caTextEntry" name="caTextEntry_23">
+                        <widget class="caTextEntry" name="caTextEntry_22">
                             <property name="geometry">
                                 <rect>
                                     <x>0</x>
@@ -2779,7 +2728,7 @@ border-radius: 2px;
                                 <enum>string</enum>
                             </property>
                         </widget>
-                        <widget class="caTextEntry" name="caTextEntry_24">
+                        <widget class="caTextEntry" name="caTextEntry_23">
                             <property name="geometry">
                                 <rect>
                                     <x>0</x>
@@ -2830,7 +2779,7 @@ border-radius: 2px;
                                 <enum>string</enum>
                             </property>
                         </widget>
-                        <widget class="caTextEntry" name="caTextEntry_25">
+                        <widget class="caTextEntry" name="caTextEntry_24">
                             <property name="geometry">
                                 <rect>
                                     <x>0</x>
@@ -3296,7 +3245,7 @@ border-radius: 2px;
                                 <height>97</height>
                             </rect>
                         </property>
-                        <widget class="caTextEntry" name="caTextEntry_26">
+                        <widget class="caTextEntry" name="caTextEntry_25">
                             <property name="geometry">
                                 <rect>
                                     <x>0</x>
@@ -3347,7 +3296,7 @@ border-radius: 2px;
                                 <enum>string</enum>
                             </property>
                         </widget>
-                        <widget class="caTextEntry" name="caTextEntry_27">
+                        <widget class="caTextEntry" name="caTextEntry_26">
                             <property name="geometry">
                                 <rect>
                                     <x>0</x>
@@ -3398,7 +3347,7 @@ border-radius: 2px;
                                 <enum>string</enum>
                             </property>
                         </widget>
-                        <widget class="caTextEntry" name="caTextEntry_28">
+                        <widget class="caTextEntry" name="caTextEntry_27">
                             <property name="geometry">
                                 <rect>
                                     <x>0</x>
@@ -3449,7 +3398,7 @@ border-radius: 2px;
                                 <enum>string</enum>
                             </property>
                         </widget>
-                        <widget class="caTextEntry" name="caTextEntry_29">
+                        <widget class="caTextEntry" name="caTextEntry_28">
                             <property name="geometry">
                                 <rect>
                                     <x>0</x>
@@ -3756,7 +3705,7 @@ border-radius: 2px;
                                 <height>72</height>
                             </rect>
                         </property>
-                        <widget class="caTextEntry" name="caTextEntry_30">
+                        <widget class="caTextEntry" name="caTextEntry_29">
                             <property name="geometry">
                                 <rect>
                                     <x>0</x>
@@ -3837,7 +3786,7 @@ border-radius: 2px;
                                 <enum>caMenu::Static</enum>
                             </property>
                         </widget>
-                        <widget class="caTextEntry" name="caTextEntry_31">
+                        <widget class="caTextEntry" name="caTextEntry_30">
                             <property name="geometry">
                                 <rect>
                                     <x>0</x>
@@ -4126,7 +4075,7 @@ border-radius: 2px;
                             <enum>caMenu::Static</enum>
                         </property>
                     </widget>
-                    <widget class="caTextEntry" name="caTextEntry_32">
+                    <widget class="caTextEntry" name="caTextEntry_31">
                         <property name="geometry">
                             <rect>
                                 <x>0</x>
@@ -4207,7 +4156,7 @@ border-radius: 2px;
                             <enum>caMenu::Static</enum>
                         </property>
                     </widget>
-                    <widget class="caTextEntry" name="caTextEntry_33">
+                    <widget class="caTextEntry" name="caTextEntry_32">
                         <property name="geometry">
                             <rect>
                                 <x>0</x>
@@ -4258,7 +4207,7 @@ border-radius: 2px;
                             <enum>decimal</enum>
                         </property>
                     </widget>
-                    <widget class="caTextEntry" name="caTextEntry_34">
+                    <widget class="caTextEntry" name="caTextEntry_33">
                         <property name="geometry">
                             <rect>
                                 <x>0</x>
@@ -4339,7 +4288,7 @@ border-radius: 2px;
                             <enum>caMenu::Static</enum>
                         </property>
                     </widget>
-                    <widget class="caTextEntry" name="caTextEntry_35">
+                    <widget class="caTextEntry" name="caTextEntry_34">
                         <property name="geometry">
                             <rect>
                                 <x>0</x>
@@ -4390,7 +4339,7 @@ border-radius: 2px;
                             <enum>decimal</enum>
                         </property>
                     </widget>
-                    <widget class="caTextEntry" name="caTextEntry_36">
+                    <widget class="caTextEntry" name="caTextEntry_35">
                         <property name="geometry">
                             <rect>
                                 <x>0</x>
@@ -4441,7 +4390,7 @@ border-radius: 2px;
                             <enum>decimal</enum>
                         </property>
                     </widget>
-                    <widget class="caTextEntry" name="caTextEntry_37">
+                    <widget class="caTextEntry" name="caTextEntry_36">
                         <property name="geometry">
                             <rect>
                                 <x>0</x>
@@ -4865,7 +4814,7 @@ border-radius: 2px;
                 </rect>
             </property>
         </widget>
-        <widget class="caTextEntry" name="caTextEntry_38">
+        <widget class="caTextEntry" name="caTextEntry_37">
             <property name="geometry">
                 <rect>
                     <x>175</x>
@@ -4952,7 +4901,7 @@ border-radius: 2px;
                 </rect>
             </property>
         </widget>
-        <widget class="caTextEntry" name="caTextEntry_39">
+        <widget class="caTextEntry" name="caTextEntry_38">
             <property name="geometry">
                 <rect>
                     <x>175</x>
@@ -5039,7 +4988,7 @@ border-radius: 2px;
                 </rect>
             </property>
         </widget>
-        <widget class="caTextEntry" name="caTextEntry_40">
+        <widget class="caTextEntry" name="caTextEntry_39">
             <property name="geometry">
                 <rect>
                     <x>175</x>
@@ -5088,6 +5037,48 @@ border-radius: 2px;
             </property>
             <property name="formatType">
                 <enum>string</enum>
+            </property>
+        </widget>
+        <widget class="caRelatedDisplay" name="caRelatedDisplay_0">
+            <property name="geometry">
+                <rect>
+                    <x>175</x>
+                    <y>390</y>
+                    <width>100</width>
+                    <height>20</height>
+                </rect>
+            </property>
+            <property name="foreground">
+                <color alpha="255">
+                    <red>0</red>
+                    <green>0</green>
+                    <blue>0</blue>
+                </color>
+            </property>
+            <property name="background">
+                <color alpha="255">
+                    <red>115</red>
+                    <green>223</green>
+                    <blue>255</blue>
+                </color>
+            </property>
+            <property name="label">
+                <string>PSO setup</string>
+            </property>
+            <property name="stackingMode">
+                <enum>Menu</enum>
+            </property>
+            <property name="labels">
+                <string>PSO setup</string>
+            </property>
+            <property name="files">
+                <string>tomoScan_pso.adl</string>
+            </property>
+            <property name="args">
+                <string>P=$(P), R=$(R)</string>
+            </property>
+            <property name="removeParent">
+                <string>false</string>
             </property>
         </widget>
         <zorder>caRectangle_0</zorder>
@@ -5217,21 +5208,21 @@ border-radius: 2px;
         <zorder>caTextEntry_27</zorder>
         <zorder>caTextEntry_28</zorder>
         <zorder>caTextEntry_29</zorder>
-        <zorder>caTextEntry_30</zorder>
         <zorder>caMenu_0</zorder>
-        <zorder>caTextEntry_31</zorder>
+        <zorder>caTextEntry_30</zorder>
         <zorder>caMenu_1</zorder>
-        <zorder>caTextEntry_32</zorder>
+        <zorder>caTextEntry_31</zorder>
         <zorder>caMenu_2</zorder>
+        <zorder>caTextEntry_32</zorder>
         <zorder>caTextEntry_33</zorder>
-        <zorder>caTextEntry_34</zorder>
         <zorder>caMenu_3</zorder>
+        <zorder>caTextEntry_34</zorder>
         <zorder>caTextEntry_35</zorder>
         <zorder>caTextEntry_36</zorder>
         <zorder>caTextEntry_37</zorder>
         <zorder>caTextEntry_38</zorder>
         <zorder>caTextEntry_39</zorder>
-        <zorder>caTextEntry_40</zorder>
+        <zorder>caRelatedDisplay_0</zorder>
     </widget>
 </widget>
 </ui>
