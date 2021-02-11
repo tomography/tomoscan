@@ -3,11 +3,6 @@
 
 # This is the file for the tomoscan_2bm derived class.
 
-############
-# PSO Prefix
-############
-$(P)$(R)PSOPVPrefix
-
 ####################
 # Energy information
 ####################
@@ -67,31 +62,6 @@ $(P)$(R)CloseFastShutterPVName
 $(P)$(R)CloseFastShutterValue
 $(P)$(R)OpenFastShutterPVName
 $(P)$(R)OpenFastShutterValue
-
-####################################
-# Pva, Roi and Cb Plugin PV Prefixes
-####################################
-$(P)$(R)PvaPluginPVPrefix
-$(P)$(R)RoiPluginPVPrefix
-$(P)$(R)CbPluginPVPrefix
-
-#################
-# Stream control
-#################
-$(P)$(R)StreamCapture
-$(P)$(R)StreamNumCapture
-$(P)$(R)StreamRetakeFlat
-$(P)$(R)StreamRetakeDark
-$(P)$(R)StreamPreCount
-$(P)$(R)StreamBinning
-$(P)$(R)StreamMessage
-$(P)$(R)StreamNumCapture
-$(P)$(R)StreamNumCaptured
-$(P)$(R)StreamNumTotalCaptured
-$(P)$(R)StreamCBStatusMessage
-$(P)$(R)StreamFileName
-$(P)$(R)StreamPreCounted
-$(P)$(R)PvaStreamPVPrefix
 
 ################
 # Shutter status

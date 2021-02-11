@@ -1,0 +1,33 @@
+# This file is used by autosave to determine what PVs to save
+# It is also used by tomoScan to determine what PVs to create
+
+# This file contains all of the PVs used by the tomoscan base class.
+
+# Lines that begin with #controlPV are not saved by autosave,
+# but they are used by tomoscan.  
+# These PVs are not saved in the tomoscan configuration file.
+
+####################################
+# Pva, Roi and Cb Plugin PV Prefixes
+####################################
+$(P)$(R)PvaPluginPVPrefix
+$(P)$(R)RoiPluginPVPrefix
+$(P)$(R)CbPluginPVPrefix
+
+#################
+# Stream control
+#################
+$(P)$(R)StreamCapture
+$(P)$(R)StreamNumCapture
+$(P)$(R)StreamRetakeFlat
+$(P)$(R)StreamRetakeDark
+$(P)$(R)StreamPreCount
+$(P)$(R)StreamBinning
+$(P)$(R)StreamMessage
+$(P)$(R)StreamNumCapture
+$(P)$(R)StreamNumCaptured
+$(P)$(R)StreamNumTotalCaptured
+$(P)$(R)StreamCBStatusMessage
+$(P)$(R)StreamFileName
+$(P)$(R)StreamPreCounted
+$(P)$(R)PvaStreamPVPrefix

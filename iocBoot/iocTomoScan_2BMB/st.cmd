@@ -1,6 +1,6 @@
 < envPaths
 
-epicsEnvSet("P", "2bma:")
+epicsEnvSet("P", "2bmb:")
 epicsEnvSet("R", "TomoScan:")
 
 ## Register all support components
@@ -10,7 +10,7 @@ dbLoadDatabase "../../dbd/tomoScanApp.dbd"
 tomoScanApp_registerRecordDeviceDriver pdbbase
 
 # Connect to the Aerotech controller
-drvAsynIPPortConfigure("PSO_PORT", "2bm_ensemble", 0, 0, 0)
+drvAsynIPPortConfigure("PSO_PORT", "164.54.113.74:8001", 0, 0, 0)
 asynOctetSetInputEos(PSO_PORT, 0, "\n")
 asynOctetSetOutputEos(PSO_PORT, 0, "\n")
 asynSetTraceIOMask(PSO_PORT, 0, ESCAPE)

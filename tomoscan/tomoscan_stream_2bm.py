@@ -69,6 +69,19 @@ class TomoScanStream2BM(TomoScan):
 
         # Disable overw writing warning
         self.epics_pvs['OverwriteWarning'].put('Yes')
+
+        # Setting the pva servers to broadcast dark and flat fields
+        if 'PvaStream' in self.pv_prefixes:
+            prefix = self.pv_prefixes['PvaStream']
+            self.pva_stream_dark = pvaccess.PvObject({'value': [pvaccess.pvaccess.ScalarType.FLOAT], 
+                'sizex': pvaccess.pvaccess.ScalarType.INT, 
+                'sizey': pvaccess.pvaccess.ScalarType.INT})
+            self.pva_server_dark = pvaccess.PvaServer(prefix + 'dark', self.pva_stream_dark)
+
+            self.pva_stream_flat = pvaccess.PvObject({'value': [pvaccess.pvaccess.ScalarType.FLOAT], 
+                'sizex': pvaccess.pvaccess.ScalarType.INT, 
+                'sizey': pvaccess.pvaccess.ScalarType.INT})
+            self.pva_server_flat = pvaccess.PvaServer(prefix + 'flat', self.pva_stream_flat)
         
         self.stream_init()
 
