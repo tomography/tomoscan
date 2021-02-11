@@ -73,3 +73,13 @@ record(ao, "$(P)$(R)PSOPulseWidth")
     field(VAL,  "10")
 }
 
+# This record is needed on the Ensemble to keep the socket from timing out.
+# It is not needed on the A3200, but does not hurt. 
+# SCAN could be set to Passive on the A3200.
+record(asyn, "$(P)$(R)PSOKeepAlive")
+{
+    field(PORT, "$(PSO_PORT)")
+    field(AOUT, "ROUND(1.1)")
+    field(SCAN, "10 second")
+}
+
