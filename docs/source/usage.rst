@@ -19,10 +19,10 @@ for image N when the trigger  for image N+1 arrives.
 
 ::
 
-ts = TomoScan13BM_PSO(["../../db/tomoScan_settings.req",
-                       "../../db/tomoScan_PSO_settings.req",
-                       "../../db/tomoScan_13BM_settings.req"],
-                      {"$(P)":"13BMDPG1:", "$(R)":"TS:"})
+  ts = TomoScan13BM_PSO(["../../db/tomoScan_settings.req",
+                         "../../db/tomoScan_PSO_settings.req",
+                         "../../db/tomoScan_13BM_settings.req"],
+                        {"$(P)":"13BMDPG1:", "$(R)":"TS:"})
 
 This line creates the TomoScan13BM_PSO object.  It takes two arguments that are passed to the 
 TomoScan constructor:

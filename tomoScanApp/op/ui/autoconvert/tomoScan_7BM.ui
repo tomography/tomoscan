@@ -415,10 +415,10 @@ border-radius: 2px;
                 <enum>Menu</enum>
             </property>
             <property name="labels">
-                <string>Experiment Information</string>
+                <string>Aerotech PSO</string>
             </property>
             <property name="files">
-                <string>$(BEAMLINE)_pso.adl</string>
+                <string>tomoScan_pso.adl</string>
             </property>
             <property name="args">
                 <string>P=$(P),R=$(R)</string>

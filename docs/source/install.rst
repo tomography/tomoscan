@@ -2,42 +2,59 @@
 Install directions
 ==================
 
+Build EPICS base
+----------------
+
+.. warning:: Make sure the disk partition hosting ~/epics is not larger than 2 TB. See `tech talk <https://epics.anl.gov/tech-talk/2017/msg00046.php>`_ and  `Diamond Data Storage <https://epics.anl.gov/meetings/2012-10/program/1023-A3_Diamond_Data_Storage.pdf>`_ document.
+
+::
+
+    $ mkdir ~/epics
+    $ cd epics
+    
+
+- Download EPICS base latest release, i.e. 7.0.3.1., from https://github.com/epics-base/epics-base::
+
+    $ git clone https://github.com/epics-base/epics-base.git
+    $ cd epics-base
+    $ make -sj
+    
 
 Build a minimal synApps
 -----------------------
 
 To build a minimal synApp::
 
-    $ mkdir ~/epics
-    $ cd epics
-
-.. warning:: Make sure the disk partition hosting ~/epics is not larger than 2 TB. See `tech talk <https://epics.anl.gov/tech-talk/2017/msg00046.php>`_ and  `Diamond Data Storage <https://epics.anl.gov/meetings/2012-10/program/1023-A3_Diamond_Data_Storage.pdf>`_ document.
-
+    $ cd ~/epics
 
 - Download in ~/epics `assemble_synApps <https://github.com/EPICS-synApps/support/blob/master/assemble_synApps.sh>`_.sh
 - Edit the assemble_synApps.sh script as follows:
     - Set FULL_CLONE=True
-    - Set EPICS_BASE to point to the location of EPICS base.  This could be on APSshare (the default), or a local version you built.
+    - Set EPICS_BASE to point to local version just built: ~/epics/epics-base.
     - For tomoscan you only need ASYN, BUSY and AUTOSAVE.  You can comment out all of the other modules (ALLENBRADLEY, ALIVE, etc.)
 
 - Run::
 
     $ assemble_synApps.sh
 
-- This will create a synApps/ directory::
+- This will create a synApps/support directory::
 
     $ cd synApps/support/
 
-- Edit asyn/configure/RELEASE to comment out the lines starting with::
+- Edit asyn-RX-YY/configure/RELEASE to comment out the lines starting with::
     
     IPAC=$(SUPPORT)/
     SNCSEQ=$(SUPPORT)/
+
+
+.. warning:: If building for RedHat8 uncomment **TIRPC=YES** in asyn-RX-YY/configure/CONFIG_SITE
+
 
 - Clone the tomoscan module into synApps/support::
     
     $ git clone https://github.com/tomography/tomoscan.git
 
-- Edit support/configure/RELEASE add this line to the end::
+- Edit configure/RELEASE add this line to the end::
     
     TOMOSCAN=$(SUPPORT)/tomoscan
 

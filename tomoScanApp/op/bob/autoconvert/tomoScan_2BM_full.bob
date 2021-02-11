@@ -4,7 +4,7 @@
   <x>1922</x>
   <y>22</y>
   <width>566</width>
-  <height>1396</height>
+  <height>1181</height>
   <background_color>
     <color red="187" green="187" blue="187">
     </color>
@@ -74,24 +74,6 @@
   </widget>
   <widget type="textentry" version="3.0.0">
     <name>text entry #18</name>
-    <pv_name>$(P)$(R)PSOPVPrefix</pv_name>
-    <x>175</x>
-    <y>390</y>
-    <width>380</width>
-    <font>
-      <font family="Liberation Sans" style="REGULAR" size="16.0">
-      </font>
-    </font>
-    <background_color>
-      <color red="115" green="223" blue="255">
-      </color>
-    </background_color>
-    <format>6</format>
-    <show_units>false</show_units>
-    <border_alarm_sensitive>false</border_alarm_sensitive>
-  </widget>
-  <widget type="textentry" version="3.0.0">
-    <name>text entry #22</name>
     <pv_name>$(P)$(R)BeamReadyPVName</pv_name>
     <x>175</x>
     <y>415</y>
@@ -109,7 +91,7 @@
     <border_alarm_sensitive>false</border_alarm_sensitive>
   </widget>
   <widget type="textentry" version="3.0.0">
-    <name>text entry #26</name>
+    <name>text entry #22</name>
     <pv_name>$(P)$(R)BeamReadyValue</pv_name>
     <x>175</x>
     <y>440</y>
@@ -127,7 +109,7 @@
     <border_alarm_sensitive>false</border_alarm_sensitive>
   </widget>
   <widget type="label" version="2.0.0">
-    <name>text #30</name>
+    <name>text #26</name>
     <text>Beam ready value</text>
     <x>10</x>
     <y>440</y>
@@ -139,7 +121,7 @@
     <horizontal_alignment>2</horizontal_alignment>
   </widget>
   <widget type="label" version="2.0.0">
-    <name>text #33</name>
+    <name>text #29</name>
     <text>Beam ready PV</text>
     <x>40</x>
     <y>415</y>
@@ -151,11 +133,11 @@
     <horizontal_alignment>2</horizontal_alignment>
   </widget>
   <widget type="label" version="2.0.0">
-    <name>text #36</name>
-    <text>PSO prefix</text>
-    <x>30</x>
+    <name>text #32</name>
+    <text>PSO setup</text>
+    <x>80</x>
     <y>390</y>
-    <width>140</width>
+    <width>90</width>
     <font>
       <font family="Liberation Sans" style="REGULAR" size="16.0">
       </font>
@@ -163,7 +145,7 @@
     <horizontal_alignment>2</horizontal_alignment>
   </widget>
   <widget type="label" version="2.0.0">
-    <name>text #39</name>
+    <name>text #35</name>
     <text>Open fast shutter value</text>
     <x>10</x>
     <y>490</y>
@@ -175,7 +157,7 @@
     <horizontal_alignment>2</horizontal_alignment>
   </widget>
   <widget type="textentry" version="3.0.0">
-    <name>text entry #42</name>
+    <name>text entry #38</name>
     <pv_name>$(P)$(R)OpenFastShutterValue</pv_name>
     <x>175</x>
     <y>490</y>
@@ -193,7 +175,7 @@
     <border_alarm_sensitive>false</border_alarm_sensitive>
   </widget>
   <widget type="label" version="2.0.0">
-    <name>text #46</name>
+    <name>text #42</name>
     <text>Open fast shutter PV</text>
     <x>40</x>
     <y>465</y>
@@ -205,7 +187,7 @@
     <horizontal_alignment>2</horizontal_alignment>
   </widget>
   <widget type="textentry" version="3.0.0">
-    <name>text entry #49</name>
+    <name>text entry #45</name>
     <pv_name>$(P)$(R)OpenFastShutterPVName</pv_name>
     <x>175</x>
     <y>465</y>
@@ -223,7 +205,7 @@
     <border_alarm_sensitive>false</border_alarm_sensitive>
   </widget>
   <widget type="label" version="2.0.0">
-    <name>text #53</name>
+    <name>text #49</name>
     <text>Close fast shutter PV</text>
     <x>40</x>
     <y>515</y>
@@ -235,7 +217,7 @@
     <horizontal_alignment>2</horizontal_alignment>
   </widget>
   <widget type="label" version="2.0.0">
-    <name>text #56</name>
+    <name>text #52</name>
     <text>Close fast shutter value</text>
     <x>10</x>
     <y>540</y>
@@ -247,7 +229,7 @@
     <horizontal_alignment>2</horizontal_alignment>
   </widget>
   <widget type="textentry" version="3.0.0">
-    <name>text entry #59</name>
+    <name>text entry #55</name>
     <pv_name>$(P)$(R)CloseFastShutterValue</pv_name>
     <x>175</x>
     <y>540</y>
@@ -265,7 +247,7 @@
     <border_alarm_sensitive>false</border_alarm_sensitive>
   </widget>
   <widget type="textentry" version="3.0.0">
-    <name>text entry #63</name>
+    <name>text entry #59</name>
     <pv_name>$(P)$(R)CloseFastShutterPVName</pv_name>
     <x>175</x>
     <y>515</y>
@@ -283,7 +265,7 @@
     <border_alarm_sensitive>false</border_alarm_sensitive>
   </widget>
   <widget type="rectangle" version="2.0.0">
-    <name>rectangle #67</name>
+    <name>rectangle #63</name>
     <x>10</x>
     <y>365</y>
     <width>545</width>
@@ -297,7 +279,7 @@
     </background_color>
   </widget>
   <widget type="label" version="2.0.0">
-    <name>text #70</name>
+    <name>text #66</name>
     <text>Epics Process Variables</text>
     <x>143</x>
     <y>365</y>
@@ -313,7 +295,7 @@
     <horizontal_alignment>1</horizontal_alignment>
   </widget>
   <widget type="group" version="2.0.0">
-    <name>composite #73</name>
+    <name>composite #69</name>
     <x>5</x>
     <y>175</y>
     <width>555</width>
@@ -321,7 +303,7 @@
     <style>3</style>
     <transparent>true</transparent>
     <widget type="group" version="2.0.0">
-      <name>composite #76</name>
+      <name>composite #72</name>
       <x>5</x>
       <y>5</y>
       <width>545</width>
@@ -329,7 +311,7 @@
       <style>3</style>
       <transparent>true</transparent>
       <widget type="rectangle" version="2.0.0">
-        <name>rectangle #79</name>
+        <name>rectangle #75</name>
         <width>545</width>
         <line_color>
           <color red="218" green="218" blue="218">
@@ -341,7 +323,7 @@
         </background_color>
       </widget>
       <widget type="label" version="2.0.0">
-        <name>text #82</name>
+        <name>text #78</name>
         <text>Configuration Information</text>
         <x>78</x>
         <width>390</width>
@@ -357,7 +339,7 @@
       </widget>
     </widget>
     <widget type="group" version="2.0.0">
-      <name>composite #85</name>
+      <name>composite #81</name>
       <x>25</x>
       <y>30</y>
       <width>525</width>
@@ -365,13 +347,13 @@
       <style>3</style>
       <transparent>true</transparent>
       <widget type="group" version="2.0.0">
-        <name>composite #88</name>
+        <name>composite #84</name>
         <width>290</width>
         <height>145</height>
         <style>3</style>
         <transparent>true</transparent>
         <widget type="label" version="2.0.0">
-          <name>text #91</name>
+          <name>text #87</name>
           <text>Tube length (mm)</text>
           <x>130</x>
           <y>125</y>
@@ -383,7 +365,7 @@
           <horizontal_alignment>2</horizontal_alignment>
         </widget>
         <widget type="label" version="2.0.0">
-          <name>text #94</name>
+          <name>text #90</name>
           <text>Scintillator type</text>
           <x>120</x>
           <width>170</width>
@@ -394,7 +376,7 @@
           <horizontal_alignment>2</horizontal_alignment>
         </widget>
         <widget type="label" version="2.0.0">
-          <name>text #97</name>
+          <name>text #93</name>
           <text>Scint. thickness (microns)</text>
           <x>30</x>
           <y>25</y>
@@ -406,7 +388,7 @@
           <horizontal_alignment>2</horizontal_alignment>
         </widget>
         <widget type="label" version="2.0.0">
-          <name>text #100</name>
+          <name>text #96</name>
           <text>Image pixel size (microns)</text>
           <x>30</x>
           <y>50</y>
@@ -418,7 +400,7 @@
           <horizontal_alignment>2</horizontal_alignment>
         </widget>
         <widget type="label" version="2.0.0">
-          <name>text #103</name>
+          <name>text #99</name>
           <text>Detector pixel size (microns)</text>
           <y>75</y>
           <width>290</width>
@@ -429,7 +411,7 @@
           <horizontal_alignment>2</horizontal_alignment>
         </widget>
         <widget type="label" version="2.0.0">
-          <name>text #106</name>
+          <name>text #102</name>
           <text>Camera objective</text>
           <x>130</x>
           <y>100</y>
@@ -442,14 +424,14 @@
         </widget>
       </widget>
       <widget type="group" version="2.0.0">
-        <name>composite #109</name>
+        <name>composite #105</name>
         <x>295</x>
         <width>230</width>
         <height>145</height>
         <style>3</style>
         <transparent>true</transparent>
         <widget type="textentry" version="3.0.0">
-          <name>text entry #112</name>
+          <name>text entry #108</name>
           <pv_name>$(P)$(R)ScintillatorThickness</pv_name>
           <y>25</y>
           <width>230</width>
@@ -466,7 +448,7 @@
           <border_alarm_sensitive>false</border_alarm_sensitive>
         </widget>
         <widget type="textentry" version="3.0.0">
-          <name>text entry #116</name>
+          <name>text entry #112</name>
           <pv_name>$(P)$(R)ScintillatorType</pv_name>
           <width>230</width>
           <font>
@@ -482,7 +464,7 @@
           <border_alarm_sensitive>false</border_alarm_sensitive>
         </widget>
         <widget type="textentry" version="3.0.0">
-          <name>text entry #120</name>
+          <name>text entry #116</name>
           <pv_name>$(P)$(R)DetectorPixelSize</pv_name>
           <y>75</y>
           <width>230</width>
@@ -499,7 +481,7 @@
           <border_alarm_sensitive>false</border_alarm_sensitive>
         </widget>
         <widget type="textentry" version="3.0.0">
-          <name>text entry #124</name>
+          <name>text entry #120</name>
           <pv_name>$(P)$(R)CameraObjective</pv_name>
           <y>100</y>
           <width>230</width>
@@ -516,7 +498,7 @@
           <border_alarm_sensitive>false</border_alarm_sensitive>
         </widget>
         <widget type="textentry" version="3.0.0">
-          <name>text entry #128</name>
+          <name>text entry #124</name>
           <pv_name>$(P)$(R)CameraTubeLength</pv_name>
           <y>125</y>
           <width>230</width>
@@ -533,7 +515,7 @@
           <border_alarm_sensitive>false</border_alarm_sensitive>
         </widget>
         <widget type="textentry" version="3.0.0">
-          <name>text entry #132</name>
+          <name>text entry #128</name>
           <pv_name>$(P)$(R)ImagePixelSize</pv_name>
           <y>50</y>
           <width>230</width>
@@ -552,7 +534,7 @@
       </widget>
     </widget>
     <widget type="rectangle" version="2.0.0">
-      <name>rectangle #136</name>
+      <name>rectangle #132</name>
       <width>555</width>
       <height>180</height>
       <line_width>1</line_width>
@@ -568,7 +550,7 @@
     </widget>
   </widget>
   <widget type="group" version="2.0.0">
-    <name>composite #139</name>
+    <name>composite #135</name>
     <x>20</x>
     <y>70</y>
     <width>535</width>
@@ -576,13 +558,13 @@
     <style>3</style>
     <transparent>true</transparent>
     <widget type="group" version="2.0.0">
-      <name>composite #142</name>
+      <name>composite #138</name>
       <width>140</width>
       <height>95</height>
       <style>3</style>
       <transparent>true</transparent>
       <widget type="label" version="2.0.0">
-        <name>text #145</name>
+        <name>text #141</name>
         <text>Description #3</text>
         <y>75</y>
         <width>140</width>
@@ -593,7 +575,7 @@
         <horizontal_alignment>2</horizontal_alignment>
       </widget>
       <widget type="label" version="2.0.0">
-        <name>text #148</name>
+        <name>text #144</name>
         <text>Sample name</text>
         <x>30</x>
         <width>110</width>
@@ -604,7 +586,7 @@
         <horizontal_alignment>2</horizontal_alignment>
       </widget>
       <widget type="label" version="2.0.0">
-        <name>text #151</name>
+        <name>text #147</name>
         <text>Description #1</text>
         <y>25</y>
         <width>140</width>
@@ -615,7 +597,7 @@
         <horizontal_alignment>2</horizontal_alignment>
       </widget>
       <widget type="label" version="2.0.0">
-        <name>text #154</name>
+        <name>text #150</name>
         <text>Description #2</text>
         <y>50</y>
         <width>140</width>
@@ -627,14 +609,14 @@
       </widget>
     </widget>
     <widget type="group" version="2.0.0">
-      <name>composite #157</name>
+      <name>composite #153</name>
       <x>145</x>
       <width>390</width>
       <height>95</height>
       <style>3</style>
       <transparent>true</transparent>
       <widget type="textentry" version="3.0.0">
-        <name>text entry #160</name>
+        <name>text entry #156</name>
         <pv_name>$(P)$(R)SampleName</pv_name>
         <width>390</width>
         <font>
@@ -650,7 +632,7 @@
         <border_alarm_sensitive>false</border_alarm_sensitive>
       </widget>
       <widget type="textentry" version="3.0.0">
-        <name>text entry #164</name>
+        <name>text entry #160</name>
         <pv_name>$(P)$(R)SampleDescription1</pv_name>
         <y>25</y>
         <width>390</width>
@@ -667,7 +649,7 @@
         <border_alarm_sensitive>false</border_alarm_sensitive>
       </widget>
       <widget type="textentry" version="3.0.0">
-        <name>text entry #168</name>
+        <name>text entry #164</name>
         <pv_name>$(P)$(R)SampleDescription2</pv_name>
         <y>50</y>
         <width>390</width>
@@ -684,7 +666,7 @@
         <border_alarm_sensitive>false</border_alarm_sensitive>
       </widget>
       <widget type="textentry" version="3.0.0">
-        <name>text entry #172</name>
+        <name>text entry #168</name>
         <pv_name>$(P)$(R)SampleDescription3</pv_name>
         <y>75</y>
         <width>390</width>
@@ -703,7 +685,7 @@
     </widget>
   </widget>
   <widget type="rectangle" version="2.0.0">
-    <name>rectangle #176</name>
+    <name>rectangle #172</name>
     <x>5</x>
     <y>40</y>
     <width>555</width>
@@ -720,7 +702,7 @@
     <transparent>true</transparent>
   </widget>
   <widget type="label" version="2.0.0">
-    <name>text #179</name>
+    <name>text #175</name>
     <text>Shutter status PV</text>
     <x>40</x>
     <y>565</y>
@@ -732,7 +714,7 @@
     <horizontal_alignment>2</horizontal_alignment>
   </widget>
   <widget type="textentry" version="3.0.0">
-    <name>text entry #182</name>
+    <name>text entry #178</name>
     <pv_name>$(P)$(R)ShutterStatusPVName</pv_name>
     <x>175</x>
     <y>565</y>
@@ -750,7 +732,7 @@
     <border_alarm_sensitive>false</border_alarm_sensitive>
   </widget>
   <widget type="label" version="2.0.0">
-    <name>text #186</name>
+    <name>text #182</name>
     <text>Sample Information</text>
     <x>143</x>
     <y>45</y>
@@ -766,7 +748,7 @@
     <horizontal_alignment>1</horizontal_alignment>
   </widget>
   <widget type="group" version="2.0.0">
-    <name>composite #189</name>
+    <name>composite #185</name>
     <x>5</x>
     <y>670</y>
     <width>555</width>
@@ -774,13 +756,13 @@
     <style>3</style>
     <transparent>true</transparent>
     <widget type="group" version="2.0.0">
-      <name>composite #192</name>
+      <name>composite #188</name>
       <width>555</width>
       <height>230</height>
       <style>3</style>
       <transparent>true</transparent>
       <widget type="group" version="2.0.0">
-        <name>composite #195</name>
+        <name>composite #191</name>
         <x>5</x>
         <y>30</y>
         <width>545</width>
@@ -788,13 +770,13 @@
         <style>3</style>
         <transparent>true</transparent>
         <widget type="group" version="2.0.0">
-          <name>composite #198</name>
+          <name>composite #194</name>
           <width>150</width>
           <height>195</height>
           <style>3</style>
           <transparent>true</transparent>
           <widget type="label" version="2.0.0">
-            <name>text #201</name>
+            <name>text #197</name>
             <text>User name</text>
             <x>60</x>
             <width>90</width>
@@ -805,7 +787,7 @@
             <horizontal_alignment>2</horizontal_alignment>
           </widget>
           <widget type="label" version="2.0.0">
-            <name>text #204</name>
+            <name>text #200</name>
             <text>Institution</text>
             <x>40</x>
             <y>25</y>
@@ -817,7 +799,7 @@
             <horizontal_alignment>2</horizontal_alignment>
           </widget>
           <widget type="label" version="2.0.0">
-            <name>text #207</name>
+            <name>text #203</name>
             <text>ANL badge #</text>
             <x>40</x>
             <y>50</y>
@@ -829,7 +811,7 @@
             <horizontal_alignment>2</horizontal_alignment>
           </widget>
           <widget type="label" version="2.0.0">
-            <name>text #210</name>
+            <name>text #206</name>
             <text>User e-mail</text>
             <x>40</x>
             <y>75</y>
@@ -841,7 +823,7 @@
             <horizontal_alignment>2</horizontal_alignment>
           </widget>
           <widget type="label" version="2.0.0">
-            <name>text #213</name>
+            <name>text #209</name>
             <text>APS proposal #</text>
             <x>10</x>
             <y>100</y>
@@ -853,7 +835,7 @@
             <horizontal_alignment>2</horizontal_alignment>
           </widget>
           <widget type="label" version="2.0.0">
-            <name>text #216</name>
+            <name>text #212</name>
             <text>APS prop. title</text>
             <y>125</y>
             <width>150</width>
@@ -864,7 +846,7 @@
             <horizontal_alignment>2</horizontal_alignment>
           </widget>
           <widget type="label" version="2.0.0">
-            <name>text #219</name>
+            <name>text #215</name>
             <text>APS ESAF #</text>
             <x>50</x>
             <y>150</y>
@@ -875,7 +857,7 @@
             <horizontal_alignment>2</horizontal_alignment>
           </widget>
           <widget type="label" version="2.0.0">
-            <name>text #222</name>
+            <name>text #218</name>
             <text>User info update</text>
             <x>50</x>
             <y>175</y>
@@ -887,14 +869,14 @@
           </widget>
         </widget>
         <widget type="group" version="2.0.0">
-          <name>composite #225</name>
+          <name>composite #221</name>
           <x>155</x>
           <width>390</width>
           <height>195</height>
           <style>3</style>
           <transparent>true</transparent>
           <widget type="textentry" version="3.0.0">
-            <name>text entry #228</name>
+            <name>text entry #224</name>
             <pv_name>$(P)$(R)UserName</pv_name>
             <width>390</width>
             <font>
@@ -910,7 +892,7 @@
             <border_alarm_sensitive>false</border_alarm_sensitive>
           </widget>
           <widget type="textentry" version="3.0.0">
-            <name>text entry #232</name>
+            <name>text entry #228</name>
             <pv_name>$(P)$(R)UserInstitution</pv_name>
             <y>25</y>
             <width>390</width>
@@ -927,7 +909,7 @@
             <border_alarm_sensitive>false</border_alarm_sensitive>
           </widget>
           <widget type="textentry" version="3.0.0">
-            <name>text entry #236</name>
+            <name>text entry #232</name>
             <pv_name>$(P)$(R)UserBadge</pv_name>
             <y>50</y>
             <width>390</width>
@@ -944,7 +926,7 @@
             <border_alarm_sensitive>false</border_alarm_sensitive>
           </widget>
           <widget type="textentry" version="3.0.0">
-            <name>text entry #240</name>
+            <name>text entry #236</name>
             <pv_name>$(P)$(R)UserEmail</pv_name>
             <y>75</y>
             <width>390</width>
@@ -961,7 +943,7 @@
             <border_alarm_sensitive>false</border_alarm_sensitive>
           </widget>
           <widget type="textentry" version="3.0.0">
-            <name>text entry #244</name>
+            <name>text entry #240</name>
             <pv_name>$(P)$(R)ProposalNumber</pv_name>
             <y>100</y>
             <width>390</width>
@@ -978,7 +960,7 @@
             <border_alarm_sensitive>false</border_alarm_sensitive>
           </widget>
           <widget type="textentry" version="3.0.0">
-            <name>text entry #248</name>
+            <name>text entry #244</name>
             <pv_name>$(P)$(R)ProposalTitle</pv_name>
             <y>125</y>
             <width>390</width>
@@ -995,7 +977,7 @@
             <border_alarm_sensitive>false</border_alarm_sensitive>
           </widget>
           <widget type="textentry" version="3.0.0">
-            <name>text entry #252</name>
+            <name>text entry #248</name>
             <pv_name>$(P)$(R)ESAFNumber</pv_name>
             <y>150</y>
             <width>390</width>
@@ -1012,7 +994,7 @@
             <border_alarm_sensitive>false</border_alarm_sensitive>
           </widget>
           <widget type="textentry" version="3.0.0">
-            <name>text entry #256</name>
+            <name>text entry #252</name>
             <pv_name>$(P)$(R)UserInfoUpdate</pv_name>
             <y>175</y>
             <width>390</width>
@@ -1031,7 +1013,7 @@
         </widget>
       </widget>
       <widget type="group" version="2.0.0">
-        <name>composite #260</name>
+        <name>composite #256</name>
         <x>5</x>
         <y>5</y>
         <width>545</width>
@@ -1039,7 +1021,7 @@
         <style>3</style>
         <transparent>true</transparent>
         <widget type="label" version="2.0.0">
-          <name>text #263</name>
+          <name>text #259</name>
           <text>User Information</text>
           <x>148</x>
           <width>249</width>
@@ -1054,7 +1036,7 @@
           <horizontal_alignment>1</horizontal_alignment>
         </widget>
         <widget type="rectangle" version="2.0.0">
-          <name>rectangle #266</name>
+          <name>rectangle #262</name>
           <width>545</width>
           <line_color>
             <color red="218" green="218" blue="218">
@@ -1066,7 +1048,7 @@
           </background_color>
         </widget>
         <widget type="label" version="2.0.0">
-          <name>text #269</name>
+          <name>text #265</name>
           <text>User Information</text>
           <x>148</x>
           <width>249</width>
@@ -1082,7 +1064,7 @@
         </widget>
       </widget>
       <widget type="rectangle" version="2.0.0">
-        <name>rectangle #272</name>
+        <name>rectangle #268</name>
         <width>555</width>
         <height>230</height>
         <line_width>1</line_width>
@@ -1098,14 +1080,14 @@
       </widget>
     </widget>
     <widget type="group" version="2.0.0">
-      <name>composite #275</name>
+      <name>composite #271</name>
       <y>235</y>
       <width>555</width>
       <height>130</height>
       <style>3</style>
       <transparent>true</transparent>
       <widget type="group" version="2.0.0">
-        <name>composite #278</name>
+        <name>composite #274</name>
         <x>5</x>
         <y>5</y>
         <width>545</width>
@@ -1113,7 +1095,7 @@
         <style>3</style>
         <transparent>true</transparent>
         <widget type="rectangle" version="2.0.0">
-          <name>rectangle #281</name>
+          <name>rectangle #277</name>
           <width>545</width>
           <line_color>
             <color red="218" green="218" blue="218">
@@ -1125,7 +1107,7 @@
           </background_color>
         </widget>
         <widget type="label" version="2.0.0">
-          <name>text #284</name>
+          <name>text #280</name>
           <text>Data Management Information</text>
           <x>133</x>
           <width>281</width>
@@ -1141,7 +1123,7 @@
         </widget>
       </widget>
       <widget type="group" version="2.0.0">
-        <name>composite #287</name>
+        <name>composite #283</name>
         <x>5</x>
         <y>30</y>
         <width>545</width>
@@ -1149,13 +1131,13 @@
         <style>3</style>
         <transparent>true</transparent>
         <widget type="group" version="2.0.0">
-          <name>composite #290</name>
+          <name>composite #286</name>
           <width>160</width>
           <height>95</height>
           <style>3</style>
           <transparent>true</transparent>
           <widget type="label" version="2.0.0">
-            <name>text #293</name>
+            <name>text #289</name>
             <text>Detector top dir</text>
             <x>20</x>
             <width>140</width>
@@ -1166,7 +1148,7 @@
             <horizontal_alignment>2</horizontal_alignment>
           </widget>
           <widget type="label" version="2.0.0">
-            <name>text #296</name>
+            <name>text #292</name>
             <text>User last name</text>
             <x>30</x>
             <y>25</y>
@@ -1178,7 +1160,7 @@
             <horizontal_alignment>2</horizontal_alignment>
           </widget>
           <widget type="label" version="2.0.0">
-            <name>text #299</name>
+            <name>text #295</name>
             <text>Experiment year month</text>
             <y>50</y>
             <width>160</width>
@@ -1189,7 +1171,7 @@
             <horizontal_alignment>2</horizontal_alignment>
           </widget>
           <widget type="label" version="2.0.0">
-            <name>text #302</name>
+            <name>text #298</name>
             <text>Remote analysis dir</text>
             <x>30</x>
             <y>75</y>
@@ -1202,14 +1184,14 @@
           </widget>
         </widget>
         <widget type="group" version="2.0.0">
-          <name>composite #305</name>
+          <name>composite #301</name>
           <x>165</x>
           <width>380</width>
           <height>95</height>
           <style>3</style>
           <transparent>true</transparent>
           <widget type="textentry" version="3.0.0">
-            <name>text entry #308</name>
+            <name>text entry #304</name>
             <pv_name>$(P)$(R)DetectorTopDir</pv_name>
             <width>380</width>
             <font>
@@ -1225,7 +1207,7 @@
             <border_alarm_sensitive>false</border_alarm_sensitive>
           </widget>
           <widget type="textentry" version="3.0.0">
-            <name>text entry #312</name>
+            <name>text entry #308</name>
             <pv_name>$(P)$(R)UserLastName</pv_name>
             <y>25</y>
             <width>380</width>
@@ -1242,7 +1224,7 @@
             <border_alarm_sensitive>false</border_alarm_sensitive>
           </widget>
           <widget type="textentry" version="3.0.0">
-            <name>text entry #316</name>
+            <name>text entry #312</name>
             <pv_name>$(P)$(R)ExperimentYearMonth</pv_name>
             <y>50</y>
             <width>380</width>
@@ -1259,7 +1241,7 @@
             <border_alarm_sensitive>false</border_alarm_sensitive>
           </widget>
           <widget type="textentry" version="3.0.0">
-            <name>text entry #320</name>
+            <name>text entry #316</name>
             <pv_name>$(P)$(R)RemoteAnalysisDir</pv_name>
             <y>75</y>
             <width>380</width>
@@ -1278,7 +1260,7 @@
         </widget>
       </widget>
       <widget type="rectangle" version="2.0.0">
-        <name>rectangle #324</name>
+        <name>rectangle #320</name>
         <width>555</width>
         <height>130</height>
         <line_width>1</line_width>
@@ -1294,7 +1276,7 @@
       </widget>
     </widget>
     <widget type="rectangle" version="2.0.0">
-      <name>rectangle #327</name>
+      <name>rectangle #323</name>
       <y>370</y>
       <width>555</width>
       <height>105</height>
@@ -1310,7 +1292,7 @@
       <transparent>true</transparent>
     </widget>
     <widget type="rectangle" version="2.0.0">
-      <name>rectangle #330</name>
+      <name>rectangle #326</name>
       <y>480</y>
       <width>555</width>
       <height>250</height>
@@ -1326,7 +1308,7 @@
       <transparent>true</transparent>
     </widget>
     <widget type="group" version="2.0.0">
-      <name>composite #333</name>
+      <name>composite #329</name>
       <x>5</x>
       <y>485</y>
       <width>545</width>
@@ -1334,7 +1316,7 @@
       <style>3</style>
       <transparent>true</transparent>
       <widget type="label" version="2.0.0">
-        <name>text #336</name>
+        <name>text #332</name>
         <text>Streaming Analysis</text>
         <x>148</x>
         <width>249</width>
@@ -1349,7 +1331,7 @@
         <horizontal_alignment>1</horizontal_alignment>
       </widget>
       <widget type="rectangle" version="2.0.0">
-        <name>rectangle #339</name>
+        <name>rectangle #335</name>
         <width>545</width>
         <line_color>
           <color red="218" green="218" blue="218">
@@ -1362,7 +1344,7 @@
       </widget>
     </widget>
     <widget type="label" version="2.0.0">
-      <name>text #342</name>
+      <name>text #338</name>
       <text>Stream Control</text>
       <x>138</x>
       <y>485</y>
@@ -1378,7 +1360,7 @@
       <horizontal_alignment>1</horizontal_alignment>
     </widget>
     <widget type="group" version="2.0.0">
-      <name>composite #345</name>
+      <name>composite #341</name>
       <x>5</x>
       <y>375</y>
       <width>545</width>
@@ -1386,7 +1368,7 @@
       <style>3</style>
       <transparent>true</transparent>
       <widget type="group" version="2.0.0">
-        <name>composite #348</name>
+        <name>composite #344</name>
         <x>20</x>
         <y>25</y>
         <width>525</width>
@@ -1394,14 +1376,14 @@
         <style>3</style>
         <transparent>true</transparent>
         <widget type="group" version="2.0.0">
-          <name>composite #351</name>
+          <name>composite #347</name>
           <x>145</x>
           <width>380</width>
           <height>70</height>
           <style>3</style>
           <transparent>true</transparent>
           <widget type="textentry" version="3.0.0">
-            <name>text entry #354</name>
+            <name>text entry #350</name>
             <pv_name>$(P)$(R)Energy</pv_name>
             <width>380</width>
             <font>
@@ -1417,7 +1399,7 @@
             <border_alarm_sensitive>false</border_alarm_sensitive>
           </widget>
           <widget type="combo" version="2.0.0">
-            <name>menu #358</name>
+            <name>menu #354</name>
             <pv_name>$(P)$(R)EnergyMode</pv_name>
             <y>25</y>
             <width>80</width>
@@ -1429,7 +1411,7 @@
             <border_alarm_sensitive>false</border_alarm_sensitive>
           </widget>
           <widget type="textentry" version="3.0.0">
-            <name>text entry #361</name>
+            <name>text entry #357</name>
             <pv_name>$(P)$(R)Filters</pv_name>
             <y>50</y>
             <width>380</width>
@@ -1447,13 +1429,13 @@
           </widget>
         </widget>
         <widget type="group" version="2.0.0">
-          <name>composite #365</name>
+          <name>composite #361</name>
           <width>140</width>
           <height>70</height>
           <style>3</style>
           <transparent>true</transparent>
           <widget type="label" version="2.0.0">
-            <name>text #368</name>
+            <name>text #364</name>
             <text>Energy (keV)</text>
             <width>140</width>
             <font>
@@ -1463,7 +1445,7 @@
             <horizontal_alignment>2</horizontal_alignment>
           </widget>
           <widget type="label" version="2.0.0">
-            <name>text #371</name>
+            <name>text #367</name>
             <text>Energy mode</text>
             <y>25</y>
             <width>140</width>
@@ -1474,7 +1456,7 @@
             <horizontal_alignment>2</horizontal_alignment>
           </widget>
           <widget type="label" version="2.0.0">
-            <name>text #374</name>
+            <name>text #370</name>
             <text>Filters</text>
             <y>50</y>
             <width>140</width>
@@ -1487,7 +1469,7 @@
         </widget>
       </widget>
       <widget type="rectangle" version="2.0.0">
-        <name>rectangle #377</name>
+        <name>rectangle #373</name>
         <width>545</width>
         <line_color>
           <color red="218" green="218" blue="218">
@@ -1499,7 +1481,7 @@
         </background_color>
       </widget>
       <widget type="label" version="2.0.0">
-        <name>text #380</name>
+        <name>text #376</name>
         <text>Energy</text>
         <x>133</x>
         <width>281</width>
@@ -1515,7 +1497,7 @@
       </widget>
     </widget>
     <widget type="group" version="2.0.0">
-      <name>composite #383</name>
+      <name>composite #379</name>
       <x>45</x>
       <y>510</y>
       <width>505</width>
@@ -1523,14 +1505,14 @@
       <style>3</style>
       <transparent>true</transparent>
       <widget type="group" version="2.0.0">
-        <name>composite #386</name>
+        <name>composite #382</name>
         <x>115</x>
         <width>390</width>
         <height>220</height>
         <style>3</style>
         <transparent>true</transparent>
         <widget type="combo" version="2.0.0">
-          <name>menu #389</name>
+          <name>menu #385</name>
           <pv_name>$(P)$(R)StreamStatus</pv_name>
           <width>80</width>
           <height>20</height>
@@ -1541,7 +1523,7 @@
           <border_alarm_sensitive>false</border_alarm_sensitive>
         </widget>
         <widget type="textentry" version="3.0.0">
-          <name>text entry #392</name>
+          <name>text entry #388</name>
           <pv_name>$(P)$(R)StreamBufferSize</pv_name>
           <y>25</y>
           <width>390</width>
@@ -1558,7 +1540,7 @@
           <border_alarm_sensitive>false</border_alarm_sensitive>
         </widget>
         <widget type="combo" version="2.0.0">
-          <name>menu #396</name>
+          <name>menu #392</name>
           <pv_name>$(P)$(R)StreamRetakeFlat</pv_name>
           <y>50</y>
           <width>80</width>
@@ -1570,7 +1552,7 @@
           <border_alarm_sensitive>false</border_alarm_sensitive>
         </widget>
         <widget type="textentry" version="3.0.0">
-          <name>text entry #399</name>
+          <name>text entry #395</name>
           <pv_name>$(P)$(R)StreamReconTime</pv_name>
           <y>75</y>
           <width>390</width>
@@ -1587,7 +1569,7 @@
           <border_alarm_sensitive>false</border_alarm_sensitive>
         </widget>
         <widget type="textentry" version="3.0.0">
-          <name>text entry #403</name>
+          <name>text entry #399</name>
           <pv_name>$(P)$(R)StreamCenter</pv_name>
           <y>100</y>
           <width>390</width>
@@ -1604,7 +1586,7 @@
           <border_alarm_sensitive>false</border_alarm_sensitive>
         </widget>
         <widget type="combo" version="2.0.0">
-          <name>menu #407</name>
+          <name>menu #403</name>
           <pv_name>$(P)$(R)StreamFilterType</pv_name>
           <y>125</y>
           <width>80</width>
@@ -1616,7 +1598,7 @@
           <border_alarm_sensitive>false</border_alarm_sensitive>
         </widget>
         <widget type="textentry" version="3.0.0">
-          <name>text entry #410</name>
+          <name>text entry #406</name>
           <pv_name>$(P)$(R)StreamOrthoX</pv_name>
           <y>150</y>
           <width>390</width>
@@ -1633,7 +1615,7 @@
           <border_alarm_sensitive>false</border_alarm_sensitive>
         </widget>
         <widget type="textentry" version="3.0.0">
-          <name>text entry #414</name>
+          <name>text entry #410</name>
           <pv_name>$(P)$(R)StreamOrthoY</pv_name>
           <y>175</y>
           <width>390</width>
@@ -1650,7 +1632,7 @@
           <border_alarm_sensitive>false</border_alarm_sensitive>
         </widget>
         <widget type="textentry" version="3.0.0">
-          <name>text entry #418</name>
+          <name>text entry #414</name>
           <pv_name>$(P)$(R)StreamOrthoZ</pv_name>
           <y>200</y>
           <width>390</width>
@@ -1668,13 +1650,13 @@
         </widget>
       </widget>
       <widget type="group" version="2.0.0">
-        <name>composite #422</name>
+        <name>composite #418</name>
         <width>110</width>
         <height>220</height>
         <style>3</style>
         <transparent>true</transparent>
         <widget type="label" version="2.0.0">
-          <name>text #425</name>
+          <name>text #421</name>
           <text>Status</text>
           <width>110</width>
           <font>
@@ -1684,7 +1666,7 @@
           <horizontal_alignment>2</horizontal_alignment>
         </widget>
         <widget type="label" version="2.0.0">
-          <name>text #428</name>
+          <name>text #424</name>
           <text>Buffer size</text>
           <y>25</y>
           <width>110</width>
@@ -1695,7 +1677,7 @@
           <horizontal_alignment>2</horizontal_alignment>
         </widget>
         <widget type="label" version="2.0.0">
-          <name>text #431</name>
+          <name>text #427</name>
           <text>Retake flat&amp;dark</text>
           <y>50</y>
           <width>110</width>
@@ -1706,7 +1688,7 @@
           <horizontal_alignment>2</horizontal_alignment>
         </widget>
         <widget type="label" version="2.0.0">
-          <name>text #434</name>
+          <name>text #430</name>
           <text>Recon time</text>
           <x>10</x>
           <y>75</y>
@@ -1717,7 +1699,7 @@
           <horizontal_alignment>2</horizontal_alignment>
         </widget>
         <widget type="label" version="2.0.0">
-          <name>text #437</name>
+          <name>text #433</name>
           <text>Center</text>
           <x>10</x>
           <y>100</y>
@@ -1728,7 +1710,7 @@
           <horizontal_alignment>2</horizontal_alignment>
         </widget>
         <widget type="label" version="2.0.0">
-          <name>text #440</name>
+          <name>text #436</name>
           <text>Filter type</text>
           <x>10</x>
           <y>125</y>
@@ -1739,7 +1721,7 @@
           <horizontal_alignment>2</horizontal_alignment>
         </widget>
         <widget type="label" version="2.0.0">
-          <name>text #443</name>
+          <name>text #439</name>
           <text>Ortho X</text>
           <x>10</x>
           <y>150</y>
@@ -1750,7 +1732,7 @@
           <horizontal_alignment>2</horizontal_alignment>
         </widget>
         <widget type="label" version="2.0.0">
-          <name>text #446</name>
+          <name>text #442</name>
           <text>Orhto Y</text>
           <x>10</x>
           <y>175</y>
@@ -1761,7 +1743,7 @@
           <horizontal_alignment>2</horizontal_alignment>
         </widget>
         <widget type="label" version="2.0.0">
-          <name>text #449</name>
+          <name>text #445</name>
           <text>Ortho Z</text>
           <x>10</x>
           <y>200</y>
@@ -1775,7 +1757,7 @@
     </widget>
   </widget>
   <widget type="label" version="2.0.0">
-    <name>text #452</name>
+    <name>text #448</name>
     <text>Pva plugin prefix</text>
     <x>40</x>
     <y>590</y>
@@ -1787,7 +1769,7 @@
     <horizontal_alignment>2</horizontal_alignment>
   </widget>
   <widget type="textentry" version="3.0.0">
-    <name>text entry #455</name>
+    <name>text entry #451</name>
     <pv_name>$(P)$(R)PvaPluginPVPrefix</pv_name>
     <x>175</x>
     <y>590</y>
@@ -1805,7 +1787,7 @@
     <border_alarm_sensitive>false</border_alarm_sensitive>
   </widget>
   <widget type="label" version="2.0.0">
-    <name>text #459</name>
+    <name>text #455</name>
     <text>Roi plugin prefix</text>
     <x>10</x>
     <y>615</y>
@@ -1817,7 +1799,7 @@
     <horizontal_alignment>2</horizontal_alignment>
   </widget>
   <widget type="textentry" version="3.0.0">
-    <name>text entry #462</name>
+    <name>text entry #458</name>
     <pv_name>$(P)$(R)RoiPluginPVPrefix</pv_name>
     <x>175</x>
     <y>615</y>
@@ -1835,7 +1817,7 @@
     <border_alarm_sensitive>false</border_alarm_sensitive>
   </widget>
   <widget type="label" version="2.0.0">
-    <name>text #466</name>
+    <name>text #462</name>
     <text>Cb plugin prefix</text>
     <x>40</x>
     <y>640</y>
@@ -1847,7 +1829,7 @@
     <horizontal_alignment>2</horizontal_alignment>
   </widget>
   <widget type="textentry" version="3.0.0">
-    <name>text entry #469</name>
+    <name>text entry #465</name>
     <pv_name>$(P)$(R)CbPluginPVPrefix</pv_name>
     <x>175</x>
     <y>640</y>
@@ -1863,5 +1845,23 @@
     <format>6</format>
     <show_units>false</show_units>
     <border_alarm_sensitive>false</border_alarm_sensitive>
+  </widget>
+  <widget type="action_button" version="3.0.0">
+    <name>related display #469</name>
+    <actions>
+      <action type="open_display">
+        <file>tomoScan_pso.opi</file>
+        <target>tab</target>
+        <description>PSO setup</description>
+      </action>
+    </actions>
+    <text>PSO setup</text>
+    <x>175</x>
+    <y>390</y>
+    <height>20</height>
+    <background_color>
+      <color red="115" green="223" blue="255">
+      </color>
+    </background_color>
   </widget>
 </display>

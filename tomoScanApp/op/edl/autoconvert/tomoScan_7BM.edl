@@ -7,9 +7,9 @@ x 571
 y 192
 w 640
 h 210
-font "helvetica-medium-r-18.0"
-ctlFont "helvetica-bold-r-10.0"
-btnFont "helvetica-medium-r-18.0"
+font "utopia-medium-r-24.0"
+ctlFont "helvetica-medium-r-8.0"
+btnFont "utopia-medium-r-24.0"
 fgColor rgb 0 0 0
 bgColor rgb 47872 47872 47872
 textColor rgb 0 0 0
@@ -265,10 +265,10 @@ buttonLabel "Aerotech PSO"
 numPvs 2
 numDsps 1
 displayFileName {
-  0 "$(BEAMLINE)_pso.edl"
+  0 "tomoScan_pso.edl"
 }
 menuLabel {
-  0 "Experiment Information"
+  0 "Aerotech PSO"
 }
 symbols {
   0 "P=$(P),R=$(R)"

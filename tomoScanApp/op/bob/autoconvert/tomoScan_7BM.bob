@@ -135,9 +135,9 @@
     <name>related display #27</name>
     <actions>
       <action type="open_display">
-        <file>$(BEAMLINE)_pso.opi</file>
+        <file>tomoScan_pso.opi</file>
         <target>tab</target>
-        <description>Experiment Information</description>
+        <description>Aerotech PSO</description>
       </action>
     </actions>
     <text>Aerotech PSO</text>
