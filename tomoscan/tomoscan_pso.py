@@ -92,7 +92,6 @@ class TomoScanPSO(TomoScan):
         super().begin_scan()
  
         # Compute the time for each frame
-        # time_per_angle = self.compute_frame_time()
         time_per_angle = self.compute_frame_time()
         self.motor_speed = self.rotation_step / time_per_angle
         time.sleep(0.1)
