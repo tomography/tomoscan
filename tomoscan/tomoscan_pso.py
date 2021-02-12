@@ -92,7 +92,7 @@ class TomoScanPSO(TomoScan):
         super().begin_scan()
  
         # Compute the time for each frame
-        time_per_angle = self.compute_frame_time()
+        time_per_angle = self.compute_frame_time()+7.2/1000 # temporary fix for 2-BM-B
         self.motor_speed = self.rotation_step / time_per_angle
         time.sleep(0.1)
 
@@ -302,6 +302,5 @@ class TomoScanPSO(TomoScan):
         #Where will the last point actually be?
         self.rotation_stop = (self.rotation_start 
                                 + (self.num_angles - 1) * self.rotation_step * user_direction)
-
-        #Assign the fly scan angular position to theta[]
-        self.theta = np.arange(self.rotation_start, self.rotation_stop, self.rotation_step)
+        # Assign the fly scan angular position to theta[]
+        self.theta = self.rotation_start + np.arange(self.num_angles) * self.rotation_step * user_direction
