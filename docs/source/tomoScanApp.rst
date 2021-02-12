@@ -981,7 +981,7 @@ Stream control
     - Stream file name
   * - $(P)$(R)PvaStreamPVPrefix
     - stringout
-    - Contains the prefix for the PVA server broadcasting dark and flat images in streaming mode, e.g. 2bmb:TonoScan:Stream:
+    - Contains the prefix for the PVA server broadcasting dark and flat images in streaming mode, e.g. 2bmb:TomoScan:Stream:
 
 
 tomoScan_2BM_settings.req
