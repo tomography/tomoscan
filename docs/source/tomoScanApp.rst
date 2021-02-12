@@ -433,12 +433,12 @@ PSO configuration
       This is needed because some PSO commands are controller dependent, and there appears
       to be no way to query the controller model.
       The choices are "Ensemble" (0), and "A3200" (1).
-  * - $(P)$(R)PSOPSOStartTaxi
+  * - $(P)$(R)PSOStartTaxi
     - ai
     - Status
     - The starting "taxi" position.  The taxi distance is used to allow the rotation stage
       to accelerate and reach the desired rotation speed before the first projection angle.
-  * - $(P)$(R)PSOPSOEndTaxi
+  * - $(P)$(R)PSOEndTaxi
     - ai
     - Status
     - The ending "taxi" position.  The taxi distance is used to allow the rotation stage
@@ -482,6 +482,12 @@ PSO configuration
     - Write/read
     - Sets the PSO output pulse width in microseconds.  Different cameras may have different
       requirements for the trigger pulse width, so this value can be modified.
+  * - $(P)$(R)PSOKeepAlive
+    - asyn
+    - Write/read
+    - This record is needed on the Ensemble to keep the socket from timing out.
+      It is not needed on the A3200, but does not hurt. 
+      SCAN could be set to Passive on the A3200.
 
 medm files
 ----------
@@ -710,23 +716,8 @@ This file is used for records needed by the tomoscan_2bm derived class, and also
 for metadata PVs that should be saved in the tomoscan configuration file and files 
 written by the areaDetector file plugins.
 
-PSO Prefix
-^^^^^^^^^^
-
-.. cssclass:: table-bordered table-striped table-hover
-.. list-table::
-  :header-rows: 1
-  :widths: 5 5 90
-
-  * - Record name
-    - Record type
-    - Description
-  * - $(P)$(R)PSOPVPrefix
-    - stringout
-    - Contains the prefix for the PSO, e.g. 2bma:PSOFly2:
-
 Pva, Roi and Cb Plugin PV Prefixes
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. cssclass:: table-bordered table-striped table-hover
 .. list-table::
