@@ -174,18 +174,6 @@ class TomoScan():
             self.control_pvs['MCSMaxChannels']     = PV(prefix + 'MaxChannels')
             self.control_pvs['MCSNuseAll']         = PV(prefix + 'NuseAll')
 
-        if 'PSO' in self.pv_prefixes:
-            prefix = self.pv_prefixes['PSO']
-            self.control_pvs['PSOscanDelta']       = PV(prefix + 'scanDelta')
-            self.control_pvs['PSOstartPos']        = PV(prefix + 'startPos')
-            self.control_pvs['PSOendPos']          = PV(prefix + 'endPos')
-            self.control_pvs['PSOslewSpeed']       = PV(prefix + 'slewSpeed')
-            self.control_pvs['PSOtaxi']            = PV(prefix + 'taxi')
-            self.control_pvs['PSOfly']             = PV(prefix + 'fly')
-            self.control_pvs['PSOscanControl']     = PV(prefix + 'scanControl')
-            self.control_pvs['PSOcalcProjections'] = PV(prefix + 'numTriggers')        
-            self.control_pvs['ThetaArray']         = PV(prefix + 'motorPos.AVAL')
-
         if 'PvaPlugin' in self.pv_prefixes:
             prefix = self.pv_prefixes['PvaPlugin']
             self.control_pvs['PVANDArrayPort']     = PV(prefix + 'NDArrayPort')                
