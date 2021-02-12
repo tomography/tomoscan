@@ -9,6 +9,7 @@
 import time
 import os
 import math
+import numpy as np
 from tomoscan import TomoScan
 from tomoscan import log
 
@@ -91,6 +92,7 @@ class TomoScanPSO(TomoScan):
         super().begin_scan()
  
         # Compute the time for each frame
+        # time_per_angle = self.compute_frame_time()
         time_per_angle = self.compute_frame_time()
         self.motor_speed = self.rotation_step / time_per_angle
         time.sleep(0.1)
@@ -272,6 +274,7 @@ class TomoScanPSO(TomoScan):
         Uses this spacing to recalculate the end of the scan, if necessary.
         Computes the taxi distance at the beginning and end of scan to allow
         the stage to accelerate to speed.
+        Assign the fly scan angular position to theta[]
         '''
         overall_sense, user_direction = self._compute_senses()
         # Get the distance needed for acceleration = 1/2 a t^2 = 1/2 * v * t
@@ -290,7 +293,7 @@ class TomoScanPSO(TomoScan):
         # Change the rotation step Python variable and PV
         self.rotation_step = delta_encoder_counts / encoder_multiply
         self.epics_pvs['RotationStep'].put(self.rotation_step)
-                  
+          
         # Make taxi distance an integer number of measurement deltas >= accel distance
         # Add 1/2 of a delta to ensure that we are really up to speed.
         taxi_dist = (math.ceil(accel_dist / self.rotation_step) + 0.5) * self.rotation_step 
@@ -300,3 +303,6 @@ class TomoScanPSO(TomoScan):
         #Where will the last point actually be?
         self.rotation_stop = (self.rotation_start 
                                 + (self.num_angles - 1) * self.rotation_step * user_direction)
+
+        #Assign the fly scan angular position to theta[]
+        self.theta = np.arange(self.rotation_start, self.rotation_stop, self.rotation_step)
