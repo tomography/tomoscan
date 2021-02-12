@@ -10,4 +10,4 @@
 
    .. autosummary::
    
-      tomoscan_pso
+      tomoscan.tomoscan_pso
