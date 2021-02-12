@@ -113,6 +113,7 @@ class TomoScan():
         self.control_pvs['CamBinY']              = PV(camera_prefix + 'BinY')
         self.control_pvs['CamWaitForPlugins']    = PV(camera_prefix + 'WaitForPlugins')
         self.control_pvs['PortNameRBV']          = PV(camera_prefix + 'PortName_RBV')
+        self.control_pvs['CamNDAttributesFile']  = PV(camera_prefix + 'NDAttributesFile')
 
         # If this is a Point Grey camera then assume we are running ADSpinnaker
         # and create some PVs specific to that driver
@@ -151,8 +152,8 @@ class TomoScan():
         self.control_pvs['FPFullFileName']    = PV(prefix + 'FullFileName_RBV')
         self.control_pvs['FPAutoSave']        = PV(prefix + 'AutoSave')
         self.control_pvs['FPEnableCallbacks'] = PV(prefix + 'EnableCallbacks')
-        
-         
+        self.control_pvs['FPXMLFileName']     = PV(prefix + 'XMLFileName')
+
         # Set some initial PV values
         file_path = self.config_pvs['FilePath'].get(as_string=True)
         self.control_pvs['FPFilePath'].put(file_path)

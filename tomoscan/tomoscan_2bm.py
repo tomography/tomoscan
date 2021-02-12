@@ -168,9 +168,11 @@ class TomoScan2BM(TomoScanPSO):
 
         This does the following:
 
-        - Calls the base class method.
-        
         - Set data directory.
+
+        - Set the TomoScan xml files
+
+        - Calls the base class method.
         
         - Opens the front-end shutter.
 
@@ -186,6 +188,10 @@ class TomoScan2BM(TomoScanPSO):
         file_path = self.epics_pvs['DetectorTopDir'].get(as_string=True) + self.epics_pvs['ExperimentYearMonth'].get(as_string=True) + os.path.sep + self.epics_pvs['UserLastName'].get(as_string=True) + os.path.sep
         self.epics_pvs['FilePath'].put(file_path, wait=True)
 
+        # set TomoScan xml files
+        self.epics_pvs['CamNDAttributesFile'].put('TomoScanDetectorAttributes.xml')
+        self.epics_pvs['FPXMLFileName'].put('TomoScanLayout.xml')
+
         # Call the base class method
         super().begin_scan()
         # Opens the front-end shutter
@@ -195,6 +201,7 @@ class TomoScan2BM(TomoScanPSO):
         # self.theta = []
         # self.theta = self.epics_pvs['ThetaArray'].get(count=int(self.num_angles))
         print(self.theta,self.num_angles)
+        print(len(self.theta))
 
     def end_scan(self):
         """Performs the operations needed at the very end of a scan.
