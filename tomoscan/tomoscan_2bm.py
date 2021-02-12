@@ -192,8 +192,8 @@ class TomoScan2BM(TomoScanPSO):
         self.open_frontend_shutter()
         
         # # Create theta array
-        self.theta = []
-        self.theta = self.epics_pvs['ThetaArray'].get(count=int(self.num_angles))
+        # self.theta = []
+        # self.theta = self.epics_pvs['ThetaArray'].get(count=int(self.num_angles))
         print(self.theta,self.num_angles)
 
     def end_scan(self):
