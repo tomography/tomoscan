@@ -1,9 +1,9 @@
-"""Software for tomography scanning with EPICS at APS beamline 2-BM-A
+"""Software for tomography scanning with EPICS at APS beamline 2-BM
 
    Classes
    -------
    TomoScan2BM
-     Derived class for tomography scanning with EPICS at APS beamline 2-BM-A
+     Derived class for tomography scanning with EPICS at APS beamline 2-BM
 """
 import time
 import os
@@ -15,7 +15,7 @@ from tomoscan import log
 EPSILON = .001
 
 class TomoScan2BM(TomoScanPSO):
-    """Derived class used for tomography scanning with EPICS at APS beamline 2-BM-A
+    """Derived class used for tomography scanning with EPICS at APS beamline 2-BM
 
     Parameters
     ----------
@@ -197,12 +197,6 @@ class TomoScan2BM(TomoScanPSO):
         # Opens the front-end shutter
         self.open_frontend_shutter()
         
-        # # Create theta array
-        # self.theta = []
-        # self.theta = self.epics_pvs['ThetaArray'].get(count=int(self.num_angles))
-        print(self.theta,self.num_angles)
-        print(len(self.theta))
-
     def end_scan(self):
         """Performs the operations needed at the very end of a scan.
 
