@@ -54,6 +54,10 @@ class TomoScanStreamPSO(TomoScan):
                 'sizex': pvaccess.pvaccess.ScalarType.INT, 
                 'sizey': pvaccess.pvaccess.ScalarType.INT})
             self.pva_server_flat = pvaccess.PvaServer(prefix + 'flat', self.pva_stream_flat)
+
+            self.pva_stream_theta = pvaccess.PvObject({'value': [pvaccess.pvaccess.ScalarType.DOUBLE], 
+                'sizex': pvaccess.pvaccess.ScalarType.INT})
+            self.pva_server_theta = pvaccess.PvaServer(prefix + 'theta', self.pva_stream_theta)
         
         self.stream_init()
 
@@ -97,6 +101,7 @@ class TomoScanStreamPSO(TomoScan):
 
         # Program the stage driver to provide PSO pulses
         self.compute_positions_PSO()
+
         self.program_PSO()
 
         self.begin_stream()  
@@ -303,7 +308,8 @@ class TomoScanStreamPSO(TomoScan):
                                 + (self.num_angles - 1) * self.rotation_step * user_direction)
         # Assign the fly scan angular position to theta[]
         self.theta = self.rotation_start + np.arange(self.num_angles) * self.rotation_step * user_direction
-
+        self.pva_stream_theta['value'] = self.theta
+        self.pva_stream_theta['sizex'] = self.num_angles
 
 
 
