@@ -708,34 +708,13 @@ These are the files that are specific to the TomoScan2BM derived class used at A
 tomoScan_2BM.template
 ~~~~~~~~~~~~~~~~~~~~~
 
-This is database file for the TomoScan2BM derived class
+This is the database file for the TomoScan2BM derived class
 :doc:`tomoScan_2BM.template`.
 
 The following tables list all of the records in the tomoScan_2BM.template file.
 This file is used for records needed by the tomoscan_2bm derived class, and also
 for metadata PVs that should be saved in the tomoscan configuration file and files 
 written by the areaDetector file plugins.
-
-Pva, Roi and Cb Plugin PV Prefixes
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-.. cssclass:: table-bordered table-striped table-hover
-.. list-table::
-  :header-rows: 1
-  :widths: 5 5 90
-
-  * - Record name
-    - Record type
-    - Description
-  * - $(P)$(R)PvaPluginPVPrefix
-    - stringout
-    - Contains the prefix for the Pva plugin, e.g. 2bmbSP1:Pva1:
-  * - $(P)$(R)RoiPluginPVPrefix
-    - stringout
-    - Contains the prefix for the ROI plugin, e.g. 2bmbSP1:ROI1:
-  * - $(P)$(R)CbPluginPVPrefix
-    - stringout
-    - Contains the prefix for the CB plugin, e.g. 2bmbSP1:CB1:
 
 Energy information
 ^^^^^^^^^^^^^^^^^^
@@ -931,6 +910,30 @@ Fast shutter control
   * - $(P)$(R)OpenFastShutterValue
     - stringout
     - Contains the value to write to open the fast shutter
+
+
+Additional files that are specific to the TomoScanStream derived class used at APS beamline 2-BM:
+
+Pva, Roi and Cb Plugin PV Prefixes
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. cssclass:: table-bordered table-striped table-hover
+.. list-table::
+  :header-rows: 1
+  :widths: 5 5 90
+
+  * - Record name
+    - Record type
+    - Description
+  * - $(P)$(R)PvaPluginPVPrefix
+    - stringout
+    - Contains the prefix for the Pva plugin, e.g. 2bmbSP1:Pva1:
+  * - $(P)$(R)RoiPluginPVPrefix
+    - stringout
+    - Contains the prefix for the ROI plugin, e.g. 2bmbSP1:ROI1:
+  * - $(P)$(R)CbPluginPVPrefix
+    - stringout
+    - Contains the prefix for the CB plugin, e.g. 2bmbSP1:CB1:
 
 Stream control
 ^^^^^^^^^^^^^^
