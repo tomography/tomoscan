@@ -871,6 +871,9 @@ Data management information
   * - $(P)$(R)RemoteAnalysisDir
     - stringout
     - Remote analysis location where to transfer the raw data for analysis, e.g tomo@handyn:/local/data/
+  * - $(P)$(R)CopyToAnalysisDir
+    - bo
+    - Enable raw data copy mode 'Yes'. Data are copied from detector to data analysis computer.
 
 Front-end shutter status
 ^^^^^^^^^^^^^^^^^^^^^^^^
