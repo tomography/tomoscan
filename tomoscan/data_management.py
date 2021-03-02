@@ -2,7 +2,7 @@
 """
 Data Management module to support data transfer from data collection to data analysis computer
 
-To use in your beamline:
+To use at your beamline:
 
 from tomoscan import data_management as dm
 
