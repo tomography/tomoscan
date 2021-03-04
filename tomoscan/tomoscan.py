@@ -238,7 +238,7 @@ class TomoScan():
         """Copies the FilePath PV to file plugin FilePath"""
 
         value = self.epics_pvs['FilePath'].get(as_string=True)
-        self.epics_pvs['FPFilePath'].put(value)
+        self.epics_pvs['FPFilePath'].put(value, wait=True)
 
     def copy_file_path_exists(self):
         """Copies the file plugin FilePathExists_RBV PV to FilePathExists"""
@@ -546,8 +546,8 @@ class TomoScan():
         # Set the exposure time
         self.set_exposure_time()
         # Set the file path, file name and file number
-        self.epics_pvs['FPFilePath'].put(self.epics_pvs['FilePath'].value)
-        self.epics_pvs['FPFileName'].put(self.epics_pvs['FileName'].value)
+        self.epics_pvs['FPFilePath'].put(self.epics_pvs['FilePath'].value, wait=True)
+        self.epics_pvs['FPFileName'].put(self.epics_pvs['FileName'].value, wait=True) 
 
         # Copy the current values of scan parameters into class variables
         self.exposure_time        = self.epics_pvs['ExposureTime'].value
@@ -839,9 +839,9 @@ class TomoScan():
         # We need to use the actual exposure time that the camera is using, not the requested time
         exposure = self.epics_pvs['CamAcquireTimeRBV'].value
         # Add some extra time to exposure time for margin.
-        # Adding 0.5% to the exposure time, and at least 1 ms seems to work for FLIR cameras
+        # Adding 1% to the exposure time, and at least 1 ms seems to work for FLIR cameras
         # This is empirical and should be made camera dependent
-        frame_time = exposure * 1.005
+        frame_time = exposure * 1.010
 
         # If the time is less than the readout time then use the readout time plus 1 ms.
         if frame_time < readout:

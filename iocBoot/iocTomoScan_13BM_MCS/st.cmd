@@ -1,18 +1,13 @@
 < envPaths
 
-epicsEnvSet("P", "TSTest:")
-epicsEnvSet("R", "TS1:")
+epicsEnvSet("P", "13BMDPG2:")
+epicsEnvSet("R", "TS:")
 
 ## Register all support components
 
 # Use these lines to run the locally built tomoScanApp
 dbLoadDatabase "../../dbd/tomoScanApp.dbd"
 tomoScanApp_registerRecordDeviceDriver pdbbase
-
-# Use these lines to run the xxx application on APSshare.
-#dbLoadDatabase "/APSshare/epics/synApps_6_1/support/xxx-R6-1/dbd/iocxxxLinux.dbd"
-#iocxxxLinux_registerRecordDeviceDriver pdbbase
-
 
 dbLoadTemplate("tomoScan.substitutions")
 
