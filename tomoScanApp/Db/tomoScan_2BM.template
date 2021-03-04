@@ -186,6 +186,12 @@ record(stringout, "$(P)$(R)RemoteAnalysisDir")
    field(VAL,  "Unknown")
 }
 
+record(bo, "$(P)$(R)CopyToAnalysisDir")
+{
+   field(ZNAM, "No")
+   field(ONAM, "Yes")
+}
+
 ######################
 # Fast shutter control
 ######################

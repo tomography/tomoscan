@@ -54,6 +54,7 @@ $(P)$(R)DetectorTopDir
 $(P)$(R)UserLastName
 $(P)$(R)ExperimentYearMonth
 $(P)$(R)RemoteAnalysisDir
+$(P)$(R)CopyToAnalysisDir
 
 ######################
 # Fast shutter control

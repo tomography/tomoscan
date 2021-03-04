@@ -9,6 +9,7 @@ import time
 import os
 import h5py 
 
+from tomoscan import data_management as dm
 from tomoscan import TomoScanPSO
 from tomoscan import log
 
@@ -214,9 +215,11 @@ class TomoScan2BM(TomoScanPSO):
 
         - Calls the base class method.
 
-        - Closes shutter.        
+        - Closes shutter.  
+
+        - Copy raw data to data analysis computer      
         """
-         # Add theta in the hdf file
+        # Add theta in the hdf file
         self.add_theta()
 
         if self.return_rotation == 'Yes':
@@ -230,6 +233,14 @@ class TomoScan2BM(TomoScanPSO):
         super().end_scan()
         # Close shutter
         self.close_shutter()
+        # Copy raw data to data analysis computer    
+        if self.epics_pvs['CopyToAnalysisDir'].get():
+            log.info('Automatic data trasfer to data analysis computer is enabled.')
+            full_file_name = self.epics_pvs['FPFullFileName'].get(as_string=True)
+            remote_analysis_dir = self.epics_pvs['RemoteAnalysisDir'].get(as_string=True)
+            dm.scp(full_file_name, remote_analysis_dir)
+        else:
+            log.warning('Automatic data trasfer to data analysis computer is disabled.')
 
     def add_theta(self):
         """Add theta at the end of a scan.
