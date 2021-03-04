@@ -3,4 +3,7 @@
 #     python -i start_tomoscan.py
 # The -i is needed to keep Python running, otherwise it will create the object and exit
 from tomoscan.tomoscan_13bm_mcs import TomoScan13BM_MCS
-ts = TomoScan13BM_MCS(["../../db/tomoScan_settings.req","../../db/tomoScan_13BM_settings.req"], {"$(P)":"TSTest:", "$(R)":"TS1:"})
+ts = TomoScan13BM_MCS(["../../db/tomoScan_settings.req",
+                       "../../db/tomoScan_13BM_MCS_settings.req", 
+                       "../../db/tomoScan_13BM_settings.req"], 
+                      {"$(P)":"13BMDPG2:", "$(R)":"TS:"})
