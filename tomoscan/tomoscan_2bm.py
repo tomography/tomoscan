@@ -203,8 +203,6 @@ class TomoScan2BM(TomoScanPSO):
 
         This does the following:
 
-        - Add theta to the raw data file. 
-
         - Calls ``save_configuration()``.
 
         - Put the camera back in "FreeRun" mode and acquiring so the user sees live images.
@@ -217,10 +215,10 @@ class TomoScan2BM(TomoScanPSO):
 
         - Closes shutter.  
 
-        - Copy raw data to data analysis computer      
+        - Add theta to the raw data file. 
+
+        - Copy raw data to data analysis computer.      
         """
-        # Add theta in the hdf file
-        self.add_theta()
 
         if self.return_rotation == 'Yes':
             # Reset rotation position by mod 360 , the actual return 
@@ -233,6 +231,13 @@ class TomoScan2BM(TomoScanPSO):
         super().end_scan()
         # Close shutter
         self.close_shutter()
+
+        # Stop the file plugin
+        self.epics_pvs['FPCapture'].put('Done')
+        self.wait_pv(self.epics_pvs['FPCaptureRBV'], 0)
+        # Add theta in the hdf file
+        self.add_theta()
+
         # Copy raw data to data analysis computer    
         if self.epics_pvs['CopyToAnalysisDir'].get():
             log.info('Automatic data trasfer to data analysis computer is enabled.')
@@ -254,13 +259,27 @@ class TomoScan2BM(TomoScanPSO):
                 with f:
                     try:
                         if self.theta is not None:
-                            theta_ds = f.create_dataset('/exchange/theta', (len(self.theta),))
-                            theta_ds[:] = self.theta[:]
+                            unique_ids = f['/defaults/NDArrayUniqueId']
+                            shift_start = int(self.num_dark_fields > 0) and (self.dark_field_mode in ('Start', 'Both'))+ \
+                                          int(self.num_flat_fields > 0) and (self.flat_field_mode in ('Start', 'Both'))                            
+                            # find beginnings of sorted subarrays
+                            # for [1,2,1,3,1,2,3,4,1,2] returns 0,2,4,8
+                            ids_list = [0,*np.where(unique_ids[1:]-unique_ids[:-1]<0)[0]+1]                            
+                            # extract projection ids
+                            if(len(ids_list)==1):
+                                proj_ids = ids_list
+                            else:
+                                proj_ids = unique_ids[ids_list[shift_start]:ids_list[shift_start+1]]
+                            
+                            theta_ds = f.create_dataset('/exchange/theta', (len(proj_ids),))
+                            theta_ds[:] = self.theta[proj_ids-1]
+                            if(len(proj_ids)!=len(self.theta)):
+                                log.warning('There are %d missing frames',len(self.theta)-len(proj_ids))
                     except:
                         log.error('Add theta: Failed accessing: %s', full_file_name)
                         traceback.print_exc(file=sys.stdout)
             except OSError:
-                log.error('Add theta aborted')
+                log.error('Add theta aborted: %s not closed', full_file_name)
         else:
             log.error('Failed adding theta. %s file does not exist', full_file_name)
 
