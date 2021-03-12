@@ -1,14 +1,14 @@
 
 file {
-	name="/home/beams/7BMB/epics/synApps/support/tomoscan/tomoScanApp/op/adl/tomoScan_7BM_dm.adl"
+	name="/home/beams9/FUELSPRAY/epics/synApps/support/tomoscan/tomoScanApp/op/adl/tomoScan_7BM_dm.adl"
 	version=030111
 }
 display {
 	object {
-		x=119
-		y=167
+		x=109
+		y=159
 		width=620
-		height=160
+		height=180
 	}
 	clr=14
 	bclr=4
@@ -111,152 +111,145 @@ text {
 	textix="$(P)$(R)   Data Management"
 	align="horiz. centered"
 }
-composite {
+text {
 	object {
-		x=58
-		y=51
-		width=545
-		height=95
+		x=18
+		y=45
+		width=200
+		height=20
 	}
-	"composite name"=""
-	children {
-		composite {
-			object {
-				x=58
-				y=51
-				width=160
-				height=95
-			}
-			"composite name"=""
-			children {
-				text {
-					object {
-						x=78
-						y=51
-						width=140
-						height=20
-					}
-					"basic attribute" {
-						clr=14
-					}
-					textix="Detector top dir"
-					align="horiz. right"
-				}
-				text {
-					object {
-						x=88
-						y=76
-						width=130
-						height=20
-					}
-					"basic attribute" {
-						clr=14
-					}
-					textix="User last name"
-					align="horiz. right"
-				}
-				text {
-					object {
-						x=58
-						y=101
-						width=160
-						height=20
-					}
-					"basic attribute" {
-						clr=14
-					}
-					textix="Experiment year month"
-					align="horiz. right"
-				}
-				text {
-					object {
-						x=88
-						y=126
-						width=130
-						height=20
-					}
-					"basic attribute" {
-						clr=14
-					}
-					textix="Remote analysis dir"
-					align="horiz. right"
-				}
-			}
-		}
-		composite {
-			object {
-				x=223
-				y=51
-				width=380
-				height=95
-			}
-			"composite name"=""
-			children {
-				"text entry" {
-					object {
-						x=223
-						y=51
-						width=380
-						height=20
-					}
-					control {
-						chan="$(P)$(R)DetectorTopDir"
-						clr=14
-						bclr=51
-					}
-					format="string"
-					limits {
-					}
-				}
-				"text entry" {
-					object {
-						x=223
-						y=76
-						width=380
-						height=20
-					}
-					control {
-						chan="$(P)$(R)UserLastName"
-						clr=14
-						bclr=51
-					}
-					format="string"
-					limits {
-					}
-				}
-				"text entry" {
-					object {
-						x=223
-						y=101
-						width=380
-						height=20
-					}
-					control {
-						chan="$(P)$(R)ExperimentYearMonth"
-						clr=14
-						bclr=51
-					}
-					format="string"
-					limits {
-					}
-				}
-				"text entry" {
-					object {
-						x=223
-						y=126
-						width=380
-						height=20
-					}
-					control {
-						chan="$(P)$(R)RemoteAnalysisDir"
-						clr=14
-						bclr=51
-					}
-					format="string"
-					limits {
-					}
-				}
-			}
-		}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Remote computer name"
+	align="horiz. right"
+}
+text {
+	object {
+		x=78
+		y=95
+		width=140
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="User last name"
+	align="horiz. right"
+}
+text {
+	object {
+		x=8
+		y=120
+		width=210
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Experiment year month"
+	align="horiz. right"
+}
+"text entry" {
+	object {
+		x=225
+		y=45
+		width=380
+		height=20
+	}
+	control {
+		chan="$(P)$(R)DetectorTopDir"
+		clr=14
+		bclr=51
+	}
+	format="string"
+	limits {
+	}
+}
+"text entry" {
+	object {
+		x=225
+		y=95
+		width=380
+		height=20
+	}
+	control {
+		chan="$(P)$(R)UserLastName"
+		clr=14
+		bclr=51
+	}
+	format="string"
+	limits {
+	}
+}
+"text entry" {
+	object {
+		x=225
+		y=120
+		width=380
+		height=20
+	}
+	control {
+		chan="$(P)$(R)ExperimentYearMonth"
+		clr=14
+		bclr=51
+	}
+	format="string"
+	limits {
+	}
+}
+"text entry" {
+	object {
+		x=225
+		y=70
+		width=380
+		height=20
+	}
+	control {
+		chan="$(P)$(R)RemoteAnalysisDir"
+		clr=14
+		bclr=51
+	}
+	format="string"
+	limits {
+	}
+}
+text {
+	object {
+		x=60
+		y=70
+		width=160
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Remote file path"
+	align="horiz. right"
+}
+text {
+	object {
+		x=48
+		y=145
+		width=170
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Auto file transer"
+	align="horiz. right"
+}
+menu {
+	object {
+		x=226
+		y=145
+		width=190
+		height=20
+	}
+	control {
+		chan="$(P)$(R)AutoFileTransfer"
+		clr=14
+		bclr=4
 	}
 }

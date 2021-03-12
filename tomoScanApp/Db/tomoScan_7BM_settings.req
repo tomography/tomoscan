@@ -78,3 +78,8 @@ $(P)$(R)OpenFastShutterValue
 # Camera External Trigger
 #########################
 $(P)$(R)ExternalTriggerSource
+
+################
+# Shutter status
+################
+$(P)$(R)ShutterStatusPVName

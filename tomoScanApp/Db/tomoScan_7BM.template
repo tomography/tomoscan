@@ -102,6 +102,15 @@ record(bo, "$(P)$(R)Testing")
    field(ONAM, "Yes")
 }
 
+################
+# Shutter status
+################
+
+record(stringout, "$(P)$(R)ShutterStatusPVName")
+{
+   field(VAL,  "$(SHUTTER_STATUS)")
+}
+
 ####################
 # Optics information
 ####################
