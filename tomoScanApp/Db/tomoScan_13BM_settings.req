@@ -3,11 +3,6 @@
 
 # This is the file for the tomoscan_13bm derived class.
 
-################
-# SIS MCS Prefix
-################
-$(P)$(R)MCSPVPrefix
-
 ####################
 # Energy information
 ####################

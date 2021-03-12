@@ -4,16 +4,6 @@
 # both in the configuration files written by tomoscan, and in the
 # files written by areaDetector file plugin.
 
-
-############
-# PSO Prefix
-############
-
-record(stringout, "$(P)$(R)PSOPVPrefix")
-{
-   field(VAL,  "$(PSO)")
-}
-
 ####################
 # Energy information
 ####################
@@ -51,6 +41,12 @@ record(stringout, "$(P)$(R)BeamReadyPVName")
 record(stringout, "$(P)$(R)BeamReadyValue")
 {
    field(VAL,  "$(READY_VALUE)")
+}
+
+record(bo, "$(P)$(R)Testing")
+{
+   field(ZNAM, "No")
+   field(ONAM, "Yes")
 }
 
 ####################
@@ -124,9 +120,12 @@ record(stringout, "$(P)$(R)UserName")
    field(VAL,  "Unknown")
 }
 
-record(stringout, "$(P)$(R)UserInstitution")
+record(waveform, "$(P)$(R)UserInstitution") 
 {
-   field(VAL,  "Unknown")
+    field(SCAN, "Passive")
+    field(DTYP, "Soft Channel")
+    field(NELM, "256")
+    field(FTVL, "CHAR")
 }
 
 record(stringout, "$(P)$(R)UserBadge")
@@ -144,9 +143,12 @@ record(stringout, "$(P)$(R)ProposalNumber")
    field(VAL,  "Unknown")
 }
 
-record(stringout, "$(P)$(R)ProposalTitle")
+record(waveform, "$(P)$(R)ProposalTitle") 
 {
-   field(VAL,  "Unknown")
+    field(SCAN, "Passive")
+    field(DTYP, "Soft Channel")
+    field(NELM, "256")
+    field(FTVL, "CHAR")
 }
 
 record(stringout, "$(P)$(R)ESAFNumber")
@@ -184,6 +186,12 @@ record(stringout, "$(P)$(R)RemoteAnalysisDir")
    field(VAL,  "Unknown")
 }
 
+record(bo, "$(P)$(R)CopyToAnalysisDir")
+{
+   field(ZNAM, "No")
+   field(ONAM, "Yes")
+}
+
 ######################
 # Fast shutter control
 ######################
@@ -207,3 +215,13 @@ record(stringout, "$(P)$(R)OpenFastShutterValue")
 {
    field(VAL,  "$(OPEN_FAST_VALUE)")
 }
+
+################
+# Shutter status
+################
+
+record(stringout, "$(P)$(R)ShutterStatusPVName")
+{
+   field(VAL,  "$(SHUTTER_STATUS)")
+}
+

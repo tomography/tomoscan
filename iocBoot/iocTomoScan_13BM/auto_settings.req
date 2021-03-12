@@ -1,2 +1,0 @@
-file "tomoScan_settings.req", P=$(P), R=$(R)
-file "tomoScan_13BM_settings.req", P=$(P), R=$(R)

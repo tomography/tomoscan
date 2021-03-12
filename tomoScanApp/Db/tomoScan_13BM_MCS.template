@@ -1,0 +1,10 @@
+# Database for EPICS PVS for tomography data collection software at APS 13-BM-D
+# It contains the MCS PV that is required by the tomoscan_13bm derived class.
+
+################
+# SIS MCS Prefix
+################
+record(stringout, "$(P)$(R)MCSPVPrefix")
+{
+   field(VAL,  "$(MCS)")
+}

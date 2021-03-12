@@ -3,11 +3,6 @@
 
 # This is the file for the tomoscan_2bm derived class.
 
-############
-# PSO Prefix
-############
-$(P)$(R)PSOPVPrefix
-
 ####################
 # Energy information
 ####################
@@ -20,6 +15,7 @@ $(P)$(R)Filters
 #########################
 $(P)$(R)BeamReadyPVName
 $(P)$(R)BeamReadyValue
+$(P)$(R)Testing
 
 ####################
 # Optics information
@@ -58,6 +54,7 @@ $(P)$(R)DetectorTopDir
 $(P)$(R)UserLastName
 $(P)$(R)ExperimentYearMonth
 $(P)$(R)RemoteAnalysisDir
+$(P)$(R)CopyToAnalysisDir
 
 ######################
 # Fast shutter control
@@ -66,3 +63,8 @@ $(P)$(R)CloseFastShutterPVName
 $(P)$(R)CloseFastShutterValue
 $(P)$(R)OpenFastShutterPVName
 $(P)$(R)OpenFastShutterValue
+
+################
+# Shutter status
+################
+$(P)$(R)ShutterStatusPVName

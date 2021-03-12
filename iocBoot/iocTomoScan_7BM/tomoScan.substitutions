@@ -1,0 +1,21 @@
+file "$(TOP)/db/tomoScan.template"
+{
+pattern
+{  P,      R,      CAMERA,    FILE_PLUGIN,   ROTATION,  SAMPLE_X,  SAMPLE_Y,      CLOSE_SHUTTER,        CLOSE_VALUE,        OPEN_SHUTTER,         OPEN_VALUE}
+{7bmtomo:, TomoScan:, 7bm_pg1:, 7bm_pg1:HDF1:,  7bmb1:aero:m3,  7bmb1:aero:m2,  7bmb1:aero:m1,  7bma1:rShtrA:Close,    1,   7bma1:rShtrA:Open,      1}
+}
+
+# For the Ensemble PSO_ENC_PER_ROTATION is a signed number containing the number of encoder pulses per rotation in positive dial coordinates
+file "$(TOP)/db/tomoScan_PSO.template"
+{
+pattern
+{  P,       R,        PSO_MODEL, PSO_PORT, PSO_AXIS_NAME, PSO_ENC_INPUT, PSO_ENC_PER_ROTATION}
+{7bmtomo:, TomoScan:,    0,      PSO_PORT,      Z,             3,           -32768000.}
+}
+
+file "$(TOP)/db/tomoScan_7BM.template"
+{
+pattern
+{  P,      R,         BEAM_READY,                  READY_VALUE,CLOSE_FAST_SHUTTER, CLOSE_FAST_VALUE, OPEN_FAST_SHUTTER, OPEN_FAST_VALUE}
+{7bmtomo:, TomoScan:, PA:07BM:STA_A_BEAMREADY_PL.VAL,    1,         7bmb1:m27,             0.2,          7bmb1:m27,            0}
+}
