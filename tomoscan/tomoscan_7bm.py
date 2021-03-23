@@ -13,6 +13,7 @@ from pathlib import Path
 import numpy as np
 from epics import PV
 
+from tomoscan import data_management as dm
 from tomoscan import TomoScanPSO
 from tomoscan import log
 
@@ -85,19 +86,24 @@ class TomoScan7BM(TomoScanPSO):
 
 
     def close_shutter(self):
-        """Closes the shutter to collect dark fields.
+        """Closes the shutter to collect dark fields and at the end of a scan
         This does the following:
 
         - Checks if we are in testing mode.  If we are, do nothing
 
-        - Calls the base class method.
-
         - Closes the 7-BM-B fast shutter.
 
+        - Closes the beamline shutter.
        """
         if self.epics_pvs['Testing'].get():
             log.warning('In testing mode, so not closing shutters.')
             return
+        # Close 7-BM-B fast shutter; don't wait for it
+        if not self.epics_pvs['CloseFastShutter'] is None:
+            pv = self.epics_pvs['CloseFastShutter']
+            value = self.epics_pvs['CloseFastShutterValue'].get(as_string=True)
+            log.info('close fast shutter: %s, value: %s', pv, value)
+            self.epics_pvs['CloseFastShutter'].put(value, wait=False)
         # Call the base class method
         if not self.epics_pvs['CloseShutter'] is None:
             pv = self.epics_pvs['CloseShutter']
@@ -109,12 +115,6 @@ class TomoScan7BM(TomoScanPSO):
             self.wait_pv(self.epics_pvs['ShutterStatus'], 1)
             status = self.epics_pvs['ShutterStatus'].get(as_string=True)
             log.info('shutter status: %s', status)
-        # Close 7-BM-B fast shutter
-        if not self.epics_pvs['CloseFastShutter'] is None:
-            pv = self.epics_pvs['CloseFastShutter']
-            value = self.epics_pvs['CloseFastShutterValue'].get(as_string=True)
-            log.info('close fast shutter: %s, value: %s', pv, value)
-            self.epics_pvs['CloseFastShutter'].put(value, wait=True)
 
 
     def set_trigger_mode(self, trigger_mode, num_images):
@@ -169,6 +169,10 @@ class TomoScan7BM(TomoScanPSO):
         # Close the shutter
         self.close_shutter()
 
+        # Stop the file plugin, though it should be done already
+        self.epics_pvs['FPCapture'].put('Done')
+        self.wait_pv(self.epics_pvs['FPCaptureRBV'], 0)
+
         # Add theta in the hdf file
         self.add_theta()
 
@@ -197,3 +201,36 @@ class TomoScan7BM(TomoScanPSO):
                 log.error('Add theta aborted')
         else:
             log.error('Failed adding theta. %s file does not exist', full_file_name)
+
+
+    def wait_pv(self, epics_pv, wait_val, timeout=np.inf, delta_t=0.01):
+        """Wait on a pv to be a value until max_timeout (default forever)
+           delay for pv to change
+        """
+        time.sleep(delta_t)
+        start_time = time.time()
+        while time.time() - start_time < timeout:
+            pv_val = epics_pv.get()
+            if isinstance(pv_val, float):
+                if abs(pv_val - wait_val) < EPSILON:
+                    return True
+            if pv_val == wait_val:
+                return True
+            time.sleep(delta_t)
+        else:
+            log.error('  *** ERROR: PV TIMEOUT ***')
+            log.error('  *** wait_pv(%s, %d, %5.2f reached max timeout. Return False',
+                          epics_pv.pvname, wait_val, timeout)
+            return False
+
+    def auto_copy_data(self):
+        '''Copies data from detector computer to analysis computer.
+        '''
+        # Copy raw data to data analysis computer    
+        if self.epics_pvs['CopyToAnalysisDir'].get():
+            log.info('Automatic data trasfer to data analysis computer is enabled.')
+            full_file_name = self.epics_pvs['FPFullFileName'].get(as_string=True)
+            remote_analysis_dir = self.epics_pvs['RemoteAnalysisDir'].get(as_string=True)
+            dm.scp(full_file_name, remote_analysis_dir)
+        else:
+            log.warning('Automatic data trasfer to data analysis computer is disabled.')
