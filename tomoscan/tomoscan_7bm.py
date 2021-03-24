@@ -43,7 +43,7 @@ class TomoScan7BM(TomoScan):
         
         # Set data directory
         file_path = Path(self.epics_pvs['DetectorTopDir'].get(as_string=True))
-        file_path = file_path.joinpath(self.epics_pvs['ExperimentYearMonth'].get(as_string=True))
+        #file_path = file_path.joinpath(self.epics_pvs['ExperimentYearMonth'].get(as_string=True))
         file_path = file_path.joinpath(self.epics_pvs['ExperimentYearMonth'].get(as_string=True) + '-'
                                        + self.epics_pvs['UserLastName'].get(as_string=True) + '-'
                                        + self.epics_pvs['ProposalNumber'].get(as_string=True)) 
