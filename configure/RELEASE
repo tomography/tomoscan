@@ -23,9 +23,9 @@ TEMPLATE_TOP=$(EPICS_BASE)/templates/makeBaseApp/top
 
 SUPPORT=/home/beams/FUELSPRAY/epics/synApps/support
 
-BUSY=$(SUPPORT)/busy-R1-7-2
-AUTOSAVE=$(SUPPORT)/autosave-R5-10
-#ASYN=$(SUPPORT)/asyn-4-38
+BUSY=$(SUPPORT)/busy-1-7-3
+AUTOSAVE=$(SUPPORT)/autosave-5-10-2
+ASYN=$(SUPPORT)/asyn-4-41
 
 # EPICS_BASE usually appears last so other apps can override stuff:
 EPICS_BASE=/APSshare/epics/base-3.15.6

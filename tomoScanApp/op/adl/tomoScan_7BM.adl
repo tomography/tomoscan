@@ -1,7 +1,7 @@
 
 file {
-	name="/home/beams/7BMB/epics/synApps/support/tomoscan/tomoScanApp/op/adl/tomoScan_7BM.adl"
-	version=030111
+	name="/home/epics/support/tomoscan/tomoScanApp/op/adl/tomoScan_7BM.adl"
+	version=030109
 }
 display {
 	object {
@@ -199,8 +199,8 @@ text {
 		height=30
 	}
 	display[0] {
-		label="Experiment Information"
-		name="$(BEAMLINE)_pso.adl"
+		label="Aerotech PSO"
+		name="tomoScan_pso.adl"
 		args="P=$(P),R=$(R)"
 	}
 	clr=14

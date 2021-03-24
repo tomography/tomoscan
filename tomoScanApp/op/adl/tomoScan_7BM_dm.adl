@@ -1,6 +1,6 @@
 
 file {
-	name="/home/beams9/FUELSPRAY/epics/synApps/support/tomoscan/tomoScanApp/op/adl/tomoScan_7BM_dm.adl"
+	name="/local/code/tomography/tomoscan/tomoScanApp/op/adl/tomoScan_7BM_dm.adl"
 	version=030111
 }
 display {
@@ -248,7 +248,7 @@ menu {
 		height=20
 	}
 	control {
-		chan="$(P)$(R)AutoFileTransfer"
+		chan="$(P)$(R)CopyToAnalysisDir"
 		clr=14
 		bclr=4
 	}

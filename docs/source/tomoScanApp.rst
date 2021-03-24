@@ -7,18 +7,24 @@ tomoScanApp EPICS application
    :hidden:
 
    tomoScan.template
+   tomoScan_PSO.template
    tomoScan_13BM.template
+   tomoScan_13BM_MCS.template
+   tomoScan_13BM_PSO.template
    tomoScan_2BM.template
    tomoScan_settings.req
-   tomoScan_13BM_settings.req
+   tomoScan_PSO_settings.req
+   tomoScan_13BM_MCS_settings.req
+   tomoScan_13BM_PSO_settings.req
    tomoScan_2BM_settings.req
    tomoScan.substitutions
 
 
 tomoscan includes a complete example EPICS application, including:
 
-- A database file and corresponding autosave request file that contain only the PVs required by the tomoscan.py base class.
-- Database files and corresponding autosave request files that contain PVs used by the derived classes.
+- A database file and corresponding autosave request file that contain the PVs required by the tomoscan.py base class.
+- A database file and corresponding autosave request file that contain the PVs required by the tomoscan_pso.py intermediate base class.
+- Database files and corresponding autosave request files that contain PVs used by the beamline-specific derived classes.
 - OPI screens for medm, edm, caQtDM, CSS/Boy, and CSS/Phoebus
 - An example IOC application that can be used to run the above databases.
   The databases are loaded in the IOC with the example substitutions file, 
@@ -213,8 +219,18 @@ Exposure time
     - Description
   * - $(P)$(R)ExposureTime
     - ao
-    - The exposure time in seconds.  Currently the same time is used for dark fields, flat fields, and projections.
+    - The exposure time in seconds.  Currently the same time is used for dark fields and projections.
+      The time for flat fields can be different, and is controlled by the following 2 records.
       Writing to this PV will copy the value to the camera AcquireTime PV.
+  * - $(P)$(R)FlatExposureTime
+    - ao
+    - The exposure time for flat fields in seconds if the value of the $(P)$(R)DifferentFlatExposure
+      record is "Different".  Otherwise $(P)$(R)ExposureTime is also used for flat fields.
+  * - $(P)$(R)DifferentFlatExposure
+    - bo
+    - Controls whether $(P)$(R)ExposureTime or $(P)$(R)FlatExposureTime is used for the flat fields.
+      Choices are "Same" (0) or "Different (1).
+
 
 File path and name control
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -382,6 +398,97 @@ It contains 4 types of PVs:
 When the request file is read it is used to construct all of the EPICS PV names that are used by TomoScan.
 This allows TomoScan to avoid having any hard-coded PV names, and makes it easy to port to a new beamline.
 
+Intermediate base class files
+=============================
+The following tables list all of the records in the tomoScan_PSO.template file.
+This class is used when an Aerotech controller runs the rotation stage and
+the PSO output is used to trigger the camera.
+
+tomoScan_PSO.template
+---------------------
+
+This is the database file that contains only the PVs required by the tomoscan_pso.py base class.
+These records cannot be modified at run-time, except for the asyn record.
+Configuration records are set in the tomoScan.subsitutions file for each IOC, and set when the IOC starts.
+Status records contain read-only status information.
+
+:doc:`tomoScan.template`.
+
+PSO configuration
+~~~~~~~~~~~~~~~~~
+
+.. cssclass:: table-bordered table-striped table-hover
+.. list-table::
+  :header-rows: 1
+  :widths: 5 5 5 85
+
+  * - Record name
+    - Record type
+    - Access type
+    - Description
+  * - $(P)$(R)PSOControllerModel
+    - mbbi
+    - Configuration
+    - The Aerotech controller model being used. 
+      This is needed because some PSO commands are controller dependent, and there appears
+      to be no way to query the controller model.
+      The choices are "Ensemble" (0), and "A3200" (1).
+  * - $(P)$(R)PSOStartTaxi
+    - ai
+    - Status
+    - The starting "taxi" position.  The taxi distance is used to allow the rotation stage
+      to accelerate and reach the desired rotation speed before the first projection angle.
+  * - $(P)$(R)PSOEndTaxi
+    - ai
+    - Status
+    - The ending "taxi" position.  The taxi distance is used to allow the rotation stage
+      to deccelerate to 0 after reaching the final projection angle.
+  * - $(P)$(R)PSOEncoderCountsPerStep
+    - longin
+    - Status
+    - The number of encoder counts between projections.
+  * - $(P)$(R)PSOCommand
+    - asyn
+    - Write/read
+    - This record is used to send PSO commands to the Aerotech controller.
+      An EPICS drvAsynIPPort is created in the IOC startup script using the IP address of the
+      Aerotech controller, and this record communicates using that asyn port.
+      The record uses "Hybid" mode for both input and output, so that the strings can be
+      longer than 40 characters.  This means that it uses the .BOUT field for output and
+      the .BINP field for input.
+      The .BOUT field is a text-input widget in the medm screen so the user can type commands
+      directly to the controller for debugging.
+  * - $(P)$(R)PSOAxisName
+    - stringin
+    - Configuration
+    - The name of the rotation axis in the controller.  This is the name that is displayed
+      in the Aerotech Motion Composer software.
+  * - $(P)$(R)PSOCountsPerRotation
+    - ai
+    - Configuration
+    - The number of encoder pulses per 360 degree rotation of the rotation stage.
+      This is a signed number, and must be negative if the encoder direction and motor direction
+      in the controller are different.
+      On the A3200 this value is read from the controller in the constructor,
+      and includes the correct sign.  This overrides the value in the subsitutions file.
+      On the Ensemble this value must be provided in the substitutions file.
+  * - $(P)$(R)PSOEncoderInput
+    - longin
+    - Configuration
+    - Selects which encoder signal is used for the PSO control. This is hardware dependent,
+      and is typically 2 or 3.
+  * - $(P)$(R)PSOPulsWidth
+    - ao
+    - Write/read
+    - Sets the PSO output pulse width in microseconds.  Different cameras may have different
+      requirements for the trigger pulse width, so this value can be modified.
+  * - $(P)$(R)PSOKeepAlive
+    - asyn
+    - Write/read
+    - This record is needed on the Ensemble to keep the socket from timing out.
+      It is not needed on the A3200, but does not hurt. 
+      SCAN could be set to Passive on the A3200.
+
 medm files
 ----------
 
@@ -404,6 +511,17 @@ If these PVs are changed tomoscan must be restarted.
 .. image:: img/tomoScanEPICS_PVs.png
     :width: 75%
     :align: center
+
+tomoScan_pso.adl
+~~~~~~~~~~~~~~~~
+
+The following is the MEDM screen :download:`tomoScan_pso.adl <../../tomoScanApp/op/adl/tomoScan_pso.adl>`. 
+It contains the PVs that control the Aerotech PSO pulse control.
+
+.. image:: img/tomoScan_pso.png
+    :width: 75%
+    :align: center
+
 
 Beamline-specific files
 =======================
@@ -590,49 +708,13 @@ These are the files that are specific to the TomoScan2BM derived class used at A
 tomoScan_2BM.template
 ~~~~~~~~~~~~~~~~~~~~~
 
-This is database file for the TomoScan2BM derived class
+This is the database file for the TomoScan2BM derived class
 :doc:`tomoScan_2BM.template`.
 
 The following tables list all of the records in the tomoScan_2BM.template file.
 This file is used for records needed by the tomoscan_2bm derived class, and also
 for metadata PVs that should be saved in the tomoscan configuration file and files 
 written by the areaDetector file plugins.
-
-PSO Prefix
-^^^^^^^^^^
-
-.. cssclass:: table-bordered table-striped table-hover
-.. list-table::
-  :header-rows: 1
-  :widths: 5 5 90
-
-  * - Record name
-    - Record type
-    - Description
-  * - $(P)$(R)PSOPVPrefix
-    - stringout
-    - Contains the prefix for the PSO, e.g. 2bma:PSOFly2:
-
-Pva, Roi and Cb Plugin PV Prefixes
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-.. cssclass:: table-bordered table-striped table-hover
-.. list-table::
-  :header-rows: 1
-  :widths: 5 5 90
-
-  * - Record name
-    - Record type
-    - Description
-  * - $(P)$(R)PvaPluginPVPrefix
-    - stringout
-    - Contains the prefix for the Pva plugin, e.g. 2bmbSP1:Pva1:
-  * - $(P)$(R)RoiPluginPVPrefix
-    - stringout
-    - Contains the prefix for the ROI plugin, e.g. 2bmbSP1:ROI1:
-  * - $(P)$(R)CbPluginPVPrefix
-    - stringout
-    - Contains the prefix for the CB plugin, e.g. 2bmbSP1:CB1:
 
 Energy information
 ^^^^^^^^^^^^^^^^^^
@@ -789,6 +871,9 @@ Data management information
   * - $(P)$(R)RemoteAnalysisDir
     - stringout
     - Remote analysis location where to transfer the raw data for analysis, e.g tomo@handyn:/local/data/
+  * - $(P)$(R)CopyToAnalysisDir
+    - bo
+    - Enable raw data copy mode 'Yes'. Data are copied from detector to data analysis computer.
 
 Front-end shutter status
 ^^^^^^^^^^^^^^^^^^^^^^^^
@@ -829,6 +914,30 @@ Fast shutter control
     - stringout
     - Contains the value to write to open the fast shutter
 
+
+Additional files that are specific to the TomoScanStream derived class used at APS beamline 2-BM:
+
+Pva, Roi and Cb Plugin PV Prefixes
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. cssclass:: table-bordered table-striped table-hover
+.. list-table::
+  :header-rows: 1
+  :widths: 5 5 90
+
+  * - Record name
+    - Record type
+    - Description
+  * - $(P)$(R)PvaPluginPVPrefix
+    - stringout
+    - Contains the prefix for the Pva plugin, e.g. 2bmbSP1:Pva1:
+  * - $(P)$(R)RoiPluginPVPrefix
+    - stringout
+    - Contains the prefix for the ROI plugin, e.g. 2bmbSP1:ROI1:
+  * - $(P)$(R)CbPluginPVPrefix
+    - stringout
+    - Contains the prefix for the CB plugin, e.g. 2bmbSP1:CB1:
+
 Stream control
 ^^^^^^^^^^^^^^
 
@@ -840,18 +949,46 @@ Stream control
   * - Record name
     - Record type
     - Description
+  * - $(P)$(R)StreamCapture
+    - busy
+    - In streaming mode, set to "Capture" to start the projection saving
+  * - $(P)$(R)StreamNumCapture
+    - longout
+    - In streaming mode, set the number of projections to save when capture is set
+  * - $(P)$(R)StreamNumCaptured
+    - longout
+    - Number of imaged captured in streaming mode
+  * - $(P)$(R)StreamNumTotalCaptured
+    - longout
+    - Total number of imaged captured in streaming mode
   * - $(P)$(R)StreamRetakeFlat
-    - bo
-    - Stream retake flat. Choices are 'No' and 'Yes'. When 'Yes' a new set of flat field images will be collected and used for reconstructing the following projections
+    - busy,
+    - Stream retake flat. Choices are 'Done' and 'Capture'. When 'Capture' a new set of flat field images will be collected and used for reconstructing the following projections
+  * - $(P)$(R)StreamRetakeDark
+    - busy  
+    - Stream retake dark. Choices are 'Done' and 'Capture'. When 'Capture' a new set of dark field images will be collected and used for reconstructing the following projections
   * - $(P)$(R)StreamPreCount
     - longout
     - Streaming pre-count are the number of projections pre-capture that are stored in a buffer. At the end of capturing these images are added to the data file
-  * - $(P)$(R)StreamCapture
-    - busy 
-    - In streaming mode, set to "Capture" to start the projection saving
-  * - $(P)$(R)StreamNumCapture    
+  * - $(P)$(R)StreamPreCounted
     - longout
-    - In streaming mode, set the number of projections to save when capture is set
+    - Streaming pre-counted are the number of projections pre-capture that have been in a buffer. At the end of capturing these images are added to the data file
+  * - $(P)$(R)StreamBinning
+    - mbbo
+    - In streaming mode, set the binnig scale for projections and streamed reconstruction. Captured data are always not binned and saved at full size
+  * - $(P)$(R)StreamMessage 
+    - waveform  
+    - Stream status message
+  * - $(P)$(R)StreamCBStatusMessage 
+    - waveform 
+    - Stream sircular buffer status message
+  * - $(P)$(R)StreamFileName 
+    - waveform
+    - Stream file name
+  * - $(P)$(R)PvaStreamPVPrefix
+    - stringout
+    - Contains the prefix for the PVA server broadcasting dark and flat images in streaming mode, e.g. 2bmb:TomoScan:Stream:
+
 
 tomoScan_2BM_settings.req
 ~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -872,6 +1009,16 @@ The following is the MEDM screen :download:`tomoScan_2BM.adl <../../tomoScanApp/
 This screen contains the PVs for the TomoScan_2BM derived class.  If the BeamReadyPV is changed then tomoscan must be restarted.
 
 .. image:: img/tomoScan_2BM.png
+    :width: 75%
+    :align: center
+
+tomoScan_2BM_stream.adl
+^^^^^^^^^^^^^^^^^^^^^^^
+
+The following is the MEDM screen :download:`tomoScan_2BM_stream.adl <../../tomoScanApp/op/adl/tomoScan_2BM_stream.adl>`.  
+This screen contains the additonal PVs used by the TomoScan_stream_2BM derived class.  
+
+.. image:: img/tomoScan_2BM_stream.png
     :width: 75%
     :align: center
 

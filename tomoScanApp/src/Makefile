@@ -12,6 +12,7 @@ DBD += tomoScanApp.dbd
 
 # test.dbd will include these files:
 tomoScanApp_DBD += base.dbd
+tomoScanApp_DBD += asyn.dbd drvAsynIPPort.dbd
 tomoScanApp_DBD += busySupport.dbd
 tomoScanApp_DBD += asSupport.dbd
 
@@ -24,7 +25,7 @@ tomoScanApp_SRCS_vxWorks += -nil-
 
 tomoScanApp_LIBS += autosave
 tomoScanApp_LIBS += busy
-#tomoScanApp_LIBS += asyn
+tomoScanApp_LIBS += asyn
 
 # Finally link IOC to the EPICS Base libraries
 tomoScanApp_LIBS += $(EPICS_BASE_IOC_LIBS)

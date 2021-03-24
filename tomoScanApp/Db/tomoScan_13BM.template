@@ -5,14 +5,6 @@
 # files written by areaDetector file plugin.
 
 
-################
-# SIS MCS Prefix
-################
-record(stringout, "$(P)$(R)MCSPVPrefix")
-{
-   field(VAL,  "$(MCS)")
-}
-
 ####################
 # Energy information
 ####################

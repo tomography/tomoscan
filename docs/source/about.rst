@@ -10,8 +10,19 @@ About
 - tomoscan.py implements a base class (TomoScan) with the code that should be beamline-independent.  
 - Beamline-dependent code is implemented in derived classes that inherit from tomoscan.
 
-  - tomoscan_13bm.py implements the derived class TomoScan13BM. This is used at APS beamline 13-BM-D.
-  - tomoscan_2bm.py implements the derived class TomoScan2BM. This is used at APS beamline 2-BM-A.
+  - tomoscan_PSO.py implements the derived class TomoScaPSO. This is an intermediate base class that implements
+    logic for triggering with the Aerotech PSO pulse output for Aerotech rotation stages.  This is used at
+    2BM, 7BM, and 13BM.
+  - tomoscan_13bm_mcs.py implements the derived class TomoScan13BM_MCS. This is used for triggering the detector
+    using the pulses from an OMS motor controller with divide by N implemented in an SIS3820 MCS.
+    It is used at APS beamline 13-BM-D.
+  - tomoscan_13bm_pso.py implements the derived class TomoScan13BM_PSO. This is used for triggering the detector
+    using the PSO pulses from an Aerotech motor controller.
+    It is used at APS beamline 13-BM-D.
+  - tomoscan_2bm.py implements the derived class TomoScan2BM. This also uses the Aerotech PSO pulses for triggering.
+    This is used at APS beamline 2-BM-A.
+  - tomoscan_7bm.py implements the derived class TomoScan7BM. This also uses the Aerotech PSO pulses for triggering.
+    This is used at APS beamline 7-BM-B.
 
 
 Advantages compared to current APS tomography Python software
@@ -53,7 +64,7 @@ APS tomography Python software (e.g. `2bm-tomo`_).
     - The existing software requires that scans be run from within the same Python process that is running
       the tomography scan.
 
-- tomoscan is quite compact code. The base tomoscan class is ~810 lines, and the derived class for 13-BM
+- tomoscan is quite compact code. The base tomoscan class is ~900 lines, and the derived class for 13-BM
   is ~230 lines. Thus only a small amount of code needs to be copied and modified for a new beamline.
   This code collects a complete tomography dataset, including dark-fields, flat-fields, projections, 
   and saves a configuration file in JSON format at the end of the scan.

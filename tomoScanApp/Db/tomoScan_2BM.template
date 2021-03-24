@@ -4,16 +4,6 @@
 # both in the configuration files written by tomoscan, and in the
 # files written by areaDetector file plugin.
 
-
-############
-# PSO Prefix
-############
-
-record(stringout, "$(P)$(R)PSOPVPrefix")
-{
-   field(VAL,  "$(PSO)")
-}
-
 ####################
 # Energy information
 ####################
@@ -196,6 +186,12 @@ record(stringout, "$(P)$(R)RemoteAnalysisDir")
    field(VAL,  "Unknown")
 }
 
+record(bo, "$(P)$(R)CopyToAnalysisDir")
+{
+   field(ZNAM, "No")
+   field(ONAM, "Yes")
+}
+
 ######################
 # Fast shutter control
 ######################
@@ -221,37 +217,6 @@ record(stringout, "$(P)$(R)OpenFastShutterValue")
 }
 
 ################
-# Stream control
-################
-
-record(busy,"$(P)$(R)StreamCapture")
-{
-   field(ZNAM,"Done")
-   field(ZSV, "NO_ALARM")
-   field(ONAM,"Capture")
-   field(OSV, "MINOR")
-   field(VAL, "0")
-}
-
-record(longout, "$(P)$(R)StreamNumCapture")
-{
-   field(LOPR, "0")
-   field(HOPR, "1000000")
-}
-
-record(bo, "$(P)$(R)StreamRetakeFlat")
-{
-   field(ZNAM, "No")
-   field(ONAM, "Yes")
-}
-
-record(longout, "$(P)$(R)StreamPreCount")
-{
-   field(LOPR, "0")
-   field(HOPR, "4000")
-}
-
-################
 # Shutter status
 ################
 
@@ -260,29 +225,3 @@ record(stringout, "$(P)$(R)ShutterStatusPVName")
    field(VAL,  "$(SHUTTER_STATUS)")
 }
 
-######################
-# Pva Plugin PV Prefix
-######################
-
-record(stringout, "$(P)$(R)PvaPluginPVPrefix")
-{
-   field(VAL,  "$(PVA_PLUGIN)")
-}
-
-######################
-# Roi Plugin PV Prefix
-######################
-
-record(stringout, "$(P)$(R)RoiPluginPVPrefix")
-{
-   field(VAL,  "$(ROI_PLUGIN)")
-}
-
-#####################
-# Cb Plugin PV Prefix
-#####################
-
-record(stringout, "$(P)$(R)CbPluginPVPrefix")
-{
-   field(VAL,  "$(CB_PLUGIN)")
-}
