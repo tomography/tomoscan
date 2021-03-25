@@ -999,6 +999,313 @@ This is the autosave request file for tomoScan_2BM.template
 It has the same usage and type of content as tomoScan_settings.req described above, except that it
 contains the PVs for the derived class TomoScan2BM.
 
+Beamline 32-ID
+--------------
+
+These are the files that are specific to the TomoScan32ID derived class used at APS beamline 32-ID-C Transmission X-ray Microscope (TXM).
+
+tomoScan_32ID.template
+~~~~~~~~~~~~~~~~~~~~~~
+
+This is the database file for the TomoScan32ID derived class
+:doc:`tomoScan_32ID.template`.
+
+The following tables list all of the records in the tomoScan_32ID.template file.
+This file is used for records needed by the tomoscan_32id derived class, and also
+for metadata PVs that should be saved in the tomoscan configuration file and files 
+written by the areaDetector file plugins.
+
+Energy information
+^^^^^^^^^^^^^^^^^^
+
+.. cssclass:: table-bordered table-striped table-hover
+.. list-table::
+  :header-rows: 1
+  :widths: 5 5 90
+
+  * - Record name
+    - Record type
+    - Description
+  * - $(P)$(R)Energy
+    - mbbo
+    - Contains the energy of the beamline.
+  * - $(P)$(R)EnergyMode
+    - mbbo
+    - Contains the energy mode of the beamline, e.g. 'Mono', 'Pink', 'White'.
+  * - $(P)$(R)Filters
+    - stringout
+    - Contains the material and thickness of the filters manually set in the beam path, e.g. Al 1mm; Glass 5mm.
+
+Beam status information
+^^^^^^^^^^^^^^^^^^^^^^^
+
+.. cssclass:: table-bordered table-striped table-hover
+.. list-table::
+  :header-rows: 1
+  :widths: 5 5 90
+
+  * - Record name
+    - Record type
+    - Description
+  * - $(P)$(R)BeamReadyPVName
+    - stringout
+    - Contains the name of the PV that indicates if beam is ready, e.g. ACIS:ShutterPermit
+  * - $(P)$(R)BeamReadyValue
+    - stringout
+    - Contains the value of the beam ready PV when beam is ready.
+  * - $(P)$(R)Testing
+    - stringout
+    - Enable testing mode 'Yes'.
+
+Sample top X and Y translation motors
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. cssclass:: table-bordered table-striped table-hover
+.. list-table::
+  :header-rows: 1
+  :widths: 5 5 90
+
+  * - Record name
+    - Record type
+    - Description
+  * - $(P)$(R)SampleTopXPVName
+    - stringout
+    - Contains the name of the sample X translation located on top of the rotary stage PV, e.g. 13BMD:m85
+  * - $(P)$(R)SampleTopZPVName
+    - stringout
+    - Contains the name of the sample Z translation located on top of the rotary stage PV, e.g. 13BMD:m85
+
+Optics information
+^^^^^^^^^^^^^^^^^^
+
+.. cssclass:: table-bordered table-striped table-hover
+.. list-table::
+  :header-rows: 1
+  :widths: 5 5 90
+
+  * - Record name
+    - Record type
+    - Description
+  * - $(P)$(R)ScintillatorType
+    - stringout
+    - Contains the type of scintillator being used.
+  * - $(P)$(R)ScintillatorThickness
+    - ao
+    - Contains the thickness of the scintillator in microns.
+  * - $(P)$(R)ImagePixelSize
+    - ao
+    - Contains the pixel size on the sample in microns (i.e. includes objective magnification)
+  * - $(P)$(R)DetectorPixelSize
+    - ao
+    - Contains the pixel size of the detector.
+  * - $(P)$(R)CameraObjective
+    - stringout
+    - Description of the camera objective
+  * - $(P)$(R)CameraTubeLength
+    - stringout
+    - Description of the camera objective
+
+TXM Optics motors
+^^^^^^^^^^^^^^^^^
+
+.. cssclass:: table-bordered table-striped table-hover
+.. list-table::
+  :header-rows: 1
+  :widths: 5 5 90
+
+  * - Record name
+    - Record type
+    - Description
+  * - $(P)$(R)CRLXPVName
+    - stringout
+    - Contains the name of the Compound Refractive Lens (CRL) X translation PV, e.g. 32idb:m32
+  * - $(P)$(R)CRLYPVName
+    - stringout
+    - Contains the name of the Compound Refractive Lens (CRL) Y translation PV, e.g. 32idb:m28
+  * - $(P)$(R)CRLPitchPVName
+    - stringout
+    - Contains the name of the Compound Refractive Lens (CRL) Pitch adjustment PV, e.g. 32idb:m26
+  * - $(P)$(R)CRLYawPVName
+    - stringout
+    - Contains the name of the Compound Refractive Lens (CRL) Yaw adjustment PV, e.g. 32idb:m27
+  * - $(P)$(R)BeamstopXPVName
+    - stringout
+    - Contains the name of the Beamstop X translation PV, e.g. 32idcTXM:mcs:c3:m3
+  * - $(P)$(R)BeamstopYPVName
+    - stringout
+    - Contains the name of the Beamstop Y translation PV, e.g. 32idcTXM:mcs:c3:m6
+  * - $(P)$(R)PinholeXPVName
+    - stringout
+    - Contains the name of the Pinhole X translation PV, e.g. 32idcTXM:xps:c1:m3
+  * - $(P)$(R)PinholeYPVName
+    - stringout
+    - Contains the name of the Pinhole Y translation PV, e.g. 32idcTXM:xps:c1:m5
+  * - $(P)$(R)CondenserXPVName
+    - stringout
+    - Contains the name of the Condenser X translation PV, e.g. 32idcTXM:mcs:c3:m1
+  * - $(P)$(R)CondenserYPVName
+    - stringout
+    - Contains the name of the Condenser Y translation PV, e.g. 32idcTXM:mcs:c3:m5
+  * - $(P)$(R)CondenserZPVName
+    - stringout
+    - Contains the name of the Condenser Z translation PV, e.g. 32idcTXM:mcs:c1:m5
+  * - $(P)$(R)CondenserPitchPVName
+    - stringout
+    - Contains the name of the Condenser Pitch adjustment PV, e.g. 32idcTXM:mcs:c3:m4
+  * - $(P)$(R)CondenserYawPVName
+    - stringout
+    - Contains the name of the Condenser Yaw adjustment PV, e.g. 32idcTXM:mcs:c3:m2
+  * - $(P)$(R)ZonePlateXPVName
+    - stringout
+    - Contains the name of the Zone plate X translation PV, e.g. 32idcTXM:mcs:c2:m1
+  * - $(P)$(R)ZonePlateYPVName
+    - stringout
+    - Contains the name of the Zone plate Y translation PV, e.g. 32idcTXM:mcs:c2:m2
+  * - $(P)$(R)ZonePlateZPVName
+    - stringout
+    - Contains the name of the Zone plate Z translation PV, e.g. 32idcTXM:mcs:c2:m3
+  * - $(P)$(R)PhaseRingXPVName
+    - stringout
+    - Contains the name of the Phase ring X translation PV, e.g. 32idcSOFT:mmc:c1:m2
+  * - $(P)$(R)PhaseRingYPVName
+    - stringout
+    - Contains the name of the Phase ring Y translation PV, e.g. 32idcSOFT:mmc:c1:m1
+
+Sample information
+^^^^^^^^^^^^^^^^^^
+
+.. cssclass:: table-bordered table-striped table-hover
+.. list-table::
+  :header-rows: 1
+  :widths: 5 5 90
+
+  * - Record name
+    - Record type
+    - Description
+  * - $(P)$(R)SampleName
+    - stringout
+    - Name of the sample
+  * - $(P)$(R)SampleDescription1
+    - stringout
+    - Description of the sample, part 1
+  * - $(P)$(R)SampleDescription2
+    - stringout
+    - Description of the sample, part 2
+  * - $(P)$(R)SampleDescription3
+    - stringout
+    - Description of the sample, part 3
+
+User information
+^^^^^^^^^^^^^^^^
+
+.. cssclass:: table-bordered table-striped table-hover
+.. list-table::
+  :header-rows: 1
+  :widths: 5 5 90
+
+  * - Record name
+    - Record type
+    - Description
+  * - $(P)$(R)UserName
+    - stringout
+    - User name
+  * - $(P)$(R)UserInstitution
+    - stringout
+    - User institution
+  * - $(P)$(R)UserBadge
+    - stringout
+    - User badge number
+  * - $(P)$(R)UserEmail
+    - stringout
+    - User email address
+  * - $(P)$(R)ProposalNumber
+    - stringout
+    - Proposal number
+  * - $(P)$(R)ProposalTitle
+    - stringout
+    - Proposal title
+  * - $(P)$(R)ESAFNumber
+    - stringout
+    - Experiment Safety Approval Form number
+  * - $(P)$(R)UserInfoUpdate
+    - stringout
+    - Date and time of the last synchronization of the user information with the APS scheduling system
+
+Data management information
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. cssclass:: table-bordered table-striped table-hover
+.. list-table::
+  :header-rows: 1
+  :widths: 5 5 90
+
+  * - Record name
+    - Record type
+    - Description
+  * - $(P)$(R)DetectorTopDir
+    - stringout
+    - Top directory from where the raw data will be saved.
+  * - $(P)$(R)UserLastName
+    - stringout
+    - User last name, automatically updated from the APS scheduling system, e.g. decarlo
+  * - $(P)$(R)ExperimentYearMonth
+    - stringout
+    - Experiment year and month, automatically updated from the APS scheduling system, e.g. 2020-04
+  * - $(P)$(R)RemoteAnalysisDir
+    - stringout
+    - Remote analysis location where to transfer the raw data for analysis, e.g tomo@handyn:/local/data/
+  * - $(P)$(R)CopyToAnalysisDir
+    - bo
+    - Enable raw data copy mode 'Yes'. Data are copied from detector to data analysis computer.
+
+Front-end shutter status
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. cssclass:: table-bordered table-striped table-hover
+.. list-table::
+  :header-rows: 1
+  :widths: 5 5 90
+
+  * - Record name
+    - Record type
+    - Description
+  * - $(P)$(R)ShutterStatusPVName
+    - stringout
+    - Contains the name of the PV to read the front-end shutter status
+
+Fast shutter control
+^^^^^^^^^^^^^^^^^^^^
+
+.. cssclass:: table-bordered table-striped table-hover
+.. list-table::
+  :header-rows: 1
+  :widths: 5 5 90
+
+  * - Record name
+    - Record type
+    - Description
+  * - $(P)$(R)CloseFastShutterPVName
+    - stringout
+    - Contains the name of the PV to close the fast shutter
+  * - $(P)$(R)CloseFastShutterValue
+    - stringout
+    - Contains the value to write to close the fast shutter
+  * - $(P)$(R)OpenFastShutterPVName
+    - stringout
+    - Contains the name of the PV to open the fast shutter
+  * - $(P)$(R)OpenFastShutterValue
+    - stringout
+    - Contains the value to write to open the fast shutter
+
+tomoScan_32ID_settings.req
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This is the autosave request file for tomoScan_2BM.template
+:doc:`tomoScan_32ID_settings.req`.
+
+It has the same usage and type of content as tomoScan_settings.req described above, except that it
+contains the PVs for the derived class TomoScan32ID.
+
 medm files
 ~~~~~~~~~~
 
@@ -1021,6 +1328,17 @@ This screen contains the additonal PVs used by the TomoScan_stream_2BM derived c
 .. image:: img/tomoScan_2BM_stream.png
     :width: 75%
     :align: center
+
+tomoScan_32ID.adl
+^^^^^^^^^^^^^^^^^
+
+The following is the MEDM screen :download:`tomoScan_32ID.adl <../../tomoScanApp/op/adl/tomoScan_32ID.adl>`.  
+This screen contains the PVs for the TomoScan_32ID derived class.  If the BeamReadyPV is changed then tomoscan must be restarted.
+
+.. image:: img/tomoScan_32ID.png
+    :width: 75%
+    :align: center
+
 
 Beamline 7-BM
 -------------
