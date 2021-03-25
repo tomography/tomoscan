@@ -1,0 +1,98 @@
+# This file is used by autosave to determine what PVs to save
+# It is also used by tomoScan to determine what PVs to create
+
+# This is the file for the tomoscan_2bm derived class.
+
+####################
+# Energy information
+####################
+$(P)$(R)Energy
+$(P)$(R)EnergyMode
+$(P)$(R)Filters
+
+#########################
+# Beam status information
+#########################
+$(P)$(R)BeamReadyPVName
+$(P)$(R)BeamReadyValue
+$(P)$(R)Testing
+
+#######################################
+# Sample top X and Y translation motors
+#######################################
+$(P)$(R)SampleTopXPVName
+$(P)$(R)SampleTopZPVName
+
+####################
+# Optics information
+####################
+$(P)$(R)ScintillatorType
+$(P)$(R)ScintillatorThickness
+$(P)$(R)ImagePixelSize
+$(P)$(R)DetectorPixelSize
+$(P)$(R)CameraObjective
+$(P)$(R)CameraTubeLength
+
+###################
+# TXM Optics motors
+###################
+$(P)$(R)CRLXPVName
+$(P)$(R)CRLYPVName
+$(P)$(R)CRLPitchPVName
+$(P)$(R)CRLYawPVName
+$(P)$(R)BeamstopXPVName
+$(P)$(R)BeamstopYPVName
+$(P)$(R)CondenserXPVName
+$(P)$(R)CondenserYPVName
+$(P)$(R)CondenserZPVName
+$(P)$(R)CondenserPitchPVName
+$(P)$(R)CondenserYawPVName
+$(P)$(R)PinHoleXPVName
+$(P)$(R)PinHoleYPVName
+$(P)$(R)ZonePlateXPVName
+$(P)$(R)ZonePlateYPVName
+$(P)$(R)ZonePlateZPVName
+$(P)$(R)PhaseRingXPVName
+$(P)$(R)PhaseRingYPVName
+
+####################
+# Sample information
+####################
+$(P)$(R)SampleName
+$(P)$(R)SampleDescription1
+$(P)$(R)SampleDescription2
+$(P)$(R)SampleDescription3
+
+##################
+# User information
+##################
+$(P)$(R)UserName
+$(P)$(R)UserInstitution
+$(P)$(R)UserBadge
+$(P)$(R)UserEmail
+$(P)$(R)ProposalNumber
+$(P)$(R)ProposalTitle
+$(P)$(R)ESAFNumber
+$(P)$(R)UserInfoUpdate
+
+#################
+# Data management
+#################
+$(P)$(R)DetectorTopDir
+$(P)$(R)UserLastName
+$(P)$(R)ExperimentYearMonth
+$(P)$(R)RemoteAnalysisDir
+$(P)$(R)CopyToAnalysisDir
+
+######################
+# Fast shutter control
+######################
+$(P)$(R)CloseFastShutterPVName
+$(P)$(R)CloseFastShutterValue
+$(P)$(R)OpenFastShutterPVName
+$(P)$(R)OpenFastShutterValue
+
+################
+# Shutter status
+################
+$(P)$(R)ShutterStatusPVName
