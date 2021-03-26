@@ -16,7 +16,7 @@ from tomoscan import log
 
 EPSILON = .001
 
-class TomoScan2BM_STEP(TomoScan):
+class TomoScan2BM(TomoScanPSO):
     """Derived class used for tomography scanning with EPICS at APS beamline 2-BM
 
     Parameters
