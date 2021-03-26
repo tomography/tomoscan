@@ -1342,7 +1342,7 @@ This screen contains the PVs for the TomoScan_32ID derived class.  If the BeamRe
 Beamline 6-BM
 -------------
 
-These are the files that are specific to the TomoScan6BM derived class used at APS beamline 6-BM-C Transmission X-ray Microscope (TXM).
+These are the files that are specific to the TomoScan6BM derived class used at APS beamline 6-BM.
 
 tomoScan_6BM.template
 ~~~~~~~~~~~~~~~~~~~~~
