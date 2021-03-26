@@ -16,7 +16,7 @@ from tomoscan import log
 
 EPSILON = .001
 
-class TomoScan2BM(TomoScanPSO):
+class TomoScan2BM_STEP(TomoScan):
     """Derived class used for tomography scanning with EPICS at APS beamline 2-BM
 
     Parameters
@@ -258,8 +258,7 @@ class TomoScan2BM(TomoScanPSO):
             try:
                 f = h5py.File(full_file_name, "a")
                 with f:
-                    # try:
-                    if (0==0):
+                    try:
                         if self.theta is not None:
                             # theta_ds = f.create_dataset('/exchange/theta', (len(self.theta),))
                             # theta_ds[:] = self.theta[:]
@@ -289,9 +288,9 @@ class TomoScan2BM(TomoScanPSO):
                                 log.warning(f'Missed ids: {list(missed_ids)}')
                                 log.warning(f'Missed theta: {list(missed_theta)}')
                                 
-                    # except:
-                    #     log.error('Add theta: Failed accessing: %s', full_file_name)
-                    #     traceback.print_exc(file=sys.stdout)
+                    except:
+                        log.error('Add theta: Failed accessing: %s', full_file_name)
+                        traceback.print_exc(file=sys.stdout)
             except OSError:
                 log.error('Add theta aborted: %s not closed', full_file_name)
         else:
