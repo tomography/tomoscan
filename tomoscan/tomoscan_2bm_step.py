@@ -1,9 +1,9 @@
-"""Software for tomography scanning with EPICS at APS beamline 2-BM
+"""Software for tomography step scanning with EPICS at APS beamline 2-BM
 
    Classes
    -------
    TomoScan2BM
-     Derived class for tomography scanning with EPICS at APS beamline 2-BM
+     Derived class for tomography step scanning with EPICS at APS beamline 2-BM
 """
 import time
 import os
@@ -30,10 +30,6 @@ class TomoScan2BMSTEP(TomoScanSTEP):
 
     def __init__(self, pv_files, macros):
         super().__init__(pv_files, macros)
-        # Set the detector running in FreeRun mode
-        # self.set_trigger_mode('FreeRun', 1)
-        # self.epics_pvs['CamAcquire'].put('Acquire') ###
-        # self.wait_pv(self.epics_pvs['CamAcquire'], 1) ###
 
         # Enable auto-increment on file writer
         self.epics_pvs['FPAutoIncrement'].put('Yes')
@@ -176,12 +172,6 @@ class TomoScan2BMSTEP(TomoScanSTEP):
         - Calls the base class method.
         
         - Opens the front-end shutter.
-
-        - Sets the PSO controller.
-
-        - Creates theta array using list from PSO. 
-
-        - Turns on data capture.
         """
         log.info('begin scan')
 
@@ -203,15 +193,11 @@ class TomoScan2BMSTEP(TomoScanSTEP):
 
         This does the following:
 
-        - Calls ``save_configuration()``.
-
-        - Put the camera back in "FreeRun" mode and acquiring so the user sees live images.
-
-        - Sets the speed of the rotation stage back to the maximum value.
-
-        - Calls ``move_sample_in()``.
+        - Reset rotation position by mod 360.
 
         - Calls the base class method.
+
+        - Stop the file plugin.
 
         - Closes shutter.  
 
@@ -231,7 +217,6 @@ class TomoScan2BMSTEP(TomoScanSTEP):
         super().end_scan()
         # Close shutter
         self.close_shutter()
-
         # Stop the file plugin
         self.epics_pvs['FPCapture'].put('Done')
         self.wait_pv(self.epics_pvs['FPCaptureRBV'], 0)

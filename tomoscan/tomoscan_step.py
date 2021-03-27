@@ -2,8 +2,8 @@
 
    Classes
    -------
-   TomoScanPSO
-     Derived class for tomography scanning with EPICS using Aerotech controllers and PSO trigger outputs
+   TomoScanSTEP
+     Derived class for tomography scanning with EPICS implementing step scan
 """
 
 import time
@@ -15,7 +15,7 @@ from tomoscan import TomoScan
 from tomoscan import log
 
 class TomoScanSTEP(TomoScan):
-    """Derived class used for tomography scanning with EPICS using Aerotech controllers and PSO trigger outputs
+    """Derived class used for tomography scanning with EPICS implementing step scan
 
     Parameters
     ----------
@@ -73,7 +73,8 @@ class TomoScanSTEP(TomoScan):
         This does the following:
 
         - Calls the base class method.
-        - Programs the Aerotech driver to provide pulses at the right positions
+
+        - Set the HDF plugin.
         """
         log.info('begin scan')
         # Call the base class method
@@ -122,40 +123,23 @@ class TomoScanSTEP(TomoScan):
 
         This does the following:
 
-        - Call the superclass collect_projections() function
+        - Call the superclass collect_projections() function.
 
-        - Taxi to the start position
-
-        - Set the trigger mode on the camera
+        - Set the trigger mode on the camera.
    
-        - Move the stage to the end position
+        - Set the camera in acquire mode.
 
-        - Computes and sets the speed of the rotation motor so that it reaches the next projection
-          angle just after the current exposure and readout are complete.
+        - Starts the camera acquiring in software trigger mode.
 
-        - These will be used by the PSO to calculate the Taxi distance and rotary stage acceleration.
-
-        - Starts the file plugin capturing in stream mode.
-
-        - Starts the camera acquiring in external trigger mode.
-
-        - Starts the PSOfly.
-
-        - Wait on the PSO done.
+        - Update scan status.
         """
 
         log.info('collect projections')
         super().collect_projections()
 
-        # log.info('taxi before starting capture')
-        # Taxi before starting capture
-        # self.epics_pvs['Rotation'].put(self.epics_pvs['PSOStartTaxi'].get(), wait=True)
-
         self.set_trigger_mode('Software', self.num_angles)
-        # self.set_trigger_mode('Internal', 1)
-            
+           
         # Start the camera
-
         self.epics_pvs['CamAcquire'].put('Acquire')
         # Need to wait a short time for AcquireBusy to change to 1
         time.sleep(0.5)
@@ -170,6 +154,8 @@ class TomoScanSTEP(TomoScan):
             self.update_status(start_time)
 
     def update_status(self, start_time):
+    # move this function to the tomoscan.py base class and replace the code
+    # within wait_camera_done() with self.update_status(start_time)
             num_collected  = self.epics_pvs['CamNumImagesCounter'].value
             num_images     = self.epics_pvs['CamNumImages'].value
             num_saved      = self.epics_pvs['FPNumCaptured'].value
