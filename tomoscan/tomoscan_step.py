@@ -10,6 +10,7 @@ import time
 import os
 import math
 import numpy as np
+from datetime import timedelta
 from tomoscan import TomoScan
 from tomoscan import log
 
@@ -57,7 +58,6 @@ class TomoScanSTEP(TomoScan):
         super().collect_dark_fields()
         self.collect_static_frames(self.num_dark_fields)
 
-
     def collect_flat_fields(self):
         """Collects flat field images.
         Calls ``collect_static_frames()`` with the number of images specified
@@ -73,8 +73,6 @@ class TomoScanSTEP(TomoScan):
         This does the following:
 
         - Calls the base class method.
-        - Sets the speed of the rotation motor
-        - Computes the delta theta, start and stop motor positions for the scan
         - Programs the Aerotech driver to provide pulses at the right positions
         """
         log.info('begin scan')
@@ -163,12 +161,32 @@ class TomoScanSTEP(TomoScan):
         time.sleep(0.5)
         # log.info('start fly scan')
         self.theta = self.rotation_start + np.arange(self.num_angles) * self.rotation_step
+        start_time = time.time()
         for k in range(self.num_angles):
             log.info('angle %d: %f', k, self.theta[k])
             self.epics_pvs['Rotation'].put(k*180/self.num_angles, wait=True)            
             self.epics_pvs['CamTriggerSoftware'].put(1)
-            self.wait_pv( self.epics_pvs['CamNumImagesCounter'], k+1, 60)
-    
+            self.wait_pv(self.epics_pvs['CamNumImagesCounter'], k+1, 60)
+            self.update_status(start_time)
+
+    def update_status(self, start_time):
+            num_collected  = self.epics_pvs['CamNumImagesCounter'].value
+            num_images     = self.epics_pvs['CamNumImages'].value
+            num_saved      = self.epics_pvs['FPNumCaptured'].value
+            num_to_save     = self.epics_pvs['FPNumCapture'].value
+            current_time = time.time()
+            elapsed_time = current_time - start_time
+            remaining_time = (elapsed_time * (num_images - num_collected) /
+                              max(float(num_collected), 1))
+            collect_progress = str(num_collected) + '/' + str(num_images)
+            log.info('Collected %s', collect_progress)
+            self.epics_pvs['ImagesCollected'].put(collect_progress)
+            save_progress = str(num_saved) + '/' + str(num_to_save)
+            log.info('Saved %s', save_progress)
+            self.epics_pvs['ImagesSaved'].put(save_progress)
+            self.epics_pvs['ElapsedTime'].put(str(timedelta(seconds=int(elapsed_time))))
+            self.epics_pvs['RemainingTime'].put(str(timedelta(seconds=int(remaining_time))))
+
     def wait_pv(self, epics_pv, wait_val, timeout=-1):
         """Wait on a pv to be a value until max_timeout (default forever)
            delay for pv to change
