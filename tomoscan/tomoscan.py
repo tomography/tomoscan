@@ -848,11 +848,40 @@ class TomoScan():
             frame_time = readout + .001
         return frame_time
 
+    def update_status(self, start_time):
+        """
+        When called updates ``ImagesCollected``, ``ImagesSaved``, ``ElapsedTime``, and ``RemainingTime``. 
+
+        Parameters
+        ----------
+        start_time : time
+
+            Start time to calculate elapsed time.
+
+        """
+        num_collected  = self.epics_pvs['CamNumImagesCounter'].value
+        num_images     = self.epics_pvs['CamNumImages'].value
+        num_saved      = self.epics_pvs['FPNumCaptured'].value
+        num_to_save     = self.epics_pvs['FPNumCapture'].value
+        current_time = time.time()
+        elapsed_time = current_time - start_time
+        remaining_time = (elapsed_time * (num_images - num_collected) /
+                          max(float(num_collected), 1))
+        collect_progress = str(num_collected) + '/' + str(num_images)
+        log.info('Collected %s', collect_progress)
+        self.epics_pvs['ImagesCollected'].put(collect_progress)
+        save_progress = str(num_saved) + '/' + str(num_to_save)
+        log.info('Saved %s', save_progress)
+        self.epics_pvs['ImagesSaved'].put(save_progress)
+        self.epics_pvs['ElapsedTime'].put(str(timedelta(seconds=int(elapsed_time))))
+        self.epics_pvs['RemainingTime'].put(str(timedelta(seconds=int(remaining_time))))
+
+        return elapsed_time
+
     def wait_camera_done(self, timeout):
         """Waits for the camera acquisition to complete, or for ``abort_scan()`` to be called.
 
-        While waiting this method periodically updates the status PVs ``ImagesCollected``,
-        ``ImagesSaved``, ``ElapsedTime``, and ``RemainingTime``.
+        While waiting this method periodically calls update_status() to updates the status PVs.
 
         Parameters
         ----------
@@ -874,22 +903,8 @@ class TomoScan():
             if not self.scan_is_running:
                 raise ScanAbortError
             time.sleep(0.2)
-            num_collected  = self.epics_pvs['CamNumImagesCounter'].value
-            num_images     = self.epics_pvs['CamNumImages'].value
-            num_saved      = self.epics_pvs['FPNumCaptured'].value
-            num_to_save     = self.epics_pvs['FPNumCapture'].value
-            current_time = time.time()
-            elapsed_time = current_time - start_time
-            remaining_time = (elapsed_time * (num_images - num_collected) /
-                              max(float(num_collected), 1))
-            collect_progress = str(num_collected) + '/' + str(num_images)
-            log.info('Collected %s', collect_progress)
-            self.epics_pvs['ImagesCollected'].put(collect_progress)
-            save_progress = str(num_saved) + '/' + str(num_to_save)
-            log.info('Saved %s', save_progress)
-            self.epics_pvs['ImagesSaved'].put(save_progress)
-            self.epics_pvs['ElapsedTime'].put(str(timedelta(seconds=int(elapsed_time))))
-            self.epics_pvs['RemainingTime'].put(str(timedelta(seconds=int(remaining_time))))
+            elapsed_time = self. update_status(start_time)
+
             if timeout > 0:
                 if elapsed_time >= timeout:
                     raise CameraTimeoutError()
