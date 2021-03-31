@@ -858,6 +858,11 @@ class TomoScan():
 
             Start time to calculate elapsed time.
 
+        Returns
+        -------
+        elapsed_time : float
+
+            Elapsed time to be used for time out.
         """
         num_collected  = self.epics_pvs['CamNumImagesCounter'].value
         num_images     = self.epics_pvs['CamNumImages'].value
@@ -881,7 +886,8 @@ class TomoScan():
     def wait_camera_done(self, timeout):
         """Waits for the camera acquisition to complete, or for ``abort_scan()`` to be called.
 
-        While waiting this method periodically calls update_status() to updates the status PVs.
+        While waiting this method periodically updates the status PVs ``ImagesCollected``,
+        ``ImagesSaved``, ``ElapsedTime``, and ``RemainingTime``.
 
         Parameters
         ----------
@@ -903,8 +909,7 @@ class TomoScan():
             if not self.scan_is_running:
                 raise ScanAbortError
             time.sleep(0.2)
-            elapsed_time = self. update_status(start_time)
-
+            elapsed_time = self.update_status(start_time)
             if timeout > 0:
                 if elapsed_time >= timeout:
                     raise CameraTimeoutError()
