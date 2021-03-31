@@ -8,6 +8,8 @@
 import time
 import os
 import h5py 
+import sys
+import traceback
 import numpy as np
 
 from tomoscan import data_management as dm
@@ -255,44 +257,40 @@ class TomoScan2BM(TomoScanPSO):
 
         full_file_name = self.epics_pvs['FPFullFileName'].get(as_string=True)
         if os.path.exists(full_file_name):
-            try:
-                f = h5py.File(full_file_name, "a")
-                with f:
-                    try:
-                        if self.theta is not None:
-                            # theta_ds = f.create_dataset('/exchange/theta', (len(self.theta),))
-                            # theta_ds[:] = self.theta[:]
+            try:                
+                with h5py.File(full_file_name, "a") as f:
+                    if self.theta is not None:
+                        # theta_ds = f.create_dataset('/exchange/theta', (len(self.theta),))
+                        # theta_ds[:] = self.theta[:]
 
-                            unique_ids = f['/defaults/NDArrayUniqueId']
-                            shift_start = int(self.num_dark_fields > 0 and (self.dark_field_mode in ('Start', 'Both')))+ \
-                                          int(self.num_flat_fields > 0 and (self.flat_field_mode in ('Start', 'Both')))                            
-                            # find beginnings of sorted subarrays
-                            # for [1,2,1,3,1,2,3,4,1,2] returns 0,2,4,8
-                            ids_list = [0,*np.where(unique_ids[1:]-unique_ids[:-1]<0)[0]+1]                            
-                            # extract projection ids
-                            if(len(ids_list[shift_start:])==1):
-                                proj_ids = unique_ids[ids_list[shift_start]:]
-                            else:
-                                proj_ids = unique_ids[ids_list[shift_start]:ids_list[shift_start+1]]
-                            # subtract first id
-                            proj_ids -= proj_ids[0]
-                            # create theta dataset in hdf5 file
-                            theta_ds = f.create_dataset('/exchange/theta', (len(proj_ids),))
-                            theta_ds[:] = self.theta[proj_ids]
-                            print(proj_ids)
+                        unique_ids = f['/defaults/NDArrayUniqueId']
+                        shift_start = int(self.num_dark_fields > 0 and (self.dark_field_mode in ('Start', 'Both')))+ \
+                                      int(self.num_flat_fields > 0 and (self.flat_field_mode in ('Start', 'Both')))                            
+                        # find beginnings of sorted subarrays
+                        # for [1,2,1,3,1,2,3,4,1,2] returns 0,2,4,8
+                        ids_list = [0,*np.where(unique_ids[1:]-unique_ids[:-1]<0)[0]+1]                            
+                        # extract projection ids
+                        if(len(ids_list[shift_start:])==1):
+                            proj_ids = unique_ids[ids_list[shift_start]:]
+                        else:
+                            proj_ids = unique_ids[ids_list[shift_start]:ids_list[shift_start+1]]
+                        # subtract first id
+                        proj_ids -= proj_ids[0]
+                        # create theta dataset in hdf5 file
+                        theta_ds = f.create_dataset('/exchange/theta', (len(proj_ids),))
+                        theta_ds[:] = self.theta[proj_ids]
+                        print(proj_ids)
 
-                            if(len(proj_ids) != len(self.theta)):
-                                log.warning('There are %d missing frames',len(self.theta)-len(proj_ids))
-                                missed_ids = [ele for ele in range(len(self.theta)) if ele not in proj_ids]
-                                missed_theta = self.theta[missed_ids]
-                                log.warning(f'Missed ids: {list(missed_ids)}')
-                                log.warning(f'Missed theta: {list(missed_theta)}')
-                                
-                    except:
-                        log.error('Add theta: Failed accessing: %s', full_file_name)
-                        traceback.print_exc(file=sys.stdout)
-            except OSError:
-                log.error('Add theta aborted: %s not closed', full_file_name)
+                        if(len(proj_ids) != len(self.theta)):
+                            log.warning('There are %d missing frames',len(self.theta)-len(proj_ids))
+                            missed_ids = [ele for ele in range(len(self.theta)) if ele not in proj_ids]
+                            missed_theta = self.theta[missed_ids]
+                            log.warning(f'Missed ids: {list(missed_ids)}')
+                            log.warning(f'Missed theta: {list(missed_theta)}')                            
+            except:
+                log.error('Add theta: Failed accessing: %s', full_file_name)
+                traceback.print_exc(file=sys.stdout)
+
         else:
             log.error('Failed adding theta. %s file does not exist', full_file_name)
 
