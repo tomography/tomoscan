@@ -1,24 +1,24 @@
-"""Software for tomography scanning with EPICS at APS beamline 2-BM
+"""Software for tomography step scanning with EPICS at APS beamline 2-BM
 
    Classes
    -------
    TomoScan2BM
-     Derived class for tomography scanning with EPICS at APS beamline 2-BM
+     Derived class for tomography step scanning with EPICS at APS beamline 2-BM
 """
 import time
 import os
-import h5py 
 import sys
+import h5py 
 import traceback
 import numpy as np
 
 from tomoscan import data_management as dm
-from tomoscan import TomoScanPSO
+from tomoscan import TomoScanSTEP
 from tomoscan import log
 
 EPSILON = .001
 
-class TomoScan2BM(TomoScanPSO):
+class TomoScan2BMSTEP(TomoScanSTEP):
     """Derived class used for tomography scanning with EPICS at APS beamline 2-BM
 
     Parameters
@@ -32,10 +32,6 @@ class TomoScan2BM(TomoScanPSO):
 
     def __init__(self, pv_files, macros):
         super().__init__(pv_files, macros)
-        # Set the detector running in FreeRun mode
-        # self.set_trigger_mode('FreeRun', 1)
-        # self.epics_pvs['CamAcquire'].put('Acquire') ###
-        # self.wait_pv(self.epics_pvs['CamAcquire'], 1) ###
 
         # Enable auto-increment on file writer
         self.epics_pvs['FPAutoIncrement'].put('Yes')
@@ -148,7 +144,7 @@ class TomoScan2BM(TomoScanPSO):
             self.wait_pv(self.epics_pvs['CamTriggerMode'], 0)
             self.epics_pvs['CamImageMode'].put('Multiple')            
             self.epics_pvs['CamNumImages'].put(num_images, wait=True)
-        else: # set camera to external triggering
+        else: # set camera to internal triggering
             # These are just in case the scan aborted with the camera in another state 
             camera_model = self.epics_pvs['CamModel'].get(as_string=True)
             if(camera_model=='Oryx ORX-10G-51S5M'):# 2bma            
@@ -156,14 +152,13 @@ class TomoScan2BM(TomoScanPSO):
                 self.epics_pvs['CamTriggerSource'].put('Line2', wait=True)
             elif(camera_model=='Grasshopper3 GS3-U3-23S6M'):# 2bmb            
                 self.epics_pvs['CamTriggerMode'].put('On', wait=True)     # VN: For PG we need to switch to On to be able to switch to readout overlap mode                                                               
-                self.epics_pvs['CamTriggerSource'].put('Line0', wait=True)
+                self.epics_pvs['CamTriggerSource'].put('Software', wait=True)
             self.epics_pvs['CamTriggerOverlap'].put('ReadOut', wait=True)
             self.epics_pvs['CamExposureMode'].put('Timed', wait=True)
             self.epics_pvs['CamImageMode'].put('Multiple')            
             self.epics_pvs['CamArrayCallbacks'].put('Enable')
             self.epics_pvs['CamFrameRateEnable'].put(0)
-
-            self.epics_pvs['CamNumImages'].put(self.num_angles, wait=True)
+            self.epics_pvs['CamNumImages'].put(num_images, wait=True)
             self.epics_pvs['CamTriggerMode'].put('On', wait=True)
             self.wait_pv(self.epics_pvs['CamTriggerMode'], 1)
 
@@ -179,12 +174,6 @@ class TomoScan2BM(TomoScanPSO):
         - Calls the base class method.
         
         - Opens the front-end shutter.
-
-        - Sets the PSO controller.
-
-        - Creates theta array using list from PSO. 
-
-        - Turns on data capture.
         """
         log.info('begin scan')
 
@@ -206,15 +195,11 @@ class TomoScan2BM(TomoScanPSO):
 
         This does the following:
 
-        - Calls ``save_configuration()``.
-
-        - Put the camera back in "FreeRun" mode and acquiring so the user sees live images.
-
-        - Sets the speed of the rotation stage back to the maximum value.
-
-        - Calls ``move_sample_in()``.
+        - Reset rotation position by mod 360.
 
         - Calls the base class method.
+
+        - Stop the file plugin.
 
         - Closes shutter.  
 
@@ -234,7 +219,6 @@ class TomoScan2BM(TomoScanPSO):
         super().end_scan()
         # Close shutter
         self.close_shutter()
-
         # Stop the file plugin
         self.epics_pvs['FPCapture'].put('Done')
         self.wait_pv(self.epics_pvs['FPCaptureRBV'], 0)
@@ -257,40 +241,44 @@ class TomoScan2BM(TomoScanPSO):
 
         full_file_name = self.epics_pvs['FPFullFileName'].get(as_string=True)
         if os.path.exists(full_file_name):
-            try:                
-                with h5py.File(full_file_name, "a") as f:
-                    if self.theta is not None:
-                        # theta_ds = f.create_dataset('/exchange/theta', (len(self.theta),))
-                        # theta_ds[:] = self.theta[:]
+            try:
+                f = h5py.File(full_file_name, "a")
+                with f:
+                    try:
+                        if self.theta is not None:
+                            # theta_ds = f.create_dataset('/exchange/theta', (len(self.theta),))
+                            # theta_ds[:] = self.theta[:]
 
-                        unique_ids = f['/defaults/NDArrayUniqueId']
-                        shift_start = int(self.num_dark_fields > 0 and (self.dark_field_mode in ('Start', 'Both')))+ \
-                                      int(self.num_flat_fields > 0 and (self.flat_field_mode in ('Start', 'Both')))                            
-                        # find beginnings of sorted subarrays
-                        # for [1,2,1,3,1,2,3,4,1,2] returns 0,2,4,8
-                        ids_list = [0,*np.where(unique_ids[1:]-unique_ids[:-1]<0)[0]+1]                            
-                        # extract projection ids
-                        if(len(ids_list[shift_start:])==1):
-                            proj_ids = unique_ids[ids_list[shift_start]:]
-                        else:
-                            proj_ids = unique_ids[ids_list[shift_start]:ids_list[shift_start+1]]
-                        # subtract first id
-                        proj_ids -= proj_ids[0]
-                        # create theta dataset in hdf5 file
-                        theta_ds = f.create_dataset('/exchange/theta', (len(proj_ids),))
-                        theta_ds[:] = self.theta[proj_ids]
-                        print(proj_ids)
+                            unique_ids = f['/defaults/NDArrayUniqueId']
+                            shift_start = int(self.num_dark_fields > 0 and (self.dark_field_mode in ('Start', 'Both')))+ \
+                                          int(self.num_flat_fields > 0 and (self.flat_field_mode in ('Start', 'Both')))                            
 
-                        if(len(proj_ids) != len(self.theta)):
-                            log.warning('There are %d missing frames',len(self.theta)-len(proj_ids))
-                            missed_ids = [ele for ele in range(len(self.theta)) if ele not in proj_ids]
-                            missed_theta = self.theta[missed_ids]
-                            log.warning(f'Missed ids: {list(missed_ids)}')
-                            log.warning(f'Missed theta: {list(missed_theta)}')                            
-            except:
-                log.error('Add theta: Failed accessing: %s', full_file_name)
-                traceback.print_exc(file=sys.stdout)
-
+                            # find beginnings of sorted subarrays
+                            # for [1,2,1,3,1,2,3,4,1,2] returns 0,2,4,8
+                            ids_list = [0,*np.where(unique_ids[1:]-unique_ids[:-1]<0)[0]+1]                            
+                            # extract projection ids
+                            if(len(ids_list[shift_start:])==1):
+                                proj_ids = unique_ids[ids_list[shift_start]:]
+                            else:
+                                proj_ids = unique_ids[ids_list[shift_start]:ids_list[shift_start+1]]
+                            # subtract first id
+                            proj_ids -= proj_ids[0]
+                            # create theta dataset in hdf5 file
+                            theta_ds = f.create_dataset('/exchange/theta', (len(proj_ids),))
+                            theta_ds[:] = self.theta[proj_ids]
+                            
+                            if(len(proj_ids) != len(self.theta)):
+                                log.warning('There are %d missing frames',len(self.theta)-len(proj_ids))
+                                missed_ids = [ele for ele in range(len(self.theta)) if ele not in proj_ids]
+                                missed_theta = self.theta[missed_ids]
+                                log.warning(f'Missed ids: {list(missed_ids)}')
+                                log.warning(f'Missed theta: {list(missed_theta)}')
+                                
+                    except:
+                        log.error('Add theta: Failed accessing: %s', full_file_name)
+                        traceback.print_exc(file=sys.stdout)
+            except OSError:
+                log.error('Add theta aborted: %s not closed', full_file_name)
         else:
             log.error('Failed adding theta. %s file does not exist', full_file_name)
 
@@ -357,3 +345,7 @@ class TomoScan2BM(TomoScanPSO):
             if timeout > 0:
                 if elapsed_time >= timeout:
                    exit()
+    
+    def abort_scan(self):
+        super().abort_scan()
+        self.add_theta()
