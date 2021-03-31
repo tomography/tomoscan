@@ -44,7 +44,7 @@ class TomoScanSTEP(TomoScan):
         self.epics_pvs['CamAcquire'].put('Acquire')
         # Wait for detector and file plugin to be ready
         time.sleep(0.5)
-        frame_time = self.compute_frame_time()+7.2/1000 # temporary fix for 2-BM-B
+        frame_time = self.compute_frame_time()
         collection_time = frame_time * num_frames
         self.wait_camera_done(collection_time + 5.0)
 
@@ -147,31 +147,12 @@ class TomoScanSTEP(TomoScan):
         self.theta = self.rotation_start + np.arange(self.num_angles) * self.rotation_step
         start_time = time.time()
         for k in range(self.num_angles):
-            log.info('angle %d: %f', k, self.theta[k])
-            self.epics_pvs['Rotation'].put(k*180/self.num_angles, wait=True)            
-            self.epics_pvs['CamTriggerSoftware'].put(1)
-            self.wait_pv(self.epics_pvs['CamNumImagesCounter'], k+1, 60)
-            self.update_status(start_time)
-
-    def update_status(self, start_time):
-    # move this function to the tomoscan.py base class and replace the code
-    # within wait_camera_done() with self.update_status(start_time)
-            num_collected  = self.epics_pvs['CamNumImagesCounter'].value
-            num_images     = self.epics_pvs['CamNumImages'].value
-            num_saved      = self.epics_pvs['FPNumCaptured'].value
-            num_to_save     = self.epics_pvs['FPNumCapture'].value
-            current_time = time.time()
-            elapsed_time = current_time - start_time
-            remaining_time = (elapsed_time * (num_images - num_collected) /
-                              max(float(num_collected), 1))
-            collect_progress = str(num_collected) + '/' + str(num_images)
-            log.info('Collected %s', collect_progress)
-            self.epics_pvs['ImagesCollected'].put(collect_progress)
-            save_progress = str(num_saved) + '/' + str(num_to_save)
-            log.info('Saved %s', save_progress)
-            self.epics_pvs['ImagesSaved'].put(save_progress)
-            self.epics_pvs['ElapsedTime'].put(str(timedelta(seconds=int(elapsed_time))))
-            self.epics_pvs['RemainingTime'].put(str(timedelta(seconds=int(remaining_time))))
+            if(self.scan_is_running):
+                log.info('angle %d: %f', k, self.theta[k])
+                self.epics_pvs['Rotation'].put(k*180/self.num_angles, wait=True)            
+                self.epics_pvs['CamTriggerSoftware'].put(1)
+                self.wait_pv(self.epics_pvs['CamNumImagesCounter'], k+1, 60)
+                self.update_status(start_time)
 
     def wait_pv(self, epics_pv, wait_val, timeout=-1):
         """Wait on a pv to be a value until max_timeout (default forever)
