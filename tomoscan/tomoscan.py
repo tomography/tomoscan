@@ -714,7 +714,7 @@ class TomoScan():
         self.epics_pvs['ScanStatus'].put('Collecting dark fields')
         self.set_exposure_time()
         self.close_shutter()
-        self.epics_pvs['HDF5Location'].put(self.epics_pvs['HDF5DarkLocation'].value, wait=True)
+        self.epics_pvs['HDF5Location'].put(self.epics_pvs['HDF5DarkLocation'].value)
         self.epics_pvs['FrameType'].put('DarkField')
 
     def collect_flat_fields(self):
@@ -740,7 +740,7 @@ class TomoScan():
         self.set_flat_exposure_time()
         self.open_shutter()
         self.move_sample_out()
-        self.epics_pvs['HDF5Location'].put(self.epics_pvs['HDF5FlatLocation'].value, wait=True)
+        self.epics_pvs['HDF5Location'].put(self.epics_pvs['HDF5FlatLocation'].value)
         self.epics_pvs['FrameType'].put('FlatField')
 
     def collect_projections(self):
@@ -766,7 +766,7 @@ class TomoScan():
         self.set_exposure_time()
         self.open_shutter()
         self.move_sample_in()
-        self.epics_pvs['HDF5Location'].put(self.epics_pvs['HDF5ProjectionLocation'].value, wait=True)
+        self.epics_pvs['HDF5Location'].put(self.epics_pvs['HDF5ProjectionLocation'].value)
         self.epics_pvs['FrameType'].put('Projection')
 
     def abort_scan(self):
