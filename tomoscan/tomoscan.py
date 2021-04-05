@@ -822,8 +822,8 @@ class TomoScan():
         readout = None
         video_mode = None
         if camera_model == 'Grasshopper3 GS3-U3-23S6M':
-           pixel_format = self.epics_pvs['CamPixelFormat'].get(as_string=True) 
-           video_mode   = self.epics_pvs['CamVideoMode'].get(as_string=True)
+            pixel_format = self.epics_pvs['CamPixelFormat'].get(as_string=True) 
+            video_mode   = self.epics_pvs['CamVideoMode'].get(as_string=True)
             readout_times = {
                 'Mono8':        {'Mode0': 6.2,  'Mode1': 6.2, 'Mode5': 6.2, 'Mode7': 7.9},
                 'Mono12Packed': {'Mode0': 9.2,  'Mode1': 6.2, 'Mode5': 6.2, 'Mode7': 11.5},
