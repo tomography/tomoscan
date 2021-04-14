@@ -130,6 +130,12 @@ class TomoScan():
             if model.find('Grasshopper3') != -1:
                 self.control_pvs['CamVideoMode']    = PV(camera_prefix + 'GC_VideoMode_RBV')
 
+        if (manufacturer.find('Adimec') != -1):
+            self.control_pvs['CamExposureMode']            = PV(camera_prefix + 'ExposureMode')
+            self.control_pvs['CamAcquisitionFrameRate']    = PV(camera_prefix + 'AcquisitionFrameRate')
+            self.control_pvs['CamAcquisitionFramePeriod']  = PV(camera_prefix + 'AcquisitionFramePeriod')
+            self.control_pvs['CamExposureTime+R']          = PV(camera_prefix + 'ExposureTime+R')
+                         
         # Set some initial PV values
         self.control_pvs['CamWaitForPlugins'].put('Yes')
         self.control_pvs['StartScan'].put(0)
@@ -813,9 +819,10 @@ class TomoScan():
         # The measured times in ms with 100 microsecond exposure time and 1000 frames
         # without dropping
         camera_model = self.epics_pvs['CamModel'].get(as_string=True)
-        pixel_format = self.epics_pvs['CamPixelFormat'].get(as_string=True)
         readout = None
+        video_mode = None
         if camera_model == 'Grasshopper3 GS3-U3-23S6M':
+            pixel_format = self.epics_pvs['CamPixelFormat'].get(as_string=True) 
             video_mode   = self.epics_pvs['CamVideoMode'].get(as_string=True)
             readout_times = {
                 'Mono8':        {'Mode0': 6.2,  'Mode1': 6.2, 'Mode5': 6.2, 'Mode7': 7.9},
@@ -824,16 +831,19 @@ class TomoScan():
             }
             readout = readout_times[pixel_format][video_mode]/1000.
         if camera_model == 'Oryx ORX-10G-51S5M':
-            # video_mode   = self.epics_pvs['CamVideoMode'].get(as_string=True)
+            pixel_format = self.epics_pvs['CamPixelFormat'].get(as_string=True) 
             readout_times = {
                 'Mono8': 6.18,
                 'Mono12Packed': 8.20,
                 'Mono16': 12.34
             }
             readout = readout_times[pixel_format]/1000.
+        if camera_model == 'Q-12A180-Fm/CXP-6':
+            readout = 0
+
         if readout is None:
             log.error('Unsupported combination of camera model, pixel format and video mode: %s %s %s',
-                          camera_model, pixel_format, video_mode)
+                          camera_model, pixel_format, video_mode)            
             return 0
 
         # We need to use the actual exposure time that the camera is using, not the requested time
