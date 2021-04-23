@@ -33,6 +33,14 @@ $(P)$(R)DetectorPixelSize
 $(P)$(R)CameraObjective
 $(P)$(R)CameraTubeLength
 
+##################################################
+# CRL Relays, Valves PLC, Shaker and BPM PV Prefix
+##################################################
+$(P)$(R)CRLRelaysPVPrefix
+$(P)$(R)ValvesPLCPVPrefix
+$(P)$(R)ShakerPVPrefix
+$(P)$(R)BPMPVPrefix
+
 ###################
 # TXM Optics motors
 ###################
@@ -47,8 +55,8 @@ $(P)$(R)CondenserYPVName
 $(P)$(R)CondenserZPVName
 $(P)$(R)CondenserPitchPVName
 $(P)$(R)CondenserYawPVName
-$(P)$(R)PinHoleXPVName
-$(P)$(R)PinHoleYPVName
+$(P)$(R)PinholeXPVName
+$(P)$(R)PinholeYPVName
 $(P)$(R)ZonePlateXPVName
 $(P)$(R)ZonePlateYPVName
 $(P)$(R)ZonePlateZPVName

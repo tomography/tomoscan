@@ -1105,6 +1105,31 @@ Optics information
     - stringout
     - Description of the camera objective
 
+TXM support IOC PV Prefixes
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. cssclass:: table-bordered table-striped table-hover
+.. list-table::
+  :header-rows: 1
+  :widths: 5 5 90
+
+  * - Record name
+    - Record type
+    - Description
+  * - $(P)$(R)CRLRelaysPVPrefix
+    - stringout
+    - Contains the prefix for the CRL Relays IOC, e.g. 32idbPLC:
+  * - $(P)$(R)ValvesPLCPVPrefix
+    - stringout
+    - Contains the prefix for the Valves PLC IOC, e.g. 32idcPLC:
+  * - $(P)$(R)ShakerPVPrefix
+    - stringout
+    - Contains the prefix for the Shaker IOC, e.g. 32idcMC:shaker:
+  * - $(P)$(R)BPMPVPrefix
+    - stringout
+    - Contains the prefix for the BPM IOC, e.g. 32ida:
+
+
 TXM Optics motors
 ^^^^^^^^^^^^^^^^^
 

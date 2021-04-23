@@ -100,6 +100,31 @@ record(ao, "$(P)$(R)CameraTubeLength")
    field(EGU,  "mm")
 }
 
+
+##################################################
+# CRL Relays, Valves PLC, Shaker and BPM PV Prefix
+##################################################
+
+record(stringout, "$(P)$(R)CRLRelaysPVPrefix")
+{
+   field(VAL,  "$(CRL_RELAYS)")
+}
+
+record(stringout, "$(P)$(R)ValvesPLCPVPrefix")
+{
+   field(VAL,  "$(VALVES_PLC)")
+}
+
+record(stringout, "$(P)$(R)ShakerPVPrefix")
+{
+   field(VAL,  "$(SHAKER)")
+}
+
+record(stringout, "$(P)$(R)BPMPVPrefix")
+{
+   field(VAL,  "$(BPM)")
+}
+
 ###################
 # TXM Optics motors
 ###################

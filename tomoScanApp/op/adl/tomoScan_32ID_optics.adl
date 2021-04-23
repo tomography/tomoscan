@@ -5,10 +5,10 @@ file {
 }
 display {
 	object {
-		x=824
-		y=96
-		width=600
-		height=645
+		x=819
+		y=134
+		width=601
+		height=750
 	}
 	clr=14
 	bclr=4
@@ -288,8 +288,8 @@ text {
 "text entry" {
 	object {
 		x=324
-		y=196
-		width=232
+		y=295
+		width=230
 		height=20
 	}
 	control {
@@ -304,7 +304,7 @@ text {
 text {
 	object {
 		x=160
-		y=196
+		y=295
 		width=160
 		height=20
 	}
@@ -317,7 +317,7 @@ text {
 text {
 	object {
 		x=160
-		y=221
+		y=320
 		width=160
 		height=20
 	}
@@ -330,8 +330,8 @@ text {
 "text entry" {
 	object {
 		x=324
-		y=221
-		width=232
+		y=320
+		width=230
 		height=20
 	}
 	control {
@@ -346,7 +346,7 @@ text {
 text {
 	object {
 		x=160
-		y=246
+		y=345
 		width=160
 		height=20
 	}
@@ -359,8 +359,8 @@ text {
 "text entry" {
 	object {
 		x=324
-		y=246
-		width=232
+		y=345
+		width=230
 		height=20
 	}
 	control {
@@ -375,7 +375,7 @@ text {
 text {
 	object {
 		x=160
-		y=271
+		y=370
 		width=160
 		height=20
 	}
@@ -388,8 +388,8 @@ text {
 "text entry" {
 	object {
 		x=324
-		y=271
-		width=232
+		y=370
+		width=230
 		height=20
 	}
 	control {
@@ -404,7 +404,7 @@ text {
 text {
 	object {
 		x=160
-		y=295
+		y=395
 		width=160
 		height=20
 	}
@@ -417,8 +417,8 @@ text {
 "text entry" {
 	object {
 		x=324
-		y=295
-		width=232
+		y=395
+		width=230
 		height=20
 	}
 	control {
@@ -433,7 +433,7 @@ text {
 text {
 	object {
 		x=160
-		y=320
+		y=420
 		width=160
 		height=20
 	}
@@ -446,8 +446,8 @@ text {
 "text entry" {
 	object {
 		x=324
-		y=320
-		width=232
+		y=420
+		width=230
 		height=20
 	}
 	control {
@@ -462,7 +462,7 @@ text {
 text {
 	object {
 		x=160
-		y=370
+		y=470
 		width=160
 		height=20
 	}
@@ -475,7 +475,7 @@ text {
 text {
 	object {
 		x=160
-		y=345
+		y=445
 		width=160
 		height=20
 	}
@@ -488,8 +488,8 @@ text {
 "text entry" {
 	object {
 		x=326
-		y=345
-		width=232
+		y=445
+		width=230
 		height=20
 	}
 	control {
@@ -504,8 +504,8 @@ text {
 "text entry" {
 	object {
 		x=325
-		y=370
-		width=232
+		y=470
+		width=230
 		height=20
 	}
 	control {
@@ -520,7 +520,7 @@ text {
 text {
 	object {
 		x=160
-		y=395
+		y=495
 		width=160
 		height=20
 	}
@@ -533,8 +533,8 @@ text {
 "text entry" {
 	object {
 		x=326
-		y=395
-		width=232
+		y=495
+		width=230
 		height=20
 	}
 	control {
@@ -549,8 +549,8 @@ text {
 "text entry" {
 	object {
 		x=326
-		y=420
-		width=232
+		y=520
+		width=230
 		height=20
 	}
 	control {
@@ -565,7 +565,7 @@ text {
 text {
 	object {
 		x=160
-		y=420
+		y=520
 		width=160
 		height=20
 	}
@@ -578,7 +578,7 @@ text {
 text {
 	object {
 		x=160
-		y=445
+		y=545
 		width=160
 		height=20
 	}
@@ -591,8 +591,8 @@ text {
 "text entry" {
 	object {
 		x=326
-		y=445
-		width=232
+		y=545
+		width=230
 		height=20
 	}
 	control {
@@ -607,8 +607,8 @@ text {
 "text entry" {
 	object {
 		x=326
-		y=470
-		width=232
+		y=570
+		width=230
 		height=20
 	}
 	control {
@@ -623,7 +623,7 @@ text {
 text {
 	object {
 		x=160
-		y=495
+		y=595
 		width=160
 		height=20
 	}
@@ -636,8 +636,8 @@ text {
 "text entry" {
 	object {
 		x=326
-		y=495
-		width=232
+		y=595
+		width=230
 		height=20
 	}
 	control {
@@ -652,7 +652,7 @@ text {
 text {
 	object {
 		x=160
-		y=470
+		y=570
 		width=160
 		height=20
 	}
@@ -665,7 +665,7 @@ text {
 text {
 	object {
 		x=160
-		y=520
+		y=620
 		width=160
 		height=20
 	}
@@ -678,8 +678,8 @@ text {
 "text entry" {
 	object {
 		x=326
-		y=520
-		width=232
+		y=620
+		width=230
 		height=20
 	}
 	control {
@@ -694,7 +694,7 @@ text {
 text {
 	object {
 		x=160
-		y=545
+		y=645
 		width=160
 		height=20
 	}
@@ -707,8 +707,8 @@ text {
 "text entry" {
 	object {
 		x=326
-		y=545
-		width=232
+		y=645
+		width=230
 		height=20
 	}
 	control {
@@ -723,7 +723,7 @@ text {
 text {
 	object {
 		x=160
-		y=570
+		y=670
 		width=160
 		height=20
 	}
@@ -736,8 +736,8 @@ text {
 "text entry" {
 	object {
 		x=326
-		y=570
-		width=232
+		y=670
+		width=230
 		height=20
 	}
 	control {
@@ -752,7 +752,7 @@ text {
 text {
 	object {
 		x=160
-		y=595
+		y=695
 		width=160
 		height=20
 	}
@@ -765,8 +765,8 @@ text {
 "text entry" {
 	object {
 		x=326
-		y=595
-		width=232
+		y=695
+		width=230
 		height=20
 	}
 	control {
@@ -781,7 +781,7 @@ text {
 text {
 	object {
 		x=160
-		y=620
+		y=720
 		width=160
 		height=20
 	}
@@ -794,12 +794,128 @@ text {
 "text entry" {
 	object {
 		x=326
-		y=620
-		width=232
+		y=720
+		width=230
 		height=20
 	}
 	control {
 		chan="$(P)$(R)PhaseRingYPVName"
+		clr=14
+		bclr=51
+	}
+	format="string"
+	limits {
+	}
+}
+"text entry" {
+	object {
+		x=324
+		y=270
+		width=230
+		height=20
+	}
+	control {
+		chan="$(P)$(R)CRLRelaysPVPrefix"
+		clr=14
+		bclr=51
+	}
+	format="string"
+	limits {
+	}
+}
+text {
+	object {
+		x=184
+		y=270
+		width=130
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="CRL Relays prefix"
+	align="horiz. right"
+}
+text {
+	object {
+		x=184
+		y=245
+		width=130
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Valves PLC prefix"
+	align="horiz. right"
+}
+"text entry" {
+	object {
+		x=324
+		y=245
+		width=230
+		height=20
+	}
+	control {
+		chan="$(P)$(R)ValvesPLCPVPrefix"
+		clr=14
+		bclr=51
+	}
+	format="string"
+	limits {
+	}
+}
+text {
+	object {
+		x=185
+		y=220
+		width=130
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Shaker prefix"
+	align="horiz. right"
+}
+"text entry" {
+	object {
+		x=325
+		y=220
+		width=230
+		height=20
+	}
+	control {
+		chan="$(P)$(R)ShakerPVPrefix"
+		clr=14
+		bclr=51
+	}
+	format="string"
+	limits {
+	}
+}
+text {
+	object {
+		x=185
+		y=195
+		width=130
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="BPM prefix"
+	align="horiz. right"
+}
+"text entry" {
+	object {
+		x=325
+		y=195
+		width=230
+		height=20
+	}
+	control {
+		chan="$(P)$(R)BPMPVPrefix"
 		clr=14
 		bclr=51
 	}

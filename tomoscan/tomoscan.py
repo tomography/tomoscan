@@ -208,6 +208,63 @@ class TomoScan():
             self.control_pvs['CBEnableCallbacks'] = PV(prefix + 'EnableCallbacks')
             self.control_pvs['CBStatusMessage']   = PV(prefix + 'StatusMessage')
 
+        # TXM Optics IOCs
+        if 'CRLRelays' in self.pv_prefixes:
+            prefix = self.pv_prefixes['CRLRelays']
+            self.control_pvs['CRLRelaysY1']       = PV(prefix + 'oY1')
+            self.control_pvs['CRLRelaysY2']       = PV(prefix + 'oY2')
+            self.control_pvs['CRLRelaysY3']       = PV(prefix + 'oY3')
+            self.control_pvs['CRLRelaysY4']       = PV(prefix + 'oY4')
+            self.control_pvs['CRLRelaysY5']       = PV(prefix + 'oY5')
+
+        if 'ValvesPLC' in self.pv_prefixes:
+            prefix = self.pv_prefixes['ValvesPLC']
+            self.control_pvs['VPLCHighPressureOn']     = PV(prefix + 'oC23')
+            self.control_pvs['VPLCHighPressureOff']    = PV(prefix + 'oC33')
+            self.control_pvs['VPLCHighPressureStatus'] = PV(prefix + 'C3')
+            self.control_pvs['VPLCLowPressureXOn']     = PV(prefix + 'oC22')
+            self.control_pvs['VPLCLowPressureXOff']    = PV(prefix + 'oC32')
+            self.control_pvs['VPLCLowPressureXStatus'] = PV(prefix + 'oC2')
+            self.control_pvs['VPLCLowPressureYOn']     = PV(prefix + 'oC21')
+            self.control_pvs['VPLCLowPressureYOff']    = PV(prefix + 'oC31')
+            self.control_pvs['VPLCLowPressureYStatus'] = PV(prefix + 'oC1')
+            self.control_pvs['VPLCHeFlow']             = PV(prefix + 'ao1')
+
+        if 'Shaker' in self.pv_prefixes:
+            prefix = self.pv_prefixes['Shaker']
+            self.control_pvs['ShakerRun']             = PV(prefix + 'run')
+            self.control_pvs['ShakerFrequency']       = PV(prefix + 'frequency')
+            self.control_pvs['ShakerTimePerPoint']    = PV(prefix + 'timePerPoint')
+            self.control_pvs['ShakerNumPoints']       = PV(prefix + 'numPoints')
+            self.control_pvs['ShakerAAmpMuliplyer']   = PV(prefix + 'A:ampMult')
+            self.control_pvs['ShakerAAmpOffset']      = PV(prefix + 'A:ampOffset')
+            self.control_pvs['ShakerAPhaseShift']     = PV(prefix + 'A:phaseShift')
+            self.control_pvs['ShakerBAmpMuliplyer']   = PV(prefix + 'B:ampMult')
+            self.control_pvs['ShakerBAmpOffset']      = PV(prefix + 'B:ampOffset')
+            self.control_pvs['ShakerBPhaseShift']     = PV(prefix + 'B:phaseShift')
+
+        if 'BPM' in self.pv_prefixes:
+            prefix = self.pv_prefixes['BPM']
+            self.control_pvs['BPMHSetPoint']          = PV(prefix + 'fb4.VAL')
+            self.control_pvs['BPMHReadBack']          = PV(prefix + 'fb4.CVAL')
+            self.control_pvs['BPMHFeedback']          = PV(prefix + 'fb4.FBON')
+            self.control_pvs['BPMHUpdateRate']        = PV(prefix + 'fb4.SCAN')
+            self.control_pvs['BPMHKP']                = PV(prefix + 'fb4.KP')
+            self.control_pvs['BPMHKI']                = PV(prefix + 'fb4.KI')
+            self.control_pvs['BPMHKD']                = PV(prefix + 'fb4.KD')
+            self.control_pvs['BPMHI']                 = PV(prefix + 'fb4.I')
+            self.control_pvs['BPMHLowLimit']          = PV(prefix + 'fb4.DRVL')
+            self.control_pvs['BPMHHighLimit']         = PV(prefix + 'fb4.DRVH')
+            self.control_pvs['BPMVSetPoint']          = PV(prefix + 'fb3.VAL')
+            self.control_pvs['BPMVReadBack']          = PV(prefix + 'fb3.CVAL')
+            self.control_pvs['BPMVFeedback']          = PV(prefix + 'fb3.FBON')
+            self.control_pvs['BPMVUpdateRate']        = PV(prefix + 'fb3.SCAN')
+            self.control_pvs['BPMVKP']                = PV(prefix + 'fb3.KP')
+            self.control_pvs['BPMVKI']                = PV(prefix + 'fb3.KI')
+            self.control_pvs['BPMVKD']                = PV(prefix + 'fb3.KD')
+            self.control_pvs['BPMVI']                 = PV(prefix + 'fb3.I')
+            self.control_pvs['BPMVLowLimit']          = PV(prefix + 'fb3.DRVL')
+            self.control_pvs['BPMVHighLimit']         = PV(prefix + 'fb3.DRVH')
 
         self.epics_pvs = {**self.config_pvs, **self.control_pvs}
         # Wait 1 second for all PVs to connect
