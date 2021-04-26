@@ -244,7 +244,7 @@ class TomoScan():
             self.control_pvs['ShakerAPhaseShift']     = PV(prefix + 'A:phaseShift')
             self.control_pvs['ShakerBAmpMuliplyer']   = PV(prefix + 'B:ampMult')
             self.control_pvs['ShakerBAmpOffset']      = PV(prefix + 'B:ampOffset')
-            self.control_pvs['ShakerBPhaseShift']     = PV(prefix + 'B:phaseShift')
+            self.control_pvs['ShakerBFreqMult']       = PV(prefix + 'B:freqMult')
 
         if 'BPM' in self.pv_prefixes:
             prefix = self.pv_prefixes['BPM']
