@@ -211,11 +211,14 @@ class TomoScan():
         # TXM Optics IOCs
         if 'CRLRelays' in self.pv_prefixes:
             prefix = self.pv_prefixes['CRLRelays']
+            self.control_pvs['CRLRelaysY0']       = PV(prefix + 'oY0')
             self.control_pvs['CRLRelaysY1']       = PV(prefix + 'oY1')
             self.control_pvs['CRLRelaysY2']       = PV(prefix + 'oY2')
             self.control_pvs['CRLRelaysY3']       = PV(prefix + 'oY3')
             self.control_pvs['CRLRelaysY4']       = PV(prefix + 'oY4')
             self.control_pvs['CRLRelaysY5']       = PV(prefix + 'oY5')
+            self.control_pvs['CRLRelaysY6']       = PV(prefix + 'oY6')
+            self.control_pvs['CRLRelaysY7']       = PV(prefix + 'oY7')
 
         if 'ValvesPLC' in self.pv_prefixes:
             prefix = self.pv_prefixes['ValvesPLC']
