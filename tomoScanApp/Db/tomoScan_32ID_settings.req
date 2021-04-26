@@ -48,6 +48,7 @@ $(P)$(R)CRLXPVName
 $(P)$(R)CRLYPVName
 $(P)$(R)CRLPitchPVName
 $(P)$(R)CRLYawPVName
+$(P)$(R)DiffuserXPVName
 $(P)$(R)BeamstopXPVName
 $(P)$(R)BeamstopYPVName
 $(P)$(R)CondenserXPVName
@@ -62,6 +63,24 @@ $(P)$(R)ZonePlateYPVName
 $(P)$(R)ZonePlateZPVName
 $(P)$(R)PhaseRingXPVName
 $(P)$(R)PhaseRingYPVName
+
+################
+# Optics control
+################
+$(P)$(R)DiffuserInX
+$(P)$(R)DiffuserOutX
+$(P)$(R)BeamstopInY
+$(P)$(R)BeamstopOutY
+$(P)$(R)PinholeInY
+$(P)$(R)PinholeOutY
+$(P)$(R)CondenserInY
+$(P)$(R)CondenserOutY
+$(P)$(R)ZonePlateInY
+$(P)$(R)ZonePlateOutY
+$(P)$(R)PhaseRingInX
+$(P)$(R)PhaseRingOutX
+$(P)$(R)PhaseRingInY
+$(P)$(R)PhaseRingOutY
 
 ####################
 # Sample information
