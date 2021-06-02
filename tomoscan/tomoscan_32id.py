@@ -2,7 +2,7 @@
 
    Classes
    -------
-   TomoScan2BM
+   TomoScan32ID
      Derived class for tomography scanning with EPICS at APS beamline 32-ID
 """
 import time
@@ -11,6 +11,7 @@ import h5py
 import sys
 import traceback
 import numpy as np
+from epics import PV
 
 from tomoscan import data_management as dm
 from tomoscan import TomoScanPSO
@@ -37,6 +38,66 @@ class TomoScan32ID(TomoScanPSO):
         # self.epics_pvs['CamAcquire'].put('Acquire') ###
         # self.wait_pv(self.epics_pvs['CamAcquire'], 1) ###
 
+        # TXM Optics IOCs
+        if 'CRLRelays' in self.pv_prefixes:
+            prefix = self.pv_prefixes['CRLRelays']
+            self.control_pvs['CRLRelaysY0']       = PV(prefix + 'oY0')
+            self.control_pvs['CRLRelaysY1']       = PV(prefix + 'oY1')
+            self.control_pvs['CRLRelaysY2']       = PV(prefix + 'oY2')
+            self.control_pvs['CRLRelaysY3']       = PV(prefix + 'oY3')
+            self.control_pvs['CRLRelaysY4']       = PV(prefix + 'oY4')
+            self.control_pvs['CRLRelaysY5']       = PV(prefix + 'oY5')
+            self.control_pvs['CRLRelaysY6']       = PV(prefix + 'oY6')
+            self.control_pvs['CRLRelaysY7']       = PV(prefix + 'oY7')
+
+        if 'ValvesPLC' in self.pv_prefixes:
+            prefix = self.pv_prefixes['ValvesPLC']
+            self.control_pvs['VPLCHighPressureOn']     = PV(prefix + 'oC23')
+            self.control_pvs['VPLCHighPressureOff']    = PV(prefix + 'oC33')
+            self.control_pvs['VPLCHighPressureStatus'] = PV(prefix + 'C3')
+            self.control_pvs['VPLCLowPressureXOn']     = PV(prefix + 'oC22')
+            self.control_pvs['VPLCLowPressureXOff']    = PV(prefix + 'oC32')
+            self.control_pvs['VPLCLowPressureXStatus'] = PV(prefix + 'oC2')
+            self.control_pvs['VPLCLowPressureYOn']     = PV(prefix + 'oC21')
+            self.control_pvs['VPLCLowPressureYOff']    = PV(prefix + 'oC31')
+            self.control_pvs['VPLCLowPressureYStatus'] = PV(prefix + 'oC1')
+            self.control_pvs['VPLCHeFlow']             = PV(prefix + 'ao1')
+
+        if 'Shaker' in self.pv_prefixes:
+            prefix = self.pv_prefixes['Shaker']
+            self.control_pvs['ShakerRun']             = PV(prefix + 'run')
+            self.control_pvs['ShakerFrequency']       = PV(prefix + 'frequency')
+            self.control_pvs['ShakerTimePerPoint']    = PV(prefix + 'timePerPoint')
+            self.control_pvs['ShakerNumPoints']       = PV(prefix + 'numPoints')
+            self.control_pvs['ShakerAAmpMuliplyer']   = PV(prefix + 'A:ampMult')
+            self.control_pvs['ShakerAAmpOffset']      = PV(prefix + 'A:ampOffset')
+            self.control_pvs['ShakerAPhaseShift']     = PV(prefix + 'A:phaseShift')
+            self.control_pvs['ShakerBAmpMuliplyer']   = PV(prefix + 'B:ampMult')
+            self.control_pvs['ShakerBAmpOffset']      = PV(prefix + 'B:ampOffset')
+            self.control_pvs['ShakerBFreqMult']       = PV(prefix + 'B:freqMult')
+
+        if 'BPM' in self.pv_prefixes:
+            prefix = self.pv_prefixes['BPM']
+            self.control_pvs['BPMHSetPoint']          = PV(prefix + 'fb4.VAL')
+            self.control_pvs['BPMHReadBack']          = PV(prefix + 'fb4.CVAL')
+            self.control_pvs['BPMHFeedback']          = PV(prefix + 'fb4.FBON')
+            self.control_pvs['BPMHUpdateRate']        = PV(prefix + 'fb4.SCAN')
+            self.control_pvs['BPMHKP']                = PV(prefix + 'fb4.KP')
+            self.control_pvs['BPMHKI']                = PV(prefix + 'fb4.KI')
+            self.control_pvs['BPMHKD']                = PV(prefix + 'fb4.KD')
+            self.control_pvs['BPMHI']                 = PV(prefix + 'fb4.I')
+            self.control_pvs['BPMHLowLimit']          = PV(prefix + 'fb4.DRVL')
+            self.control_pvs['BPMHHighLimit']         = PV(prefix + 'fb4.DRVH')
+            self.control_pvs['BPMVSetPoint']          = PV(prefix + 'fb3.VAL')
+            self.control_pvs['BPMVReadBack']          = PV(prefix + 'fb3.CVAL')
+            self.control_pvs['BPMVFeedback']          = PV(prefix + 'fb3.FBON')
+            self.control_pvs['BPMVUpdateRate']        = PV(prefix + 'fb3.SCAN')
+            self.control_pvs['BPMVKP']                = PV(prefix + 'fb3.KP')
+            self.control_pvs['BPMVKI']                = PV(prefix + 'fb3.KI')
+            self.control_pvs['BPMVKD']                = PV(prefix + 'fb3.KD')
+            self.control_pvs['BPMVI']                 = PV(prefix + 'fb3.I')
+            self.control_pvs['BPMVLowLimit']          = PV(prefix + 'fb3.DRVL')
+            self.control_pvs['BPMVHighLimit']         = PV(prefix + 'fb3.DRVH')
         # Enable auto-increment on file writer
         self.epics_pvs['FPAutoIncrement'].put('Yes')
 
@@ -47,6 +108,83 @@ class TomoScan32ID(TomoScanPSO):
         self.epics_pvs['OverwriteWarning'].put('Yes')
 
         log.setup_custom_logger("./tomoscan.log")
+   
+    def open_frontend_shutter(self):
+        """Opens the shutters to collect flat fields or projections.
+
+        This does the following:
+
+        - Checks if we are in testing mode. If we are, do nothing else opens the 2-BM-A front-end shutter.
+
+        """
+        if self.epics_pvs['Testing'].get():
+            log.warning('In testing mode, so not opening shutters.')
+        else:
+            # Open 2-BM-A front-end shutter
+            if not self.epics_pvs['OpenShutter'] is None:
+                pv = self.epics_pvs['OpenShutter']
+                value = self.epics_pvs['OpenShutterValue'].get(as_string=True)
+                status = self.epics_pvs['ShutterStatus'].get(as_string=True)
+                log.info('shutter status: %s', status)
+                log.info('open shutter: %s, value: %s', pv, value)
+                self.epics_pvs['OpenShutter'].put(value, wait=True)
+                self.wait_frontend_shutter_open()
+                # self.wait_pv(self.epics_pvs['ShutterStatus'], 1)
+                status = self.epics_pvs['ShutterStatus'].get(as_string=True)
+                log.info('shutter status: %s', status)
+
+    def open_shutter(self):
+        """Opens the shutters to collect flat fields or projections.
+
+        This does the following:
+
+        - Opens the 2-BM-A fast shutter.
+        """
+
+        # Open 2-BM-A fast shutter
+        if not self.epics_pvs['OpenFastShutter'] is None:
+            pv = self.epics_pvs['OpenFastShutter']
+            value = self.epics_pvs['OpenFastShutterValue'].get(as_string=True)
+            log.info('open fast shutter: %s, value: %s', pv, value)
+            self.epics_pvs['OpenFastShutter'].put(value, wait=True)
+
+    def close_frontend_shutter(self):
+        """Closes the shutters to collect dark fields.
+        This does the following:
+
+        - Closes the 32-ID-C front-end shutter.
+
+        """
+        if self.epics_pvs['Testing'].get():
+            log.warning('In testing mode, so not opening shutters.')
+        else:
+            # Close 2-BM-A front-end shutter
+            if not self.epics_pvs['CloseShutter'] is None:
+                pv = self.epics_pvs['CloseShutter']
+                value = self.epics_pvs['CloseShutterValue'].get(as_string=True)
+                status = self.epics_pvs['ShutterStatus'].get(as_string=True)
+                log.info('shutter status: %s', status)
+                log.info('close shutter: %s, value: %s', pv, value)
+                self.epics_pvs['CloseShutter'].put(value, wait=True)
+                self.wait_pv(self.epics_pvs['ShutterStatus'], 0)
+                status = self.epics_pvs['ShutterStatus'].get(as_string=True)
+                log.info('shutter status: %s', status)
+
+    def close_shutter(self):
+        """Closes the shutters to collect dark fields.
+        This does the following:
+
+        - Closes the 32-ID-C fast shutter.
+        """
+
+        # Close 2-BM-A fast shutter
+        if not self.epics_pvs['CloseFastShutter'] is None:
+            pv = self.epics_pvs['CloseFastShutter']
+            value = self.epics_pvs['CloseFastShutterValue'].get(as_string=True)
+            log.info('close fast shutter: %s, value: %s', pv, value)
+            self.epics_pvs['CloseFastShutter'].put(value, wait=True)
+
+
 
     def set_trigger_mode(self, trigger_mode, num_images):
         """Sets the trigger mode SIS3820 and the camera.
@@ -187,7 +325,7 @@ class TomoScan32ID(TomoScanPSO):
             self.epics_pvs['CamAcquisitionFrameRate'].put(1/exposure_time, wait=True, timeout=10.0) 
             self.epics_pvs['CamAcquireTime'].put(exposure_time, wait=True, timeout = 10.0)
         else:
-            super.set_exposure_time(exposure_time)
+            super().set_exposure_time(exposure_time)
 
     def add_theta(self):
         """Add theta at the end of a scan.
