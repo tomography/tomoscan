@@ -127,7 +127,7 @@ class TomoScan():
             self.control_pvs['CamFrameRateEnable']  = PV(camera_prefix + 'FrameRateEnable')
             self.control_pvs['CamTriggerSource']    = PV(camera_prefix + 'TriggerSource')
             self.control_pvs['CamTriggerSoftware']  = PV(camera_prefix + 'TriggerSoftware')
-            if model.find('Grasshopper3') != -1:
+            if model.find('Grasshopper3 GS3-U3-23S6M') != -1:
                 self.control_pvs['CamVideoMode']    = PV(camera_prefix + 'GC_VideoMode_RBV')
 
         if (manufacturer.find('Adimec') != -1):
@@ -890,6 +890,15 @@ class TomoScan():
                 'Mono16':       {'Mode0': 12.2, 'Mode1': 6.2, 'Mode5': 6.2, 'Mode7': 12.2}
             }
             readout = readout_times[pixel_format][video_mode]/1000.
+        if camera_model == 'Grasshopper3 GS3-U3-51S5M':
+            pixel_format = self.epics_pvs['CamPixelFormat'].get(as_string=True) 
+            readout_times = {
+                'Mono8': 6.18,
+                'Mono12Packed': 8.20,
+                'Mono12p': 8.20,
+                'Mono16': 12.34
+            }
+            readout = readout_times[pixel_format]/1000.            
         if camera_model == 'Oryx ORX-10G-51S5M':
             pixel_format = self.epics_pvs['CamPixelFormat'].get(as_string=True) 
             readout_times = {
