@@ -1,12 +1,12 @@
 
 file {
-	name="/local/usr32idc/epics/synApps/support/tomoscan/tomoScanApp/op/adl/tomoScan_32ID_optics.adl"
+	name="/local/usertxm/epics/synApps/support/tomoscan/tomoScanApp/op/adl/tomoScan_32ID_optics.adl"
 	version=030111
 }
 display {
 	object {
-		x=1474
-		y=453
+		x=1464
+		y=445
 		width=1100
 		height=775
 	}
@@ -1427,4 +1427,20 @@ text {
 	}
 	label="Move All Out"
 	press_msg="1"
+}
+"message button" {
+	object {
+		x=688
+		y=10
+		width=120
+		height=20
+	}
+	control {
+		chan="$(P)$(R)AllStop"
+		clr=14
+		bclr=20
+	}
+	label="All Stop"
+	press_msg="1"
+	release_msg="0"
 }
