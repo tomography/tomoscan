@@ -2,3 +2,4 @@ pymsgbox
 pyepics
 h5py
 pvapy
+paramiko
