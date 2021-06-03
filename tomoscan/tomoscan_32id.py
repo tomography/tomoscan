@@ -52,6 +52,7 @@ class TomoScan32ID(TomoScanPSO):
 
         if 'ValvesPLC' in self.pv_prefixes:
             prefix = self.pv_prefixes['ValvesPLC']
+            # Sample stack
             self.control_pvs['VPLCHighPressureOn']     = PV(prefix + 'oC23')
             self.control_pvs['VPLCHighPressureOff']    = PV(prefix + 'oC33')
             self.control_pvs['VPLCHighPressureStatus'] = PV(prefix + 'C3')
@@ -98,6 +99,9 @@ class TomoScan32ID(TomoScanPSO):
             self.control_pvs['BPMVI']                 = PV(prefix + 'fb3.I')
             self.control_pvs['BPMVLowLimit']          = PV(prefix + 'fb3.DRVL')
             self.control_pvs['BPMVHighLimit']         = PV(prefix + 'fb3.DRVH')
+
+        self.epics_pvs = {**self.config_pvs, **self.control_pvs}
+        
         # Enable auto-increment on file writer
         self.epics_pvs['FPAutoIncrement'].put('Yes')
 
