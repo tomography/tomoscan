@@ -2,7 +2,7 @@ file "$(TOP)/db/tomoScan.template"
 {
 pattern
 {  P,      R,      CAMERA,    FILE_PLUGIN,    ROTATION,   SAMPLE_X,   SAMPLE_Y,       CLOSE_SHUTTER,        CLOSE_VALUE,        OPEN_SHUTTER,         OPEN_VALUE}
-{6bm:, TomoScan:,  6bmPG1:,   1idPG2:HDF1:,  6bmpreci:m1, 6bma1:m19,     NA,      6bmb1:rShtrA:Close.VAL,        1,           6bmb1:rShtrA:Open.VAL,      1}
+{6bm:, TomoScan:,  6bmARV1:,   6bmARV1:HDF1:,  6bmpreci:m1, 6bma1:m19,     NA,      6bmb1:rShtrA:Close.VAL,        1,           6bmb1:rShtrA:Open.VAL,      1}
 }
 
 file "$(TOP)/db/tomoScan_6BM.template"
