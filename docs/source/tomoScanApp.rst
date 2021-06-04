@@ -1279,48 +1279,51 @@ Optics control
   * - $(P)$(R)SampleOutX
     - ao
     - Position of the X stage when the sample is out for collecting flat fields.
-  * - $(P)$(R)DiffuserInX")
+  * - $(P)$(R)DiffuserInX
     - ao
     - Position of the X stage when the diffuser is in the beam.
-  * - $(P)$(R)DiffuserOutX")
+  * - $(P)$(R)DiffuserOutX
     - ao
     - Position of the X stage when the diffuser is out of the beam.
-  * - $(P)$(R)BeamstopInY")
+  * - $(P)$(R)BeamstopInY
     - ao
     - Position of the Y stage when the beamstop is in the beam.
-  * - $(P)$(R)BeamstopOutY")
+  * - $(P)$(R)BeamstopOutY
     - ao
     - Position of the Y stage when the beamstop is out of the beam.
-  * - $(P)$(R)PinholeInY")
+  * - $(P)$(R)PinholeInY
     - ao
     - Position of the Y stage when the pinhole is in the beam.
-  * - $(P)$(R)PinholeOutY")
+  * - $(P)$(R)PinholeOutY
     - ao
     - Position of the Y stage when the pinhole is out of the beam.
   * - $(P)$(R)CondenserInY")
     - ao
     - Position of the Y stage when the condenser is in the beam.
-  * - $(P)$(R)CondenserOutY")
+  * - $(P)$(R)CondenserOutY
     - ao
     - Position of the Y stage when the condenser is out of the beam.
-  * - $(P)$(R)ZonePlateInY")
+  * - $(P)$(R)ZonePlateInY
     - ao
     - Position of the Y stage when the zone plate is in the beam.
-  * - $(P)$(R)ZonePlateOutY")
+  * - $(P)$(R)ZonePlateOutY
     - ao
     - Position of the Y stage when the zone plate is out of the beam.
-  * - $(P)$(R)PhaseRingInX")
+  * - $(P)$(R)PhaseRingInX
     - ao
     - Position of the X stage when the phase ring is in the beam.
-  * - $(P)$(R)PhaseRingOutX")
+  * - $(P)$(R)PhaseRingOutX
     - ao
     - Position of the X stage when the phase ring is out of the beam.
-  * - $(P)$(R)PhaseRingInY")
+  * - $(P)$(R)PhaseRingInY
     - ao
     - Position of the Y stage when the phase ring is in the beam.
-  * - $(P)$(R)PhaseRingOutY")
+  * - $(P)$(R)PhaseRingOutY
     - ao
     - Position of the Y stage when the phase ring is out of the beam.
+  * - $(P)$(R)AllStop
+    - bo
+    - Stops all TXM optic motors. Options are release or stop.
 
 Sample information
 ^^^^^^^^^^^^^^^^^^

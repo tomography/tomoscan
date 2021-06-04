@@ -325,6 +325,12 @@ record(busy, "$(P)$(R)MovePhaseRingOut")
    field(ONAM, "Move")
 }
 
+record(bo, "$(P)$(R)AllStop")
+{
+   field(ZNAM, "release")
+   field(ONAM, "stop")
+}
+
 ################
 # Optics control
 ################
