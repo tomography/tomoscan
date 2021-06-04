@@ -12,6 +12,7 @@ import sys
 import traceback
 import numpy as np
 from epics import PV
+import threading
 
 from tomoscan import data_management as dm
 from tomoscan import TomoScanPSO
@@ -110,6 +111,13 @@ class TomoScan32ID(TomoScanPSO):
 
         # Disable over writing warning
         self.epics_pvs['OverwriteWarning'].put('Yes')
+
+
+        for epics_pv in ('MoveCRLIn', 'MoveCRLOut', 'MovePhaseRingIn', 'MovePhaseRingOut', 'MoveDiffuserIn',
+                         'MoveDiffuserOut', 'MoveBeamstopIn', 'MoveBeamstopOut', 'MovePinholeIn', 'MovePinholeOut',
+                         'MoveCondenserIn', 'MoveCondenserOut', 'MoveZonePlateIn', 'MoveZonePlateOut',
+                         'MoveAllIn', 'MoveAllOut'):
+            self.epics_pvs[epics_pv].add_callback(self.pv_callback_32id)
 
         log.setup_custom_logger("./tomoscan.log")
    
@@ -460,8 +468,8 @@ class TomoScan32ID(TomoScanPSO):
         self.control_pvs['CRLRelaysY3'].put(0, wait=True, timeout=1)
         self.control_pvs['CRLRelaysY4'].put(0, wait=True, timeout=1)
         self.control_pvs['CRLRelaysY5'].put(0, wait=True, timeout=1)
-        # self.control_pvs['CRLRelaysY6'].put(0, wait=True, timeout=1)
-        # self.control_pvs['CRLRelaysY7'].put(0, wait=True, timeout=1)
+        self.control_pvs['CRLRelaysY6'].put(0, wait=True, timeout=1)
+        self.control_pvs['CRLRelaysY7'].put(0, wait=True, timeout=1)
 
         self.epics_pvs['MoveCRLOut'].put('Done')
 
@@ -500,6 +508,7 @@ class TomoScan32ID(TomoScanPSO):
     def move_pinhole_in(self):
         """Moves the pinhole in.
         """
+        print(f'Move pinhole in')
         position = self.epics_pvs['PinholeInY'].value
         self.epics_pvs['PinholeY'].put(position, wait=True)
 
@@ -545,7 +554,7 @@ class TomoScan32ID(TomoScanPSO):
 
         self.epics_pvs['MoveZonePlateOut'].put('Done')
 
-    def move_phasering_in(self):
+    def move_PhaseRing_in(self):
         """Moves the phase ring in.
         """
         position = self.epics_pvs['PhaseRingInX'].value
@@ -555,7 +564,7 @@ class TomoScan32ID(TomoScanPSO):
 
         self.epics_pvs['MovePhaseRingIn'].put('Done')
 
-    def move_phasering_out(self):
+    def move_PhaseRing_out(self):
         """Moves the phase ring out.
         """
         position = self.epics_pvs['PhaseRingOutX'].value
@@ -564,3 +573,80 @@ class TomoScan32ID(TomoScanPSO):
         self.epics_pvs['PhaseRingY'].put(position, wait=True)
 
         self.epics_pvs['MovePhaseRingOut'].put('Done')
+
+    def move_all_in(self):
+        """Moves all in
+        """        
+        self.move_crl_in()
+#       self.move_phasering_in() # VN: not needed for absorption contrast
+        self.move_diffuser_in()
+        self.move_beamstop_in()
+        self.move_pinhole_in()
+        self.move_condenser_in()
+#        self.move_zoneplate_in() # VN: better not to move ZP
+
+    def move_all_out(self):
+        """Moves all out
+        """        
+        self.move_crl_out()
+#       self.move_phasering_out() # VN: not needed for absorption contrast
+        self.move_diffuser_out()
+        self.move_beamstop_out()
+        self.move_pinhole_out()
+        self.move_condenser_out()
+#        self.move_zoneplate_in() # VN: better not to move ZP
+
+    def pv_callback_32id(self, pvname=None, value=None, char_value=None, **kw):
+        """Callback function that is called by pyEpics when certain EPICS PVs are changed        
+        """
+
+        log.debug('pv_callback pvName=%s, value=%s, char_value=%s', pvname, value, char_value)
+        if (pvname.find('MoveCRLIn') != -1) and (value == 1):
+            thread = threading.Thread(target=self.move_crl_in, args=())
+            thread.start()
+        elif (pvname.find('MoveCRLOut') != -1) and (value == 1):
+            thread = threading.Thread(target=self.move_crl_out, args=())
+            thread.start()
+        elif (pvname.find('MovePhaseRingIn') != -1) and (value == 1):
+            thread = threading.Thread(target=self.move_phasering_in, args=())
+            thread.start()
+        elif (pvname.find('MovePhaseRingOut') != -1) and (value == 1):
+            thread = threading.Thread(target=self.move_phasering_out, args=())
+            thread.start()            
+        elif (pvname.find('MoveDiffuserIn') != -1) and (value == 1):
+            thread = threading.Thread(target=self.move_diffuser_in, args=())
+            thread.start()                        
+        elif (pvname.find('MoveDiffuserOut') != -1) and (value == 1):
+            thread = threading.Thread(target=self.move_diffuser_out, args=())
+            thread.start()                                    
+        elif (pvname.find('MoveBeamstopIn') != -1) and (value == 1):
+            thread = threading.Thread(target=self.move_beamstop_in, args=())
+            thread.start()                        
+        elif (pvname.find('MoveBeamstopOut') != -1) and (value == 1):
+            thread = threading.Thread(target=self.move_beamstop_out, args=())
+            thread.start()                                    
+        elif (pvname.find('MovePinholeIn') != -1) and (value == 1):
+            thread = threading.Thread(target=self.move_pinhole_in, args=())
+            thread.start()                        
+        elif (pvname.find('MovePinholeOut') != -1) and (value == 1):
+            thread = threading.Thread(target=self.move_pinhole_out, args=())
+            thread.start()                                    
+        elif (pvname.find('MoveCondenserIn') != -1) and (value == 1):
+            thread = threading.Thread(target=self.move_condenser_in, args=())
+            thread.start()                        
+        elif (pvname.find('MoveCondenserOut') != -1) and (value == 1):
+            thread = threading.Thread(target=self.move_condenser_out, args=())
+            thread.start()                                    
+        elif (pvname.find('MoveZonePlateIn') != -1) and (value == 1):
+            thread = threading.Thread(target=self.move_zoneplate_in, args=())
+            thread.start()                        
+        elif (pvname.find('MoveZonePlateOut') != -1) and (value == 1):
+            thread = threading.Thread(target=self.move_zoneplate_out, args=())
+            thread.start()        
+        elif (pvname.find('MoveAllIn') != -1) and (value == 1):
+            thread = threading.Thread(target=self.move_all_in, args=())
+            thread.start()                        
+        elif (pvname.find('MoveAllOut') != -1) and (value == 1):
+            thread = threading.Thread(target=self.move_all_out, args=())
+            thread.start()       
+

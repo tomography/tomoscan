@@ -123,3 +123,23 @@ $(P)$(R)OpenFastShutterValue
 # Shutter status
 ################
 $(P)$(R)ShutterStatusPVName
+
+#################################
+# Optics control via Channel Access
+#################################
+#controlPV $(P)$(R)MoveCRLIn
+#controlPV $(P)$(R)MoveCRLOut
+#controlPV $(P)$(R)MovePhaseRingIn
+#controlPV $(P)$(R)MovePhaseRingOut
+#controlPV $(P)$(R)MoveDiffuserIn
+#controlPV $(P)$(R)MoveDiffuserOut
+#controlPV $(P)$(R)MoveBeamstopIn
+#controlPV $(P)$(R)MoveBeamstopOut
+#controlPV $(P)$(R)MovePinholeIn
+#controlPV $(P)$(R)MovePinholeOut
+#controlPV $(P)$(R)MoveCondenserIn
+#controlPV $(P)$(R)MoveCondenserOut
+#controlPV $(P)$(R)MoveZonePlateIn
+#controlPV $(P)$(R)MoveZonePlateOut
+#controlPV $(P)$(R)MoveAllIn
+#controlPV $(P)$(R)MoveAllOut
