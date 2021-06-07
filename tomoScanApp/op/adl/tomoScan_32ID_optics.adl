@@ -1,12 +1,12 @@
 
 file {
-	name="/local/usertxm/epics/synApps/support/tomoscan/tomoScanApp/op/adl/tomoScan_32ID_optics.adl"
+	name="/local/usertxm/epics/synApps/support/tomoscan/iocBoot/iocTomoScan_32ID/../../tomoScanApp/op/adl/tomoScan_32ID_optics.adl"
 	version=030111
 }
 display {
 	object {
-		x=1464
-		y=445
+		x=1454
+		y=437
 		width=1100
 		height=775
 	}
@@ -1166,7 +1166,7 @@ text {
 		height=20
 	}
 	control {
-		chan="$(P)$(R)DiffuserInX"
+		chan="$(P)$(R)ZonePlateInY"
 		clr=14
 		bclr=51
 	}
@@ -1181,7 +1181,7 @@ text {
 		height=20
 	}
 	control {
-		chan="$(P)$(R)DiffuserOutX"
+		chan="$(P)$(R)ZonePlateOutY"
 		clr=14
 		bclr=51
 	}
