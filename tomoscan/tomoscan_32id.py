@@ -117,6 +117,7 @@ class TomoScan32ID(TomoScanPSO):
                          'MoveDiffuserOut', 'MoveBeamstopIn', 'MoveBeamstopOut', 'MovePinholeIn', 'MovePinholeOut',
                          'MoveCondenserIn', 'MoveCondenserOut', 'MoveZonePlateIn', 'MoveZonePlateOut',
                          'MoveAllIn', 'MoveAllOut'):
+            self.epics_pvs[epics_pv].put('Done')
             self.epics_pvs[epics_pv].add_callback(self.pv_callback_32id)
 
         log.setup_custom_logger("./tomoscan.log")
@@ -448,28 +449,28 @@ class TomoScan32ID(TomoScanPSO):
     def move_crl_in(self):
         """Moves the crl in.
         """
-        self.control_pvs['CRLRelaysY0'].put(1, wait=True, timeout=1)
-        # self.control_pvs['CRLRelaysY1'].put(1, wait=True, timeout=1)
+        #self.control_pvs['CRLRelaysY0'].put(1, wait=True, timeout=1)
+        self.control_pvs['CRLRelaysY1'].put(1, wait=True, timeout=1)
         self.control_pvs['CRLRelaysY2'].put(1, wait=True, timeout=1)
         self.control_pvs['CRLRelaysY3'].put(1, wait=True, timeout=1)
         self.control_pvs['CRLRelaysY4'].put(1, wait=True, timeout=1)
         self.control_pvs['CRLRelaysY5'].put(1, wait=True, timeout=1)
-        self.control_pvs['CRLRelaysY6'].put(1, wait=True, timeout=1)
-        self.control_pvs['CRLRelaysY7'].put(1, wait=True, timeout=1)
+        #self.control_pvs['CRLRelaysY6'].put(1, wait=True, timeout=1)
+        #self.control_pvs['CRLRelaysY7'].put(1, wait=True, timeout=1)
 
         self.epics_pvs['MoveCRLIn'].put('Done')
 
     def move_crl_out(self):
         """Moves the crl out.
         """
-        self.control_pvs['CRLRelaysY0'].put(0, wait=True, timeout=1)
-        # self.control_pvs['CRLRelaysY1'].put(0, wait=True, timeout=1)
+        #self.control_pvs['CRLRelaysY0'].put(0, wait=True, timeout=1)
+        self.control_pvs['CRLRelaysY1'].put(0, wait=True, timeout=1)
         self.control_pvs['CRLRelaysY2'].put(0, wait=True, timeout=1)
         self.control_pvs['CRLRelaysY3'].put(0, wait=True, timeout=1)
         self.control_pvs['CRLRelaysY4'].put(0, wait=True, timeout=1)
         self.control_pvs['CRLRelaysY5'].put(0, wait=True, timeout=1)
-        self.control_pvs['CRLRelaysY6'].put(0, wait=True, timeout=1)
-        self.control_pvs['CRLRelaysY7'].put(0, wait=True, timeout=1)
+        #self.control_pvs['CRLRelaysY6'].put(0, wait=True, timeout=1)
+        #self.control_pvs['CRLRelaysY7'].put(0, wait=True, timeout=1)
 
         self.epics_pvs['MoveCRLOut'].put('Done')
 
@@ -554,7 +555,7 @@ class TomoScan32ID(TomoScanPSO):
 
         self.epics_pvs['MoveZonePlateOut'].put('Done')
 
-    def move_PhaseRing_in(self):
+    def move_phasering_in(self):
         """Moves the phase ring in.
         """
         position = self.epics_pvs['PhaseRingInX'].value
@@ -564,7 +565,7 @@ class TomoScan32ID(TomoScanPSO):
 
         self.epics_pvs['MovePhaseRingIn'].put('Done')
 
-    def move_PhaseRing_out(self):
+    def move_phasering_out(self):
         """Moves the phase ring out.
         """
         position = self.epics_pvs['PhaseRingOutX'].value
@@ -578,23 +579,27 @@ class TomoScan32ID(TomoScanPSO):
         """Moves all in
         """        
         self.move_crl_in()
-#       self.move_phasering_in() # VN: not needed for absorption contrast
+        #self.move_phasering_in() # VN: not needed for absorption contrast
         self.move_diffuser_in()
         self.move_beamstop_in()
         self.move_pinhole_in()
         self.move_condenser_in()
-#        self.move_zoneplate_in() # VN: better not to move ZP
+        self.move_zoneplate_in() # VN: better not to move ZP
+        super().set_exposure_time(1)
+        self.epics_pvs['MoveAllIn'].put('Done')
 
     def move_all_out(self):
         """Moves all out
         """        
         self.move_crl_out()
-#       self.move_phasering_out() # VN: not needed for absorption contrast
+        #self.move_phasering_out() # VN: not needed for absorption contrast
         self.move_diffuser_out()
         self.move_beamstop_out()
         self.move_pinhole_out()
         self.move_condenser_out()
-#        self.move_zoneplate_in() # VN: better not to move ZP
+        self.move_zoneplate_out() # VN: better not to move ZP
+        super().set_exposure_time(0.01)
+        self.epics_pvs['MoveAllOut'].put('Done')
 
     def pv_callback_32id(self, pvname=None, value=None, char_value=None, **kw):
         """Callback function that is called by pyEpics when certain EPICS PVs are changed        
@@ -650,3 +655,4 @@ class TomoScan32ID(TomoScanPSO):
             thread = threading.Thread(target=self.move_all_out, args=())
             thread.start()       
 
+    
