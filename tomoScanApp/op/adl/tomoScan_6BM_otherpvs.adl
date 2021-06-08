@@ -1,14 +1,14 @@
 
 file {
-	name="/home/beams/S6BM/epics/synApps/support/tomoscan/tomoScanApp/op/adl/tomoScan_6BM_otherpvs.adl"
+	name="/home/beams29/S6BM/epics/synApps/support/tomoscan/iocBoot/iocTomoScan_6BM_STEP/../../tomoScanApp/op/adl/tomoScan_6BM_otherpvs.adl"
 	version=030111
 }
 display {
 	object {
-		x=54
-		y=667
+		x=49
+		y=211
 		width=640
-		height=225
+		height=245
 	}
 	clr=14
 	bclr=4
@@ -307,6 +307,35 @@ text {
 	}
 	control {
 		chan="$(P)$(R)SampleTopRXPVName"
+		clr=14
+		bclr=51
+	}
+	format="string"
+	limits {
+	}
+}
+text {
+	object {
+		x=117
+		y=215
+		width=130
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Shutter status PV"
+	align="horiz. right"
+}
+"text entry" {
+	object {
+		x=252
+		y=215
+		width=380
+		height=20
+	}
+	control {
+		chan="$(P)$(R)ShutterStatusPVName"
 		clr=14
 		bclr=51
 	}

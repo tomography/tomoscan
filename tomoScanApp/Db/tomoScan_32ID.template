@@ -100,6 +100,31 @@ record(ao, "$(P)$(R)CameraTubeLength")
    field(EGU,  "mm")
 }
 
+
+##################################################
+# CRL Relays, Valves PLC, Shaker and BPM PV Prefix
+##################################################
+
+record(stringout, "$(P)$(R)CRLRelaysPVPrefix")
+{
+   field(VAL,  "$(CRL_RELAYS)")
+}
+
+record(stringout, "$(P)$(R)ValvesPLCPVPrefix")
+{
+   field(VAL,  "$(VALVES_PLC)")
+}
+
+record(stringout, "$(P)$(R)ShakerPVPrefix")
+{
+   field(VAL,  "$(SHAKER)")
+}
+
+record(stringout, "$(P)$(R)BPMPVPrefix")
+{
+   field(VAL,  "$(BPM)")
+}
+
 ###################
 # TXM Optics motors
 ###################
@@ -122,6 +147,11 @@ record(stringout, "$(P)$(R)CRLPitchPVName")
 record(stringout, "$(P)$(R)CRLYawPVName")
 {
    field(VAL,  "$(CRL_YAW)")
+}
+
+record(stringout, "$(P)$(R)DiffuserXPVName")
+{
+   field(VAL,  "$(DIFFUSER_X)")
 }
 
 record(stringout, "$(P)$(R)BeamstopXPVName")
@@ -194,6 +224,186 @@ record(stringout, "$(P)$(R)PhaseRingYPVName")
    field(VAL,  "$(PHASERING_Y)")
 }
 
+
+###################################
+# Optics control via Channel Access
+###################################
+
+record(busy, "$(P)$(R)MoveAllIn")
+{
+   field(ZNAM, "Done")
+   field(ONAM, "Move")
+}
+
+record(busy, "$(P)$(R)MoveAllOut")
+{
+   field(ZNAM, "Done")
+   field(ONAM, "Move")
+}
+
+record(busy, "$(P)$(R)MoveCRLIn")
+{
+   field(ZNAM, "Done")
+   field(ONAM, "Move")
+}
+
+record(busy, "$(P)$(R)MoveCRLOut")
+{
+   field(ZNAM, "Done")
+   field(ONAM, "Move")
+}
+
+record(busy, "$(P)$(R)MoveDiffuserIn")
+{
+   field(ZNAM, "Done")
+   field(ONAM, "Move")
+}
+
+record(busy, "$(P)$(R)MoveDiffuserOut")
+{
+   field(ZNAM, "Done")
+   field(ONAM, "Move")
+}
+
+record(busy, "$(P)$(R)MoveBeamstopIn")
+{
+   field(ZNAM, "Done")
+   field(ONAM, "Move")
+}
+
+record(busy, "$(P)$(R)MoveBeamstopOut")
+{
+   field(ZNAM, "Done")
+   field(ONAM, "Move")
+}
+
+record(busy, "$(P)$(R)MovePinholeIn")
+{
+   field(ZNAM, "Done")
+   field(ONAM, "Move")
+}
+
+record(busy, "$(P)$(R)MovePinholeOut")
+{
+   field(ZNAM, "Done")
+   field(ONAM, "Move")
+}
+
+record(busy, "$(P)$(R)MoveCondenserIn")
+{
+   field(ZNAM, "Done")
+   field(ONAM, "Move")
+}
+
+record(busy, "$(P)$(R)MoveCondenserOut")
+{
+   field(ZNAM, "Done")
+   field(ONAM, "Move")
+}
+
+record(busy, "$(P)$(R)MoveZonePlateIn")
+{
+   field(ZNAM, "Done")
+   field(ONAM, "Move")
+}
+
+record(busy, "$(P)$(R)MoveZonePlateOut")
+{
+   field(ZNAM, "Done")
+   field(ONAM, "Move")
+}
+
+record(busy, "$(P)$(R)MovePhaseRingIn")
+{
+   field(ZNAM, "Done")
+   field(ONAM, "Move")
+}
+
+record(busy, "$(P)$(R)MovePhaseRingOut")
+{
+   field(ZNAM, "Done")
+   field(ONAM, "Move")
+}
+
+record(bo, "$(P)$(R)AllStop")
+{
+   field(ZNAM, "release")
+   field(ONAM, "stop")
+}
+
+################
+# Optics control
+################
+
+record(ao, "$(P)$(R)DiffuserInX")
+{
+   field(PREC,  "3")
+}
+
+record(ao, "$(P)$(R)DiffuserOutX")
+{
+   field(PREC,  "3")
+}
+
+record(ao, "$(P)$(R)BeamstopInY")
+{
+   field(PREC,  "3")
+}
+
+record(ao, "$(P)$(R)BeamstopOutY")
+{
+   field(PREC,  "3")
+}
+
+record(ao, "$(P)$(R)PinholeInY")
+{
+   field(PREC,  "3")
+}
+
+record(ao, "$(P)$(R)PinholeOutY")
+{
+   field(PREC,  "3")
+}
+
+record(ao, "$(P)$(R)CondenserInY")
+{
+   field(PREC,  "3")
+}
+
+record(ao, "$(P)$(R)CondenserOutY")
+{
+   field(PREC,  "3")
+}
+
+record(ao, "$(P)$(R)ZonePlateInY")
+{
+   field(PREC,  "3")
+}
+
+record(ao, "$(P)$(R)ZonePlateOutY")
+{
+   field(PREC,  "3")
+}
+
+record(ao, "$(P)$(R)PhaseRingInX")
+{
+   field(PREC,  "3")
+}
+
+record(ao, "$(P)$(R)PhaseRingOutX")
+{
+   field(PREC,  "3")
+}
+
+record(ao, "$(P)$(R)PhaseRingInY")
+{
+   field(PREC,  "3")
+}
+
+record(ao, "$(P)$(R)PhaseRingOutY")
+{
+   field(PREC,  "3")
+}
 
 ####################
 # Sample information

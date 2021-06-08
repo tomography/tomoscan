@@ -1,1 +1,0 @@
-medm -x -macro "P=6bm:,R=TomoScan:,BEAMLINE=tomoScan_6BM" ../../tomoScanApp/op/adl/tomoScan.adl &
