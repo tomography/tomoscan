@@ -543,3 +543,26 @@ record(stringout, "$(P)$(R)ShutterStatusPVName")
    field(VAL,  "$(SHUTTER_STATUS)")
 }
 
+#################
+# Interlaced scan
+#################
+record(bo, "$(P)$(R)InterlacedScan")
+{
+   field(ZNAM, "No")
+   field(ONAM, "Yes")
+}
+
+record(waveform, "$(P)$(R)InterlacedFileName")
+{
+   field(FTVL, "UCHAR")
+   field(NELM, "256")
+}
+
+record(busy,"$(P)$(R)InterlacedRetakeFlat")
+{
+   field(ZNAM,"Done")
+   field(ZSV, "NO_ALARM")
+   field(ONAM,"Capture")
+   field(OSV, "MINOR")
+   field(VAL, "0")
+}

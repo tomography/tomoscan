@@ -1451,6 +1451,27 @@ Fast shutter control
     - stringout
     - Contains the value to write to open the fast shutter
 
+Interlaced scan
+^^^^^^^^^^^^^^^
+
+.. cssclass:: table-bordered table-striped table-hover
+.. list-table::
+  :header-rows: 1
+  :widths: 5 5 90
+
+  * - Record name
+    - Record type
+    - Description
+  * - $(P)$(R)InterlacedScan
+    - bo
+    - Flag controlling whether the scan is regualr or interlaced. Choices are 'No' and 'Yes'. When "No" the angles are equally spaced using the Start angle, # of angles and Angle step parameters. When 'Yes' the list of angles is read from a file.
+  * - $(P)$(R)InterlacedFileName
+    - waveform
+    - The file name containing the list of interalced angles.
+  * - $(P)$(R)InterlacedRetakeFlat
+    - busy,
+    - Interlaced retake flat. Choices are 'Done' and 'Capture'. When 'Capture' a new set of flat field images will be collected.
+
 tomoScan_32ID_settings.req
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 

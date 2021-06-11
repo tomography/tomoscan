@@ -1,6 +1,6 @@
 
 file {
-	name="/local/user2bmb/epics_test/synApps/support/tomoscan/tomoScanApp/op/adl/tomoScan_2BM.adl"
+	name="/local/usertxm/epics/synApps/support/tomoscan/tomoScanApp/op/adl/tomoScan_32ID.adl"
 	version=030111
 }
 display {
@@ -194,7 +194,7 @@ text {
 "related display" {
 	object {
 		x=335
-		y=84
+		y=124
 		width=280
 		height=30
 	}
@@ -232,4 +232,20 @@ text {
 	}
 	textix="Testing"
 	align="horiz. centered"
+}
+"related display" {
+	object {
+		x=335
+		y=84
+		width=280
+		height=30
+	}
+	display[0] {
+		label="Interlaced"
+		name="$(BEAMLINE)_interlaced.adl"
+		args="P=$(P),R=$(R)"
+	}
+	clr=14
+	bclr=51
+	label="Interlaced"
 }

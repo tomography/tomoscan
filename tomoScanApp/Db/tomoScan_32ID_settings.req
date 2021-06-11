@@ -143,3 +143,11 @@ $(P)$(R)ShutterStatusPVName
 #controlPV $(P)$(R)MoveZonePlateOut
 #controlPV $(P)$(R)MoveAllIn
 #controlPV $(P)$(R)MoveAllOut
+
+#################
+# Interlaced scan
+#################
+$(P)$(R)InterlacedScan
+$(P)$(R)InterlacedFileName
+$(P)$(R)InterlacedRetakeFlat
+
