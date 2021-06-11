@@ -1430,7 +1430,7 @@ text {
 }
 "message button" {
 	object {
-		x=688
+		x=50
 		y=10
 		width=120
 		height=20
