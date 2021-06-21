@@ -33,55 +33,6 @@ $(P)$(R)DetectorPixelSize
 $(P)$(R)CameraObjective
 $(P)$(R)CameraTubeLength
 
-##################################################
-# CRL Relays, Valves PLC, Shaker and BPM PV Prefix
-##################################################
-$(P)$(R)CRLRelaysPVPrefix
-$(P)$(R)ValvesPLCPVPrefix
-$(P)$(R)ShakerPVPrefix
-$(P)$(R)BPMPVPrefix
-
-###################
-# TXM Optics motors
-###################
-$(P)$(R)CRLXPVName
-$(P)$(R)CRLYPVName
-$(P)$(R)CRLPitchPVName
-$(P)$(R)CRLYawPVName
-$(P)$(R)DiffuserXPVName
-$(P)$(R)BeamstopXPVName
-$(P)$(R)BeamstopYPVName
-$(P)$(R)CondenserXPVName
-$(P)$(R)CondenserYPVName
-$(P)$(R)CondenserZPVName
-$(P)$(R)CondenserPitchPVName
-$(P)$(R)CondenserYawPVName
-$(P)$(R)PinholeXPVName
-$(P)$(R)PinholeYPVName
-$(P)$(R)ZonePlateXPVName
-$(P)$(R)ZonePlateYPVName
-$(P)$(R)ZonePlateZPVName
-$(P)$(R)PhaseRingXPVName
-$(P)$(R)PhaseRingYPVName
-
-################
-# Optics control
-################
-$(P)$(R)DiffuserInX
-$(P)$(R)DiffuserOutX
-$(P)$(R)BeamstopInY
-$(P)$(R)BeamstopOutY
-$(P)$(R)PinholeInY
-$(P)$(R)PinholeOutY
-$(P)$(R)CondenserInY
-$(P)$(R)CondenserOutY
-$(P)$(R)ZonePlateInY
-$(P)$(R)ZonePlateOutY
-$(P)$(R)PhaseRingInX
-$(P)$(R)PhaseRingOutX
-$(P)$(R)PhaseRingInY
-$(P)$(R)PhaseRingOutY
-
 ####################
 # Sample information
 ####################
@@ -123,26 +74,6 @@ $(P)$(R)OpenFastShutterValue
 # Shutter status
 ################
 $(P)$(R)ShutterStatusPVName
-
-#################################
-# Optics control via Channel Access
-#################################
-#controlPV $(P)$(R)MoveCRLIn
-#controlPV $(P)$(R)MoveCRLOut
-#controlPV $(P)$(R)MovePhaseRingIn
-#controlPV $(P)$(R)MovePhaseRingOut
-#controlPV $(P)$(R)MoveDiffuserIn
-#controlPV $(P)$(R)MoveDiffuserOut
-#controlPV $(P)$(R)MoveBeamstopIn
-#controlPV $(P)$(R)MoveBeamstopOut
-#controlPV $(P)$(R)MovePinholeIn
-#controlPV $(P)$(R)MovePinholeOut
-#controlPV $(P)$(R)MoveCondenserIn
-#controlPV $(P)$(R)MoveCondenserOut
-#controlPV $(P)$(R)MoveZonePlateIn
-#controlPV $(P)$(R)MoveZonePlateOut
-#controlPV $(P)$(R)MoveAllIn
-#controlPV $(P)$(R)MoveAllOut
 
 #################
 # Interlaced scan

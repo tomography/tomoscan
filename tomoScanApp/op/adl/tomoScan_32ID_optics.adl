@@ -1,14 +1,14 @@
 
 file {
-	name="/local/usertxm/epics/synApps/support/tomoscan/iocBoot/iocTomoScan_32ID/../../tomoScanApp/op/adl/tomoScan_32ID_optics.adl"
+	name="/home/beams/7BMB/epics/synApps/support/tomoscan/tomoScanApp/op/adl/tomoScan_7BM_optics.adl"
 	version=030111
 }
 display {
 	object {
-		x=1454
-		y=437
-		width=1100
-		height=775
+		x=13
+		y=64
+		width=600
+		height=200
 	}
 	clr=14
 	bclr=4
@@ -91,7 +91,7 @@ rectangle {
 	object {
 		x=0
 		y=5
-		width=1100
+		width=600
 		height=30
 	}
 	"basic attribute" {
@@ -100,7 +100,7 @@ rectangle {
 }
 text {
 	object {
-		x=250
+		x=0
 		y=3
 		width=600
 		height=30
@@ -111,1336 +111,210 @@ text {
 	textix="$(P)$(R)   Optics"
 	align="horiz. centered"
 }
-text {
-	object {
-		x=160
-		y=170
-		width=160
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="Tube length (mm)"
-	align="horiz. right"
-}
-text {
-	object {
-		x=150
-		y=45
-		width=170
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="Scintillator type"
-	align="horiz. right"
-}
-text {
-	object {
-		x=60
-		y=70
-		width=260
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="Scint. thickness (microns)"
-	align="horiz. right"
-}
-text {
-	object {
-		x=60
-		y=95
-		width=260
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="Image pixel size (microns)"
-	align="horiz. right"
-}
-text {
+composite {
 	object {
 		x=30
-		y=120
-		width=290
-		height=20
+		y=46
+		width=525
+		height=145
+	}
+	"composite name"=""
+	children {
+		composite {
+			object {
+				x=30
+				y=46
+				width=290
+				height=145
+			}
+			"composite name"=""
+			children {
+				text {
+					object {
+						x=160
+						y=171
+						width=160
+						height=20
+					}
+					"basic attribute" {
+						clr=14
+					}
+					textix="Tube length (mm)"
+					align="horiz. right"
+				}
+				text {
+					object {
+						x=150
+						y=46
+						width=170
+						height=20
+					}
+					"basic attribute" {
+						clr=14
+					}
+					textix="Scintillator type"
+					align="horiz. right"
+				}
+				text {
+					object {
+						x=60
+						y=71
+						width=260
+						height=20
+					}
+					"basic attribute" {
+						clr=14
+					}
+					textix="Scint. thickness (microns)"
+					align="horiz. right"
+				}
+				text {
+					object {
+						x=60
+						y=96
+						width=260
+						height=20
+					}
+					"basic attribute" {
+						clr=14
+					}
+					textix="Image pixel size (microns)"
+					align="horiz. right"
+				}
+				text {
+					object {
+						x=30
+						y=121
+						width=290
+						height=20
+					}
+					"basic attribute" {
+						clr=14
+					}
+					textix="Detector pixel size (microns)"
+					align="horiz. right"
+				}
+				text {
+					object {
+						x=160
+						y=146
+						width=160
+						height=20
+					}
+					"basic attribute" {
+						clr=14
+					}
+					textix="Camera objective"
+					align="horiz. right"
+				}
+			}
+		}
+		composite {
+			object {
+				x=325
+				y=46
+				width=230
+				height=145
+			}
+			"composite name"=""
+			children {
+				"text entry" {
+					object {
+						x=325
+						y=71
+						width=230
+						height=20
+					}
+					control {
+						chan="$(P)$(R)ScintillatorThickness"
+						clr=14
+						bclr=51
+					}
+					format="string"
+					limits {
+					}
+				}
+				"text entry" {
+					object {
+						x=325
+						y=46
+						width=230
+						height=20
+					}
+					control {
+						chan="$(P)$(R)ScintillatorType"
+						clr=14
+						bclr=51
+					}
+					format="string"
+					limits {
+					}
+				}
+				"text entry" {
+					object {
+						x=325
+						y=121
+						width=230
+						height=20
+					}
+					control {
+						chan="$(P)$(R)DetectorPixelSize"
+						clr=14
+						bclr=51
+					}
+					format="string"
+					limits {
+					}
+				}
+				"text entry" {
+					object {
+						x=325
+						y=146
+						width=230
+						height=20
+					}
+					control {
+						chan="$(P)$(R)CameraObjective"
+						clr=14
+						bclr=51
+					}
+					format="string"
+					limits {
+					}
+				}
+				"text entry" {
+					object {
+						x=325
+						y=171
+						width=230
+						height=20
+					}
+					control {
+						chan="$(P)$(R)CameraTubeLength"
+						clr=14
+						bclr=51
+					}
+					format="string"
+					limits {
+					}
+				}
+				"text entry" {
+					object {
+						x=325
+						y=96
+						width=230
+						height=20
+					}
+					control {
+						chan="$(P)$(R)ImagePixelSize"
+						clr=14
+						bclr=51
+					}
+					format="string"
+					limits {
+					}
+				}
+			}
+		}
 	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="Detector pixel size (microns)"
-	align="horiz. right"
-}
-text {
-	object {
-		x=160
-		y=145
-		width=160
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="Camera objective"
-	align="horiz. right"
-}
-"text entry" {
-	object {
-		x=325
-		y=70
-		width=230
-		height=20
-	}
-	control {
-		chan="$(P)$(R)ScintillatorThickness"
-		clr=14
-		bclr=51
-	}
-	format="string"
-	limits {
-	}
-}
-"text entry" {
-	object {
-		x=325
-		y=45
-		width=230
-		height=20
-	}
-	control {
-		chan="$(P)$(R)ScintillatorType"
-		clr=14
-		bclr=51
-	}
-	format="string"
-	limits {
-	}
-}
-"text entry" {
-	object {
-		x=325
-		y=120
-		width=230
-		height=20
-	}
-	control {
-		chan="$(P)$(R)DetectorPixelSize"
-		clr=14
-		bclr=51
-	}
-	format="string"
-	limits {
-	}
-}
-"text entry" {
-	object {
-		x=325
-		y=145
-		width=230
-		height=20
-	}
-	control {
-		chan="$(P)$(R)CameraObjective"
-		clr=14
-		bclr=51
-	}
-	format="string"
-	limits {
-	}
-}
-"text entry" {
-	object {
-		x=325
-		y=170
-		width=230
-		height=20
-	}
-	control {
-		chan="$(P)$(R)CameraTubeLength"
-		clr=14
-		bclr=51
-	}
-	format="string"
-	limits {
-	}
-}
-"text entry" {
-	object {
-		x=325
-		y=95
-		width=230
-		height=20
-	}
-	control {
-		chan="$(P)$(R)ImagePixelSize"
-		clr=14
-		bclr=51
-	}
-	format="string"
-	limits {
-	}
-}
-"text entry" {
-	object {
-		x=325
-		y=295
-		width=230
-		height=20
-	}
-	control {
-		chan="$(P)$(R)CRLXPVName"
-		clr=14
-		bclr=51
-	}
-	format="string"
-	limits {
-	}
-}
-text {
-	object {
-		x=160
-		y=295
-		width=160
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="CRL X PV"
-	align="horiz. right"
-}
-text {
-	object {
-		x=160
-		y=320
-		width=160
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="CRL Y PV"
-	align="horiz. right"
-}
-"text entry" {
-	object {
-		x=325
-		y=320
-		width=230
-		height=20
-	}
-	control {
-		chan="$(P)$(R)CRLYPVName"
-		clr=14
-		bclr=51
-	}
-	format="string"
-	limits {
-	}
-}
-text {
-	object {
-		x=160
-		y=345
-		width=160
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="CRL Pitch PV"
-	align="horiz. right"
-}
-"text entry" {
-	object {
-		x=325
-		y=345
-		width=230
-		height=20
-	}
-	control {
-		chan="$(P)$(R)CRLPitchPVName"
-		clr=14
-		bclr=51
-	}
-	format="string"
-	limits {
-	}
-}
-text {
-	object {
-		x=160
-		y=370
-		width=160
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="CRL Yaw PV"
-	align="horiz. right"
-}
-"text entry" {
-	object {
-		x=325
-		y=370
-		width=230
-		height=20
-	}
-	control {
-		chan="$(P)$(R)CRLYawPVName"
-		clr=14
-		bclr=51
-	}
-	format="string"
-	limits {
-	}
-}
-text {
-	object {
-		x=160
-		y=420
-		width=160
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="Beamstop X PV"
-	align="horiz. right"
-}
-"text entry" {
-	object {
-		x=325
-		y=420
-		width=230
-		height=20
-	}
-	control {
-		chan="$(P)$(R)BeamstopXPVName"
-		clr=14
-		bclr=51
-	}
-	format="string"
-	limits {
-	}
-}
-text {
-	object {
-		x=160
-		y=445
-		width=160
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="Beamstop Y PV"
-	align="horiz. right"
-}
-"text entry" {
-	object {
-		x=325
-		y=445
-		width=230
-		height=20
-	}
-	control {
-		chan="$(P)$(R)BeamstopYPVName"
-		clr=14
-		bclr=51
-	}
-	format="string"
-	limits {
-	}
-}
-text {
-	object {
-		x=160
-		y=495
-		width=160
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="Pinhole Y PV"
-	align="horiz. right"
-}
-text {
-	object {
-		x=160
-		y=470
-		width=160
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="Pinhole X PV"
-	align="horiz. right"
-}
-"text entry" {
-	object {
-		x=325
-		y=470
-		width=230
-		height=20
-	}
-	control {
-		chan="$(P)$(R)PinholeXPVName"
-		clr=14
-		bclr=51
-	}
-	format="string"
-	limits {
-	}
-}
-"text entry" {
-	object {
-		x=325
-		y=495
-		width=230
-		height=20
-	}
-	control {
-		chan="$(P)$(R)PinholeYPVName"
-		clr=14
-		bclr=51
-	}
-	format="string"
-	limits {
-	}
-}
-text {
-	object {
-		x=160
-		y=520
-		width=160
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="Condenser X PV"
-	align="horiz. right"
-}
-"text entry" {
-	object {
-		x=325
-		y=520
-		width=230
-		height=20
-	}
-	control {
-		chan="$(P)$(R)CondenserXPVName"
-		clr=14
-		bclr=51
-	}
-	format="string"
-	limits {
-	}
-}
-"text entry" {
-	object {
-		x=325
-		y=545
-		width=230
-		height=20
-	}
-	control {
-		chan="$(P)$(R)CondenserYPVName"
-		clr=14
-		bclr=51
-	}
-	format="string"
-	limits {
-	}
-}
-text {
-	object {
-		x=160
-		y=545
-		width=160
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="Condenser Y PV"
-	align="horiz. right"
-}
-text {
-	object {
-		x=160
-		y=570
-		width=160
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="Condenser Z PV"
-	align="horiz. right"
-}
-"text entry" {
-	object {
-		x=325
-		y=570
-		width=230
-		height=20
-	}
-	control {
-		chan="$(P)$(R)CondenserZPVName"
-		clr=14
-		bclr=51
-	}
-	format="string"
-	limits {
-	}
-}
-"text entry" {
-	object {
-		x=325
-		y=595
-		width=230
-		height=20
-	}
-	control {
-		chan="$(P)$(R)CondenserPitchPVName"
-		clr=14
-		bclr=51
-	}
-	format="string"
-	limits {
-	}
-}
-text {
-	object {
-		x=160
-		y=620
-		width=160
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="Condenser Yaw PV"
-	align="horiz. right"
-}
-"text entry" {
-	object {
-		x=325
-		y=620
-		width=230
-		height=20
-	}
-	control {
-		chan="$(P)$(R)CondenserYawPVName"
-		clr=14
-		bclr=51
-	}
-	format="string"
-	limits {
-	}
-}
-text {
-	object {
-		x=160
-		y=595
-		width=160
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="Condenser Pitch PV"
-	align="horiz. right"
-}
-text {
-	object {
-		x=160
-		y=645
-		width=160
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="Zone plate X PV"
-	align="horiz. right"
-}
-"text entry" {
-	object {
-		x=325
-		y=645
-		width=230
-		height=20
-	}
-	control {
-		chan="$(P)$(R)ZonePlateXPVName"
-		clr=14
-		bclr=51
-	}
-	format="string"
-	limits {
-	}
-}
-text {
-	object {
-		x=160
-		y=670
-		width=160
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="Zone plate Y PV"
-	align="horiz. right"
-}
-"text entry" {
-	object {
-		x=325
-		y=670
-		width=230
-		height=20
-	}
-	control {
-		chan="$(P)$(R)ZonePlateYPVName"
-		clr=14
-		bclr=51
-	}
-	format="string"
-	limits {
-	}
-}
-text {
-	object {
-		x=160
-		y=695
-		width=160
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="Zone plate Z PV"
-	align="horiz. right"
-}
-"text entry" {
-	object {
-		x=325
-		y=695
-		width=230
-		height=20
-	}
-	control {
-		chan="$(P)$(R)ZonePlateZPVName"
-		clr=14
-		bclr=51
-	}
-	format="string"
-	limits {
-	}
-}
-text {
-	object {
-		x=160
-		y=720
-		width=160
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="Phase ring X PV"
-	align="horiz. right"
-}
-"text entry" {
-	object {
-		x=325
-		y=720
-		width=230
-		height=20
-	}
-	control {
-		chan="$(P)$(R)PhaseRingXPVName"
-		clr=14
-		bclr=51
-	}
-	format="string"
-	limits {
-	}
-}
-text {
-	object {
-		x=160
-		y=745
-		width=160
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="Phase ring Y PV"
-	align="horiz. right"
-}
-"text entry" {
-	object {
-		x=325
-		y=745
-		width=230
-		height=20
-	}
-	control {
-		chan="$(P)$(R)PhaseRingYPVName"
-		clr=14
-		bclr=51
-	}
-	format="string"
-	limits {
-	}
-}
-"text entry" {
-	object {
-		x=325
-		y=270
-		width=230
-		height=20
-	}
-	control {
-		chan="$(P)$(R)CRLRelaysPVPrefix"
-		clr=14
-		bclr=51
-	}
-	format="string"
-	limits {
-	}
-}
-text {
-	object {
-		x=184
-		y=270
-		width=130
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="CRL Relays prefix"
-	align="horiz. right"
-}
-text {
-	object {
-		x=184
-		y=245
-		width=130
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="Valves PLC prefix"
-	align="horiz. right"
-}
-"text entry" {
-	object {
-		x=325
-		y=245
-		width=230
-		height=20
-	}
-	control {
-		chan="$(P)$(R)ValvesPLCPVPrefix"
-		clr=14
-		bclr=51
-	}
-	format="string"
-	limits {
-	}
-}
-text {
-	object {
-		x=185
-		y=220
-		width=130
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="Shaker prefix"
-	align="horiz. right"
-}
-"text entry" {
-	object {
-		x=325
-		y=220
-		width=230
-		height=20
-	}
-	control {
-		chan="$(P)$(R)ShakerPVPrefix"
-		clr=14
-		bclr=51
-	}
-	format="string"
-	limits {
-	}
-}
-text {
-	object {
-		x=185
-		y=195
-		width=130
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="BPM prefix"
-	align="horiz. right"
-}
-"text entry" {
-	object {
-		x=325
-		y=195
-		width=230
-		height=20
-	}
-	control {
-		chan="$(P)$(R)BPMPVPrefix"
-		clr=14
-		bclr=51
-	}
-	format="string"
-	limits {
-	}
-}
-"message button" {
-	object {
-		x=816
-		y=270
-		width=120
-		height=20
-	}
-	control {
-		chan="$(P)$(R)MoveCRLIn"
-		clr=14
-		bclr=51
-	}
-	label="Move CRL In"
-	press_msg="1"
-}
-"message button" {
-	object {
-		x=951
-		y=270
-		width=120
-		height=20
-	}
-	control {
-		chan="$(P)$(R)MoveCRLOut"
-		clr=14
-		bclr=51
-	}
-	label="Move CRL Out"
-	press_msg="1"
-}
-text {
-	object {
-		x=160
-		y=395
-		width=160
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="Diffuser X PV"
-	align="horiz. right"
-}
-"text entry" {
-	object {
-		x=325
-		y=395
-		width=230
-		height=20
-	}
-	control {
-		chan="$(P)$(R)DiffuserXPVName"
-		clr=14
-		bclr=51
-	}
-	format="string"
-	limits {
-	}
-}
-text {
-	object {
-		x=552
-		y=365
-		width=130
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="In position"
-	align="horiz. centered"
-}
-text {
-	object {
-		x=692
-		y=365
-		width=130
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="Out position"
-	align="horiz. centered"
-}
-"text entry" {
-	object {
-		x=570
-		y=395
-		width=100
-		height=20
-	}
-	control {
-		chan="$(P)$(R)DiffuserInX"
-		clr=14
-		bclr=51
-	}
-	limits {
-	}
-}
-"text entry" {
-	object {
-		x=710
-		y=395
-		width=100
-		height=20
-	}
-	control {
-		chan="$(P)$(R)DiffuserOutX"
-		clr=14
-		bclr=51
-	}
-	limits {
-	}
-}
-"text entry" {
-	object {
-		x=570
-		y=545
-		width=100
-		height=20
-	}
-	control {
-		chan="$(P)$(R)CondenserInY"
-		clr=14
-		bclr=51
-	}
-	limits {
-	}
-}
-"text entry" {
-	object {
-		x=710
-		y=545
-		width=100
-		height=20
-	}
-	control {
-		chan="$(P)$(R)CondenserOutY"
-		clr=14
-		bclr=51
-	}
-	limits {
-	}
-}
-"text entry" {
-	object {
-		x=570
-		y=495
-		width=100
-		height=20
-	}
-	control {
-		chan="$(P)$(R)PinholeInY"
-		clr=14
-		bclr=51
-	}
-	limits {
-	}
-}
-"text entry" {
-	object {
-		x=710
-		y=495
-		width=100
-		height=20
-	}
-	control {
-		chan="$(P)$(R)PinholeOutY"
-		clr=14
-		bclr=51
-	}
-	limits {
-	}
-}
-"text entry" {
-	object {
-		x=570
-		y=445
-		width=100
-		height=20
-	}
-	control {
-		chan="$(P)$(R)BeamstopInY"
-		clr=14
-		bclr=51
-	}
-	limits {
-	}
-}
-"text entry" {
-	object {
-		x=710
-		y=445
-		width=100
-		height=20
-	}
-	control {
-		chan="$(P)$(R)BeamstopOutY"
-		clr=14
-		bclr=51
-	}
-	limits {
-	}
-}
-"text entry" {
-	object {
-		x=570
-		y=745
-		width=100
-		height=20
-	}
-	control {
-		chan="$(P)$(R)PhaseRingInY"
-		clr=14
-		bclr=51
-	}
-	limits {
-	}
-}
-"text entry" {
-	object {
-		x=710
-		y=745
-		width=100
-		height=20
-	}
-	control {
-		chan="$(P)$(R)PhaseRingOutY"
-		clr=14
-		bclr=51
-	}
-	limits {
-	}
-}
-"text entry" {
-	object {
-		x=570
-		y=670
-		width=100
-		height=20
-	}
-	control {
-		chan="$(P)$(R)ZonePlateInY"
-		clr=14
-		bclr=51
-	}
-	limits {
-	}
-}
-"text entry" {
-	object {
-		x=710
-		y=670
-		width=100
-		height=20
-	}
-	control {
-		chan="$(P)$(R)ZonePlateOutY"
-		clr=14
-		bclr=51
-	}
-	limits {
-	}
-}
-"text entry" {
-	object {
-		x=570
-		y=720
-		width=100
-		height=20
-	}
-	control {
-		chan="$(P)$(R)PhaseRingInX"
-		clr=14
-		bclr=51
-	}
-	limits {
-	}
-}
-"text entry" {
-	object {
-		x=710
-		y=720
-		width=100
-		height=20
-	}
-	control {
-		chan="$(P)$(R)PhaseRingOutX"
-		clr=14
-		bclr=51
-	}
-	limits {
-	}
-}
-"message button" {
-	object {
-		x=816
-		y=520
-		width=120
-		height=20
-	}
-	control {
-		chan="$(P)$(R)MoveCondenserIn"
-		clr=14
-		bclr=51
-	}
-	label="Move Cond. In"
-	press_msg="1"
-}
-"message button" {
-	object {
-		x=951
-		y=520
-		width=120
-		height=20
-	}
-	control {
-		chan="$(P)$(R)MoveCondenserOut"
-		clr=14
-		bclr=51
-	}
-	label="Move Cond. Out"
-	press_msg="1"
-}
-"message button" {
-	object {
-		x=816
-		y=645
-		width=120
-		height=20
-	}
-	control {
-		chan="$(P)$(R)MoveZonePlateIn"
-		clr=14
-		bclr=51
-	}
-	label="Move ZP In"
-	press_msg="1"
-}
-"message button" {
-	object {
-		x=951
-		y=645
-		width=120
-		height=20
-	}
-	control {
-		chan="$(P)$(R)MoveZonePlateOut"
-		clr=14
-		bclr=51
-	}
-	label="Move ZP Out"
-	press_msg="1"
-}
-"message button" {
-	object {
-		x=816
-		y=720
-		width=120
-		height=20
-	}
-	control {
-		chan="$(P)$(R)MovePhaseRingIn"
-		clr=14
-		bclr=51
-	}
-	label="Move PhaseR. In"
-	press_msg="1"
-}
-"message button" {
-	object {
-		x=951
-		y=720
-		width=120
-		height=20
-	}
-	control {
-		chan="$(P)$(R)MovePhaseRingOut"
-		clr=14
-		bclr=51
-	}
-	label="Move PhaseR. Out"
-	press_msg="1"
-}
-"message button" {
-	object {
-		x=816
-		y=395
-		width=120
-		height=20
-	}
-	control {
-		chan="$(P)$(R)MoveDiffuserIn"
-		clr=14
-		bclr=51
-	}
-	label="Move Diffuser In"
-	press_msg="1"
-}
-"message button" {
-	object {
-		x=951
-		y=395
-		width=120
-		height=20
-	}
-	control {
-		chan="$(P)$(R)MoveDiffuserOut"
-		clr=14
-		bclr=51
-	}
-	label="Move Diffuser Out"
-	press_msg="1"
-}
-"message button" {
-	object {
-		x=816
-		y=420
-		width=120
-		height=20
-	}
-	control {
-		chan="$(P)$(R)MoveBeamstopIn"
-		clr=14
-		bclr=51
-	}
-	label="Move Beamstop In"
-	press_msg="1"
-}
-"message button" {
-	object {
-		x=951
-		y=420
-		width=120
-		height=20
-	}
-	control {
-		chan="$(P)$(R)MoveBeamstopOut"
-		clr=14
-		bclr=51
-	}
-	label="Move Beamstop Out"
-	press_msg="1"
-}
-"message button" {
-	object {
-		x=816
-		y=470
-		width=120
-		height=20
-	}
-	control {
-		chan="$(P)$(R)MovePinholeIn"
-		clr=14
-		bclr=51
-	}
-	label="Move Pinhole In"
-	press_msg="1"
-}
-"message button" {
-	object {
-		x=951
-		y=470
-		width=120
-		height=20
-	}
-	control {
-		chan="$(P)$(R)MovePinholeOut"
-		clr=14
-		bclr=51
-	}
-	label="Move Pinhole Out"
-	press_msg="1"
-}
-"message button" {
-	object {
-		x=816
-		y=10
-		width=120
-		height=20
-	}
-	control {
-		chan="$(P)$(R)MoveAllIn"
-		clr=14
-		bclr=51
-	}
-	label="Move All In"
-	press_msg="1"
-}
-"message button" {
-	object {
-		x=951
-		y=10
-		width=120
-		height=20
-	}
-	control {
-		chan="$(P)$(R)MoveAllOut"
-		clr=14
-		bclr=51
-	}
-	label="Move All Out"
-	press_msg="1"
-}
-"message button" {
-	object {
-		x=50
-		y=10
-		width=120
-		height=20
-	}
-	control {
-		chan="$(P)$(R)AllStop"
-		clr=14
-		bclr=20
-	}
-	label="All Stop"
-	press_msg="1"
-	release_msg="0"
 }
