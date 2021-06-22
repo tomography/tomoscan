@@ -253,11 +253,7 @@ record(waveform, "$(P)$(R)InterlacedFileName")
    field(NELM, "256")
 }
 
-record(busy,"$(P)$(R)InterlacedRetakeFlat")
+record(ao, "$(P)$(R)StabilizationTime")
 {
-   field(ZNAM,"Done")
-   field(ZSV, "NO_ALARM")
-   field(ONAM,"Capture")
-   field(OSV, "MINOR")
-   field(VAL, "0")
+   field(PREC,  "3")
 }

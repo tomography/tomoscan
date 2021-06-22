@@ -80,5 +80,4 @@ $(P)$(R)ShutterStatusPVName
 #################
 $(P)$(R)InterlacedScan
 $(P)$(R)InterlacedFileName
-$(P)$(R)InterlacedRetakeFlat
-
+$(P)$(R)StabilizationTime

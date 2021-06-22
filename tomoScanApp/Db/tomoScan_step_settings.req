@@ -1,0 +1,11 @@
+# This file is used by autosave to determine what PVs to save
+# It is also used by tomoScan to determine what PVs to create
+
+# This is the file for the TomoScanSTEP derived class.
+
+#################
+# Interlaced scan
+#################
+$(P)$(R)InterlacedScan
+$(P)$(R)InterlacedFileName
+$(P)$(R)StabilizationTime

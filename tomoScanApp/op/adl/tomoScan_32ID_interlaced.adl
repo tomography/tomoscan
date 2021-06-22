@@ -5,10 +5,10 @@ file {
 }
 display {
 	object {
-		x=695
-		y=483
-		width=500
-		height=125
+		x=685
+		y=475
+		width=536
+		height=104
 	}
 	clr=14
 	bclr=4
@@ -91,7 +91,7 @@ rectangle {
 	object {
 		x=0
 		y=5
-		width=500
+		width=533
 		height=30
 	}
 	"basic attribute" {
@@ -102,7 +102,7 @@ text {
 	object {
 		x=0
 		y=5
-		width=500
+		width=532
 		height=30
 	}
 	"basic attribute" {
@@ -111,23 +111,10 @@ text {
 	textix="$(P)$(R)Interlaced"
 	align="horiz. centered"
 }
-text {
-	object {
-		x=40
-		y=47
-		width=170
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="Retake flat fields"
-	align="horiz. right"
-}
 menu {
 	object {
-		x=225
-		y=97
+		x=167
+		y=46
 		width=80
 		height=20
 	}
@@ -139,8 +126,8 @@ menu {
 }
 text {
 	object {
-		x=40
-		y=97
+		x=-9
+		y=46
 		width=170
 		height=20
 	}
@@ -149,21 +136,6 @@ text {
 	}
 	textix="Interlaced scan"
 	align="horiz. right"
-}
-"message button" {
-	object {
-		x=225
-		y=47
-		width=80
-		height=20
-	}
-	control {
-		chan="$(P)$(R)InterlacedRetakeFlat"
-		clr=14
-		bclr=51
-	}
-	label="Flat"
-	press_msg="1"
 }
 text {
 	object {
@@ -180,9 +152,9 @@ text {
 }
 "text entry" {
 	object {
-		x=225
+		x=227
 		y=72
-		width=256
+		width=303
 		height=20
 	}
 	control {
@@ -191,6 +163,34 @@ text {
 		bclr=51
 	}
 	format="string"
+	limits {
+	}
+}
+text {
+	object {
+		x=266
+		y=44
+		width=171
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Stabilization time"
+	align="horiz. right"
+}
+"text entry" {
+	object {
+		x=441
+		y=44
+		width=90
+		height=20
+	}
+	control {
+		chan="$(P)$(R)StabilizationTime"
+		clr=14
+		bclr=51
+	}
 	limits {
 	}
 }
