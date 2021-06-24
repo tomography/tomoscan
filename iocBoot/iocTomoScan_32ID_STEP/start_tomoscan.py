@@ -6,4 +6,4 @@ from tomoscan.tomoscan_32id_step import TomoScan32IDSTEP
 ts = TomoScan32IDSTEP(["../../db/tomoScan_settings.req",
                     "../../db/tomoScan_step_settings.req",
                   "../../db/tomoScan_32ID_settings.req"], 
-                 {"$(P)":"32id:", "$(R)":"TomoScan:"})
+                 {"$(P)":"32id:", "$(R)":"TomoScanStep:"})
