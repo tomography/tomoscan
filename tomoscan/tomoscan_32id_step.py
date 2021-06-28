@@ -72,6 +72,9 @@ class TomoScan32IDSTEP(TomoScanSTEP):
                 # self.wait_pv(self.epics_pvs['ShutterStatus'], 1)
                 status = self.epics_pvs['ShutterStatus'].get(as_string=True)
                 log.info('shutter status: %s', status)
+                
+                #VN: fix later, fast shutter status check is needed
+                time.sleep(2)
 
     def open_shutter(self):
         """Opens the shutters to collect flat fields or projections.
@@ -124,6 +127,9 @@ class TomoScan32IDSTEP(TomoScanSTEP):
             log.info('close fast shutter: %s, value: %s', pv, value)
             self.epics_pvs['CloseFastShutter'].put(value, wait=True)
 
+            #VN: fix later, fast shutter status check is needed
+            time.sleep(2)
+
 
 
     def set_trigger_mode(self, trigger_mode, num_images):
@@ -162,6 +168,7 @@ class TomoScan32IDSTEP(TomoScanSTEP):
         elif trigger_mode == 'Software':
             self.epics_pvs['CamTriggerMode'].put('On', wait=True)
             self.wait_pv(self.epics_pvs['CamTriggerMode'], 1)
+            self.epics_pvs['CamTriggerSource'].put('Software', wait=True)
             self.epics_pvs['CamImageMode'].put('Multiple')            
             self.epics_pvs['CamNumImages'].put(num_images, wait=True)
         else: # set camera to external triggering
@@ -203,8 +210,9 @@ class TomoScan32IDSTEP(TomoScanSTEP):
         file_path = self.epics_pvs['DetectorTopDir'].get(as_string=True) + self.epics_pvs['ExperimentYearMonth'].get(as_string=True) + os.path.sep + self.epics_pvs['UserLastName'].get(as_string=True) + os.path.sep
         self.epics_pvs['FilePath'].put(file_path, wait=True)
 
-        # set TomoScan xml files
-        self.epics_pvs['CamNDAttributesFile'].put('TomoScanDetectorAttributes.xml')
+        # set TomoScan xml files        
+        # VN: changed to TomoScanStepDetectorAttributes 
+        self.epics_pvs['CamNDAttributesFile'].put('TomoScanStepDetectorAttributes.xml')
         self.epics_pvs['FPXMLFileName'].put('TomoScanLayout.xml')
 
         # Call the base class method
@@ -286,7 +294,7 @@ class TomoScan32IDSTEP(TomoScanSTEP):
                         hdf_location = f['/defaults/HDF5FrameLocation']
                         total_dark_fields = self.num_dark_fields * ((self.dark_field_mode in ('Start', 'Both')) + (self.dark_field_mode in ('End', 'Both')))
                         total_flat_fields = self.num_flat_fields * ((self.flat_field_mode in ('Start', 'Both')) + (self.flat_field_mode in ('End', 'Both')))                        
-                        
+
                         proj_ids = unique_ids[hdf_location[:] == b'/exchange/data']
                         flat_ids = unique_ids[hdf_location[:] == b'/exchange/data_white']
                         dark_ids = unique_ids[hdf_location[:] == b'/exchange/data_dark']

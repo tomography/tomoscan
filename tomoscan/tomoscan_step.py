@@ -173,7 +173,6 @@ class TomoScanSTEP(TomoScan):
         start_time = time.time()
         stabilization_time = self.epics_pvs['StabilizationTime'].get()
         log.info("stabilization time %f s", stabilization_time)
-        print(self.num_angles)
         for k in range(self.num_angles):
             if(self.scan_is_running):
                 log.info('angle %d: %f', k, self.theta[k])
