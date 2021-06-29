@@ -327,5 +327,6 @@ autodoc_mock_imports = [
     'time',
     'math',
     'pymsgbox',
-    'pvaccess'
+    'pvaccess',
+    'paramiko'
 ]

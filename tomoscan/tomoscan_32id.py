@@ -1,9 +1,9 @@
-"""Software for tomography scanning with EPICS at APS beamline 2-BM
+"""Software for tomography scanning with EPICS at APS beamline 32-ID
 
    Classes
    -------
-   TomoScan2BM
-     Derived class for tomography scanning with EPICS at APS beamline 2-BM
+   TomoScan32ID
+     Derived class for tomography scanning with EPICS at APS beamline 32-ID
 """
 import time
 import os
@@ -11,6 +11,8 @@ import h5py
 import sys
 import traceback
 import numpy as np
+from epics import PV
+import threading
 
 from tomoscan import data_management as dm
 from tomoscan import TomoScanPSO
@@ -18,8 +20,8 @@ from tomoscan import log
 
 EPSILON = .001
 
-class TomoScan2BM(TomoScanPSO):
-    """Derived class used for tomography scanning with EPICS at APS beamline 2-BM
+class TomoScan32ID(TomoScanPSO):
+    """Derived class used for tomography scanning with EPICS at APS beamline 32-ID
 
     Parameters
     ----------
@@ -37,6 +39,70 @@ class TomoScan2BM(TomoScanPSO):
         # self.epics_pvs['CamAcquire'].put('Acquire') ###
         # self.wait_pv(self.epics_pvs['CamAcquire'], 1) ###
 
+        # TXM Optics IOCs
+        if 'CRLRelays' in self.pv_prefixes:
+            prefix = self.pv_prefixes['CRLRelays']
+            self.control_pvs['CRLRelaysY0']       = PV(prefix + 'oY0')
+            self.control_pvs['CRLRelaysY1']       = PV(prefix + 'oY1')
+            self.control_pvs['CRLRelaysY2']       = PV(prefix + 'oY2')
+            self.control_pvs['CRLRelaysY3']       = PV(prefix + 'oY3')
+            self.control_pvs['CRLRelaysY4']       = PV(prefix + 'oY4')
+            self.control_pvs['CRLRelaysY5']       = PV(prefix + 'oY5')
+            self.control_pvs['CRLRelaysY6']       = PV(prefix + 'oY6')
+            self.control_pvs['CRLRelaysY7']       = PV(prefix + 'oY7')
+
+        if 'ValvesPLC' in self.pv_prefixes:
+            prefix = self.pv_prefixes['ValvesPLC']
+            # Sample stack
+            self.control_pvs['VPLCHighPressureOn']     = PV(prefix + 'oC23')
+            self.control_pvs['VPLCHighPressureOff']    = PV(prefix + 'oC33')
+            self.control_pvs['VPLCHighPressureStatus'] = PV(prefix + 'C3')
+            self.control_pvs['VPLCLowPressureXOn']     = PV(prefix + 'oC22')
+            self.control_pvs['VPLCLowPressureXOff']    = PV(prefix + 'oC32')
+            self.control_pvs['VPLCLowPressureXStatus'] = PV(prefix + 'oC2')
+            self.control_pvs['VPLCLowPressureYOn']     = PV(prefix + 'oC21')
+            self.control_pvs['VPLCLowPressureYOff']    = PV(prefix + 'oC31')
+            self.control_pvs['VPLCLowPressureYStatus'] = PV(prefix + 'oC1')
+            self.control_pvs['VPLCHeFlow']             = PV(prefix + 'ao1')
+
+        if 'Shaker' in self.pv_prefixes:
+            prefix = self.pv_prefixes['Shaker']
+            self.control_pvs['ShakerRun']             = PV(prefix + 'run')
+            self.control_pvs['ShakerFrequency']       = PV(prefix + 'frequency')
+            self.control_pvs['ShakerTimePerPoint']    = PV(prefix + 'timePerPoint')
+            self.control_pvs['ShakerNumPoints']       = PV(prefix + 'numPoints')
+            self.control_pvs['ShakerAAmpMuliplyer']   = PV(prefix + 'A:ampMult')
+            self.control_pvs['ShakerAAmpOffset']      = PV(prefix + 'A:ampOffset')
+            self.control_pvs['ShakerAPhaseShift']     = PV(prefix + 'A:phaseShift')
+            self.control_pvs['ShakerBAmpMuliplyer']   = PV(prefix + 'B:ampMult')
+            self.control_pvs['ShakerBAmpOffset']      = PV(prefix + 'B:ampOffset')
+            self.control_pvs['ShakerBFreqMult']       = PV(prefix + 'B:freqMult')
+
+        if 'BPM' in self.pv_prefixes:
+            prefix = self.pv_prefixes['BPM']
+            self.control_pvs['BPMHSetPoint']          = PV(prefix + 'fb4.VAL')
+            self.control_pvs['BPMHReadBack']          = PV(prefix + 'fb4.CVAL')
+            self.control_pvs['BPMHFeedback']          = PV(prefix + 'fb4.FBON')
+            self.control_pvs['BPMHUpdateRate']        = PV(prefix + 'fb4.SCAN')
+            self.control_pvs['BPMHKP']                = PV(prefix + 'fb4.KP')
+            self.control_pvs['BPMHKI']                = PV(prefix + 'fb4.KI')
+            self.control_pvs['BPMHKD']                = PV(prefix + 'fb4.KD')
+            self.control_pvs['BPMHI']                 = PV(prefix + 'fb4.I')
+            self.control_pvs['BPMHLowLimit']          = PV(prefix + 'fb4.DRVL')
+            self.control_pvs['BPMHHighLimit']         = PV(prefix + 'fb4.DRVH')
+            self.control_pvs['BPMVSetPoint']          = PV(prefix + 'fb3.VAL')
+            self.control_pvs['BPMVReadBack']          = PV(prefix + 'fb3.CVAL')
+            self.control_pvs['BPMVFeedback']          = PV(prefix + 'fb3.FBON')
+            self.control_pvs['BPMVUpdateRate']        = PV(prefix + 'fb3.SCAN')
+            self.control_pvs['BPMVKP']                = PV(prefix + 'fb3.KP')
+            self.control_pvs['BPMVKI']                = PV(prefix + 'fb3.KI')
+            self.control_pvs['BPMVKD']                = PV(prefix + 'fb3.KD')
+            self.control_pvs['BPMVI']                 = PV(prefix + 'fb3.I')
+            self.control_pvs['BPMVLowLimit']          = PV(prefix + 'fb3.DRVL')
+            self.control_pvs['BPMVHighLimit']         = PV(prefix + 'fb3.DRVH')
+
+        self.epics_pvs = {**self.config_pvs, **self.control_pvs}
+        
         # Enable auto-increment on file writer
         self.epics_pvs['FPAutoIncrement'].put('Yes')
 
@@ -46,8 +112,16 @@ class TomoScan2BM(TomoScanPSO):
         # Disable over writing warning
         self.epics_pvs['OverwriteWarning'].put('Yes')
 
-        log.setup_custom_logger("./tomoscan.log")
 
+        for epics_pv in ('MoveCRLIn', 'MoveCRLOut', 'MovePhaseRingIn', 'MovePhaseRingOut', 'MoveDiffuserIn',
+                         'MoveDiffuserOut', 'MoveBeamstopIn', 'MoveBeamstopOut', 'MovePinholeIn', 'MovePinholeOut',
+                         'MoveCondenserIn', 'MoveCondenserOut', 'MoveZonePlateIn', 'MoveZonePlateOut',
+                         'MoveAllIn', 'MoveAllOut'):
+            self.epics_pvs[epics_pv].put('Done')
+            self.epics_pvs[epics_pv].add_callback(self.pv_callback_32id)
+
+        log.setup_custom_logger("./tomoscan.log")
+   
     def open_frontend_shutter(self):
         """Opens the shutters to collect flat fields or projections.
 
@@ -91,7 +165,7 @@ class TomoScan2BM(TomoScanPSO):
         """Closes the shutters to collect dark fields.
         This does the following:
 
-        - Closes the 2-BM-A front-end shutter.
+        - Closes the 32-ID-C front-end shutter.
 
         """
         if self.epics_pvs['Testing'].get():
@@ -113,7 +187,7 @@ class TomoScan2BM(TomoScanPSO):
         """Closes the shutters to collect dark fields.
         This does the following:
 
-        - Closes the 2-BM-A fast shutter.
+        - Closes the 32-ID-C fast shutter.
         """
 
         # Close 2-BM-A fast shutter
@@ -122,6 +196,8 @@ class TomoScan2BM(TomoScanPSO):
             value = self.epics_pvs['CloseFastShutterValue'].get(as_string=True)
             log.info('close fast shutter: %s, value: %s', pv, value)
             self.epics_pvs['CloseFastShutter'].put(value, wait=True)
+
+
 
     def set_trigger_mode(self, trigger_mode, num_images):
         """Sets the trigger mode SIS3820 and the camera.
@@ -136,43 +212,11 @@ class TomoScan2BM(TomoScanPSO):
             This is used to set the ``NumImages`` PV of the camera.
         """
         camera_model = self.epics_pvs['CamModel'].get(as_string=True)
-        if(camera_model=='Oryx ORX-10G-51S5M'):            
-            self.set_trigger_mode_oryx(trigger_mode, num_images)
-        elif(camera_model=='Grasshopper3 GS3-U3-23S6M'):        
+        if(camera_model=='Grasshopper3 GS3-U3-51S5M'):        
             self.set_trigger_mode_grasshopper(trigger_mode, num_images)
-        elif(camera_model=='Q-12A180-Fm/CXP-6'):          
-            self.set_trigger_mode_adimec(trigger_mode, num_images)
         else:
             log.error('Camera is not supported')
             exit(1)
-
-    def set_trigger_mode_oryx(self, trigger_mode, num_images):
-        self.epics_pvs['CamAcquire'].put('Done') ###
-        self.wait_pv(self.epics_pvs['CamAcquire'], 0) ###
-        log.info('set trigger mode: %s', trigger_mode)
-        if trigger_mode == 'FreeRun':
-            self.epics_pvs['CamImageMode'].put('Continuous', wait=True)
-            self.epics_pvs['CamTriggerMode'].put('Off', wait=True)
-            self.wait_pv(self.epics_pvs['CamTriggerMode'], 0)
-            # self.epics_pvs['CamAcquire'].put('Acquire')
-        elif trigger_mode == 'Internal':
-            self.epics_pvs['CamTriggerMode'].put('Off', wait=True)
-            self.wait_pv(self.epics_pvs['CamTriggerMode'], 0)
-            self.epics_pvs['CamImageMode'].put('Multiple')            
-            self.epics_pvs['CamNumImages'].put(num_images, wait=True)
-        else: # set camera to external triggering
-            # These are just in case the scan aborted with the camera in another state 
-            self.epics_pvs['CamTriggerMode'].put('Off', wait=True)   # VN: For FLIR we first switch to Off and then change overlap. any reason of that?                                                 
-            self.epics_pvs['CamTriggerSource'].put('Line2', wait=True)
-            self.epics_pvs['CamTriggerOverlap'].put('ReadOut', wait=True)
-            self.epics_pvs['CamExposureMode'].put('Timed', wait=True)
-            self.epics_pvs['CamImageMode'].put('Multiple')            
-            self.epics_pvs['CamArrayCallbacks'].put('Enable')
-            self.epics_pvs['CamFrameRateEnable'].put(0)
-
-            self.epics_pvs['CamNumImages'].put(self.num_angles, wait=True)
-            self.epics_pvs['CamTriggerMode'].put('On', wait=True)
-            self.wait_pv(self.epics_pvs['CamTriggerMode'], 1)
 
     def set_trigger_mode_grasshopper(self, trigger_mode, num_images):
         self.epics_pvs['CamAcquire'].put('Done') ###
@@ -201,25 +245,6 @@ class TomoScan2BM(TomoScanPSO):
             self.epics_pvs['CamNumImages'].put(self.num_angles, wait=True)
             self.epics_pvs['CamTriggerMode'].put('On', wait=True)
             self.wait_pv(self.epics_pvs['CamTriggerMode'], 1)
-   
-    def set_trigger_mode_adimec(self, trigger_mode, num_images):
-        self.epics_pvs['CamAcquire'].put('Done') ###
-        self.wait_pv(self.epics_pvs['CamAcquire'], 0) ###
-        log.info('set trigger mode: %s', trigger_mode)
-        if trigger_mode == 'FreeRun':
-            self.epics_pvs['CamImageMode'].put('Continuous', wait=True)
-            self.epics_pvs['CamExposureMode'].put('Timed', wait=True)
-            self.wait_pv(self.epics_pvs['CamExposureMode'], 0)                
-        elif trigger_mode == 'Internal':
-            self.epics_pvs['CamExposureMode'].put('Timed', wait=True)
-            self.wait_pv(self.epics_pvs['CamExposureMode'], 0)
-            self.epics_pvs['CamImageMode'].put('Multiple')            
-            self.epics_pvs['CamNumImages'].put(num_images, wait=True)
-        else: # set camera to external triggering
-            self.epics_pvs['CamExposureMode'].put('TimedTriggerCont', wait=True)                
-            self.wait_pv(self.epics_pvs['CamExposureMode'], 3)                
-            self.epics_pvs['CamImageMode'].put('Multiple')                        
-            self.epics_pvs['CamNumImages'].put(self.num_angles, wait=True)            
 
     def begin_scan(self):
         """Performs the operations needed at the very start of a scan.
@@ -420,3 +445,214 @@ class TomoScan2BM(TomoScanPSO):
             if timeout > 0:
                 if elapsed_time >= timeout:
                    exit()
+
+    def move_crl_in(self):
+        """Moves the crl in.
+        """
+        #self.control_pvs['CRLRelaysY0'].put(1, wait=True, timeout=1)
+        self.control_pvs['CRLRelaysY1'].put(1, wait=True, timeout=1)
+        self.control_pvs['CRLRelaysY2'].put(1, wait=True, timeout=1)
+        self.control_pvs['CRLRelaysY3'].put(1, wait=True, timeout=1)
+        self.control_pvs['CRLRelaysY4'].put(1, wait=True, timeout=1)
+        self.control_pvs['CRLRelaysY5'].put(1, wait=True, timeout=1)
+        #self.control_pvs['CRLRelaysY6'].put(1, wait=True, timeout=1)
+        #self.control_pvs['CRLRelaysY7'].put(1, wait=True, timeout=1)
+
+        self.epics_pvs['MoveCRLIn'].put('Done')
+
+    def move_crl_out(self):
+        """Moves the crl out.
+        """
+        #self.control_pvs['CRLRelaysY0'].put(0, wait=True, timeout=1)
+        self.control_pvs['CRLRelaysY1'].put(0, wait=True, timeout=1)
+        self.control_pvs['CRLRelaysY2'].put(0, wait=True, timeout=1)
+        self.control_pvs['CRLRelaysY3'].put(0, wait=True, timeout=1)
+        self.control_pvs['CRLRelaysY4'].put(0, wait=True, timeout=1)
+        self.control_pvs['CRLRelaysY5'].put(0, wait=True, timeout=1)
+        #self.control_pvs['CRLRelaysY6'].put(0, wait=True, timeout=1)
+        #self.control_pvs['CRLRelaysY7'].put(0, wait=True, timeout=1)
+
+        self.epics_pvs['MoveCRLOut'].put('Done')
+
+    def move_diffuser_in(self):
+        """Moves the diffuser in.
+        """
+        position = self.epics_pvs['DiffuserInX'].value
+        self.epics_pvs['DiffuserX'].put(position, wait=True)
+
+        self.epics_pvs['MoveDiffuserIn'].put('Done')
+
+    def move_diffuser_out(self):
+        """Moves the diffuser out.
+        """
+        position = self.epics_pvs['DiffuserOutX'].value
+        self.epics_pvs['DiffuserX'].put(position, wait=True)
+
+        self.epics_pvs['MoveDiffuserOut'].put('Done')
+
+    def move_beamstop_in(self):
+        """Moves the beamstop in.
+        """
+        position = self.epics_pvs['BeamstopInY'].value
+        self.epics_pvs['BeamstopY'].put(position, wait=True)
+
+        self.epics_pvs['MoveBeamstopIn'].put('Done')
+
+    def move_beamstop_out(self):
+        """Moves the beamstop out.
+        """
+        position = self.epics_pvs['BeamstopOutY'].value
+        self.epics_pvs['BeamstopY'].put(position, wait=True)
+
+        self.epics_pvs['MoveBeamstopOut'].put('Done')
+
+    def move_pinhole_in(self):
+        """Moves the pinhole in.
+        """
+        print(f'Move pinhole in')
+        position = self.epics_pvs['PinholeInY'].value
+        self.epics_pvs['PinholeY'].put(position, wait=True)
+
+        self.epics_pvs['MovePinholeIn'].put('Done')
+
+    def move_pinhole_out(self):
+        """Moves the pinhole out.
+        """
+        position = self.epics_pvs['PinholeOutY'].value
+        self.epics_pvs['PinholeY'].put(position, wait=True)
+
+        self.epics_pvs['MovePinholeOut'].put('Done')
+
+    def move_condenser_in(self):
+        """Moves the condenser in.
+        """
+        position = self.epics_pvs['CondenserInY'].value
+        self.epics_pvs['CondenserY'].put(position, wait=True)
+
+        self.epics_pvs['MoveCondenserIn'].put('Done')
+
+    def move_condenser_out(self):
+        """Moves the condenser out.
+        """
+        position = self.epics_pvs['CondenserOutY'].value
+        self.epics_pvs['CondenserY'].put(position, wait=True)
+
+        self.epics_pvs['MoveCondenserOut'].put('Done')
+
+    def move_zoneplate_in(self):
+        """Moves the zone plate in.
+        """
+        position = self.epics_pvs['ZonePlateInY'].value
+        self.epics_pvs['ZonePlateY'].put(position, wait=True)
+
+        self.epics_pvs['MoveZonePlateIn'].put('Done')
+
+    def move_zoneplate_out(self):
+        """Moves the zone plate out.
+        """
+        position = self.epics_pvs['ZonePlateOutY'].value
+        self.epics_pvs['ZonePlateY'].put(position, wait=True)
+
+        self.epics_pvs['MoveZonePlateOut'].put('Done')
+
+    def move_phasering_in(self):
+        """Moves the phase ring in.
+        """
+        position = self.epics_pvs['PhaseRingInX'].value
+        self.epics_pvs['PhaseRingX'].put(position, wait=True)
+        position = self.epics_pvs['PhaseRingInY'].value
+        self.epics_pvs['PhaseRingY'].put(position, wait=True)
+
+        self.epics_pvs['MovePhaseRingIn'].put('Done')
+
+    def move_phasering_out(self):
+        """Moves the phase ring out.
+        """
+        position = self.epics_pvs['PhaseRingOutX'].value
+        self.epics_pvs['PhaseRingX'].put(position, wait=True)
+        position = self.epics_pvs['PhaseRingOutY'].value
+        self.epics_pvs['PhaseRingY'].put(position, wait=True)
+
+        self.epics_pvs['MovePhaseRingOut'].put('Done')
+
+    def move_all_in(self):
+        """Moves all in
+        """        
+        self.move_crl_in()
+        #self.move_phasering_in() # VN: not needed for absorption contrast
+        self.move_diffuser_in()
+        self.move_beamstop_in()
+        self.move_pinhole_in()
+        self.move_condenser_in()
+        self.move_zoneplate_in() # VN: better not to move ZP
+        super().set_exposure_time(1)
+        self.epics_pvs['MoveAllIn'].put('Done')
+
+    def move_all_out(self):
+        """Moves all out
+        """        
+        self.move_crl_out()
+        #self.move_phasering_out() # VN: not needed for absorption contrast
+        self.move_diffuser_out()
+        self.move_beamstop_out()
+        self.move_pinhole_out()
+        self.move_condenser_out()
+        self.move_zoneplate_out() # VN: better not to move ZP
+        super().set_exposure_time(0.01)
+        self.epics_pvs['MoveAllOut'].put('Done')
+
+    def pv_callback_32id(self, pvname=None, value=None, char_value=None, **kw):
+        """Callback function that is called by pyEpics when certain EPICS PVs are changed        
+        """
+
+        log.debug('pv_callback pvName=%s, value=%s, char_value=%s', pvname, value, char_value)
+        if (pvname.find('MoveCRLIn') != -1) and (value == 1):
+            thread = threading.Thread(target=self.move_crl_in, args=())
+            thread.start()
+        elif (pvname.find('MoveCRLOut') != -1) and (value == 1):
+            thread = threading.Thread(target=self.move_crl_out, args=())
+            thread.start()
+        elif (pvname.find('MovePhaseRingIn') != -1) and (value == 1):
+            thread = threading.Thread(target=self.move_phasering_in, args=())
+            thread.start()
+        elif (pvname.find('MovePhaseRingOut') != -1) and (value == 1):
+            thread = threading.Thread(target=self.move_phasering_out, args=())
+            thread.start()            
+        elif (pvname.find('MoveDiffuserIn') != -1) and (value == 1):
+            thread = threading.Thread(target=self.move_diffuser_in, args=())
+            thread.start()                        
+        elif (pvname.find('MoveDiffuserOut') != -1) and (value == 1):
+            thread = threading.Thread(target=self.move_diffuser_out, args=())
+            thread.start()                                    
+        elif (pvname.find('MoveBeamstopIn') != -1) and (value == 1):
+            thread = threading.Thread(target=self.move_beamstop_in, args=())
+            thread.start()                        
+        elif (pvname.find('MoveBeamstopOut') != -1) and (value == 1):
+            thread = threading.Thread(target=self.move_beamstop_out, args=())
+            thread.start()                                    
+        elif (pvname.find('MovePinholeIn') != -1) and (value == 1):
+            thread = threading.Thread(target=self.move_pinhole_in, args=())
+            thread.start()                        
+        elif (pvname.find('MovePinholeOut') != -1) and (value == 1):
+            thread = threading.Thread(target=self.move_pinhole_out, args=())
+            thread.start()                                    
+        elif (pvname.find('MoveCondenserIn') != -1) and (value == 1):
+            thread = threading.Thread(target=self.move_condenser_in, args=())
+            thread.start()                        
+        elif (pvname.find('MoveCondenserOut') != -1) and (value == 1):
+            thread = threading.Thread(target=self.move_condenser_out, args=())
+            thread.start()                                    
+        elif (pvname.find('MoveZonePlateIn') != -1) and (value == 1):
+            thread = threading.Thread(target=self.move_zoneplate_in, args=())
+            thread.start()                        
+        elif (pvname.find('MoveZonePlateOut') != -1) and (value == 1):
+            thread = threading.Thread(target=self.move_zoneplate_out, args=())
+            thread.start()        
+        elif (pvname.find('MoveAllIn') != -1) and (value == 1):
+            thread = threading.Thread(target=self.move_all_in, args=())
+            thread.start()                        
+        elif (pvname.find('MoveAllOut') != -1) and (value == 1):
+            thread = threading.Thread(target=self.move_all_out, args=())
+            thread.start()       
+
+    
