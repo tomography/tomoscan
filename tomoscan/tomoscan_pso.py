@@ -93,7 +93,7 @@ class TomoScanPSO(TomoScan):
  
         # Compute the time for each frame
         time_per_angle = self.compute_frame_time()
-        self.motor_speed = self.rotation_step / time_per_angle
+        self.motor_speed = np.abs(self.rotation_step) / time_per_angle
         time.sleep(0.1)
 
         # Program the stage driver to provide PSO pulses
@@ -218,15 +218,15 @@ class TomoScanPSO(TomoScan):
         pso_command.put('PSOTRACK %s INPUT %d' % (pso_axis, pso_input), wait=True, timeout=10.0)
         # Set the distance between pulses. Do this in encoder counts.
         pso_command.put('PSODISTANCE %s FIXED %d' % (pso_axis, 
-                        self.epics_pvs['PSOEncoderCountsPerStep'].get()) , wait=True, timeout=10.0)
+                        int(np.abs(self.epics_pvs['PSOEncoderCountsPerStep'].get()))) , wait=True, timeout=10.0)
         # Which encoder is being used to calculate whether we are in the window.  1 for single axis
         pso_command.put('PSOWINDOW %s 1 INPUT %d' % (pso_axis, pso_input), wait=True, timeout=10.0)
 
         # Calculate window function parameters.  Must be in encoder counts, and is 
         # referenced from the stage location where we arm the PSO.  We are at that point now.
         # We want pulses to start at start - delta/2, end at end + delta/2.  
-        range_start = -round(self.epics_pvs['PSOEncoderCountsPerStep'].get()/ 2) * overall_sense
-        range_length = self.epics_pvs['PSOEncoderCountsPerStep'].get() * self.num_angles
+        range_start = -round(np.abs(self.epics_pvs['PSOEncoderCountsPerStep'].get())/ 2) * overall_sense
+        range_length = np.abs(self.epics_pvs['PSOEncoderCountsPerStep'].get()) * self.num_angles
         # The start of the PSO window must be < end.  Handle this.
         if overall_sense > 0:
             window_start = range_start
@@ -295,7 +295,10 @@ class TomoScanPSO(TomoScan):
           
         # Make taxi distance an integer number of measurement deltas >= accel distance
         # Add 1/2 of a delta to ensure that we are really up to speed.
-        taxi_dist = (math.ceil(accel_dist / self.rotation_step) + 0.5) * self.rotation_step 
+        if self.rotation_step > 0:
+            taxi_dist = math.ceil(accel_dist / self.rotation_step + 0.5) * self.rotation_step 
+        else:
+            taxi_dist = math.floor(accel_dist / self.rotation_step - 0.5) * self.rotation_step 
         self.epics_pvs['PSOStartTaxi'].put(self.rotation_start - taxi_dist * user_direction)
         self.epics_pvs['PSOEndTaxi'].put(self.rotation_stop + taxi_dist * user_direction)
         

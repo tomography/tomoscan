@@ -138,8 +138,9 @@ class TomoScan7BM(TomoScanPSO):
             self.epics_pvs['CamImageMode'].put('Multiple')
             self.epics_pvs['CamNumImages'].put(num_images, wait=True)
         else: # set camera to external triggering
-            self.epics_pvs['CamTriggerMode'].put('Off', wait=True)
-            self.epics_pvs['CamTriggerSource'].put('Line2', wait=True)
+            self.epics_pvs['CamTriggerMode'].put('On', wait=True)
+            ext_source = str(self.epics_pvs['ExternalTriggerSource'].get())
+            self.epics_pvs['CamTriggerSource'].put(ext_source, wait=True)
             self.epics_pvs['CamTriggerOverlap'].put('ReadOut', wait=True)
             self.epics_pvs['CamExposureMode'].put('Timed', wait=True)
 
