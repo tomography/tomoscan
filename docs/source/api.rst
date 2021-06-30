@@ -13,7 +13,10 @@ API reference
    api/tomoscan_2bm
    api/tomoscan_2bm_step
    api/tomoscan_stream_2bm
+   api/tomoscan_6bm_step
    api/tomoscan_7bm
+   api/tomoscan_32id
+   api/tomoscan_32id_step
 
 .. automodule:: tomoscan
    :members:
