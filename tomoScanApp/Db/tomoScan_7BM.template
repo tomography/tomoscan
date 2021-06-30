@@ -4,58 +4,6 @@
 # both in the configuration files written by tomoscan, and in the
 # files written by areaDetector file plugin.
 
-################
-# PSO parameters
-################
-
-record(ao, "$(P)$(R)startTaxi") 
-{
-    field(DESC, "start position with taxi")
-    field(EGU, "degrees")
-    field(PREC, "5")
-}
-
-record(ao, "$(P)$(R)endTaxi") 
-{
-    field(DESC, "end position with taxi")
-    field(EGU, "degrees")
-    field(PREC, "5")
-}
-
-record(longout, "$(P)$(R)EncoderPulsesPerStep") 
-{
-    field(DESC, "Encoder pulses per projection")
-    field(VAL, "6400")
-    field(DRVL, "0")
-    field(DRVH, "$(PSO_ENC_PER_ROTATION)")
-}
-
-record(stringout, "$(P)$(R)PSOAsynPVName")
-{
-    field(VAL,  "$(ASYN_RECORD)")
-}
-
-record(stringout, "$(P)$(R)PSOAxisName")
-{
-    field(VAL, "$(PSO_AXIS_NAME)")
-}
-
-record(ao, "$(P)$(R)PSOPulsesPerRotation") 
-{
-    field(DESC, "Number of encoder counts per revolution")
-    field(VAL, "$(PSO_ENC_PER_ROTATION)")
-    field(DRVL, "0")
-    field(DRVH, "1000000000")
-}
-
-record(longout, "$(P)$(R)PSOEncoderInput") 
-{
-    field(DESC, "Encoder input")
-    field(VAL, "$(PSO_ENC_INPUT)")
-    field(DRVL, "0")
-    field(DRVH, "4")
-}
-
 ####################
 # Energy information
 ####################
@@ -100,6 +48,15 @@ record(bo, "$(P)$(R)Testing")
 {
    field(ZNAM, "No")
    field(ONAM, "Yes")
+}
+
+################
+# Shutter status
+################
+
+record(stringout, "$(P)$(R)ShutterStatusPVName")
+{
+   field(VAL,  "$(SHUTTER_STATUS)")
 }
 
 ####################
@@ -239,6 +196,12 @@ record(stringout, "$(P)$(R)RemoteAnalysisDir")
    field(VAL,  "Unknown")
 }
 
+record(bo, "$(P)$(R)CopyToAnalysisDir")
+{
+   field(ZNAM, "No")
+   field(ONAM, "Yes")
+}
+
 ######################
 # Fast shutter control
 ######################
@@ -269,5 +232,5 @@ record(stringout, "$(P)$(R)OpenFastShutterValue")
 
 record(stringout, "$(P)$(R)ExternalTriggerSource")
 {
-    field(VAL, "Line2")
+    field(VAL, "$(LINE)")
 }
