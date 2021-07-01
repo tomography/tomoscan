@@ -10,12 +10,12 @@ file "$(TOP)/db/tomoScan_PSO.template"
 {
 pattern
 {  P,       R,        PSO_MODEL, PSO_PORT, PSO_AXIS_NAME, PSO_ENC_INPUT, PSO_ENC_PER_ROTATION}
-{7bmtomo:, TomoScan:,    0,      PSO_PORT,      Z,             3,           -32768000.}
+{7bmtomo:, TomoScan:,    Ensemble,      PSO_PORT,      A,             3,           -32768000.}
 }
 
 file "$(TOP)/db/tomoScan_7BM.template"
 {
 pattern
-{  P,      R,         BEAM_READY,                  READY_VALUE,CLOSE_FAST_SHUTTER, CLOSE_FAST_VALUE, OPEN_FAST_SHUTTER, OPEN_FAST_VALUE}
-{7bmtomo:, TomoScan:, PA:07BM:STA_A_BEAMREADY_PL.VAL,    1,         7bmb1:m27,             0.2,          7bmb1:m27,            0}
+{  P,      R,         BEAM_READY,                  READY_VALUE,CLOSE_FAST_SHUTTER, CLOSE_FAST_VALUE, OPEN_FAST_SHUTTER, OPEN_FAST_VALUE, LINE, SHUTTER_STATUS}
+{7bmtomo:, TomoScan:, PA:07BM:STA_A_BEAMREADY_PL.VAL,    1,         7bmb1:m27,             0.2,          7bmb1:m27,            0,       Line0, PB:07BM:STA_A_FES_CLSD_PL.VAL}
 }

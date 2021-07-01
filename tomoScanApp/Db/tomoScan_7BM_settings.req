@@ -3,17 +3,6 @@
 
 # This is the file for the tomoscan_7bm derived class.
 
-###############
-#PSO Parameters
-###############
-$(P)$(R)startTaxi
-$(P)$(R)endTaxi
-$(P)$(R)EncoderPulsesPerStep
-$(P)$(R)PSOAsynPVName
-$(P)$(R)PSOAxisName
-$(P)$(R)PSOEncoderInput
-$(P)$(R)PSOPulsesPerRotation
-
 ####################
 # Energy information
 ####################
@@ -65,6 +54,7 @@ $(P)$(R)DetectorTopDir
 $(P)$(R)UserLastName
 $(P)$(R)ExperimentYearMonth
 $(P)$(R)RemoteAnalysisDir
+$(P)$(R)CopyToAnalysisDir
 
 ######################
 # Fast shutter control
@@ -78,3 +68,8 @@ $(P)$(R)OpenFastShutterValue
 # Camera External Trigger
 #########################
 $(P)$(R)ExternalTriggerSource
+
+################
+# Shutter status
+################
+$(P)$(R)ShutterStatusPVName
