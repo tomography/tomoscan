@@ -91,9 +91,6 @@ class TomoScanPSO(TomoScan):
         # Call the base class method
         super().begin_scan()
  
-        # Compute the time for each frame
-        time_per_angle = self.compute_frame_time()
-        self.motor_speed = np.abs(self.rotation_step) / time_per_angle
         time.sleep(0.1)
 
         # Program the stage driver to provide PSO pulses
@@ -276,10 +273,7 @@ class TomoScanPSO(TomoScan):
         Assign the fly scan angular position to theta[]
         '''
         overall_sense, user_direction = self._compute_senses()
-        # Get the distance needed for acceleration = 1/2 a t^2 = 1/2 * v * t
-        motor_accl_time = float(self.epics_pvs['RotationAccelTime'].get()) # Acceleration time in s
-        accel_dist = motor_accl_time / 2.0 * float(self.motor_speed) 
-
+        
         # Compute the actual delta to keep each interval an integer number of encoder counts
         encoder_multiply = float(self.epics_pvs['PSOCountsPerRotation'].get()) / 360.
         raw_delta_encoder_counts = self.rotation_step * encoder_multiply
@@ -292,6 +286,13 @@ class TomoScanPSO(TomoScan):
         # Change the rotation step Python variable and PV
         self.rotation_step = delta_encoder_counts / encoder_multiply
         self.epics_pvs['RotationStep'].put(self.rotation_step)
+                
+        # Compute the time for each frame
+        time_per_angle = self.compute_frame_time()
+        self.motor_speed = np.abs(self.rotation_step) / time_per_angle
+        # Get the distance needed for acceleration = 1/2 a t^2 = 1/2 * v * t
+        motor_accl_time = float(self.epics_pvs['RotationAccelTime'].get()) # Acceleration time in s
+        accel_dist = motor_accl_time / 2.0 * float(self.motor_speed) 
           
         # Make taxi distance an integer number of measurement deltas >= accel distance
         # Add 1/2 of a delta to ensure that we are really up to speed.
