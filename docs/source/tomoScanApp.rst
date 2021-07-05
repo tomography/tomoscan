@@ -1247,10 +1247,13 @@ Interlaced scan
     - Flag controlling whether the scan is regualr or interlaced. Choices are 'No' and 'Yes'. When "No" the angles are equally spaced using the Start angle, # of angles and Angle step parameters. When 'Yes' the list of angles is read from a file.
   * - $(P)$(R)InterlacedFileName
     - waveform
-    - The file name containing the list of interalced angles.
-  * - $(P)$(R)InterlacedRetakeFlat
-    - busy,
-    - Interlaced retake flat. Choices are 'Done' and 'Capture'. When 'Capture' a new set of flat field images will be collected.
+    - The file name containing the list of interalced angles in npy format.
+  * - $(P)$(R)InterlacedFileName
+    - waveform
+    - Interlaced file name containing the numpy list of angles to collect in interlaced mode.
+  * - $(P)$(R)StabilizationTime
+    - ao
+    - Settling time after the rotary stage motion is completed (used only in step scans).
 
 tomoScan_32ID_settings.req
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
