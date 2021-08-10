@@ -239,6 +239,9 @@ class TomoScanStream2BM(TomoScanStreamPSO):
         if self.return_rotation == 'Yes':
         # Reset rotation position by mod 360 , the actual return 
         # to start position is handled by super().end_scan()
+            # allow stage to stop
+            log.info('wait until the stage is stopped')
+            time.sleep(self.epics_pvs['RotationAccelTime'].get()*1.2)                        
             current_angle = self.epics_pvs['RotationRBV'].get() %360
             log.info('reset position to %f',current_angle)            
             self.epics_pvs['RotationSet'].put('Set', wait=True)
