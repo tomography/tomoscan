@@ -224,7 +224,7 @@ class TomoScan2BM(TomoScanPSO):
         if self.return_rotation == 'Yes':
             # Reset rotation position by mod 360 , the actual return 
             # to start position is handled by super().end_scan()
-            current_angle = self.epics_pvs['Rotation'].get() %360
+            current_angle = self.epics_pvs['RotationRBV'].get() %360
             self.epics_pvs['RotationSet'].put('Set', wait=True)
             self.epics_pvs['Rotation'].put(current_angle, wait=True)
             self.epics_pvs['RotationSet'].put('Use', wait=True)
