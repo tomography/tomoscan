@@ -842,8 +842,8 @@ class TomoScan():
         # Add some extra time to exposure time for margin.
         # Adding 1% to the exposure time, and at least 1 ms seems to work for FLIR cameras
         # This is empirical and should be made camera dependent
-        frame_time = exposure * 1.025
-        print(frame_time,readout)
+        # VN: had to increae to 2.5% because Oryx had missing frames when working with 100fps
+        frame_time = exposure * 1.025        
         # If the time is less than the readout time then use the readout time plus 1 ms.
         if frame_time < readout:
             frame_time = readout + .001
