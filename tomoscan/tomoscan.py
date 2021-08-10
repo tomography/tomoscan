@@ -96,7 +96,7 @@ class TomoScan():
         self.control_pvs['RotationDirection']  = PV(rotation_pv_name + '.DIR')
         self.control_pvs['RotationAccelTime']  = PV(rotation_pv_name + '.ACCL')
         self.control_pvs['RotationRBV']        = PV(rotation_pv_name + '.RBV')
-        print(rotation_pv_name)
+
         #Define PVs from the camera IOC that we will need
         prefix = self.pv_prefixes['Camera']
         camera_prefix = prefix + 'cam1:'
