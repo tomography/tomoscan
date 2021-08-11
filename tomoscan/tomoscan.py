@@ -128,9 +128,15 @@ class TomoScan():
             self.control_pvs['CamFrameRateEnable']  = PV(camera_prefix + 'FrameRateEnable')
             self.control_pvs['CamTriggerSource']    = PV(camera_prefix + 'TriggerSource')
             self.control_pvs['CamTriggerSoftware']  = PV(camera_prefix + 'TriggerSoftware')
-            if model.find('Grasshopper3') != -1:
+            if model.find('Grasshopper3 GS3-U3-23S6M') != -1:
                 self.control_pvs['CamVideoMode']    = PV(camera_prefix + 'GC_VideoMode_RBV')
 
+        if (manufacturer.find('Adimec') != -1):
+            self.control_pvs['CamExposureMode']            = PV(camera_prefix + 'ExposureMode')
+            self.control_pvs['CamAcquisitionFrameRate']    = PV(camera_prefix + 'AcquisitionFrameRate')
+            self.control_pvs['CamAcquisitionFramePeriod']  = PV(camera_prefix + 'AcquisitionFramePeriod')
+            self.control_pvs['CamExposureTime+R']          = PV(camera_prefix + 'ExposureTime+R')
+                         
         # Set some initial PV values
         self.control_pvs['CamWaitForPlugins'].put('Yes')
         self.control_pvs['StartScan'].put(0)
@@ -202,7 +208,6 @@ class TomoScan():
             self.control_pvs['CBCurrentQtyRBV']   = PV(prefix + 'CurrentQty_RBV')            
             self.control_pvs['CBEnableCallbacks'] = PV(prefix + 'EnableCallbacks')
             self.control_pvs['CBStatusMessage']   = PV(prefix + 'StatusMessage')
-
 
         self.epics_pvs = {**self.config_pvs, **self.control_pvs}
         # Wait 1 second for all PVs to connect
@@ -814,9 +819,10 @@ class TomoScan():
         # The measured times in ms with 100 microsecond exposure time and 1000 frames
         # without dropping
         camera_model = self.epics_pvs['CamModel'].get(as_string=True)
-        pixel_format = self.epics_pvs['CamPixelFormat'].get(as_string=True)
         readout = None
+        video_mode = None
         if camera_model == 'Grasshopper3 GS3-U3-23S6M':
+            pixel_format = self.epics_pvs['CamPixelFormat'].get(as_string=True) 
             video_mode   = self.epics_pvs['CamVideoMode'].get(as_string=True)
             readout_times = {
                 'Mono8':        {'Mode0': 6.2,  'Mode1': 6.2, 'Mode5': 6.2, 'Mode7': 7.9},
@@ -824,17 +830,29 @@ class TomoScan():
                 'Mono16':       {'Mode0': 12.2, 'Mode1': 6.2, 'Mode5': 6.2, 'Mode7': 12.2}
             }
             readout = readout_times[pixel_format][video_mode]/1000.
+        if camera_model == 'Grasshopper3 GS3-U3-51S5M':
+            pixel_format = self.epics_pvs['CamPixelFormat'].get(as_string=True) 
+            readout_times = {
+                'Mono8': 6.18,
+                'Mono12Packed': 8.20,
+                'Mono12p': 8.20,
+                'Mono16': 12.34
+            }
+            readout = readout_times[pixel_format]/1000.            
         if camera_model == 'Oryx ORX-10G-51S5M':
-            # video_mode   = self.epics_pvs['CamVideoMode'].get(as_string=True)
+            pixel_format = self.epics_pvs['CamPixelFormat'].get(as_string=True) 
             readout_times = {
                 'Mono8': 6.18,
                 'Mono12Packed': 8.20,
                 'Mono16': 12.34
             }
             readout = readout_times[pixel_format]/1000.
+        if camera_model == 'Q-12A180-Fm/CXP-6':
+            readout = 0
+
         if readout is None:
             log.error('Unsupported combination of camera model, pixel format and video mode: %s %s %s',
-                          camera_model, pixel_format, video_mode)
+                          camera_model, pixel_format, video_mode)            
             return 0
 
         # We need to use the actual exposure time that the camera is using, not the requested time
@@ -848,6 +866,41 @@ class TomoScan():
         if frame_time < readout:
             frame_time = readout + .001
         return frame_time
+
+    def update_status(self, start_time):
+        """
+        When called updates ``ImagesCollected``, ``ImagesSaved``, ``ElapsedTime``, and ``RemainingTime``. 
+
+        Parameters
+        ----------
+        start_time : time
+
+            Start time to calculate elapsed time.
+
+        Returns
+        -------
+        elapsed_time : float
+
+            Elapsed time to be used for time out.
+        """
+        num_collected  = self.epics_pvs['CamNumImagesCounter'].value
+        num_images     = self.epics_pvs['CamNumImages'].value
+        num_saved      = self.epics_pvs['FPNumCaptured'].value
+        num_to_save     = self.epics_pvs['FPNumCapture'].value
+        current_time = time.time()
+        elapsed_time = current_time - start_time
+        remaining_time = (elapsed_time * (num_images - num_collected) /
+                          max(float(num_collected), 1))
+        collect_progress = str(num_collected) + '/' + str(num_images)
+        log.info('Collected %s', collect_progress)
+        self.epics_pvs['ImagesCollected'].put(collect_progress)
+        save_progress = str(num_saved) + '/' + str(num_to_save)
+        log.info('Saved %s', save_progress)
+        self.epics_pvs['ImagesSaved'].put(save_progress)
+        self.epics_pvs['ElapsedTime'].put(str(timedelta(seconds=int(elapsed_time))))
+        self.epics_pvs['RemainingTime'].put(str(timedelta(seconds=int(remaining_time))))
+
+        return elapsed_time
 
     def wait_camera_done(self, timeout):
         """Waits for the camera acquisition to complete, or for ``abort_scan()`` to be called.
@@ -875,22 +928,7 @@ class TomoScan():
             if not self.scan_is_running:
                 raise ScanAbortError
             time.sleep(0.2)
-            num_collected  = self.epics_pvs['CamNumImagesCounter'].value
-            num_images     = self.epics_pvs['CamNumImages'].value
-            num_saved      = self.epics_pvs['FPNumCaptured'].value
-            num_to_save     = self.epics_pvs['FPNumCapture'].value
-            current_time = time.time()
-            elapsed_time = current_time - start_time
-            remaining_time = (elapsed_time * (num_images - num_collected) /
-                              max(float(num_collected), 1))
-            collect_progress = str(num_collected) + '/' + str(num_images)
-            log.info('Collected %s', collect_progress)
-            self.epics_pvs['ImagesCollected'].put(collect_progress)
-            save_progress = str(num_saved) + '/' + str(num_to_save)
-            log.info('Saved %s', save_progress)
-            self.epics_pvs['ImagesSaved'].put(save_progress)
-            self.epics_pvs['ElapsedTime'].put(str(timedelta(seconds=int(elapsed_time))))
-            self.epics_pvs['RemainingTime'].put(str(timedelta(seconds=int(remaining_time))))
+            elapsed_time = self.update_status(start_time)
             if timeout > 0:
                 if elapsed_time >= timeout:
                     raise CameraTimeoutError()

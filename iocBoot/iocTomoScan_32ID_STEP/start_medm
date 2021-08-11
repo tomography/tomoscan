@@ -1,0 +1,1 @@
+medm -x -macro "P=32id:,R=TomoScanStep:,BEAMLINE=tomoScanStep_32ID" ../../tomoScanApp/op/adl/tomoScan.adl &

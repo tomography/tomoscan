@@ -1,4 +1,5 @@
 pymsgbox
-epics
+pyepics
 h5py
-pvaccess
+pvapy
+paramiko
