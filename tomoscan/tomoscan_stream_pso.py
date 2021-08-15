@@ -551,7 +551,9 @@ class TomoScanStreamPSO(TomoScan):
         self.epics_pvs['StreamMessage'].put('Done')        
         self.epics_pvs['StreamFileName'].put(basename)
         self.epics_pvs['StreamNumTotalCaptured'].put(num_captured)
-
+ 
+        #VN: Enable CB buffer again because if number of elements in CB==0 then the plugin will automatically turn off
+        self.epics_pvs['CBEnableCallbacks'].put('Enable')
         self.capturing = 0
         
 
@@ -710,11 +712,13 @@ class TomoScanStreamPSO(TomoScan):
         """
 
         log.info('dump theta into the hdf5 file %s',file_name)
-        hdf_file = util.open_hdf5(file_name,'r+')                
-        unique_ids = hdf_file['/defaults/NDArrayUniqueId'][:]
-        dset = hdf_file.create_dataset('/exchange/theta', (len(unique_ids),), dtype='float32')
-        dset[:] = self.theta[unique_ids]        
-        log.info('theta to save: %s .. %s', self.theta[unique_ids[0]], self.theta[unique_ids[-1]])
+        with util.open_hdf5(file_name,'r+') as hdf_file:               
+            unique_ids = hdf_file['/defaults/NDArrayUniqueId'][:]
+            if '/exchange/theta' in hdf_file:
+                del hdf_file['/exchange/theta']
+            dset = hdf_file.create_dataset('/exchange/theta', (len(unique_ids),), dtype='float32')
+            dset[:] = self.theta[unique_ids]        
+        log.info('saved theta: %s .. %s', self.theta[unique_ids[0]], self.theta[unique_ids[-1]])
         log.info('total saved theta: %s', len(unique_ids))        
 
 
@@ -745,8 +749,8 @@ class TomoScanStreamPSO(TomoScan):
 
         log.info('broadcast dark fields')
         dirname = os.path.dirname(self.epics_pvs['FPFullFileName'].get(as_string=True))            
-        h5file = util.open_hdf5(dirname+'/dark_fields.h5','r')
-        data = h5file['exchange/data_dark'][:]
+        with util.open_hdf5(dirname+'/dark_fields.h5','r') as h5file:
+            data = h5file['exchange/data_dark'][:]
         data = np.mean(data.astype('float32'),0)
         for k in range(self.epics_pvs['StreamBinning'].get() ):
             data = 0.5*(data[:, ::2]+data[:, 1::2])
@@ -765,8 +769,8 @@ class TomoScanStreamPSO(TomoScan):
         
         log.info('broadcast flat fields')        
         dirname = os.path.dirname(self.epics_pvs['FPFullFileName'].get(as_string=True))            
-        h5file = util.open_hdf5(dirname+'/flat_fields.h5','r') 
-        data = h5file['exchange/data_white'][:]
+        with util.open_hdf5(dirname+'/flat_fields.h5','r') as h5file:
+            data = h5file['exchange/data_white'][:]
         data = np.mean(data.astype('float32'),0)
         for k in range(self.epics_pvs['StreamBinning'].get() ):
             data = 0.5*(data[:, ::2]+data[:, 1::2])
