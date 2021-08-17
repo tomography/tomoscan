@@ -95,6 +95,7 @@ class TomoScan():
         self.control_pvs['RotationDmov']       = PV(rotation_pv_name + '.DMOV')
         self.control_pvs['RotationDirection']  = PV(rotation_pv_name + '.DIR')
         self.control_pvs['RotationAccelTime']  = PV(rotation_pv_name + '.ACCL')
+        self.control_pvs['RotationRBV']        = PV(rotation_pv_name + '.RBV')
 
         #Define PVs from the camera IOC that we will need
         prefix = self.pv_prefixes['Camera']
@@ -788,7 +789,7 @@ class TomoScan():
         # Stop the rotation motor
         self.epics_pvs['RotationStop'].put(1)
         # Stop the file plugin
-        self.epics_pvs['FPCapture'].put('Done')
+        self.epics_pvs['FPCapture'].put(0) # VN: for put('Done') I have a timeout error in the streaming mode where capture is not happening by default
 
     def compute_frame_time(self):
         """Computes the time to collect and readout an image from the camera.
@@ -859,8 +860,8 @@ class TomoScan():
         # Add some extra time to exposure time for margin.
         # Adding 1% to the exposure time, and at least 1 ms seems to work for FLIR cameras
         # This is empirical and should be made camera dependent
-        frame_time = exposure * 1.010
-
+        # VN: had to increae to 2.5% because Oryx had missing frames when working with 100fps
+        frame_time = exposure * 1.025        
         # If the time is less than the readout time then use the readout time plus 1 ms.
         if frame_time < readout:
             frame_time = readout + .001

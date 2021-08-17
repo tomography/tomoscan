@@ -17,9 +17,13 @@ import threading
 from tomoscan import data_management as dm
 from tomoscan import TomoScanPSO
 from tomoscan import log
+from tomoscan import ScanAbortError
 
 EPSILON = .001
-
+class SampleXError(Exception):
+    '''Exception raised when SampleX is not equal to SampleInX
+    '''
+    
 class TomoScan32ID(TomoScanPSO):
     """Derived class used for tomography scanning with EPICS at APS beamline 32-ID
 
@@ -79,15 +83,14 @@ class TomoScan32ID(TomoScanPSO):
 
         This does the following:
 
-        - Opens the 2-BM-A fast shutter.
+        - Opens the 32-ID-C fast shutter.
         """
-
-        # Open 2-BM-A fast shutter
+        # Open 32-ID-C fast shutter
         if not self.epics_pvs['OpenFastShutter'] is None:
-            pv = self.epics_pvs['OpenFastShutter']
-            value = self.epics_pvs['OpenFastShutterValue'].get(as_string=True)
-            log.info('open fast shutter: %s, value: %s', pv, value)
-            self.epics_pvs['OpenFastShutter'].put(value, wait=True)
+           pv = self.epics_pvs['OpenFastShutter']
+           value = self.epics_pvs['OpenFastShutterValue'].get(as_string=True)
+           log.info('open fast shutter: %s, value: %s', pv, value)
+           self.epics_pvs['OpenFastShutter'].put(value, wait=True)
 
     def close_frontend_shutter(self):
         """Closes the shutters to collect dark fields.
@@ -118,15 +121,24 @@ class TomoScan32ID(TomoScanPSO):
         - Closes the 32-ID-C fast shutter.
         """
 
-        # Close 2-BM-A fast shutter
+        
+	    # Close 32-ID-C fast shutter
         if not self.epics_pvs['CloseFastShutter'] is None:
-            pv = self.epics_pvs['CloseFastShutter']
-            value = self.epics_pvs['CloseFastShutterValue'].get(as_string=True)
-            log.info('close fast shutter: %s, value: %s', pv, value)
-            self.epics_pvs['CloseFastShutter'].put(value, wait=True)
-
-
-
+           pv = self.epics_pvs['CloseFastShutter']
+           value = self.epics_pvs['CloseFastShutterValue'].get(as_string=True)
+           log.info('close fast shutter: %s, value: %s', pv, value)
+           self.epics_pvs['CloseFastShutter'].put(value, wait=True)
+        
+    def fly_scan(self):
+        """Control of Sample X position
+        """
+        if(abs(self.epics_pvs['SampleInX'].value-self.epics_pvs['SampleX'].value)>1e-4):
+            log.error('SampleInX is not the same as current SampleTopX')            
+            self.epics_pvs['ScanStatus'].put('SampleX error')
+            self.epics_pvs['StartScan'].put(0)        
+            return
+        super().fly_scan()
+    
     def set_trigger_mode(self, trigger_mode, num_images):
         """Sets the trigger mode SIS3820 and the camera.
 
@@ -205,6 +217,7 @@ class TomoScan32ID(TomoScanPSO):
 
         # Call the base class method
         super().begin_scan()
+         
         # Opens the front-end shutter
         self.open_frontend_shutter()
         
@@ -233,7 +246,9 @@ class TomoScan32ID(TomoScanPSO):
         if self.return_rotation == 'Yes':
             # Reset rotation position by mod 360 , the actual return 
             # to start position is handled by super().end_scan()
-            current_angle = self.epics_pvs['Rotation'].get() %360
+            log.info('wait until the stage is stopped')
+            time.sleep(self.epics_pvs['RotationAccelTime'].get()*1.2)                        
+            current_angle = self.epics_pvs['RotationRBV'].get() %360
             self.epics_pvs['RotationSet'].put('Set', wait=True)
             self.epics_pvs['Rotation'].put(current_angle, wait=True)
             self.epics_pvs['RotationSet'].put('Use', wait=True)
