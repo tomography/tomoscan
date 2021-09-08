@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<display version="2.0.0">
+  <name>tomoScan_32ID</name>
+  <x>561</x>
+  <y>184</y>
+  <width>640</width>
+  <height>210</height>
+  <background_color>
+    <color red="187" green="187" blue="187">
+    </color>
+  </background_color>
+  <grid_visible>false</grid_visible>
+  <grid_step_x>5</grid_step_x>
+  <widget type="rectangle" version="2.0.0">
+    <name>rectangle #6</name>
+    <y>5</y>
+    <width>640</width>
+    <height>30</height>
+    <line_color>
+      <color red="218" green="218" blue="218">
+      </color>
+    </line_color>
+    <background_color>
+      <color red="218" green="218" blue="218">
+      </color>
+    </background_color>
+  </widget>
+  <widget type="label" version="2.0.0">
+    <name>text #9</name>
+    <text>$(P)$(R)</text>
+    <y>5</y>
+    <width>640</width>
+    <height>30</height>
+    <font>
+      <font family="Liberation Sans" style="REGULAR" size="30.0">
+      </font>
+    </font>
+    <foreground_color>
+      <color red="10" green="0" blue="184">
+      </color>
+    </foreground_color>
+    <horizontal_alignment>1</horizontal_alignment>
+  </widget>
+  <widget type="action_button" version="3.0.0">
+    <name>related display #12</name>
+    <actions>
+      <action type="open_display">
+        <file>$(BEAMLINE)_sample.opi</file>
+        <target>tab</target>
+        <description>Sample Information</description>
+      </action>
+    </actions>
+    <text>Sample</text>
+    <x>10</x>
+    <y>44</y>
+    <width>280</width>
+    <background_color>
+      <color red="115" green="223" blue="255">
+      </color>
+    </background_color>
+  </widget>
+  <widget type="action_button" version="3.0.0">
+    <name>related display #15</name>
+    <actions>
+      <action type="open_display">
+        <file>$(BEAMLINE)_experiment.opi</file>
+        <target>tab</target>
+        <description>Experiment Information</description>
+      </action>
+    </actions>
+    <text>Experiment</text>
+    <x>10</x>
+    <y>84</y>
+    <width>280</width>
+    <background_color>
+      <color red="115" green="223" blue="255">
+      </color>
+    </background_color>
+  </widget>
+  <widget type="action_button" version="3.0.0">
+    <name>related display #18</name>
+    <actions>
+      <action type="open_display">
+        <file>$(BEAMLINE)_energy.opi</file>
+        <target>tab</target>
+        <description>Energy Information</description>
+      </action>
+    </actions>
+    <text>Energy &amp; Filters</text>
+    <x>10</x>
+    <y>164</y>
+    <width>280</width>
+    <background_color>
+      <color red="115" green="223" blue="255">
+      </color>
+    </background_color>
+  </widget>
+  <widget type="action_button" version="3.0.0">
+    <name>related display #21</name>
+    <actions>
+      <action type="open_display">
+        <file>$(BEAMLINE)_dm.opi</file>
+        <target>tab</target>
+        <description>Data Management</description>
+      </action>
+    </actions>
+    <text>Data Management</text>
+    <x>10</x>
+    <y>124</y>
+    <width>280</width>
+    <background_color>
+      <color red="115" green="223" blue="255">
+      </color>
+    </background_color>
+  </widget>
+  <widget type="action_button" version="3.0.0">
+    <name>related display #24</name>
+    <actions>
+      <action type="open_display">
+        <file>$(BEAMLINE)_optics.opi</file>
+        <target>tab</target>
+        <description>Optics Information</description>
+      </action>
+    </actions>
+    <text>Optics</text>
+    <x>335</x>
+    <y>44</y>
+    <width>280</width>
+    <background_color>
+      <color red="115" green="223" blue="255">
+      </color>
+    </background_color>
+  </widget>
+  <widget type="action_button" version="3.0.0">
+    <name>related display #27</name>
+    <actions>
+      <action type="open_display">
+        <file>$(BEAMLINE)_otherpvs.opi</file>
+        <target>tab</target>
+        <description>Data Management</description>
+      </action>
+    </actions>
+    <text>Other PVs</text>
+    <x>335</x>
+    <y>84</y>
+    <width>280</width>
+    <background_color>
+      <color red="115" green="223" blue="255">
+      </color>
+    </background_color>
+  </widget>
+  <widget type="combo" version="2.0.0">
+    <name>menu #30</name>
+    <pv_name>$(P)$(R)Testing</pv_name>
+    <x>494</x>
+    <y>164</y>
+    <width>120</width>
+    <background_color>
+      <color red="115" green="223" blue="255">
+      </color>
+    </background_color>
+    <border_alarm_sensitive>false</border_alarm_sensitive>
+  </widget>
+  <widget type="label" version="2.0.0">
+    <name>text #33</name>
+    <text>Testing</text>
+    <x>338</x>
+    <y>164</y>
+    <width>150</width>
+    <height>30</height>
+    <font>
+      <font family="Liberation Sans" style="REGULAR" size="30.0">
+      </font>
+    </font>
+    <horizontal_alignment>1</horizontal_alignment>
+  </widget>
+</display>
