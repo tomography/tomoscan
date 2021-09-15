@@ -783,10 +783,15 @@ Optics information
     - Contains the pixel size of the detector.
   * - $(P)$(R)CameraObjective
     - stringout
-    - Description of the camera objective
+  * - $(P)$(R)CameraObjectiveSelector
+    - mbbo
+    - Optique Peter triple lens selector
   * - $(P)$(R)CameraTubeLength
     - stringout
     - Description of the camera objective
+  * - $(P)$(R)CameraSelector
+    - mbbo
+    - Optique Peter dual camera selector
 
 Sample information
 ^^^^^^^^^^^^^^^^^^

@@ -80,12 +80,33 @@ record(stringout, "$(P)$(R)CameraObjective")
    field(VAL,  "Unknown")
 }
 
+record(mbbo, "$(P)$(R)CameraObjectiveSelector")
+{
+   field(ZRVL, "0")
+   field(ZRST, "None")
+   field(ONVL, "1")
+   field(ONST, "1.1 x")
+   field(TWVL, "2")
+   field(TWST, "5 x")
+   field(THVL, "3")
+   field(THST, "10 x")
+}
+
 record(ao, "$(P)$(R)CameraTubeLength")
 {
    field(PREC, "0")
    field(EGU,  "mm")
 }
 
+record(mbbo, "$(P)$(R)CameraSelector")
+{
+   field(ZRVL, "0")
+   field(ZRST, "None")
+   field(ONVL, "1")
+   field(ONST, "Adimec")
+   field(TWVL, "2")
+   field(TWST, "Flir")
+}
 
 ####################
 # Sample information
