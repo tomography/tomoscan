@@ -130,6 +130,10 @@ class TomoScan():
             self.control_pvs['CamTriggerSoftware']  = PV(camera_prefix + 'TriggerSoftware')
             if model.find('Grasshopper3 GS3-U3-23S6M') != -1:
                 self.control_pvs['CamVideoMode']    = PV(camera_prefix + 'GC_VideoMode_RBV')
+            if model.find('Blackfly S BFS-PGE-161S7M') != -1:
+                # when this camera powers on, ExposureAuto is set to 'Continuous'  
+                # but we need 'Off' to properly work with tomoscan
+                PV(camera_prefix + 'GC_ExposureAuto').put('Off')           
 
         if (manufacturer.find('Adimec') != -1):
             self.control_pvs['CamExposureMode']            = PV(camera_prefix + 'ExposureMode')
@@ -849,6 +853,14 @@ class TomoScan():
             readout = readout_times[pixel_format]/1000.
         if camera_model == 'Q-12A180-Fm/CXP-6':
             readout = 0
+        if camera_model == 'Blackfly S BFS-PGE-161S7M':
+            pixel_format = self.epics_pvs['CamPixelFormat'].get(as_string=True) 
+            # readout_times = {
+            #     'Mono8': 6.18,
+            #     'Mono12Packed': 8.20,
+            #     'Mono16': 12.34
+            # }
+            readout = 0#readout_times[pixel_format]/1000.
 
         if readout is None:
             log.error('Unsupported combination of camera model, pixel format and video mode: %s %s %s',
