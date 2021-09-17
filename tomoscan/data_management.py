@@ -64,7 +64,7 @@ def check_remote_directory(remote_server, remote_dir):
     try:
         rcmd = 'ls ' + remote_dir
         # rcmd is the command used to check if the remote directory exists
-        subprocess.check_call(['ssh', remote_server, rcmd], stderr=open(os.devnull, 'wb'), stdout=open(os.devnull, 'wb'))
+        subprocess.check_call(['ssh', '-t', remote_server, rcmd], stderr=open(os.devnull, 'wb'), stdout=open(os.devnull, 'wb')) # VN: stopped working for some reason
         log.warning('      *** remote directory %s exists' % (remote_dir))
         return 0
 
@@ -80,7 +80,7 @@ def create_remote_directory(remote_server, remote_dir):
     cmd = 'mkdir -p ' + remote_dir
     try:
         log.info('      *** creating remote directory %s' % (remote_dir))
-        subprocess.check_call(['ssh', remote_server, cmd])
+        subprocess.check_call(['ssh', '-t', remote_server, cmd])
         log.info('      *** creating remote directory %s: Done!' % (remote_dir))
         return 0
 
