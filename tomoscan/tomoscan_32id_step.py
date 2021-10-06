@@ -12,12 +12,19 @@ import sys
 import traceback
 import numpy as np
 from epics import PV
+import threading
 
 from tomoscan import data_management as dm
 from tomoscan import TomoScanSTEP
 from tomoscan import log
+from tomoscan import ScanAbortError
+
 
 EPSILON = .001
+
+class SampleXError(Exception):
+    '''Exception raised when SampleX is not equal to SampleInX
+    '''
 
 class TomoScan32IDSTEP(TomoScanSTEP):
     """Derived class used for tomography scanning with EPICS at APS beamline 32-ID
@@ -73,8 +80,7 @@ class TomoScan32IDSTEP(TomoScanSTEP):
                 status = self.epics_pvs['ShutterStatus'].get(as_string=True)
                 log.info('shutter status: %s', status)
                 
-                #VN: fix later, fast shutter status check is needed
-                time.sleep(2)
+                
 
     def open_shutter(self):
         """Opens the shutters to collect flat fields or projections.
@@ -84,7 +90,7 @@ class TomoScan32IDSTEP(TomoScanSTEP):
         - Opens the 2-BM-A fast shutter.
         """
 
-        # Open 2-BM-A fast shutter
+        # Open 32-ID-C fast shutter
         if not self.epics_pvs['OpenFastShutter'] is None:
             pv = self.epics_pvs['OpenFastShutter']
             value = self.epics_pvs['OpenFastShutterValue'].get(as_string=True)
@@ -127,9 +133,15 @@ class TomoScan32IDSTEP(TomoScanSTEP):
             log.info('close fast shutter: %s, value: %s', pv, value)
             self.epics_pvs['CloseFastShutter'].put(value, wait=True)
 
-            #VN: fix later, fast shutter status check is needed
-            time.sleep(2)
-
+    def step_scan(self):
+        """Control of Sample X position
+        """
+        if(abs(self.epics_pvs['SampleInX'].value-self.epics_pvs['SampleX'].value)>1e-4):
+            log.error('SampleInX is not the same as current SampleTopX')            
+            self.epics_pvs['ScanStatus'].put('SampleX error')
+            self.epics_pvs['StartScan'].put(0)        
+            return
+        super().step_scan()
 
 
     def set_trigger_mode(self, trigger_mode, num_images):
@@ -176,7 +188,7 @@ class TomoScan32IDSTEP(TomoScanSTEP):
         else: # set camera to external triggering
             # These are just in case the scan aborted with the camera in another state 
             self.epics_pvs['CamTriggerMode'].put('On', wait=True)     # VN: For PG we need to switch to On to be able to switch to readout overlap mode                                                               
-            self.epics_pvs['CamTriggerSource'].put('Line0', wait=True)
+            self.epics_pvs['CamTriggerSource'].put('Line2', wait=True)
             self.epics_pvs['CamTriggerOverlap'].put('ReadOut', wait=True)
             self.epics_pvs['CamExposureMode'].put('Timed', wait=True)
             self.epics_pvs['CamImageMode'].put('Multiple')            
@@ -214,7 +226,7 @@ class TomoScan32IDSTEP(TomoScanSTEP):
 
         # set TomoScan xml files        
         # VN: changed to TomoScanStepDetectorAttributes 
-        self.epics_pvs['CamNDAttributesFile'].put('TomoScanStepDetectorAttributes.xml')
+        self.epics_pvs['CamNDAttributesFile'].put('TomoScanDetectorAttributes.xml')
         self.epics_pvs['FPXMLFileName'].put('TomoScanLayout.xml')
 
         # Call the base class method
