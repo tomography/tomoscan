@@ -147,6 +147,8 @@ class TomoScan32IDSTEP(TomoScanSTEP):
         camera_model = self.epics_pvs['CamModel'].get(as_string=True)
         if(camera_model=='Grasshopper3 GS3-U3-51S5M'):        
             self.set_trigger_mode_grasshopper(trigger_mode, num_images)
+        elif(camera_model=='Blackfly S BFS-PGE-161S7M'):
+            self.set_trigger_mode_grasshopper(trigger_mode, num_images)
         else:
             log.error('Camera is not supported')
             exit(1)
