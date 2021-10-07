@@ -228,6 +228,7 @@ class TomoScan32IDSTEP(TomoScanSTEP):
         # VN: changed to TomoScanStepDetectorAttributes 
         self.epics_pvs['CamNDAttributesFile'].put('TomoScanDetectorAttributes.xml')
         self.epics_pvs['FPXMLFileName'].put('TomoScanLayout.xml')
+        self.control_pvs['CamNDAttributesMacros'].put('DET=32idARV2:,TS=32id:TomoScanStep:')
 
         # Call the base class method
         super().begin_scan()

@@ -100,21 +100,22 @@ class TomoScan():
         #Define PVs from the camera IOC that we will need
         prefix = self.pv_prefixes['Camera']
         camera_prefix = prefix + 'cam1:'
-        self.control_pvs['CamManufacturer']      = PV(camera_prefix + 'Manufacturer_RBV')
-        self.control_pvs['CamModel']             = PV(camera_prefix + 'Model_RBV')
-        self.control_pvs['CamAcquire']           = PV(camera_prefix + 'Acquire')
-        self.control_pvs['CamAcquireBusy']       = PV(camera_prefix + 'AcquireBusy')
-        self.control_pvs['CamImageMode']         = PV(camera_prefix + 'ImageMode')
-        self.control_pvs['CamTriggerMode']       = PV(camera_prefix + 'TriggerMode')
-        self.control_pvs['CamNumImages']         = PV(camera_prefix + 'NumImages')
-        self.control_pvs['CamNumImagesCounter']  = PV(camera_prefix + 'NumImagesCounter_RBV')
-        self.control_pvs['CamAcquireTime']       = PV(camera_prefix + 'AcquireTime')
-        self.control_pvs['CamAcquireTimeRBV']    = PV(camera_prefix + 'AcquireTime_RBV')
-        self.control_pvs['CamBinX']              = PV(camera_prefix + 'BinX')
-        self.control_pvs['CamBinY']              = PV(camera_prefix + 'BinY')
-        self.control_pvs['CamWaitForPlugins']    = PV(camera_prefix + 'WaitForPlugins')
-        self.control_pvs['PortNameRBV']          = PV(camera_prefix + 'PortName_RBV')
-        self.control_pvs['CamNDAttributesFile']  = PV(camera_prefix + 'NDAttributesFile')
+        self.control_pvs['CamManufacturer']        = PV(camera_prefix + 'Manufacturer_RBV')
+        self.control_pvs['CamModel']               = PV(camera_prefix + 'Model_RBV')
+        self.control_pvs['CamAcquire']             = PV(camera_prefix + 'Acquire')
+        self.control_pvs['CamAcquireBusy']         = PV(camera_prefix + 'AcquireBusy')
+        self.control_pvs['CamImageMode']           = PV(camera_prefix + 'ImageMode')
+        self.control_pvs['CamTriggerMode']         = PV(camera_prefix + 'TriggerMode')
+        self.control_pvs['CamNumImages']           = PV(camera_prefix + 'NumImages')
+        self.control_pvs['CamNumImagesCounter']    = PV(camera_prefix + 'NumImagesCounter_RBV')
+        self.control_pvs['CamAcquireTime']         = PV(camera_prefix + 'AcquireTime')
+        self.control_pvs['CamAcquireTimeRBV']      = PV(camera_prefix + 'AcquireTime_RBV')
+        self.control_pvs['CamBinX']                = PV(camera_prefix + 'BinX')
+        self.control_pvs['CamBinY']                = PV(camera_prefix + 'BinY')
+        self.control_pvs['CamWaitForPlugins']      = PV(camera_prefix + 'WaitForPlugins')
+        self.control_pvs['PortNameRBV']            = PV(camera_prefix + 'PortName_RBV')
+        self.control_pvs['CamNDAttributesFile']    = PV(camera_prefix + 'NDAttributesFile')
+        self.control_pvs['CamNDAttributesMacros']  = PV(camera_prefix + 'NDAttributesMacros')
 
         # If this is a Point Grey camera then assume we are running ADSpinnaker
         # and create some PVs specific to that driver
@@ -872,8 +873,8 @@ class TomoScan():
         # Add some extra time to exposure time for margin.
         # Adding 1% to the exposure time, and at least 1 ms seems to work for FLIR cameras
         # This is empirical and should be made camera dependent
-        # VN: had to increae to 2.5% because Oryx had missing frames when working with 100fps
-        frame_time = exposure * 1.025        
+        # VN: had to increae to 3.5% because Oryx had missing frames when working with 100fps
+        frame_time = exposure * 1.035        
         # If the time is less than the readout time then use the readout time plus 1 ms.
         if frame_time < readout:
             frame_time = readout + .001
