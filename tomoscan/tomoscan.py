@@ -406,11 +406,11 @@ class TomoScan():
         log.info('move_sample_in axis: %s', axis)
         if axis in ('X', 'Both'):
             position = self.epics_pvs['SampleInX'].value
-            self.epics_pvs['SampleX'].put(position, wait=True)
+            self.epics_pvs['SampleX'].put(position, wait=True, timeout=600)
 
         if axis in ('Y', 'Both'):
             position = self.epics_pvs['SampleInY'].value
-            self.epics_pvs['SampleY'].put(position, wait=True)
+            self.epics_pvs['SampleY'].put(position, wait=True, timeout=600)
 
         self.epics_pvs['MoveSampleIn'].put('Done')
 
@@ -427,11 +427,11 @@ class TomoScan():
         log.info('move_sample_out axis: %s', axis)
         if axis in ('X', 'Both'):
             position = self.epics_pvs['SampleOutX'].value
-            self.epics_pvs['SampleX'].put(position, wait=True)
+            self.epics_pvs['SampleX'].put(position, wait=True, timeout=600)
 
         if axis in ('Y', 'Both'):
             position = self.epics_pvs['SampleOutY'].value
-            self.epics_pvs['SampleY'].put(position, wait=True)
+            self.epics_pvs['SampleY'].put(position, wait=True, timeout=600)
 
         self.epics_pvs['MoveSampleOut'].put('Done')
 
