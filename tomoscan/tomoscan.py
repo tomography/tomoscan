@@ -852,7 +852,6 @@ class TomoScan():
                 'Mono12Packed': 8.20,
                 'Mono16': 12.34
             }
-            readout_margin = 1.025
             readout = readout_times[pixel_format]/1000.
         if camera_model == 'Q-12A180-Fm/CXP-6':
             pixel_format = self.epics_pvs['CamPixelFormat'].get(as_string=True) 
