@@ -42,7 +42,7 @@ class TomoScan32ID(TomoScanPSO):
         # self.set_trigger_mode('FreeRun', 1)
         # self.epics_pvs['CamAcquire'].put('Acquire') ###
         # self.wait_pv(self.epics_pvs['CamAcquire'], 1) ###
-       
+        
         # Enable auto-increment on file writer
         self.epics_pvs['FPAutoIncrement'].put('Yes')
 
@@ -154,6 +154,8 @@ class TomoScan32ID(TomoScanPSO):
         camera_model = self.epics_pvs['CamModel'].get(as_string=True)
         if(camera_model=='Grasshopper3 GS3-U3-51S5M'):        
             self.set_trigger_mode_grasshopper(trigger_mode, num_images)
+        elif(camera_model=='Blackfly S BFS-PGE-161S7M'):        
+            self.set_trigger_mode_grasshopper(trigger_mode, num_images)
         else:
             log.error('Camera is not supported')
             exit(1)
@@ -161,6 +163,7 @@ class TomoScan32ID(TomoScanPSO):
     def set_trigger_mode_grasshopper(self, trigger_mode, num_images):
         self.epics_pvs['CamAcquire'].put('Done') ###
         self.wait_pv(self.epics_pvs['CamAcquire'], 0) ###
+        
         log.info('set trigger mode: %s', trigger_mode)
         if trigger_mode == 'FreeRun':
             self.epics_pvs['CamImageMode'].put('Continuous', wait=True)
@@ -175,7 +178,7 @@ class TomoScan32ID(TomoScanPSO):
         else: # set camera to external triggering
             # These are just in case the scan aborted with the camera in another state 
             self.epics_pvs['CamTriggerMode'].put('On', wait=True)     # VN: For PG we need to switch to On to be able to switch to readout overlap mode                                                               
-            self.epics_pvs['CamTriggerSource'].put('Line0', wait=True)
+            self.epics_pvs['CamTriggerSource'].put('Line2', wait=True)
             self.epics_pvs['CamTriggerOverlap'].put('ReadOut', wait=True)
             self.epics_pvs['CamExposureMode'].put('Timed', wait=True)
             self.epics_pvs['CamImageMode'].put('Multiple')            
@@ -214,6 +217,7 @@ class TomoScan32ID(TomoScanPSO):
         # set TomoScan xml files
         self.epics_pvs['CamNDAttributesFile'].put('TomoScanDetectorAttributes.xml')
         self.epics_pvs['FPXMLFileName'].put('TomoScanLayout.xml')
+        self.control_pvs['CamNDAttributesMacros'].put('DET=32idARV2:,TS=32id:TomoScan:')
 
         # Call the base class method
         super().begin_scan()

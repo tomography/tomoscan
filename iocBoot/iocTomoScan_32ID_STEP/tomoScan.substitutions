@@ -2,7 +2,7 @@ file "$(TOP)/db/tomoScan.template"
 {
 pattern
 {  P,      R,      CAMERA,  FILE_PLUGIN,      ROTATION,              SAMPLE_X,      SAMPLE_Y,              CLOSE_SHUTTER,        CLOSE_VALUE,        OPEN_SHUTTER,         OPEN_VALUE}
-{32id:, TomoScanStep:, 32ARV1:, 32ARV1:HDF1:,  32idcTXM:ens:c1:m1,  32idcTXM:nf:c0:m1,  32idcTXM:mxv:c1:m1,  32idb:rshtrB:Close,          1,            32idb:rshtrB:Open,      1}
+{32id:, TomoScanStep:, 32idARV2:, 32idARV2:HDF1:,  32idcTXM:ens:c1:m1,  32idcTXM:nf:c0:m1,  32idcTXM:mxv:c1:m1,  32idb:rshtrB:Close,          1,            32idb:rshtrB:Open,      1}
 }
 
 # For the Ensemble PSO_ENC_PER_ROTATION is a signed number containing the number of encoder pulses per rotation in positive dial coordinates
