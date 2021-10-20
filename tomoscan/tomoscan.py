@@ -792,7 +792,7 @@ class TomoScan():
         # Stop the rotation motor
         self.epics_pvs['RotationStop'].put(1)
         # Stop the file plugin
-        self.epics_pvs['FPCapture'].put(0) # VN: for put('Done') I have a timeout error in the streaming mode where capture is not happening by default
+        self.epics_pvs['FPCapture'].put(0) # see https://github.com/tomography/tomoscan/issues/127
 
     def compute_frame_time(self):
         """Computes the time to collect and readout an image from the camera.
@@ -878,8 +878,6 @@ class TomoScan():
         # We need to use the actual exposure time that the camera is using, not the requested time
         exposure = self.epics_pvs['CamAcquireTimeRBV'].value
         # Add some extra time to exposure time for margin.
-
-        # VN: had to increae to 3.5% because Oryx had missing frames when working with 100fps
         frame_time = exposure * readout_margin        
         # If the time is less than the readout time then use the readout time plus 1 ms.
         if frame_time < readout:
