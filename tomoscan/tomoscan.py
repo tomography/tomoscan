@@ -132,7 +132,7 @@ class TomoScan():
             if model.find('Grasshopper3 GS3-U3-23S6M') != -1:
                 self.control_pvs['CamVideoMode']    = PV(camera_prefix + 'GC_VideoMode_RBV')
             if model.find('Blackfly S BFS-PGE-161S7M') != -1:
-                self.control_pvs['GC_ExposureAuto']    = PV(camera_prefix + 'GC_ExposureAuto')       
+                self.control_pvs['GC_ExposureAuto'] = PV(camera_prefix + 'GC_ExposureAuto')       
 
         if (manufacturer.find('Adimec') != -1):
             self.control_pvs['CamExposureMode']            = PV(camera_prefix + 'ExposureMode')
