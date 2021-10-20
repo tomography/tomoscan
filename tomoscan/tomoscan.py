@@ -826,6 +826,9 @@ class TomoScan():
         camera_model = self.epics_pvs['CamModel'].get(as_string=True)
         readout = None
         video_mode = None
+        # Adding 1% read out margin to the exposure time, and at least 1 ms seems to work for FLIR cameras
+        # This is empirical and if needed should adjusted for each camera
+        readout_margin = 1.01
         if camera_model == 'Grasshopper3 GS3-U3-23S6M':
             pixel_format = self.epics_pvs['CamPixelFormat'].get(as_string=True) 
             video_mode   = self.epics_pvs['CamVideoMode'].get(as_string=True)
@@ -851,17 +854,23 @@ class TomoScan():
                 'Mono12Packed': 8.20,
                 'Mono16': 12.34
             }
+            readout_margin = 1.025
             readout = readout_times[pixel_format]/1000.
         if camera_model == 'Q-12A180-Fm/CXP-6':
-            readout = 0
+            pixel_format = self.epics_pvs['CamPixelFormat'].get(as_string=True) 
+            readout_times = {
+                'Mono8': 5.35
+            }        
+            readout = readout_times[pixel_format]/1000.
         if camera_model == 'Blackfly S BFS-PGE-161S7M':
             pixel_format = self.epics_pvs['CamPixelFormat'].get(as_string=True) 
-            # readout_times = {
-            #     'Mono8': 6.18,
-            #     'Mono12Packed': 8.20,
-            #     'Mono16': 12.34
-            # }
-            readout = 0#readout_times[pixel_format]/1000.
+            readout_times = {
+                'Mono8': 83.4,
+                'Mono12Packed': 100.0,
+                'Mono16': 142.86
+            }
+            readout_margin = 1.035
+            readout = readout_times[pixel_format]/1000.
 
         if readout is None:
             log.error('Unsupported combination of camera model, pixel format and video mode: %s %s %s',
@@ -871,10 +880,9 @@ class TomoScan():
         # We need to use the actual exposure time that the camera is using, not the requested time
         exposure = self.epics_pvs['CamAcquireTimeRBV'].value
         # Add some extra time to exposure time for margin.
-        # Adding 1% to the exposure time, and at least 1 ms seems to work for FLIR cameras
-        # This is empirical and should be made camera dependent
+
         # VN: had to increae to 3.5% because Oryx had missing frames when working with 100fps
-        frame_time = exposure * 1.035        
+        frame_time = exposure * readout_margin        
         # If the time is less than the readout time then use the readout time plus 1 ms.
         if frame_time < readout:
             frame_time = readout + .001
