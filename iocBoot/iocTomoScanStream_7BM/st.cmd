@@ -1,6 +1,6 @@
 < envPaths
 
-epicsEnvSet("P", "7bmtomo:")
+epicsEnvSet("P", "7bmb:")
 epicsEnvSet("R", "TomoScanStream:")
 
 ## Register all support components
