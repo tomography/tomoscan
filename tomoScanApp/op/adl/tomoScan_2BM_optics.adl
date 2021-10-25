@@ -1,14 +1,14 @@
 
 file {
-	name="/local/user2bmb/epics_new/synApps/support/tomoscan/iocBoot/iocTomoScan_2BMB/../../tomoScanApp/op/adl/tomoScan_2BM_optics.adl"
+	name="/home/beams8/USER2BMB/epics/synApps/support/tomoscan/tomoScanApp/op/adl/tomoScan_2BM_optics.adl"
 	version=030111
 }
 display {
 	object {
-		x=221
-		y=996
+		x=211
+		y=988
 		width=600
-		height=250
+		height=200
 	}
 	clr=14
 	bclr=4
@@ -173,7 +173,7 @@ text {
 	"basic attribute" {
 		clr=14
 	}
-	textix="Camera objective"
+	textix="Camera objective mag. (x)"
 	align="horiz. right"
 }
 "text entry" {
@@ -260,43 +260,6 @@ composite {
 	object {
 		x=160
 		y=171
-		width=245
-		height=20
-	}
-	"composite name"=""
-	children {
-		text {
-			object {
-				x=160
-				y=171
-				width=160
-				height=20
-			}
-			"basic attribute" {
-				clr=14
-			}
-			textix="Camera objective selector"
-			align="horiz. right"
-		}
-		menu {
-			object {
-				x=325
-				y=171
-				width=80
-				height=20
-			}
-			control {
-				chan="$(P)$(R)CameraObjectiveSelector"
-				clr=14
-				bclr=51
-			}
-		}
-	}
-}
-composite {
-	object {
-		x=160
-		y=196
 		width=395
 		height=20
 	}
@@ -305,7 +268,7 @@ composite {
 		text {
 			object {
 				x=160
-				y=196
+				y=171
 				width=160
 				height=20
 			}
@@ -318,7 +281,7 @@ composite {
 		"text entry" {
 			object {
 				x=325
-				y=196
+				y=171
 				width=230
 				height=20
 			}
@@ -331,31 +294,5 @@ composite {
 			limits {
 			}
 		}
-	}
-}
-text {
-	object {
-		x=160
-		y=221
-		width=160
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="Camera selector"
-	align="horiz. right"
-}
-menu {
-	object {
-		x=325
-		y=221
-		width=80
-		height=20
-	}
-	control {
-		chan="$(P)$(R)CameraSelector"
-		clr=14
-		bclr=51
 	}
 }
