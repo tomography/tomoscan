@@ -231,6 +231,16 @@ class TomoScanStream32ID(TomoScanStreamPSO):
         self.epics_pvs['FPXMLFileName'].put('TomoScanStreamLayout.xml')
         self.control_pvs['CamNDAttributesMacros'].put('DET=32idARV2:,TS=32id:TomoScanStream:')
 
+        if self.return_rotation == 'Yes':
+            # Reset rotation position by mod 360 , the actual return 
+            # to start position is handled by super().end_scan()
+            ang = self.epics_pvs['RotationRBV'].get()            
+            current_angle = numpy.sign(ang)*(numpy.abs(ang) % 360)
+            log.info('reset position to %f',current_angle)            
+            self.epics_pvs['RotationSet'].put('Set', wait=True)
+            self.epics_pvs['Rotation'].put(current_angle, wait=True)
+            self.epics_pvs['RotationSet'].put('Use', wait=True)
+            
         # Call the base class method
         super().begin_scan()
         # Opens the front-end shutter
@@ -258,7 +268,8 @@ class TomoScanStream32ID(TomoScanStreamPSO):
             # to start position is handled by super().end_scan()
             log.info('wait until the stage is stopped')
             time.sleep(self.epics_pvs['RotationAccelTime'].get()*1.2)                        
-            current_angle = self.epics_pvs['RotationRBV'].get() %360
+            ang = self.epics_pvs['RotationRBV'].get()            
+            current_angle = numpy.sign(ang)*(numpy.abs(ang) % 360)
             log.info('reset position to %f',current_angle)            
             self.epics_pvs['RotationSet'].put('Set', wait=True)
             self.epics_pvs['Rotation'].put(current_angle, wait=True)

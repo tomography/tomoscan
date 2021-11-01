@@ -385,20 +385,21 @@ class TomoScanStreamPSO(TomoScan):
         - remove callbacks 
         - set flag for controling only one capturing at a time to 0          
         """
+        log.info('end stream')
         
         self.epics_pvs['StreamCapture'].put('Done')
         self.epics_pvs['StreamRetakeDark'].put('Done')
         self.epics_pvs['StreamRetakeFlat'].put('Done')        
-                
-        self.epics_pvs['StreamCapture'].remove_callback()
-        self.epics_pvs['StreamRetakeDark'].remove_callback()                
-        self.epics_pvs['StreamRetakeFlat'].remove_callback()
-        self.epics_pvs['StreamPreCount'].remove_callback()
-        self.epics_pvs['StreamBinning'].remove_callback()
-        self.epics_pvs['CBCurrentQtyRBV'].remove_callback()
-        self.epics_pvs['CBStatusMessage'].remove_callback()
-        # self.epics_pvs['FPNumCaptureRBV'].remove_callback()        
-        self.epics_pvs['FPNumCaptured'].remove_callback()
+                        
+        self.epics_pvs['StreamCapture'].clear_callbacks()
+        self.epics_pvs['StreamRetakeDark'].clear_callbacks()                
+        self.epics_pvs['StreamRetakeFlat'].clear_callbacks()
+        self.epics_pvs['StreamPreCount'].clear_callbacks()
+        self.epics_pvs['StreamBinning'].clear_callbacks()
+        self.epics_pvs['CBCurrentQtyRBV'].clear_callbacks()
+        self.epics_pvs['CBStatusMessage'].clear_callbacks()
+        self.epics_pvs['FPNumCapture'].clear_callbacks()        
+        self.epics_pvs['FPNumCaptured'].clear_callbacks()
         
         self.capturing = 0  
 
