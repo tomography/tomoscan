@@ -213,7 +213,15 @@ class TomoScanStream7BM(TomoScanStreamPSO):
         # set TomoScan xml files
         self.epics_pvs['CamNDAttributesFile'].put('TomoScanStreamDetectorAttributes.xml')
         self.epics_pvs['FPXMLFileName'].put('TomoScanStreamLayout.xml')
-
+        if self.return_rotation == 'Yes':
+            # Reset rotation position by mod 360 , the actual return 
+            # to start position is handled by super().end_scan()
+            ang = self.epics_pvs['RotationRBV'].get()            
+            current_angle = numpy.sign(ang)*(numpy.abs(ang) % 360)
+            log.info('reset position to %f',current_angle)            
+            self.epics_pvs['RotationSet'].put('Set', wait=True)
+            self.epics_pvs['Rotation'].put(current_angle, wait=True)
+            self.epics_pvs['RotationSet'].put('Use', wait=True)
         # Call the base class method
         super().begin_scan()
         # Opens the front-end shutter
