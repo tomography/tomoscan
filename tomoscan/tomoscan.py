@@ -108,7 +108,6 @@ class TomoScan():
         self.control_pvs['CamTriggerMode']         = PV(camera_prefix + 'TriggerMode')
         self.control_pvs['CamNumImages']           = PV(camera_prefix + 'NumImages')
         self.control_pvs['CamNumImagesCounter']    = PV(camera_prefix + 'NumImagesCounter_RBV')
-        self.control_pvs['CamArrayCounter']        = PV(camera_prefix + 'ArrayCounter')
         self.control_pvs['CamAcquireTime']         = PV(camera_prefix + 'AcquireTime')
         self.control_pvs['CamAcquireTimeRBV']      = PV(camera_prefix + 'AcquireTime_RBV')
         self.control_pvs['CamBinX']                = PV(camera_prefix + 'BinX')
@@ -553,9 +552,6 @@ class TomoScan():
         self.epics_pvs['ScanStatus'].put('Beginning scan')
         # Stop the camera since it could be in free-run mode
         self.epics_pvs['CamAcquire'].put(0, wait=True)
-        # Zero array counter
-        log.info('set counter 0')
-        self.epics_pvs['CamArrayCounter'].put(0, wait=True)
         # Set the exposure time
         self.set_exposure_time()
         # Set the file path, file name and file number
