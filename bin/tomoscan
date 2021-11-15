@@ -76,6 +76,11 @@ def run_mosaic(args):
     run_scan(args)
     config.write(args.config, args, sections=config.MOSAIC_SCAN_PARAMS)
 
+def run_energy(args):
+    args.scan_type = 'energy'
+    run_scan(args)
+    config.write(args.config, args, sections=config.ENERGY_SCAN_PARAMS)    
+
 def run_scan(args):
     
     ts_pvs = init_PVs(args.tomoscan_prefix)
@@ -115,6 +120,8 @@ def scan(args, ts):
     flat_field_mode = ts['FlatFieldMode'].get(as_string=True)
     if (args.scan_type == 'single'):
         single_scan(args, ts)
+    elif (args.scan_type == 'energy'):
+        energy_scan(args, ts)        
     elif (args.scan_type == 'mosaic'):
         start_y = args.vertical_start
         step_size_y = args.vertical_step_size  
@@ -184,6 +191,63 @@ def single_scan(args, ts):
     dtime = (time.time() - tic_01)/60.
     log.info('single scan time: %3.3f minutes', dtime)
 
+def energy_scan(args, ts):
+    
+    tic_01 =  time.time()
+    log.info('energy scan start')
+    
+    ts['StartEnergyChange'] = PV(args.tomoscan_prefix + 'StartEnergyChange')    
+    ts['Energy'] = PV(args.tomoscan_prefix + 'Energy')    
+    
+    energies = np.load(args.file_energies)    
+    
+    # read pvs for 2 energies
+    pvs1, pvs2, vals1, vals2 = [],[],[],[]
+    with open(args.file_params1,'r') as fid:
+        for pv_val in fid.readlines():
+            pv, val = pv_val[:-1].split(' ')
+            pvs1.append(pv)
+            vals1.append(float(val))
+    with open(args.file_params2,'r') as fid:
+        for pv_val in fid.readlines():
+            pv, val = pv_val[:-1].split(' ')
+            pvs2.append(pv)
+            vals2.append(float(val))                    
+    
+    for k in range(len(pvs1)):
+        if(pvs1[k]!=pvs2[k]):
+            log.error("Inconsitent files with PVs")
+            exit(1)
+
+    if(np.abs(vals2[0]-vals1[0])<0.02):            
+        log.error("Energies in params files should be different")
+        exit(1)
+    
+    # energy scan
+    for energy in energies:               
+        log.info("energy %.2f keV", energy)                    
+        # interpolate values
+        vals = []                     
+        for k in range(len(pvs1)):
+            vals.append(vals1[k]+(energy-vals1[0])*(vals2[k]-vals1[k])/(vals2[0]-vals1[0]))               
+        for j in range(3):
+            print(f"DEBUG:{pvs1[j]},{vals[j]},{vals1[j]},{vals2[j]}")
+        if args.testing:
+            log.warning('testing mode')
+        else:           
+            # set new pvs  
+            for k in range(1,len(pvs1)):# skip energy line
+                PV(pvs1[k]).put(vals[k],wait=True)                                                        
+            # set new energy
+            ts['Energy'].put(energy,wait=True)
+            # change energy via tomoscan
+            ts['StartEnergyChange'].put(1,wait=True,timeout=3600)
+            # start scan
+            ts['StartScan'].put(1, wait=True, timeout=360000) # -1 - no timeout means timeout=0                
+    dtime = (time.time() - tic_01)/60.
+    log.info('energy scan time: %3.3f minutes', dtime)
+
+
 
 def main():
     # set logs directory
@@ -205,6 +269,7 @@ def main():
     vertical_param = config.VERTICAL_SCAN_PARAMS
     horizontal_param = config.HORIZONTAL_SCAN_PARAMS
     mosaic_param = config.MOSAIC_SCAN_PARAMS
+    energy_param = config.ENERGY_SCAN_PARAMS
 
     cmd_parsers = [
         ('init',           init,              (),                   "Create configuration file"),
@@ -213,6 +278,7 @@ def main():
         ('vertical',       run_vertical,      vertical_param,       "Run a vertical tomographic scan"),
         ('horizontal',     run_horizontal,    horizontal_param,     "Run a horizontal tomographic scan"),
         ('mosaic',         run_mosaic,        mosaic_param,         "Run a mosaic tomographic scan"),
+        ('energy',         run_energy,        energy_param,         "Run an energy tomographic scan"),
     ]
 
     subparsers = parser.add_subparsers(title="Commands", metavar='')

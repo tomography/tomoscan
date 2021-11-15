@@ -25,5 +25,5 @@ file "$(TOP)/db/tomoScanStream.template"
 {
 pattern
 {  P,        R,           PVA_PLUGIN,     ROI_PLUGIN,     CB_PLUGIN,          PVA_STREAM,}
-{2bmb:, TomoScanStream:, 2bmbPG1:Pva1:,  2bmbPG1:ROI1:,  2bmbPG1:CB1:, 2bmb:TomoScan:Stream:,}
+{2bmb:, TomoScanStream:, 2bmbPG1:Pva1:,  2bmbPG1:ROI1:,  2bmbPG1:CB1:, 2bmb:TomoScanStream:,}
 }

@@ -1,33 +1,47 @@
-"""Software for tomography scanning with EPICS at APS beamline 32-ID
-
-   Classes
-   -------
-   TomoScan32ID
-     Derived class for tomography scanning with EPICS at APS beamline 32-ID
 """
-import time
+.. _tomoStream: https://tomostream.readthedocs.io
+.. _circular buffer plugin: https://cars9.uchicago.edu/software/epics/NDPluginCircularBuff.html
+.. _AreaDetector: https://areadetector.github.io/master/index.html
+.. _stream: https://tomoscan.readthedocs.io/en/latest/tomoScanApp.html#tomoscan-2bm-stream-adl
+
+Software for tomography stream scanning with EPICS at APS beamline 7-BM
+
+This class support `tomoStream`_ by providing:
+
+- Dark-flat field image PVs broadcasting
+    | Dark-flat field images are broadcasted using PVaccess. Dark-flat field images are also saved in a temporary \
+    hdf5 file that are re-written whenever new flat/dark fields are acquired. Acquisition of dark and flat fields is \
+    performed without stopping rotation of the stage. Dark-flat field images can also be binned setting the binning \
+    parameter in ROI1 plugin.
+- On-demand capturing to an hdf5 file
+    | The capturing/saving to an hdf5 file can be done on-demand by pressing the Capture proj button in the `Stream`_\
+    MEDM control screen. Whenever capturing is done, dark/flat fields from the temporarily hdf5 file are added to the file containing \
+    the projections and the experimental meta data. In addition, the `circular buffer plugin`_ (CB1) of `AreaDetector`_ \
+    is used to store a set of projections acquired before capturing is started. This allows to save projections containing \
+    information about the sample right before a sample change is detected. Data from the circular buffer is also added to \
+    the hdf5 after capturing is done. The resulting hdf5 file has the same format as in regular single tomoscan file. 
+
+
+Classes
+-------
+    TomoScanStream7BM
+        Derived class for tomography scanning in streaming mode with EPICS at APS beamline 2-BM
+"""
 import os
+import time
 import h5py 
-import sys
-import traceback
-import numpy as np
-from epics import PV
-import threading
+import numpy
 
-from tomoscan import data_management as dm
-from tomoscan import TomoScanSTEP
+from tomoscan import TomoScanStreamPSO
 from tomoscan import log
-from tomoscan import ScanAbortError
-
+from tomoscan import util
+import threading
+import pvaccess
 
 EPSILON = .001
 
-class SampleXError(Exception):
-    '''Exception raised when SampleX is not equal to SampleInX
-    '''
-
-class TomoScan32IDSTEP(TomoScanSTEP):
-    """Derived class used for tomography scanning with EPICS at APS beamline 32-ID
+class TomoScanStream7BM(TomoScanStreamPSO):
+    """Derived class used for tomography scanning in streamaing mode with EPICS at APS beamline 2-BM
 
     Parameters
     ----------
@@ -40,35 +54,21 @@ class TomoScan32IDSTEP(TomoScanSTEP):
 
     def __init__(self, pv_files, macros):
         super().__init__(pv_files, macros)
-        # Set the detector running in FreeRun mode
-        # self.set_trigger_mode('FreeRun', 1)
-        # self.epics_pvs['CamAcquire'].put('Acquire') ###
-        # self.wait_pv(self.epics_pvs['CamAcquire'], 1) ###
-
+        # Set the detector in idle
+        self.set_trigger_mode('Internal', 1)
+        
         # Enable auto-increment on file writer
         self.epics_pvs['FPAutoIncrement'].put('Yes')
 
         # Set standard file template on file writer
         self.epics_pvs['FPFileTemplate'].put("%s%s_%3.3d.h5", wait=True)
 
-        # Disable over writing warning
-        self.epics_pvs['OverwriteWarning'].put('Yes')                
-        
-        self.epics_pvs['StartEnergyChange'].put(0,wait=True)
-        # energy scan
-        self.epics_pvs['StartEnergyChange'].add_callback(self.pv_callback_step)
+        # Disable overw writing warning
+        self.epics_pvs['OverwriteWarning'].put('Yes')
         
         log.setup_custom_logger("./tomoscan.log")
-    
-    def pv_callback_step(self, pvname=None, value=None, char_value=None, **kw):
-        """Callback function that is called by pyEpics when certain EPICS PVs are changed
-        
-        """
 
-        log.debug('pv_callback_step pvName=%s, value=%s, char_value=%s', pvname, value, char_value)       
-        if (pvname.find('StartEnergyChange') != -1) and (value == 1):
-            self.energy_change()        
-                    
+    
     def open_frontend_shutter(self):
         """Opens the shutters to collect flat fields or projections.
 
@@ -88,12 +88,9 @@ class TomoScan32IDSTEP(TomoScanSTEP):
                 log.info('shutter status: %s', status)
                 log.info('open shutter: %s, value: %s', pv, value)
                 self.epics_pvs['OpenShutter'].put(value, wait=True)
-                self.wait_frontend_shutter_open()
-                # self.wait_pv(self.epics_pvs['ShutterStatus'], 1)
+                self.wait_pv(self.epics_pvs['ShutterStatus'], 1)
                 status = self.epics_pvs['ShutterStatus'].get(as_string=True)
                 log.info('shutter status: %s', status)
-                
-                
 
     def open_shutter(self):
         """Opens the shutters to collect flat fields or projections.
@@ -103,7 +100,7 @@ class TomoScan32IDSTEP(TomoScanSTEP):
         - Opens the 2-BM-A fast shutter.
         """
 
-        # Open 32-ID-C fast shutter
+        # Open 2-BM-A fast shutter
         if not self.epics_pvs['OpenFastShutter'] is None:
             pv = self.epics_pvs['OpenFastShutter']
             value = self.epics_pvs['OpenFastShutterValue'].get(as_string=True)
@@ -114,7 +111,7 @@ class TomoScan32IDSTEP(TomoScanSTEP):
         """Closes the shutters to collect dark fields.
         This does the following:
 
-        - Closes the 32-ID-C front-end shutter.
+        - Closes the 2-BM-A front-end shutter.
 
         """
         if self.epics_pvs['Testing'].get():
@@ -136,7 +133,7 @@ class TomoScan32IDSTEP(TomoScanSTEP):
         """Closes the shutters to collect dark fields.
         This does the following:
 
-        - Closes the 32-ID-C fast shutter.
+        - Closes the 2-BM-A fast shutter.
         """
 
         # Close 2-BM-A fast shutter
@@ -145,17 +142,8 @@ class TomoScan32IDSTEP(TomoScanSTEP):
             value = self.epics_pvs['CloseFastShutterValue'].get(as_string=True)
             log.info('close fast shutter: %s, value: %s', pv, value)
             self.epics_pvs['CloseFastShutter'].put(value, wait=True)
-
-    def step_scan(self):
-        """Control of Sample X position
-        """
-        if(abs(self.epics_pvs['SampleInX'].value-self.epics_pvs['SampleX'].value)>1e-4):
-            log.error('SampleInX is not the same as current SampleTopX')            
-            self.epics_pvs['ScanStatus'].put('SampleX error')
-            self.epics_pvs['StartScan'].put(0)        
-            return
-        super().step_scan()
-
+            log.warning('close fast shutter sleep 2 sec')
+            time.sleep(2)
 
     def set_trigger_mode(self, trigger_mode, num_images):
         """Sets the trigger mode SIS3820 and the camera.
@@ -169,49 +157,37 @@ class TomoScan32IDSTEP(TomoScanSTEP):
             Number of images to collect.  Ignored if trigger_mode="FreeRun".
             This is used to set the ``NumImages`` PV of the camera.
         """
-        camera_model = self.epics_pvs['CamModel'].get(as_string=True)
-        if(camera_model=='Grasshopper3 GS3-U3-51S5M'):        
-            self.set_trigger_mode_grasshopper(trigger_mode, num_images)
-        elif(camera_model=='Blackfly S BFS-PGE-161S7M'):
-            self.set_trigger_mode_grasshopper(trigger_mode, num_images)
-        else:
-            log.error('Camera is not supported')
-            exit(1)
-
-    def set_trigger_mode_grasshopper(self, trigger_mode, num_images):
-        self.epics_pvs['CamAcquire'].put('Done') ###
-        self.wait_pv(self.epics_pvs['CamAcquire'], 0) ###
         log.info('set trigger mode: %s', trigger_mode)
         if trigger_mode == 'FreeRun':
             self.epics_pvs['CamImageMode'].put('Continuous', wait=True)
             self.epics_pvs['CamTriggerMode'].put('Off', wait=True)
             self.wait_pv(self.epics_pvs['CamTriggerMode'], 0)
-            # self.epics_pvs['CamAcquire'].put('Acquire')
+            self.epics_pvs['CamAcquire'].put('Acquire')
         elif trigger_mode == 'Internal':
             self.epics_pvs['CamTriggerMode'].put('Off', wait=True)
             self.wait_pv(self.epics_pvs['CamTriggerMode'], 0)
-            self.epics_pvs['CamImageMode'].put('Multiple')            
-            self.epics_pvs['CamNumImages'].put(num_images, wait=True)
-        elif trigger_mode == 'Software':
-            self.epics_pvs['CamTriggerMode'].put('On', wait=True)
-            self.wait_pv(self.epics_pvs['CamTriggerMode'], 1)
-            self.epics_pvs['CamTriggerSource'].put('Software', wait=True)
-            self.epics_pvs['CamImageMode'].put('Multiple')            
+            self.epics_pvs['CamImageMode'].put('Multiple')
             self.epics_pvs['CamNumImages'].put(num_images, wait=True)
         else: # set camera to external triggering
-            # These are just in case the scan aborted with the camera in another state 
-            self.epics_pvs['CamTriggerMode'].put('On', wait=True)     # VN: For PG we need to switch to On to be able to switch to readout overlap mode                                                               
-            self.epics_pvs['CamTriggerSource'].put('Line2', wait=True)
+            # These are just in case the scan aborted with the camera in another state
+             # These are just in case the scan aborted with the camera in another state 
+            camera_model = self.epics_pvs['CamModel'].get(as_string=True)
+            if(camera_model=='Oryx ORX-10G-51S5M'):# 2bma            
+                self.epics_pvs['CamTriggerMode'].put('Off', wait=True)   # VN: For FLIR we first switch to Off and then change overlap. any reason of that?                                                 
+                self.epics_pvs['CamTriggerSource'].put('Line2', wait=True)
+            elif(camera_model=='Grasshopper3 GS3-U3-23S6M'):# 2bmb            
+                self.epics_pvs['CamTriggerMode'].put('On', wait=True)     # VN: For PG we need to switch to On to be able to switch to readout overlap mode                                                               
+                self.epics_pvs['CamTriggerSource'].put('Line0', wait=True)
             self.epics_pvs['CamTriggerOverlap'].put('ReadOut', wait=True)
             self.epics_pvs['CamExposureMode'].put('Timed', wait=True)
-            self.epics_pvs['CamImageMode'].put('Multiple')            
+            self.epics_pvs['CamImageMode'].put('Multiple')
             self.epics_pvs['CamArrayCallbacks'].put('Enable')
             self.epics_pvs['CamFrameRateEnable'].put(0)
 
             self.epics_pvs['CamNumImages'].put(self.num_angles, wait=True)
             self.epics_pvs['CamTriggerMode'].put('On', wait=True)
             self.wait_pv(self.epics_pvs['CamTriggerMode'], 1)
-
+    
     def begin_scan(self):
         """Performs the operations needed at the very start of a scan.
 
@@ -219,17 +195,14 @@ class TomoScan32IDSTEP(TomoScanSTEP):
 
         - Set data directory.
 
-        - Set the TomoScan xml files
-
         - Calls the base class method.
-        
-        - Opens the front-end shutter.
 
+        - Opens the front-end shutter.
+        
         - Sets the PSO controller.
 
         - Creates theta array using list from PSO. 
 
-        - Turns on data capture.
         """
         log.info('begin scan')
 
@@ -237,23 +210,28 @@ class TomoScan32IDSTEP(TomoScanSTEP):
         file_path = self.epics_pvs['DetectorTopDir'].get(as_string=True) + self.epics_pvs['ExperimentYearMonth'].get(as_string=True) + os.path.sep + self.epics_pvs['UserLastName'].get(as_string=True) + os.path.sep
         self.epics_pvs['FilePath'].put(file_path, wait=True)
 
-        # set TomoScan xml files        
-        # VN: changed to TomoScanStepDetectorAttributes 
-        self.epics_pvs['CamNDAttributesFile'].put('TomoScanDetectorAttributes.xml')
-        self.epics_pvs['FPXMLFileName'].put('TomoScanLayout.xml')
-        self.control_pvs['CamNDAttributesMacros'].put('DET=32idARV2:,TS=32id:TomoScanStep:')
-
+        # set TomoScan xml files
+        self.epics_pvs['CamNDAttributesFile'].put('TomoScanStreamDetectorAttributes.xml')
+        self.epics_pvs['FPXMLFileName'].put('TomoScanStreamLayout.xml')
+        if self.return_rotation == 'Yes':
+            # Reset rotation position by mod 360 , the actual return 
+            # to start position is handled by super().end_scan()
+            ang = self.epics_pvs['RotationRBV'].get()            
+            current_angle = numpy.sign(ang)*(numpy.abs(ang) % 360)
+            log.info('reset position to %f',current_angle)            
+            self.epics_pvs['RotationSet'].put('Set', wait=True)
+            self.epics_pvs['Rotation'].put(current_angle, wait=True)
+            self.epics_pvs['RotationSet'].put('Use', wait=True)
         # Call the base class method
         super().begin_scan()
         # Opens the front-end shutter
         self.open_frontend_shutter()
+         
         
     def end_scan(self):
         """Performs the operations needed at the very end of a scan.
 
         This does the following:
-
-        - Calls ``save_configuration()``.
 
         - Put the camera back in "FreeRun" mode and acquiring so the user sees live images.
 
@@ -263,109 +241,26 @@ class TomoScan32IDSTEP(TomoScanSTEP):
 
         - Calls the base class method.
 
-        - Closes shutter.  
-
-        - Add theta to the raw data file. 
-
-        - Copy raw data to data analysis computer.      
+        - Closes shutter.
         """
-
+        
         if self.return_rotation == 'Yes':
-            # Reset rotation position by mod 360 , the actual return 
-            # to start position is handled by super().end_scan()
+        # Reset rotation position by mod 360 , the actual return 
+        # to start position is handled by super().end_scan()
+            # allow stage to stop
             log.info('wait until the stage is stopped')
             time.sleep(self.epics_pvs['RotationAccelTime'].get()*1.2)                        
             current_angle = self.epics_pvs['RotationRBV'].get() %360
+            log.info('reset position to %f',current_angle)            
             self.epics_pvs['RotationSet'].put('Set', wait=True)
             self.epics_pvs['Rotation'].put(current_angle, wait=True)
             self.epics_pvs['RotationSet'].put('Use', wait=True)
+            
         # Call the base class method
         super().end_scan()
         # Close shutter
         self.close_shutter()
-
-        # Stop the file plugin
-        self.epics_pvs['FPCapture'].put('Done')
-        self.wait_pv(self.epics_pvs['FPCaptureRBV'], 0)
-        # Add theta in the hdf file
-        self.add_theta()
-
-        # Copy raw data to data analysis computer    
-        if self.epics_pvs['CopyToAnalysisDir'].get():
-            log.info('Automatic data trasfer to data analysis computer is enabled.')
-            full_file_name = self.epics_pvs['FPFullFileName'].get(as_string=True)
-            remote_analysis_dir = self.epics_pvs['RemoteAnalysisDir'].get(as_string=True)
-            dm.scp(full_file_name, remote_analysis_dir)
-        else:
-            log.warning('Automatic data trasfer to data analysis computer is disabled.')
-    
-    def energy_change(self):
-        
-        energy = float(self.epics_pvs["Energy"].get())
-        log.info("Tomoscan: change energy to %.2f",energy)
-        self.epics_pvs['DCMputEnergy'].put(energy, wait=True)
-        self.epics_pvs['GAPputEnergy'].put(energy)
-        wait_pv(self.epics_pvs['EnergyWait'], 0)
-        self.epics_pvs['GAPputEnergy'].put(energy + 0.15)
-        wait_pv(self.epics_pvs['EnergyWait'], 0)
-        self.epics_pvs['DCMmvt'].put(0)
-        self.epics_pvs['StartEnergyChange'].put(0)
-        self.epics_pvs['StartEnergyChange'].put(0,wait=True)
-        
-    def set_exposure_time(self, exposure_time=None):
-
-        camera_model = self.epics_pvs['CamModel'].get(as_string=True)        
-        if(camera_model=='Q-12A180-Fm/CXP-6'):
-            if exposure_time is None:
-                exposure_time = self.epics_pvs['ExposureTime'].value            
-            self.epics_pvs['CamAcquisitionFrameRate'].put(1/exposure_time, wait=True, timeout=10.0) 
-            self.epics_pvs['CamAcquireTime'].put(exposure_time, wait=True, timeout = 10.0)
-        else:
-            super().set_exposure_time(exposure_time)
-
-    def add_theta(self):
-        """Add theta at the end of a scan.
-        """
-        log.info('add theta')
-
-        full_file_name = self.epics_pvs['FPFullFileName'].get(as_string=True)
-        if os.path.exists(full_file_name):
-            try:                
-                with h5py.File(full_file_name, "a") as f:
-                    if self.theta is not None:                        
-                        unique_ids = f['/defaults/NDArrayUniqueId']
-                        hdf_location = f['/defaults/HDF5FrameLocation']
-                        total_dark_fields = self.num_dark_fields * ((self.dark_field_mode in ('Start', 'Both')) + (self.dark_field_mode in ('End', 'Both')))
-                        total_flat_fields = self.num_flat_fields * ((self.flat_field_mode in ('Start', 'Both')) + (self.flat_field_mode in ('End', 'Both')))                        
-
-                        proj_ids = unique_ids[hdf_location[:] == b'/exchange/data']
-                        flat_ids = unique_ids[hdf_location[:] == b'/exchange/data_white']
-                        dark_ids = unique_ids[hdf_location[:] == b'/exchange/data_dark']
-
-
-                        # create theta dataset in hdf5 file
-                        if len(proj_ids) > 0:
-                            theta_ds = f.create_dataset('/exchange/theta', (len(proj_ids),))
-                            theta_ds[:] = self.theta[proj_ids - proj_ids[0]]
-
-                        # warnings that data is missing
-                        if len(proj_ids) != len(self.theta):
-                            log.warning(f'There are {len(self.theta) - len(proj_ids)} missing data frames')
-                            missed_ids = [ele for ele in range(len(self.theta)) if ele not in proj_ids-proj_ids[0]]
-                            missed_theta = self.theta[missed_ids]
-                            # log.warning(f'Missed ids: {list(missed_ids)}')
-                            log.warning(f'Missed theta: {list(missed_theta)}')
-                        if len(flat_ids) != total_flat_fields:
-                            log.warning(f'There are {total_flat_fields - len(flat_ids)} missing flat field frames')
-                        if (len(dark_ids) != total_dark_fields):
-                            log.warning(f'There are {total_dark_fields - len(dark_ids)} missing dark field frames')
-            except:
-                log.error('Add theta: Failed accessing: %s', full_file_name)
-                traceback.print_exc(file=sys.stdout)
-
-        else:
-            log.error('Failed adding theta. %s file does not exist', full_file_name)
-
+ 
     def wait_pv(self, epics_pv, wait_val, timeout=-1):
         """Wait on a pv to be a value until max_timeout (default forever)
            delay for pv to change
@@ -391,8 +286,7 @@ class TomoScan32IDSTEP(TomoScanSTEP):
             else:
                 return True
 
-
-        
+                
     def wait_frontend_shutter_open(self, timeout=-1):
         """Waits for the front end shutter to open, or for ``abort_scan()`` to be called.
 
@@ -431,4 +325,3 @@ class TomoScan32IDSTEP(TomoScanSTEP):
             if timeout > 0:
                 if elapsed_time >= timeout:
                    exit()
-

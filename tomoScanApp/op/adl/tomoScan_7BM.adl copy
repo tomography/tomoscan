@@ -1,12 +1,12 @@
 
 file {
-	name="/local/usertxm/epics/synApps/support/tomoscan/tomoScanApp/op/adl/tomoScan_32ID.adl"
-	version=030111
+	name="/home/epics/support/tomoscan/tomoScanApp/op/adl/tomoScan_7BM.adl"
+	version=030109
 }
 display {
 	object {
-		x=561
-		y=184
+		x=571
+		y=192
 		width=640
 		height=210
 	}
@@ -108,7 +108,7 @@ text {
 	"basic attribute" {
 		clr=54
 	}
-	textix="$(P)$(R)"
+	textix="7-BM Tomography   $(P)$(R)"
 	align="horiz. centered"
 }
 "related display" {
@@ -195,6 +195,22 @@ text {
 	object {
 		x=335
 		y=84
+		width=280
+		height=30
+	}
+	display[0] {
+		label="Aerotech PSO"
+		name="tomoScan_pso.adl"
+		args="P=$(P),R=$(R)"
+	}
+	clr=14
+	bclr=51
+	label="Aerotech PSO"
+}
+"related display" {
+	object {
+		x=335
+		y=124
 		width=280
 		height=30
 	}

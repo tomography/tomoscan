@@ -301,10 +301,12 @@ class TomoScanPSO(TomoScan):
         else:
             taxi_dist = math.floor(accel_dist / self.rotation_step - 0.5) * self.rotation_step 
         self.epics_pvs['PSOStartTaxi'].put(self.rotation_start - taxi_dist * user_direction)
-        self.epics_pvs['PSOEndTaxi'].put(self.rotation_stop + taxi_dist * user_direction)
         
         #Where will the last point actually be?
         self.rotation_stop = (self.rotation_start 
                                 + (self.num_angles - 1) * self.rotation_step * user_direction)
+        self.epics_pvs['PSOEndTaxi'].put(self.rotation_stop + taxi_dist * user_direction)
+        
         # Assign the fly scan angular position to theta[]
         self.theta = self.rotation_start + np.arange(self.num_angles) * self.rotation_step * user_direction
+        

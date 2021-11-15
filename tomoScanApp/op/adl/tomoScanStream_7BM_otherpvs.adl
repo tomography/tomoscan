@@ -1,14 +1,14 @@
 
 file {
-	name="/home/beams8/USER2BMB/epics/synApps/support/tomoscan/tomoScanApp/op/adl/tomoScan_2BM_optics.adl"
+	name="/home/beams9/FUELSPRAY/epics/synApps/support/tomoscan/tomoScanApp/op/adl/tomoScan_7BM_otherpvs.adl"
 	version=030111
 }
 display {
 	object {
-		x=211
-		y=988
-		width=600
-		height=200
+		x=1238
+		y=514
+		width=640
+		height=260
 	}
 	clr=14
 	bclr=4
@@ -91,7 +91,7 @@ rectangle {
 	object {
 		x=0
 		y=5
-		width=600
+		width=640
 		height=30
 	}
 	"basic attribute" {
@@ -101,90 +101,167 @@ rectangle {
 text {
 	object {
 		x=0
-		y=3
-		width=600
+		y=4
+		width=640
 		height=30
 	}
 	"basic attribute" {
 		clr=54
 	}
-	textix="$(P)$(R)   Optics"
+	textix="$(P)$(R)   Other PVs"
 	align="horiz. centered"
 }
-text {
+"text entry" {
 	object {
-		x=150
-		y=46
-		width=170
+		x=254
+		y=70
+		width=380
 		height=20
 	}
-	"basic attribute" {
+	control {
+		chan="$(P)$(R)BeamReadyPVName"
 		clr=14
+		bclr=51
 	}
-	textix="Scintillator type"
-	align="horiz. right"
+	format="string"
+	limits {
+	}
+}
+"text entry" {
+	object {
+		x=254
+		y=95
+		width=380
+		height=20
+	}
+	control {
+		chan="$(P)$(R)BeamReadyValue"
+		clr=14
+		bclr=51
+	}
+	format="string"
+	limits {
+	}
 }
 text {
 	object {
-		x=60
-		y=71
-		width=260
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="Scint. thickness (microns)"
-	align="horiz. right"
-}
-text {
-	object {
-		x=60
-		y=96
-		width=260
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="Image pixel size (microns)"
-	align="horiz. right"
-}
-text {
-	object {
-		x=30
-		y=121
-		width=290
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="Detector pixel size (microns)"
-	align="horiz. right"
-}
-text {
-	object {
-		x=160
-		y=146
+		x=89
+		y=95
 		width=160
 		height=20
 	}
 	"basic attribute" {
 		clr=14
 	}
-	textix="Camera objective mag. (x)"
+	textix="Beam ready value"
+	align="horiz. right"
+}
+text {
+	object {
+		x=119
+		y=70
+		width=130
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Beam ready PV"
+	align="horiz. right"
+}
+text {
+	object {
+		x=19
+		y=145
+		width=230
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Open fast shutter value"
 	align="horiz. right"
 }
 "text entry" {
 	object {
-		x=325
-		y=71
-		width=230
+		x=254
+		y=145
+		width=380
 		height=20
 	}
 	control {
-		chan="$(P)$(R)ScintillatorThickness"
+		chan="$(P)$(R)OpenFastShutterValue"
+		clr=14
+		bclr=51
+	}
+	format="string"
+	limits {
+	}
+}
+text {
+	object {
+		x=49
+		y=120
+		width=200
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Open fast shutter PV"
+	align="horiz. right"
+}
+"text entry" {
+	object {
+		x=254
+		y=120
+		width=380
+		height=20
+	}
+	control {
+		chan="$(P)$(R)OpenFastShutterPVName"
+		clr=14
+		bclr=51
+	}
+	format="string"
+	limits {
+	}
+}
+text {
+	object {
+		x=39
+		y=170
+		width=210
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Close fast shutter PV"
+	align="horiz. right"
+}
+text {
+	object {
+		x=9
+		y=195
+		width=240
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Close fast shutter value"
+	align="horiz. right"
+}
+"text entry" {
+	object {
+		x=254
+		y=195
+		width=380
+		height=20
+	}
+	control {
+		chan="$(P)$(R)CloseFastShutterValue"
 		clr=14
 		bclr=51
 	}
@@ -194,105 +271,75 @@ text {
 }
 "text entry" {
 	object {
-		x=325
-		y=46
-		width=230
+		x=254
+		y=170
+		width=380
 		height=20
 	}
 	control {
-		chan="$(P)$(R)ScintillatorType"
+		chan="$(P)$(R)CloseFastShutterPVName"
 		clr=14
 		bclr=51
 	}
 	format="string"
 	limits {
 	}
+}
+text {
+	object {
+		x=19
+		y=220
+		width=230
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="External Trigger Source"
+	align="horiz. right"
 }
 "text entry" {
 	object {
-		x=325
-		y=121
-		width=230
+		x=254
+		y=220
+		width=380
 		height=20
 	}
 	control {
-		chan="$(P)$(R)DetectorPixelSize"
+		chan="$(P)$(R)ExternalTriggerSource"
 		clr=14
 		bclr=51
 	}
 	format="string"
 	limits {
 	}
+}
+text {
+	object {
+		x=79
+		y=45
+		width=170
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Shutter Status PV"
+	align="horiz. right"
 }
 "text entry" {
 	object {
-		x=325
-		y=146
-		width=230
+		x=254
+		y=45
+		width=380
 		height=20
 	}
 	control {
-		chan="$(P)$(R)CameraObjective"
+		chan="$(P)$(R)ShutterStatusPVName"
 		clr=14
 		bclr=51
 	}
 	format="string"
 	limits {
-	}
-}
-"text entry" {
-	object {
-		x=325
-		y=96
-		width=230
-		height=20
-	}
-	control {
-		chan="$(P)$(R)ImagePixelSize"
-		clr=14
-		bclr=51
-	}
-	format="string"
-	limits {
-	}
-}
-composite {
-	object {
-		x=160
-		y=171
-		width=395
-		height=20
-	}
-	"composite name"=""
-	children {
-		text {
-			object {
-				x=160
-				y=171
-				width=160
-				height=20
-			}
-			"basic attribute" {
-				clr=14
-			}
-			textix="Tube length (mm)"
-			align="horiz. right"
-		}
-		"text entry" {
-			object {
-				x=325
-				y=171
-				width=230
-				height=20
-			}
-			control {
-				chan="$(P)$(R)CameraTubeLength"
-				clr=14
-				bclr=51
-			}
-			format="string"
-			limits {
-			}
-		}
 	}
 }

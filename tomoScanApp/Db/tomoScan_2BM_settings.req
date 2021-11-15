@@ -25,9 +25,7 @@ $(P)$(R)ScintillatorThickness
 $(P)$(R)ImagePixelSize
 $(P)$(R)DetectorPixelSize
 $(P)$(R)CameraObjective
-$(P)$(R)CameraObjectiveSelector
 $(P)$(R)CameraTubeLength
-$(P)$(R)CameraSelector
 
 ####################
 # Sample information

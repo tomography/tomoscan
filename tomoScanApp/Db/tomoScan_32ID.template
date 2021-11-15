@@ -257,3 +257,41 @@ record(ao, "$(P)$(R)StabilizationTime")
 {
    field(PREC,  "3")
 }
+
+###################
+# Energy change
+###################
+record(stringout, "$(P)$(R)DCMmvtPVName")
+{
+   field(VAL,  "$(KOHZUMODE)")
+}
+
+record(stringout, "$(P)$(R)GAPputEnergyPVName")
+{
+   field(VAL,  "$(USENERGY)")
+}
+
+record(stringout, "$(P)$(R)EnergyWaitPVName")
+{
+   field(VAL,  "$(USBUSY)")
+}
+
+record(stringout, "$(P)$(R)DCMputEnergyPVName")
+{
+   field(VAL,  "$(BRAGG)")
+}
+
+record(busy,"$(P)$(R)StartEnergyChange")
+{
+   field(ZNAM,"Done")
+   field(ZSV, "NO_ALARM")
+   field(ONAM,"Acquire")
+   field(OSV, "MINOR")
+   field(VAL, "0")
+}
+
+record(ao, "$(P)$(R)Energy")
+{
+   field(PREC,  "3")
+   field(VAL,  "8")
+}
