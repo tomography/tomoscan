@@ -52,10 +52,23 @@ class TomoScan32IDSTEP(TomoScanSTEP):
         self.epics_pvs['FPFileTemplate'].put("%s%s_%3.3d.h5", wait=True)
 
         # Disable over writing warning
-        self.epics_pvs['OverwriteWarning'].put('Yes')
-
+        self.epics_pvs['OverwriteWarning'].put('Yes')                
+        
+        self.epics_pvs['StartEnergyChange'].put(0,wait=True)
+        # energy scan
+        self.epics_pvs['StartEnergyChange'].add_callback(self.pv_callback_step)
+        
         log.setup_custom_logger("./tomoscan.log")
-   
+    
+    def pv_callback_step(self, pvname=None, value=None, char_value=None, **kw):
+        """Callback function that is called by pyEpics when certain EPICS PVs are changed
+        
+        """
+
+        log.debug('pv_callback_step pvName=%s, value=%s, char_value=%s', pvname, value, char_value)       
+        if (pvname.find('StartEnergyChange') != -1) and (value == 1):
+            self.energy_change()        
+                    
     def open_frontend_shutter(self):
         """Opens the shutters to collect flat fields or projections.
 
@@ -286,6 +299,19 @@ class TomoScan32IDSTEP(TomoScanSTEP):
         else:
             log.warning('Automatic data trasfer to data analysis computer is disabled.')
     
+    def energy_change(self):
+        
+        energy = float(self.epics_pvs["Energy"].get())
+        log.info("Tomoscan: change energy to %.2f",energy)
+        self.epics_pvs['DCMputEnergy'].put(energy, wait=True)
+        self.epics_pvs['GAPputEnergy'].put(energy)
+        wait_pv(self.epics_pvs['EnergyWait'], 0)
+        self.epics_pvs['GAPputEnergy'].put(energy + 0.15)
+        wait_pv(self.epics_pvs['EnergyWait'], 0)
+        self.epics_pvs['DCMmvt'].put(0)
+        self.epics_pvs['StartEnergyChange'].put(0)
+        self.epics_pvs['StartEnergyChange'].put(0,wait=True)
+        
     def set_exposure_time(self, exposure_time=None):
 
         camera_model = self.epics_pvs['CamModel'].get(as_string=True)        
@@ -365,6 +391,8 @@ class TomoScan32IDSTEP(TomoScanSTEP):
             else:
                 return True
 
+
+        
     def wait_frontend_shutter_open(self, timeout=-1):
         """Waits for the front end shutter to open, or for ``abort_scan()`` to be called.
 

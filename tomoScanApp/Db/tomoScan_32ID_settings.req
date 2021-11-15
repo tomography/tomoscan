@@ -81,3 +81,13 @@ $(P)$(R)ShutterStatusPVName
 $(P)$(R)InterlacedScan
 $(P)$(R)InterlacedFileName
 $(P)$(R)StabilizationTime
+
+###################
+# Energy change
+###################
+$(P)$(R)DCMmvtPVName
+$(P)$(R)GAPputEnergyPVName
+$(P)$(R)EnergyWaitPVName
+$(P)$(R)DCMputEnergyPVName
+$(P)$(R)StartEnergyChange
+$(P)$(R)Energy
