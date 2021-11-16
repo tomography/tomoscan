@@ -783,10 +783,15 @@ Optics information
     - Contains the pixel size of the detector.
   * - $(P)$(R)CameraObjective
     - stringout
-    - Description of the camera objective
+  * - $(P)$(R)CameraObjectiveSelector
+    - mbbo
+    - Optique Peter triple lens selector
   * - $(P)$(R)CameraTubeLength
     - stringout
     - Description of the camera objective
+  * - $(P)$(R)CameraSelector
+    - mbbo
+    - Optique Peter dual camera selector
 
 Sample information
 ^^^^^^^^^^^^^^^^^^
@@ -1105,226 +1110,6 @@ Optics information
     - stringout
     - Description of the camera objective
 
-TXM support IOC PV Prefixes
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-.. cssclass:: table-bordered table-striped table-hover
-.. list-table::
-  :header-rows: 1
-  :widths: 5 5 90
-
-  * - Record name
-    - Record type
-    - Description
-  * - $(P)$(R)CRLRelaysPVPrefix
-    - stringout
-    - Contains the prefix for the CRL Relays IOC, e.g. 32idbPLC:
-  * - $(P)$(R)ValvesPLCPVPrefix
-    - stringout
-    - Contains the prefix for the Valves PLC IOC, e.g. 32idcPLC:
-  * - $(P)$(R)ShakerPVPrefix
-    - stringout
-    - Contains the prefix for the Shaker IOC, e.g. 32idcMC:shaker:
-  * - $(P)$(R)BPMPVPrefix
-    - stringout
-    - Contains the prefix for the BPM IOC, e.g. 32ida:
-
-
-TXM Optics motors
-^^^^^^^^^^^^^^^^^
-
-.. cssclass:: table-bordered table-striped table-hover
-.. list-table::
-  :header-rows: 1
-  :widths: 5 5 90
-
-  * - Record name
-    - Record type
-    - Description
-  * - $(P)$(R)CRLXPVName
-    - stringout
-    - Contains the name of the Compound Refractive Lens (CRL) X translation PV, e.g. 32idb:m32
-  * - $(P)$(R)CRLYPVName
-    - stringout
-    - Contains the name of the Compound Refractive Lens (CRL) Y translation PV, e.g. 32idb:m28
-  * - $(P)$(R)CRLPitchPVName
-    - stringout
-    - Contains the name of the Compound Refractive Lens (CRL) Pitch adjustment PV, e.g. 32idb:m26
-  * - $(P)$(R)CRLYawPVName
-    - stringout
-    - Contains the name of the Compound Refractive Lens (CRL) Yaw adjustment PV, e.g. 32idb:m27
-  * - $(P)$(R)DiffuserXPVName
-    - stringout
-    - Contains the name of the Beamstop X translation PV, e.g. 32idcTXM:xps:c1:m2
-  * - $(P)$(R)BeamstopXPVName
-    - stringout
-    - Contains the name of the Beamstop X translation PV, e.g. 32idcTXM:mcs:c3:m3
-  * - $(P)$(R)BeamstopYPVName
-    - stringout
-    - Contains the name of the Beamstop Y translation PV, e.g. 32idcTXM:mcs:c3:m6
-  * - $(P)$(R)PinholeXPVName
-    - stringout
-    - Contains the name of the Pinhole X translation PV, e.g. 32idcTXM:xps:c1:m3
-  * - $(P)$(R)PinholeYPVName
-    - stringout
-    - Contains the name of the Pinhole Y translation PV, e.g. 32idcTXM:xps:c1:m5
-  * - $(P)$(R)CondenserXPVName
-    - stringout
-    - Contains the name of the Condenser X translation PV, e.g. 32idcTXM:mcs:c3:m1
-  * - $(P)$(R)CondenserYPVName
-    - stringout
-    - Contains the name of the Condenser Y translation PV, e.g. 32idcTXM:mcs:c3:m5
-  * - $(P)$(R)CondenserZPVName
-    - stringout
-    - Contains the name of the Condenser Z translation PV, e.g. 32idcTXM:mcs:c1:m5
-  * - $(P)$(R)CondenserPitchPVName
-    - stringout
-    - Contains the name of the Condenser Pitch adjustment PV, e.g. 32idcTXM:mcs:c3:m4
-  * - $(P)$(R)CondenserYawPVName
-    - stringout
-    - Contains the name of the Condenser Yaw adjustment PV, e.g. 32idcTXM:mcs:c3:m2
-  * - $(P)$(R)ZonePlateXPVName
-    - stringout
-    - Contains the name of the Zone plate X translation PV, e.g. 32idcTXM:mcs:c2:m1
-  * - $(P)$(R)ZonePlateYPVName
-    - stringout
-    - Contains the name of the Zone plate Y translation PV, e.g. 32idcTXM:mcs:c2:m2
-  * - $(P)$(R)ZonePlateZPVName
-    - stringout
-    - Contains the name of the Zone plate Z translation PV, e.g. 32idcTXM:mcs:c2:m3
-  * - $(P)$(R)PhaseRingXPVName
-    - stringout
-    - Contains the name of the Phase ring X translation PV, e.g. 32idcSOFT:mmc:c1:m2
-  * - $(P)$(R)PhaseRingYPVName
-    - stringout
-    - Contains the name of the Phase ring Y translation PV, e.g. 32idcSOFT:mmc:c1:m1
-
-Optics control via Channel Access
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-.. cssclass:: table-bordered table-striped table-hover
-.. list-table::
-  :header-rows: 1
-  :widths: 5 5 90
-
-  * - Record name
-    - Record type
-    - Description
-  * - $(P)$(R)MoveAllIn
-    - ao
-    - Setting this record to 1 moves all TXM optics in.
-  * - $(P)$(R)MoveAllOut
-    - ao
-    - Setting this record to 1 moves all TXM optics out.
-  * - $(P)$(R)MoveCRLIn
-    - ao
-    - Setting this record to 1 moves CRL in.
-  * - $(P)$(R)MoveCRLOut
-    - ao
-    - Setting this record to 1 moves moves CRL out.
-  * - $(P)$(R)MoveDiffuserIn
-    - ao
-    - Setting this record to 1 moves diffuser in.
-  * - $(P)$(R)MoveDiffuserOut
-    - ao
-    - Setting this record to 1 moves diffuser out.
-  * - $(P)$(R)MoveBeamstopIn
-    - ao
-    - Setting this record to 1 moves beamstop in.
-  * - $(P)$(R)MoveBeamstopOut
-    - ao
-    - Setting this record to 1 moves beamstop out.
-  * - $(P)$(R)MovePinholeIn
-    - ao
-    - Setting this record to 1 moves pinhole in.
-  * - $(P)$(R)MovePinholeOut
-    - ao
-    - Setting this record to 1 moves pinhole out.
-  * - $(P)$(R)MoveCondenserIn
-    - ao
-    - Setting this record to 1 moves condenser in.
-  * - $(P)$(R)MoveCondenserOut
-    - ao
-    - Setting this record to 1 moves condenser out.
-  * - $(P)$(R)MoveZonePlateIn
-    - ao
-    - Setting this record to 1 moves zone plate in.
-  * - $(P)$(R)MoveZonePlateOut
-    - ao
-    - Setting this record to 1 moves zone plate out.
-  * - $(P)$(R)MovePhaseRingIn
-    - ao
-    - Setting this record to 1 moves phase ring in.
-  * - $(P)$(R)MovePhaseRingOut
-    - ao
-    - Setting this record to 1 moves phase ring out.
-
-Optics control
-^^^^^^^^^^^^^^
-
-.. cssclass:: table-bordered table-striped table-hover
-.. list-table::
-  :header-rows: 1
-  :widths: 5 5 90
-
-  * - Record name
-    - Record type
-    - Description
-  * - $(P)$(R)NumFlatFields
-    - longout
-    - Number of flat fields to collect
-  * - $(P)$(R)SampleInX
-    - ao
-    - Position of the X stage when the sample is in position for collecting projections.
-  * - $(P)$(R)SampleOutX
-    - ao
-    - Position of the X stage when the sample is out for collecting flat fields.
-  * - $(P)$(R)DiffuserInX
-    - ao
-    - Position of the X stage when the diffuser is in the beam.
-  * - $(P)$(R)DiffuserOutX
-    - ao
-    - Position of the X stage when the diffuser is out of the beam.
-  * - $(P)$(R)BeamstopInY
-    - ao
-    - Position of the Y stage when the beamstop is in the beam.
-  * - $(P)$(R)BeamstopOutY
-    - ao
-    - Position of the Y stage when the beamstop is out of the beam.
-  * - $(P)$(R)PinholeInY
-    - ao
-    - Position of the Y stage when the pinhole is in the beam.
-  * - $(P)$(R)PinholeOutY
-    - ao
-    - Position of the Y stage when the pinhole is out of the beam.
-  * - $(P)$(R)CondenserInY")
-    - ao
-    - Position of the Y stage when the condenser is in the beam.
-  * - $(P)$(R)CondenserOutY
-    - ao
-    - Position of the Y stage when the condenser is out of the beam.
-  * - $(P)$(R)ZonePlateInY
-    - ao
-    - Position of the Y stage when the zone plate is in the beam.
-  * - $(P)$(R)ZonePlateOutY
-    - ao
-    - Position of the Y stage when the zone plate is out of the beam.
-  * - $(P)$(R)PhaseRingInX
-    - ao
-    - Position of the X stage when the phase ring is in the beam.
-  * - $(P)$(R)PhaseRingOutX
-    - ao
-    - Position of the X stage when the phase ring is out of the beam.
-  * - $(P)$(R)PhaseRingInY
-    - ao
-    - Position of the Y stage when the phase ring is in the beam.
-  * - $(P)$(R)PhaseRingOutY
-    - ao
-    - Position of the Y stage when the phase ring is out of the beam.
-  * - $(P)$(R)AllStop
-    - bo
-    - Stops all TXM optic motors. Options are release or stop.
-
 Sample information
 ^^^^^^^^^^^^^^^^^^
 
@@ -1450,6 +1235,30 @@ Fast shutter control
   * - $(P)$(R)OpenFastShutterValue
     - stringout
     - Contains the value to write to open the fast shutter
+
+Interlaced scan
+^^^^^^^^^^^^^^^
+
+.. cssclass:: table-bordered table-striped table-hover
+.. list-table::
+  :header-rows: 1
+  :widths: 5 5 90
+
+  * - Record name
+    - Record type
+    - Description
+  * - $(P)$(R)InterlacedScan
+    - bo
+    - Flag controlling whether the scan is regualr or interlaced. Choices are 'No' and 'Yes'. When "No" the angles are equally spaced using the Start angle, # of angles and Angle step parameters. When 'Yes' the list of angles is read from a file.
+  * - $(P)$(R)InterlacedFileName
+    - waveform
+    - The file name containing the list of interalced angles in npy format.
+  * - $(P)$(R)InterlacedFileName
+    - waveform
+    - Interlaced file name containing the numpy list of angles to collect in interlaced mode.
+  * - $(P)$(R)StabilizationTime
+    - ao
+    - Settling time after the rotary stage motion is completed (used only in step scans).
 
 tomoScan_32ID_settings.req
 ~~~~~~~~~~~~~~~~~~~~~~~~~~

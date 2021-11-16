@@ -2,7 +2,7 @@ file "$(TOP)/db/tomoScan.template"
 {
 pattern
 {  P,      R,      CAMERA,  FILE_PLUGIN,      ROTATION,              SAMPLE_X,      SAMPLE_Y,              CLOSE_SHUTTER,        CLOSE_VALUE,        OPEN_SHUTTER,         OPEN_VALUE}
-{32id:, TomoScan:, 32ARV1:, 32ARV1:HDF1:,  32idcTXM:ens:c1:m1,  32idcTXM:nf:c0:m1,  32idcTXM:mxv:c1:m1,  32idb:rshtrA:Close,          1,            32idb:rshtrA:Open,      1}
+{32id:, TomoScanStep:, 32idARV2:, 32idARV2:HDF1:,  32idcTXM:ens:c1:m1,  32idcTXM:nf:c0:m1,  32idcTXM:mxv:c1:m1,  32idb:rshtrB:Close,          1,            32idb:rshtrB:Open,      1}
 }
 
 # For the Ensemble PSO_ENC_PER_ROTATION is a signed number containing the number of encoder pulses per rotation in positive dial coordinates
@@ -10,13 +10,13 @@ file "$(TOP)/db/tomoScan_PSO.template"
 {
 pattern
 {  P,       R,     PSO_MODEL, PSO_PORT, PSO_AXIS_NAME, PSO_ENC_INPUT, PSO_ENC_PER_ROTATION}
-{32id:, TomoScan:,    0,      PSO_PORT,      X,             3,            94400.}
+{32id:, TomoScanStep:,    0,      PSO_PORT,      X,             3,            94400.}
 }
 
 
 file "$(TOP)/db/tomoScan_32ID.template"
 {
 pattern
-{  P,      R,          BEAM_READY,    READY_VALUE, CLOSE_FAST_SHUTTER,        CLOSE_FAST_VALUE,   OPEN_FAST_SHUTTER,        OPEN_FAST_VALUE,      SHUTTER_STATUS,         SAMPLE_TOP_X,     SAMPLE_TOP_Z,         BPM,       SHAKER,       VALVES_PLC,      CRL_RELAYS,   CRL_X,     CRL_Y,    CRL_PITCH,   CRL_YAW,      DIFFUSER_X,          BEAMSTOP_X,          BEAMSTOP_Y,        PINHOLE_X,          PINHOLE_Y,         CONDENSER_X,        CONDENSER_Y,        CONDENSER_Z,        CONDENSER_PITCH,     CONDENSER_YAW,     ZONEPLATE_X,         ZONEPLATE_Y,        ZONEPLATE_Z,        PHASERING_X,         PHASERING_Y}
-{32id:, TomoScan:, ACIS:ShutterPermit,    1,     32idcTXM:uniblitz:control,          0,          32idcTXM:uniblitz:control,         1,        PA:02BM:STA_A_FES_OPEN_PL, 32idcTXM:mcs:c3:m7, 32idcTXM:mcs:c3:m7,  32ida:  32idcMC:shaker:,   32idcPLC:,       32idbPLC:, 32idb:m32, 32idb:m28, 32idb:m26,  32idb:m27,  32idcTXM:xps:c1:m2   32idcTXM:mcs:c3:m3, 32idcTXM:mcs:c3:m6, 32idcTXM:xps:c1:m3, 32idcTXM:xps:c1:m5, 32idcTXM:mcs:c3:m1, 32idcTXM:mcs:c3:m5, 32idcTXM:mxv:c1:m5,  32idcTXM:mcs:c3:m4, 32idcTXM:mcs:c3:m2, 32idcTXM:mcs:c2:m1, 32idcTXM:mcs:c2:m2, 32idcTXM:mcs:c2:m3, 32idcSOFT:mmc:c1:m2, 32idcSOFT:mmc:c1:m1}
+{  P,      R,          BEAM_READY,    READY_VALUE, CLOSE_FAST_SHUTTER,        CLOSE_FAST_VALUE,   OPEN_FAST_SHUTTER,        OPEN_FAST_VALUE,      SHUTTER_STATUS,         SAMPLE_TOP_X,     SAMPLE_TOP_Z, KOHZUMODE, USENERGY, USBUSY, BRAGG    }
+{32id:, TomoScanStep:, ACIS:ShutterPermit,    1,     32idcTXM:uniblitz:control,          0,          32idcTXM:uniblitz:control,         1,        PA:32ID:STA_B_SBS_OPEN_PL, 32idcTXM:mcs:c3:m7, 32idcTXM:mcs:c3:m7, 32ida:KohzuModeBO, 32id:ID32us_energy, ID32us:Busy, 32ida:BraggEAO  }
 }

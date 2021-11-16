@@ -55,7 +55,7 @@ class TomoScanStream2BM(TomoScanStreamPSO):
     def __init__(self, pv_files, macros):
         super().__init__(pv_files, macros)
         # Set the detector in idle
-        self.set_trigger_mode('Internal', 1)
+        #self.set_trigger_mode('Internal', 1)
         
         # Enable auto-increment on file writer
         self.epics_pvs['FPAutoIncrement'].put('Yes')
@@ -88,7 +88,8 @@ class TomoScanStream2BM(TomoScanStreamPSO):
                 log.info('shutter status: %s', status)
                 log.info('open shutter: %s, value: %s', pv, value)
                 self.epics_pvs['OpenShutter'].put(value, wait=True)
-                self.wait_pv(self.epics_pvs['ShutterStatus'], 1)
+                self.wait_frontend_shutter_open()
+                # self.wait_pv(self.epics_pvs['ShutterStatus'], 1)
                 status = self.epics_pvs['ShutterStatus'].get(as_string=True)
                 log.info('shutter status: %s', status)
 
@@ -142,8 +143,8 @@ class TomoScanStream2BM(TomoScanStreamPSO):
             value = self.epics_pvs['CloseFastShutterValue'].get(as_string=True)
             log.info('close fast shutter: %s, value: %s', pv, value)
             self.epics_pvs['CloseFastShutter'].put(value, wait=True)
-            log.warning('close fast shutter sleep 2 sec')
-            time.sleep(2)
+            #log.warning('close fast shutter sleep 2 sec')
+            #time.sleep(2)
 
     def set_trigger_mode(self, trigger_mode, num_images):
         """Sets the trigger mode SIS3820 and the camera.
@@ -157,43 +158,100 @@ class TomoScanStream2BM(TomoScanStreamPSO):
             Number of images to collect.  Ignored if trigger_mode="FreeRun".
             This is used to set the ``NumImages`` PV of the camera.
         """
+        camera_model = self.epics_pvs['CamModel'].get(as_string=True)
+        if(camera_model=='Oryx ORX-10G-51S5M'):            
+            self.set_trigger_mode_oryx(trigger_mode, num_images)
+        elif(camera_model=='Grasshopper3 GS3-U3-23S6M'):        
+            self.set_trigger_mode_grasshopper(trigger_mode, num_images)
+        elif(camera_model=='Q-12A180-Fm/CXP-6'):          
+            self.set_trigger_mode_adimec(trigger_mode, num_images)
+        else:
+            log.error('Camera is not supported')
+            exit(1)
+        
+    def set_trigger_mode_oryx(self, trigger_mode, num_images):
+        self.epics_pvs['CamAcquire'].put('Done') ###
+        self.wait_pv(self.epics_pvs['CamAcquire'], 0) ###
         log.info('set trigger mode: %s', trigger_mode)
         if trigger_mode == 'FreeRun':
             self.epics_pvs['CamImageMode'].put('Continuous', wait=True)
             self.epics_pvs['CamTriggerMode'].put('Off', wait=True)
             self.wait_pv(self.epics_pvs['CamTriggerMode'], 0)
-            self.epics_pvs['CamAcquire'].put('Acquire')
+            # self.epics_pvs['CamAcquire'].put('Acquire')
         elif trigger_mode == 'Internal':
             self.epics_pvs['CamTriggerMode'].put('Off', wait=True)
             self.wait_pv(self.epics_pvs['CamTriggerMode'], 0)
-            self.epics_pvs['CamImageMode'].put('Multiple')
+            self.epics_pvs['CamImageMode'].put('Multiple')            
             self.epics_pvs['CamNumImages'].put(num_images, wait=True)
         else: # set camera to external triggering
-            # These are just in case the scan aborted with the camera in another state
-             # These are just in case the scan aborted with the camera in another state 
-            camera_model = self.epics_pvs['CamModel'].get(as_string=True)
-            if(camera_model=='Oryx ORX-10G-51S5M'):# 2bma            
-                self.epics_pvs['CamTriggerMode'].put('Off', wait=True)   # VN: For FLIR we first switch to Off and then change overlap. any reason of that?                                                 
-                self.epics_pvs['CamTriggerSource'].put('Line2', wait=True)
-            elif(camera_model=='Grasshopper3 GS3-U3-23S6M'):# 2bmb            
-                self.epics_pvs['CamTriggerMode'].put('On', wait=True)     # VN: For PG we need to switch to On to be able to switch to readout overlap mode                                                               
-                self.epics_pvs['CamTriggerSource'].put('Line0', wait=True)
+            # These are just in case the scan aborted with the camera in another state 
+            self.epics_pvs['CamTriggerMode'].put('Off', wait=True)   # VN: For FLIR we first switch to Off and then change overlap. any reason of that?                                                 
+            self.epics_pvs['CamTriggerSource'].put('Line2', wait=True)
             self.epics_pvs['CamTriggerOverlap'].put('ReadOut', wait=True)
             self.epics_pvs['CamExposureMode'].put('Timed', wait=True)
-            self.epics_pvs['CamImageMode'].put('Multiple')
+            self.epics_pvs['CamImageMode'].put('Multiple')            
             self.epics_pvs['CamArrayCallbacks'].put('Enable')
             self.epics_pvs['CamFrameRateEnable'].put(0)
 
             self.epics_pvs['CamNumImages'].put(self.num_angles, wait=True)
             self.epics_pvs['CamTriggerMode'].put('On', wait=True)
             self.wait_pv(self.epics_pvs['CamTriggerMode'], 1)
-    
+
+    def set_trigger_mode_grasshopper(self, trigger_mode, num_images):
+        self.epics_pvs['CamAcquire'].put('Done') ###
+        self.wait_pv(self.epics_pvs['CamAcquire'], 0) ###
+        log.info('set trigger mode: %s', trigger_mode)
+        if trigger_mode == 'FreeRun':
+            self.epics_pvs['CamImageMode'].put('Continuous', wait=True)
+            self.epics_pvs['CamTriggerMode'].put('Off', wait=True)
+            self.wait_pv(self.epics_pvs['CamTriggerMode'], 0)
+            #self.epics_pvs['CamAcquire'].put('Acquire')
+        elif trigger_mode == 'Internal':
+            self.epics_pvs['CamTriggerMode'].put('Off', wait=True)
+            self.wait_pv(self.epics_pvs['CamTriggerMode'], 0)
+            self.epics_pvs['CamImageMode'].put('Multiple')
+            self.epics_pvs['CamNumImages'].put(num_images, wait=True)
+        else: # set camera to external triggering
+            # These are just in case the scan aborted with the camera in another state 
+            self.epics_pvs['CamTriggerMode'].put('On', wait=True)     # VN: For PG we need to switch to On to be able to switch to readout overlap mode                                                               
+            self.epics_pvs['CamTriggerSource'].put('Line0', wait=True)
+            self.epics_pvs['CamTriggerOverlap'].put('ReadOut', wait=True)
+            self.epics_pvs['CamExposureMode'].put('Timed', wait=True)
+            self.epics_pvs['CamImageMode'].put('Multiple')            
+            self.epics_pvs['CamArrayCallbacks'].put('Enable')
+            self.epics_pvs['CamFrameRateEnable'].put(0)
+
+            self.epics_pvs['CamNumImages'].put(self.num_angles, wait=True)
+            self.epics_pvs['CamTriggerMode'].put('On', wait=True)
+            self.wait_pv(self.epics_pvs['CamTriggerMode'], 1)
+
+    def set_trigger_mode_adimec(self, trigger_mode, num_images):
+        self.epics_pvs['CamAcquire'].put('Done') ###
+        self.wait_pv(self.epics_pvs['CamAcquire'], 0) ###
+        log.info('set trigger mode: %s', trigger_mode)
+        if trigger_mode == 'FreeRun':
+            self.epics_pvs['CamImageMode'].put('Continuous', wait=True)
+            self.epics_pvs['CamExposureMode'].put('Timed', wait=True)
+            self.wait_pv(self.epics_pvs['CamExposureMode'], 0)                
+        elif trigger_mode == 'Internal':
+            self.epics_pvs['CamExposureMode'].put('Timed', wait=True)
+            self.wait_pv(self.epics_pvs['CamExposureMode'], 0)
+            self.epics_pvs['CamImageMode'].put('Multiple')            
+            self.epics_pvs['CamNumImages'].put(num_images, wait=True)
+        else: # set camera to external triggering
+            self.epics_pvs['CamExposureMode'].put('TimedTriggerCont', wait=True)                
+            self.wait_pv(self.epics_pvs['CamExposureMode'], 3)                
+            self.epics_pvs['CamImageMode'].put('Multiple')                        
+            self.epics_pvs['CamNumImages'].put(self.num_angles, wait=True)            
+
     def begin_scan(self):
         """Performs the operations needed at the very start of a scan.
 
         This does the following:
 
         - Set data directory.
+
+         - Set the TomoScan xml files
 
         - Calls the base class method.
 
@@ -214,6 +272,15 @@ class TomoScanStream2BM(TomoScanStreamPSO):
         self.epics_pvs['CamNDAttributesFile'].put('TomoScanStreamDetectorAttributes.xml')
         self.epics_pvs['FPXMLFileName'].put('TomoScanStreamLayout.xml')
 
+        if self.return_rotation == 'Yes':
+            # Reset rotation position by mod 360 , the actual return 
+            # to start position is handled by super().end_scan()
+            ang = self.epics_pvs['RotationRBV'].get()            
+            current_angle = numpy.sign(ang)*(numpy.abs(ang) % 360)
+            log.info('reset position to %f',current_angle)            
+            self.epics_pvs['RotationSet'].put('Set', wait=True)
+            self.epics_pvs['Rotation'].put(current_angle, wait=True)
+            self.epics_pvs['RotationSet'].put('Use', wait=True)
         # Call the base class method
         super().begin_scan()
         # Opens the front-end shutter
@@ -224,7 +291,7 @@ class TomoScanStream2BM(TomoScanStreamPSO):
         """Performs the operations needed at the very end of a scan.
 
         This does the following:
-
+        - Calls ``save_configuration()``.
         - Put the camera back in "FreeRun" mode and acquiring so the user sees live images.
 
         - Sets the speed of the rotation stage back to the maximum value.
@@ -239,10 +306,15 @@ class TomoScanStream2BM(TomoScanStreamPSO):
         if self.return_rotation == 'Yes':
         # Reset rotation position by mod 360 , the actual return 
         # to start position is handled by super().end_scan()
-            current_angle = self.epics_pvs['Rotation'].get() %360
+            # allow stage to stop
+            log.info('wait until the stage is stopped')
+            time.sleep(self.epics_pvs['RotationAccelTime'].get()*1.2)                        
+            current_angle = self.epics_pvs['RotationRBV'].get() %360
+            log.info('reset position to %f',current_angle)            
             self.epics_pvs['RotationSet'].put('Set', wait=True)
             self.epics_pvs['Rotation'].put(current_angle, wait=True)
             self.epics_pvs['RotationSet'].put('Use', wait=True)
+            
         # Call the base class method
         super().end_scan()
         # Close shutter

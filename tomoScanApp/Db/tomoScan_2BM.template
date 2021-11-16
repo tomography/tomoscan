@@ -86,7 +86,6 @@ record(ao, "$(P)$(R)CameraTubeLength")
    field(EGU,  "mm")
 }
 
-
 ####################
 # Sample information
 ####################

@@ -27,7 +27,7 @@
   </widget>
   <widget type="label" version="2.0.0">
     <name>text #9</name>
-    <text>2-BM Tomography   $(P)$(R)</text>
+    <text>$(P)$(R)</text>
     <y>5</y>
     <width>640</width>
     <height>30</height>
@@ -135,17 +135,12 @@
     <name>related display #27</name>
     <actions>
       <action type="open_display">
-        <file>$(BEAMLINE)_stream.opi</file>
-        <macros>
-          <CB>CB1:</CB>
-          <PH>2bmbSP1:</PH>
-          <RH>HDF1:</RH>
-        </macros>
+        <file>$(BEAMLINE)_otherpvs.opi</file>
         <target>tab</target>
-        <description>Experiment Information</description>
+        <description>Data Management</description>
       </action>
     </actions>
-    <text>Stream</text>
+    <text>Other PVs</text>
     <x>335</x>
     <y>84</y>
     <width>280</width>
@@ -154,26 +149,8 @@
       </color>
     </background_color>
   </widget>
-  <widget type="action_button" version="3.0.0">
-    <name>related display #30</name>
-    <actions>
-      <action type="open_display">
-        <file>$(BEAMLINE)_otherpvs.opi</file>
-        <target>tab</target>
-        <description>Data Management</description>
-      </action>
-    </actions>
-    <text>Other PVs</text>
-    <x>335</x>
-    <y>124</y>
-    <width>280</width>
-    <background_color>
-      <color red="115" green="223" blue="255">
-      </color>
-    </background_color>
-  </widget>
   <widget type="combo" version="2.0.0">
-    <name>menu #33</name>
+    <name>menu #30</name>
     <pv_name>$(P)$(R)Testing</pv_name>
     <x>494</x>
     <y>164</y>
@@ -185,7 +162,7 @@
     <border_alarm_sensitive>false</border_alarm_sensitive>
   </widget>
   <widget type="label" version="2.0.0">
-    <name>text #36</name>
+    <name>text #33</name>
     <text>Testing</text>
     <x>338</x>
     <y>164</y>

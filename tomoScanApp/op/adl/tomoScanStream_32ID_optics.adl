@@ -1,14 +1,14 @@
 
 file {
-	name="/home/beams/7BMB/epics/synApps/support/tomoscan/tomoScanApp/op/adl/tomoScan_7BM_dm.adl"
+	name="/home/beams/7BMB/epics/synApps/support/tomoscan/tomoScanApp/op/adl/tomoScan_7BM_optics.adl"
 	version=030111
 }
 display {
 	object {
-		x=119
-		y=167
-		width=620
-		height=160
+		x=13
+		y=64
+		width=600
+		height=200
 	}
 	clr=14
 	bclr=4
@@ -91,7 +91,7 @@ rectangle {
 	object {
 		x=0
 		y=5
-		width=620
+		width=600
 		height=30
 	}
 	"basic attribute" {
@@ -102,105 +102,131 @@ text {
 	object {
 		x=0
 		y=3
-		width=620
+		width=600
 		height=30
 	}
 	"basic attribute" {
 		clr=54
 	}
-	textix="$(P)$(R)   Data Management"
+	textix="$(P)$(R)   Optics"
 	align="horiz. centered"
 }
 composite {
 	object {
-		x=58
-		y=51
-		width=545
-		height=95
+		x=30
+		y=46
+		width=525
+		height=145
 	}
 	"composite name"=""
 	children {
 		composite {
 			object {
-				x=58
-				y=51
-				width=160
-				height=95
+				x=30
+				y=46
+				width=290
+				height=145
 			}
 			"composite name"=""
 			children {
 				text {
 					object {
-						x=78
-						y=51
-						width=140
-						height=20
-					}
-					"basic attribute" {
-						clr=14
-					}
-					textix="Detector top dir"
-					align="horiz. right"
-				}
-				text {
-					object {
-						x=88
-						y=76
-						width=130
-						height=20
-					}
-					"basic attribute" {
-						clr=14
-					}
-					textix="User last name"
-					align="horiz. right"
-				}
-				text {
-					object {
-						x=58
-						y=101
+						x=160
+						y=171
 						width=160
 						height=20
 					}
 					"basic attribute" {
 						clr=14
 					}
-					textix="Experiment year month"
+					textix="Tube length (mm)"
 					align="horiz. right"
 				}
 				text {
 					object {
-						x=88
-						y=126
-						width=130
+						x=150
+						y=46
+						width=170
 						height=20
 					}
 					"basic attribute" {
 						clr=14
 					}
-					textix="Remote analysis dir"
+					textix="Scintillator type"
+					align="horiz. right"
+				}
+				text {
+					object {
+						x=60
+						y=71
+						width=260
+						height=20
+					}
+					"basic attribute" {
+						clr=14
+					}
+					textix="Scint. thickness (microns)"
+					align="horiz. right"
+				}
+				text {
+					object {
+						x=60
+						y=96
+						width=260
+						height=20
+					}
+					"basic attribute" {
+						clr=14
+					}
+					textix="Image pixel size (microns)"
+					align="horiz. right"
+				}
+				text {
+					object {
+						x=30
+						y=121
+						width=290
+						height=20
+					}
+					"basic attribute" {
+						clr=14
+					}
+					textix="Detector pixel size (microns)"
+					align="horiz. right"
+				}
+				text {
+					object {
+						x=160
+						y=146
+						width=160
+						height=20
+					}
+					"basic attribute" {
+						clr=14
+					}
+					textix="Camera objective"
 					align="horiz. right"
 				}
 			}
 		}
 		composite {
 			object {
-				x=223
-				y=51
-				width=380
-				height=95
+				x=325
+				y=46
+				width=230
+				height=145
 			}
 			"composite name"=""
 			children {
 				"text entry" {
 					object {
-						x=223
-						y=51
-						width=380
+						x=325
+						y=71
+						width=230
 						height=20
 					}
 					control {
-						chan="$(P)$(R)DetectorTopDir"
+						chan="$(P)$(R)ScintillatorThickness"
 						clr=14
 						bclr=51
 					}
@@ -210,13 +236,13 @@ composite {
 				}
 				"text entry" {
 					object {
-						x=223
-						y=76
-						width=380
+						x=325
+						y=46
+						width=230
 						height=20
 					}
 					control {
-						chan="$(P)$(R)UserLastName"
+						chan="$(P)$(R)ScintillatorType"
 						clr=14
 						bclr=51
 					}
@@ -226,13 +252,13 @@ composite {
 				}
 				"text entry" {
 					object {
-						x=223
-						y=101
-						width=380
+						x=325
+						y=121
+						width=230
 						height=20
 					}
 					control {
-						chan="$(P)$(R)ExperimentYearMonth"
+						chan="$(P)$(R)DetectorPixelSize"
 						clr=14
 						bclr=51
 					}
@@ -242,13 +268,45 @@ composite {
 				}
 				"text entry" {
 					object {
-						x=223
-						y=126
-						width=380
+						x=325
+						y=146
+						width=230
 						height=20
 					}
 					control {
-						chan="$(P)$(R)RemoteAnalysisDir"
+						chan="$(P)$(R)CameraObjective"
+						clr=14
+						bclr=51
+					}
+					format="string"
+					limits {
+					}
+				}
+				"text entry" {
+					object {
+						x=325
+						y=171
+						width=230
+						height=20
+					}
+					control {
+						chan="$(P)$(R)CameraTubeLength"
+						clr=14
+						bclr=51
+					}
+					format="string"
+					limits {
+					}
+				}
+				"text entry" {
+					object {
+						x=325
+						y=96
+						width=230
+						height=20
+					}
+					control {
+						chan="$(P)$(R)ImagePixelSize"
 						clr=14
 						bclr=51
 					}

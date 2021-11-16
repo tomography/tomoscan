@@ -76,9 +76,35 @@ class TomoScanSTEP(TomoScan):
 
         - Set the HDF plugin.
         """
+
         log.info('begin scan')
         # Call the base class method
         super().begin_scan()
+        
+        # Set angles for the interlaced scan
+        if(self.epics_pvs['InterlacedScan'].get(as_string=True)=='Yes'):
+            interlacedfilename = self.epics_pvs['InterlacedFileName'].get(as_string=True)
+            try:
+                self.theta = np.load(interlacedfilename)                
+                # update angles and number of frames to be captured and collected
+                self.total_images -= self.num_angles-len(self.theta)
+                self.num_angles = len(self.theta)                
+                # print some information about angles
+                stheta = np.sort(self.theta)
+                log.info('file with interlaced angles %s', interlacedfilename)
+                log.info('loaded %d interlaced angles',self.num_angles)
+                log.info('min angle %f',stheta[0])
+                log.info('max angle %f',stheta[-1])
+                log.info('min distance between neigbouring sorted angles %f',np.amin(np.abs(stheta[1::2]-stheta[::2])))
+                log.info('max distance between neigbouring sorted angles %f',np.amax(np.abs(stheta[1::2]-stheta[::2])))                
+            except:
+                log.error('%s file with interlaced angles is not valid', interlacedfilename)
+                self.theta = []
+                self.abort_scan()
+                return                
+        else:
+                self.theta = self.rotation_start + np.arange(self.num_angles) * self.rotation_step
+
         self.epics_pvs['FPNumCapture'].put(self.total_images, wait=True)
         self.epics_pvs['FPCapture'].put('Capture')
 
@@ -143,16 +169,22 @@ class TomoScanSTEP(TomoScan):
         self.epics_pvs['CamAcquire'].put('Acquire')
         # Need to wait a short time for AcquireBusy to change to 1
         time.sleep(0.5)
-        # log.info('start fly scan')
-        self.theta = self.rotation_start + np.arange(self.num_angles) * self.rotation_step
+        
         start_time = time.time()
+        stabilization_time = self.epics_pvs['StabilizationTime'].get()
+        log.info("stabilization time %f s", stabilization_time)
         for k in range(self.num_angles):
             if(self.scan_is_running):
                 log.info('angle %d: %f', k, self.theta[k])
-                self.epics_pvs['Rotation'].put(k*180/self.num_angles, wait=True)            
-                self.epics_pvs['CamTriggerSoftware'].put(1)
+                self.epics_pvs['Rotation'].put(self.theta[k], wait=True)            
+                time.sleep(stabilization_time)
+                self.epics_pvs['CamTriggerSoftware'].put(1)    
                 self.wait_pv(self.epics_pvs['CamNumImagesCounter'], k+1, 60)
                 self.update_status(start_time)
+        
+        # wait until the last frame is saved (not needed)
+        time.sleep(0.5)        
+        self.update_status(start_time)                
 
     def wait_pv(self, epics_pv, wait_val, timeout=-1):
         """Wait on a pv to be a value until max_timeout (default forever)
