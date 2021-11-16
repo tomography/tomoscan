@@ -57,6 +57,11 @@ class TomoScanStream2BM(TomoScanStreamPSO):
         # Set the detector in idle
         #self.set_trigger_mode('Internal', 1)
         
+        # set TomoScan xml files
+        self.epics_pvs['CamNDAttributesFile'].put('TomoScanStreamDetectorAttributes.xml')
+        self.epics_pvs['FPXMLFileName'].put('TomoScanStreamLayout.xml')
+        self.control_pvs['CamNDAttributesMacros'].put('DET=2bmbSP2:,TS=2bmb:TomoScan:')
+
         # Enable auto-increment on file writer
         self.epics_pvs['FPAutoIncrement'].put('Yes')
 
@@ -267,10 +272,6 @@ class TomoScanStream2BM(TomoScanStreamPSO):
         # Set data directory
         file_path = self.epics_pvs['DetectorTopDir'].get(as_string=True) + self.epics_pvs['ExperimentYearMonth'].get(as_string=True) + os.path.sep + self.epics_pvs['UserLastName'].get(as_string=True) + os.path.sep
         self.epics_pvs['FilePath'].put(file_path, wait=True)
-
-        # set TomoScan xml files
-        self.epics_pvs['CamNDAttributesFile'].put('TomoScanStreamDetectorAttributes.xml')
-        self.epics_pvs['FPXMLFileName'].put('TomoScanStreamLayout.xml')
 
         if self.return_rotation == 'Yes':
             # Reset rotation position by mod 360 , the actual return 

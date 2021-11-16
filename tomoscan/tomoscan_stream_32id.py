@@ -59,6 +59,11 @@ class TomoScanStream32ID(TomoScanStreamPSO):
     def __init__(self, pv_files, macros):
         super().__init__(pv_files, macros)
         
+        # set TomoScan xml files
+        self.epics_pvs['CamNDAttributesFile'].put('TomoScanStreamDetectorAttributes.xml')
+        self.epics_pvs['FPXMLFileName'].put('TomoScanStreamLayout.xml')
+        self.control_pvs['CamNDAttributesMacros'].put('DET=32idARV2:,TS=32id:TomoScanStream:')
+
         # Enable auto-increment on file writer
         self.epics_pvs['FPAutoIncrement'].put('Yes')
 
@@ -225,11 +230,6 @@ class TomoScanStream32ID(TomoScanStreamPSO):
         # Set data directory
         file_path = self.epics_pvs['DetectorTopDir'].get(as_string=True) + self.epics_pvs['ExperimentYearMonth'].get(as_string=True) + os.path.sep + self.epics_pvs['UserLastName'].get(as_string=True) + os.path.sep
         self.epics_pvs['FilePath'].put(file_path, wait=True)
-
-        # set TomoScan xml files
-        self.epics_pvs['CamNDAttributesFile'].put('TomoScanStreamDetectorAttributes.xml')
-        self.epics_pvs['FPXMLFileName'].put('TomoScanStreamLayout.xml')
-        self.control_pvs['CamNDAttributesMacros'].put('DET=32idARV2:,TS=32id:TomoScanStream:')
 
         if self.return_rotation == 'Yes':
             # Reset rotation position by mod 360 , the actual return 
