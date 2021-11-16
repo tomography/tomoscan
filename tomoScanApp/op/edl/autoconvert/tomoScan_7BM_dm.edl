@@ -3,10 +3,10 @@ beginScreenProperties
 major 4
 minor 0
 release 1
-x 119
-y 167
+x 109
+y 159
 w 620
-h 160
+h 180
 font "helvetica-medium-r-18.0"
 ctlFont "helvetica-bold-r-10.0"
 btnFont "helvetica-medium-r-18.0"
@@ -60,41 +60,15 @@ value {
 }
 endObjectProperties
 
-# (Group)
-object activeGroupClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 58
-y 51
-w 545
-h 95
-
-beginGroup
-
-# (Group)
-object activeGroupClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 58
-y 51
-w 160
-h 95
-
-beginGroup
-
 # (Static Text)
 object activeXTextClass
 beginObjectProperties
 major 4
 minor 1
 release 1
-x 78
-y 51
-w 140
+x 18
+y 45
+w 200
 h 20
 font "helvetica-medium-r-14.0"
 fontAlign "right"
@@ -102,7 +76,7 @@ fgColor rgb 0 0 0
 bgColor index 3
 useDisplayBg
 value {
-  "Detector top dir"
+  "Remote computer name"
 }
 endObjectProperties
 
@@ -112,9 +86,9 @@ beginObjectProperties
 major 4
 minor 1
 release 1
-x 88
-y 76
-w 130
+x 78
+y 95
+w 140
 h 20
 font "helvetica-medium-r-14.0"
 fontAlign "right"
@@ -132,9 +106,9 @@ beginObjectProperties
 major 4
 minor 1
 release 1
-x 58
-y 101
-w 160
+x 8
+y 120
+w 210
 h 20
 font "helvetica-medium-r-14.0"
 fontAlign "right"
@@ -146,52 +120,14 @@ value {
 }
 endObjectProperties
 
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 1
-x 79
-y 126
-w 139
-h 20
-font "helvetica-medium-r-14.0"
-fontAlign "right"
-fgColor rgb 0 0 0
-bgColor index 3
-useDisplayBg
-value {
-  "Remote analysis dir"
-}
-endObjectProperties
-
-endGroup
-
-endObjectProperties
-
-
-# (Group)
-object activeGroupClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 223
-y 51
-w 380
-h 95
-
-beginGroup
-
 # (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
 minor 7
 release 0
-x 223
-y 51
+x 225
+y 45
 w 380
 h 20
 controlPv "$(P)$(R)DetectorTopDir"
@@ -216,8 +152,8 @@ beginObjectProperties
 major 4
 minor 7
 release 0
-x 223
-y 76
+x 225
+y 95
 w 380
 h 20
 controlPv "$(P)$(R)UserLastName"
@@ -242,8 +178,8 @@ beginObjectProperties
 major 4
 minor 7
 release 0
-x 223
-y 101
+x 225
+y 120
 w 380
 h 20
 controlPv "$(P)$(R)ExperimentYearMonth"
@@ -268,8 +204,8 @@ beginObjectProperties
 major 4
 minor 7
 release 0
-x 223
-y 126
+x 225
+y 70
 w 380
 h 20
 controlPv "$(P)$(R)RemoteAnalysisDir"
@@ -288,64 +224,63 @@ newPos
 objType "controls"
 endObjectProperties
 
-endGroup
-
-endObjectProperties
-
-
-endGroup
-
-endObjectProperties
-
-# (Group)
-object activeGroupClass
+# (Static Text)
+object activeXTextClass
 beginObjectProperties
 major 4
-minor 0
-release 0
-x 58
-y 51
-w 545
-h 95
-
-beginGroup
-# (Group)
-object activeGroupClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 58
-y 51
+minor 1
+release 1
+x 60
+y 70
 w 160
-h 95
-
-beginGroup
-
-endGroup
-
+h 20
+font "helvetica-medium-r-14.0"
+fontAlign "right"
+fgColor rgb 0 0 0
+bgColor index 3
+useDisplayBg
+value {
+  "Remote file path"
+}
 endObjectProperties
 
-# (Group)
-object activeGroupClass
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 48
+y 145
+w 170
+h 20
+font "helvetica-medium-r-14.0"
+fontAlign "right"
+fgColor rgb 0 0 0
+bgColor index 3
+useDisplayBg
+value {
+  "Auto file transer"
+}
+endObjectProperties
+
+# (Menu Button)
+object activeMenuButtonClass
 beginObjectProperties
 major 4
 minor 0
 release 0
-x 223
-y 51
-w 380
-h 95
-
-beginGroup
-
-endGroup
-
+x 226
+y 145
+w 190
+h 20
+fgColor rgb 0 0 0
+bgColor rgb 47872 47872 47872
+inconsistentColor rgb 17920 17920 17920
+topShadowColor rgb 55808 55808 55808
+botShadowColor rgb 17920 17920 17920
+controlPv "$(P)$(R)CopyToAnalysisDir"
+indicatorPv "$(P)$(R)CopyToAnalysisDir"
+font "helvetica-medium-r-12.0"
 endObjectProperties
-
-
-endGroup
-
-endObjectProperties
-
 

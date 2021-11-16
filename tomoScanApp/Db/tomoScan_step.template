@@ -1,0 +1,22 @@
+# Database for EPICS PVS for tomography data collection software using the step scan
+
+
+#################
+# Step scan
+#################
+record(bo, "$(P)$(R)InterlacedScan")
+{
+   field(ZNAM, "No")
+   field(ONAM, "Yes")
+}
+
+record(waveform, "$(P)$(R)InterlacedFileName")
+{
+   field(FTVL, "UCHAR")
+   field(NELM, "256")
+}
+
+record(ao, "$(P)$(R)StabilizationTime")
+{
+   field(PREC,  "3")
+}

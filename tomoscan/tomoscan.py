@@ -95,25 +95,27 @@ class TomoScan():
         self.control_pvs['RotationDmov']       = PV(rotation_pv_name + '.DMOV')
         self.control_pvs['RotationDirection']  = PV(rotation_pv_name + '.DIR')
         self.control_pvs['RotationAccelTime']  = PV(rotation_pv_name + '.ACCL')
+        self.control_pvs['RotationRBV']        = PV(rotation_pv_name + '.RBV')
 
         #Define PVs from the camera IOC that we will need
         prefix = self.pv_prefixes['Camera']
         camera_prefix = prefix + 'cam1:'
-        self.control_pvs['CamManufacturer']      = PV(camera_prefix + 'Manufacturer_RBV')
-        self.control_pvs['CamModel']             = PV(camera_prefix + 'Model_RBV')
-        self.control_pvs['CamAcquire']           = PV(camera_prefix + 'Acquire')
-        self.control_pvs['CamAcquireBusy']       = PV(camera_prefix + 'AcquireBusy')
-        self.control_pvs['CamImageMode']         = PV(camera_prefix + 'ImageMode')
-        self.control_pvs['CamTriggerMode']       = PV(camera_prefix + 'TriggerMode')
-        self.control_pvs['CamNumImages']         = PV(camera_prefix + 'NumImages')
-        self.control_pvs['CamNumImagesCounter']  = PV(camera_prefix + 'NumImagesCounter_RBV')
-        self.control_pvs['CamAcquireTime']       = PV(camera_prefix + 'AcquireTime')
-        self.control_pvs['CamAcquireTimeRBV']    = PV(camera_prefix + 'AcquireTime_RBV')
-        self.control_pvs['CamBinX']              = PV(camera_prefix + 'BinX')
-        self.control_pvs['CamBinY']              = PV(camera_prefix + 'BinY')
-        self.control_pvs['CamWaitForPlugins']    = PV(camera_prefix + 'WaitForPlugins')
-        self.control_pvs['PortNameRBV']          = PV(camera_prefix + 'PortName_RBV')
-        self.control_pvs['CamNDAttributesFile']  = PV(camera_prefix + 'NDAttributesFile')
+        self.control_pvs['CamManufacturer']        = PV(camera_prefix + 'Manufacturer_RBV')
+        self.control_pvs['CamModel']               = PV(camera_prefix + 'Model_RBV')
+        self.control_pvs['CamAcquire']             = PV(camera_prefix + 'Acquire')
+        self.control_pvs['CamAcquireBusy']         = PV(camera_prefix + 'AcquireBusy')
+        self.control_pvs['CamImageMode']           = PV(camera_prefix + 'ImageMode')
+        self.control_pvs['CamTriggerMode']         = PV(camera_prefix + 'TriggerMode')
+        self.control_pvs['CamNumImages']           = PV(camera_prefix + 'NumImages')
+        self.control_pvs['CamNumImagesCounter']    = PV(camera_prefix + 'NumImagesCounter_RBV')
+        self.control_pvs['CamAcquireTime']         = PV(camera_prefix + 'AcquireTime')
+        self.control_pvs['CamAcquireTimeRBV']      = PV(camera_prefix + 'AcquireTime_RBV')
+        self.control_pvs['CamBinX']                = PV(camera_prefix + 'BinX')
+        self.control_pvs['CamBinY']                = PV(camera_prefix + 'BinY')
+        self.control_pvs['CamWaitForPlugins']      = PV(camera_prefix + 'WaitForPlugins')
+        self.control_pvs['PortNameRBV']            = PV(camera_prefix + 'PortName_RBV')
+        self.control_pvs['CamNDAttributesFile']    = PV(camera_prefix + 'NDAttributesFile')
+        self.control_pvs['CamNDAttributesMacros']  = PV(camera_prefix + 'NDAttributesMacros')
 
         # If this is a Point Grey camera then assume we are running ADSpinnaker
         # and create some PVs specific to that driver
@@ -129,6 +131,8 @@ class TomoScan():
             self.control_pvs['CamTriggerSoftware']  = PV(camera_prefix + 'TriggerSoftware')
             if model.find('Grasshopper3 GS3-U3-23S6M') != -1:
                 self.control_pvs['CamVideoMode']    = PV(camera_prefix + 'GC_VideoMode_RBV')
+            if model.find('Blackfly S BFS-PGE-161S7M') != -1:
+                self.control_pvs['GC_ExposureAuto'] = PV(camera_prefix + 'GC_ExposureAuto')       
 
         if (manufacturer.find('Adimec') != -1):
             self.control_pvs['CamExposureMode']            = PV(camera_prefix + 'ExposureMode')
@@ -400,11 +404,11 @@ class TomoScan():
         log.info('move_sample_in axis: %s', axis)
         if axis in ('X', 'Both'):
             position = self.epics_pvs['SampleInX'].value
-            self.epics_pvs['SampleX'].put(position, wait=True)
+            self.epics_pvs['SampleX'].put(position, wait=True, timeout=600)
 
         if axis in ('Y', 'Both'):
             position = self.epics_pvs['SampleInY'].value
-            self.epics_pvs['SampleY'].put(position, wait=True)
+            self.epics_pvs['SampleY'].put(position, wait=True, timeout=600)
 
         self.epics_pvs['MoveSampleIn'].put('Done')
 
@@ -421,11 +425,11 @@ class TomoScan():
         log.info('move_sample_out axis: %s', axis)
         if axis in ('X', 'Both'):
             position = self.epics_pvs['SampleOutX'].value
-            self.epics_pvs['SampleX'].put(position, wait=True)
+            self.epics_pvs['SampleX'].put(position, wait=True, timeout=600)
 
         if axis in ('Y', 'Both'):
             position = self.epics_pvs['SampleOutY'].value
-            self.epics_pvs['SampleY'].put(position, wait=True)
+            self.epics_pvs['SampleY'].put(position, wait=True, timeout=600)
 
         self.epics_pvs['MoveSampleOut'].put('Done')
 
@@ -788,7 +792,7 @@ class TomoScan():
         # Stop the rotation motor
         self.epics_pvs['RotationStop'].put(1)
         # Stop the file plugin
-        self.epics_pvs['FPCapture'].put('Done')
+        self.epics_pvs['FPCapture'].put(0) # see https://github.com/tomography/tomoscan/issues/127
 
     def compute_frame_time(self):
         """Computes the time to collect and readout an image from the camera.
@@ -820,6 +824,9 @@ class TomoScan():
         camera_model = self.epics_pvs['CamModel'].get(as_string=True)
         readout = None
         video_mode = None
+        # Adding 1% read out margin to the exposure time, and at least 1 ms seems to work for FLIR cameras
+        # This is empirical and if needed should adjusted for each camera
+        readout_margin = 1.01
         if camera_model == 'Grasshopper3 GS3-U3-23S6M':
             pixel_format = self.epics_pvs['CamPixelFormat'].get(as_string=True) 
             video_mode   = self.epics_pvs['CamVideoMode'].get(as_string=True)
@@ -847,7 +854,20 @@ class TomoScan():
             }
             readout = readout_times[pixel_format]/1000.
         if camera_model == 'Q-12A180-Fm/CXP-6':
-            readout = 0
+            pixel_format = self.epics_pvs['CamPixelFormat'].get(as_string=True) 
+            readout_times = {
+                'Mono8': 5.35
+            }        
+            readout = readout_times[pixel_format]/1000.
+        if camera_model == 'Blackfly S BFS-PGE-161S7M':
+            pixel_format = self.epics_pvs['CamPixelFormat'].get(as_string=True) 
+            readout_times = {
+                'Mono8': 83.4,
+                'Mono12Packed': 100.0,
+                'Mono16': 142.86
+            }
+            readout_margin = 1.035
+            readout = readout_times[pixel_format]/1000.
 
         if readout is None:
             log.error('Unsupported combination of camera model, pixel format and video mode: %s %s %s',
@@ -857,10 +877,7 @@ class TomoScan():
         # We need to use the actual exposure time that the camera is using, not the requested time
         exposure = self.epics_pvs['CamAcquireTimeRBV'].value
         # Add some extra time to exposure time for margin.
-        # Adding 1% to the exposure time, and at least 1 ms seems to work for FLIR cameras
-        # This is empirical and should be made camera dependent
-        frame_time = exposure * 1.010
-
+        frame_time = exposure * readout_margin        
         # If the time is less than the readout time then use the readout time plus 1 ms.
         if frame_time < readout:
             frame_time = readout + .001

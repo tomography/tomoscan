@@ -132,10 +132,26 @@ SECTIONS['horizontal'] = {
         'help': "Number of horizontal steps"},
     }
 
+SECTIONS['energy'] = {
+    'file-energies': {
+        'default': '',
+        'type': str,
+        'help': "Numpy file with an array of energies in keV"},
+    'file-params1': {
+        'default': '/home/beams/USERTXM/epics/synApps/support/txmoptics/iocBoot/iocTXMOptics/energy1.txt',
+        'type': str,
+        'help': "Txt file with PV values corresponding to optics positions for the first energy"},    
+    'file-params2': {
+        'default': '/home/beams/USERTXM/epics/synApps/support/txmoptics/iocBoot/iocTXMOptics/energy2.txt',
+        'type': str,
+        'help': "Txt file with PV values corresponding to optics positions for the second energy"},    
+    }
+
 SINGLE_SCAN_PARAMS = ('tomoscan', 'in-situ')
 VERTICAL_SCAN_PARAMS = SINGLE_SCAN_PARAMS + ('vertical',)
 HORIZONTAL_SCAN_PARAMS = SINGLE_SCAN_PARAMS + ('horizontal',)
 MOSAIC_SCAN_PARAMS = SINGLE_SCAN_PARAMS + ('vertical', 'horizontal')
+ENERGY_SCAN_PARAMS = SINGLE_SCAN_PARAMS + ('energy',)
 
 NICE_NAMES = ('General', 'Tomoscan', 'In-situ Scans', 'Vertical Scan', "Horizonatal Scan")
 
