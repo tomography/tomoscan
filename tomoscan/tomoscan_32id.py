@@ -46,7 +46,8 @@ class TomoScan32ID(TomoScanPSO):
         # set TomoScan xml files
         self.epics_pvs['CamNDAttributesFile'].put('TomoScanDetectorAttributes.xml')
         self.epics_pvs['FPXMLFileName'].put('TomoScanLayout.xml')
-        self.control_pvs['CamNDAttributesMacros'].put('DET=32idARV2:,TS=32id:TomoScan:')
+        macro = 'DET=' + self.pv_prefixes['Camera'] + ',' + 'TS=' + self.epics_pvs['Testing'].__dict__['pvname'].replace('Testing', '', 1)
+        self.control_pvs['CamNDAttributesMacros'].put(macro)
 
         # Enable auto-increment on file writer
         self.epics_pvs['FPAutoIncrement'].put('Yes')
