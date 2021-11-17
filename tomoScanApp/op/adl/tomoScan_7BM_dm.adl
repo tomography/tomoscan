@@ -1,6 +1,6 @@
 
 file {
-	name="/local/code/tomography/tomoscan/tomoScanApp/op/adl/tomoScan_7BM_dm.adl"
+	name="/local/user2bmb/epics_new/synApps/support/tomoscan/tomoScanApp/op/adl/tomoScan_2BM_dm.adl"
 	version=030111
 }
 display {
@@ -8,7 +8,7 @@ display {
 		x=109
 		y=159
 		width=620
-		height=180
+		height=185
 	}
 	clr=14
 	bclr=4
@@ -113,22 +113,22 @@ text {
 }
 text {
 	object {
-		x=18
-		y=45
-		width=200
+		x=78
+		y=51
+		width=140
 		height=20
 	}
 	"basic attribute" {
 		clr=14
 	}
-	textix="Remote computer name"
+	textix="Detector top dir"
 	align="horiz. right"
 }
 text {
 	object {
-		x=78
-		y=95
-		width=140
+		x=88
+		y=76
+		width=130
 		height=20
 	}
 	"basic attribute" {
@@ -139,9 +139,9 @@ text {
 }
 text {
 	object {
-		x=8
-		y=120
-		width=210
+		x=58
+		y=101
+		width=160
 		height=20
 	}
 	"basic attribute" {
@@ -150,10 +150,23 @@ text {
 	textix="Experiment year month"
 	align="horiz. right"
 }
+text {
+	object {
+		x=88
+		y=126
+		width=130
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Remote analysis dir"
+	align="horiz. right"
+}
 "text entry" {
 	object {
-		x=225
-		y=45
+		x=223
+		y=51
 		width=380
 		height=20
 	}
@@ -168,8 +181,8 @@ text {
 }
 "text entry" {
 	object {
-		x=225
-		y=95
+		x=223
+		y=76
 		width=380
 		height=20
 	}
@@ -184,8 +197,8 @@ text {
 }
 "text entry" {
 	object {
-		x=225
-		y=120
+		x=223
+		y=101
 		width=380
 		height=20
 	}
@@ -200,8 +213,8 @@ text {
 }
 "text entry" {
 	object {
-		x=225
-		y=70
+		x=223
+		y=126
 		width=380
 		height=20
 	}
@@ -216,40 +229,27 @@ text {
 }
 text {
 	object {
-		x=60
-		y=70
-		width=160
+		x=88
+		y=151
+		width=130
 		height=20
 	}
 	"basic attribute" {
 		clr=14
 	}
-	textix="Remote file path"
-	align="horiz. right"
-}
-text {
-	object {
-		x=48
-		y=145
-		width=170
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="Auto file transer"
+	textix="Copy to analysis dir"
 	align="horiz. right"
 }
 menu {
 	object {
-		x=226
-		y=145
-		width=190
+		x=223
+		y=151
+		width=120
 		height=20
 	}
 	control {
 		chan="$(P)$(R)CopyToAnalysisDir"
 		clr=14
-		bclr=4
+		bclr=51
 	}
 }

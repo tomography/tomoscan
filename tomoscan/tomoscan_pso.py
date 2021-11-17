@@ -183,7 +183,7 @@ class TomoScanPSO(TomoScan):
         self.epics_pvs['Rotation'].put(self.epics_pvs['PSOEndTaxi'].get())
         time_per_angle = self.compute_frame_time()
         collection_time = self.num_angles * time_per_angle
-        self.wait_camera_done(collection_time + 60.)
+        self.wait_camera_done(collection_time + 180.)
 
     def program_PSO(self):
         '''Performs programming of PSO output on the Aerotech driver.

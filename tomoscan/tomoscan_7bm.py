@@ -177,6 +177,9 @@ class TomoScan7BM(TomoScanPSO):
         # Add theta in the hdf file
         self.add_theta()
 
+        # Copy file to the analysis computer, if desired
+        self.auto_copy_data()
+
         # Call the base class method
         super().end_scan()
 
