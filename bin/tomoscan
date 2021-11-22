@@ -219,35 +219,50 @@ def energy_scan(args, ts):
             log.error("Inconsitent files with PVs")
             exit(1)
 
-    if(np.abs(vals2[0]-vals1[0])<0.02):            
+    if(np.abs(vals2[0]-vals1[0])<0.001):            
         log.error("Energies in params files should be different")
         exit(1)
-    
+
     # energy scan
+    print(energies)
+    energies=energies/1000.0
     for energy in energies:               
-        log.info("energy %.2f keV", energy)                    
+        log.info("energy %.3f eV", energy)                    
         # interpolate values
         vals = []                     
         for k in range(len(pvs1)):
             vals.append(vals1[k]+(energy-vals1[0])*(vals2[k]-vals1[k])/(vals2[0]-vals1[0]))               
-        for j in range(3):
-            print(f"DEBUG:{pvs1[j]},{vals[j]},{vals1[j]},{vals2[j]}")
         if args.testing:
             log.warning('testing mode')
         else:           
             # set new pvs  
             for k in range(1,len(pvs1)):# skip energy line
-                PV(pvs1[k]).put(vals[k],wait=True)                                                        
+                if(pvs1[k]=="32idcTXM:mxv:c1:m6.VAL"):
+                    log.info('old Camera Z %3.3f', PV(pvs1[k]).get())
+                    PV(pvs1[k]).put(vals[k],wait=True)                                                        
+                    log.info('new Camera Z %3.3f', PV(pvs1[k]).get())
+                if(pvs1[k]=="32idcTXM:mcs:c2:m3.VAL"):
+                    log.info('old FZP Z %3.3f', PV(pvs1[k]).get())
+                    PV(pvs1[k]).put(vals[k],wait=True)
+                    log.info('new FZP Z %3.3f', PV(pvs1[k]).get())
+                if(pvs1[k]=="32idcTXM:mcs:c2:m1.VAL"):
+                    log.info('old FZP X %3.3f', PV(pvs1[k]).get())
+                    PV(pvs1[k]).put(vals[k],wait=True)
+                    log.info('new FZP X %3.3f', PV(pvs1[k]).get())
+                                    
             # set new energy
-            ts['Energy'].put(energy,wait=True)
+            ts['Energy'].put(energy)
+            time.sleep(1)
             # change energy via tomoscan
-            ts['StartEnergyChange'].put(1,wait=True,timeout=3600)
+            ts['StartEnergyChange'].put(1)#,timeout=3600)
+            log.warning('wait 10s to finalize energy changes')
+            time.sleep(10)
+            log.warning('start scan')
             # start scan
             ts['StartScan'].put(1, wait=True, timeout=360000) # -1 - no timeout means timeout=0                
+            
     dtime = (time.time() - tic_01)/60.
     log.info('energy scan time: %3.3f minutes', dtime)
-
-
 
 def main():
     # set logs directory
