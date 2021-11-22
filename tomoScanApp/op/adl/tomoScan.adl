@@ -1,7 +1,7 @@
 
 file {
-	name="/home/epics/support/tomoscan/tomoScanApp/op/adl/tomoScan.adl"
-	version=030109
+	name="/home/beams19/USERTXM/epics/synApps/support/tomoscan/tomoScanApp/op/adl/tomoScan.adl"
+	version=030111
 }
 display {
 	object {
@@ -324,60 +324,6 @@ rectangle {
 		fill="outline"
 	}
 }
-text {
-	object {
-		x=35
-		y=260
-		width=130
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="X in position"
-}
-"text entry" {
-	object {
-		x=170
-		y=260
-		width=100
-		height=20
-	}
-	control {
-		chan="$(P)$(R)SampleInX"
-		clr=14
-		bclr=51
-	}
-	limits {
-	}
-}
-"text entry" {
-	object {
-		x=170
-		y=285
-		width=100
-		height=20
-	}
-	control {
-		chan="$(P)$(R)SampleOutX"
-		clr=14
-		bclr=51
-	}
-	limits {
-	}
-}
-text {
-	object {
-		x=25
-		y=285
-		width=140
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="X out position"
-}
 menu {
 	object {
 		x=170
@@ -402,60 +348,6 @@ text {
 		clr=14
 	}
 	textix="Flat field axis"
-}
-text {
-	object {
-		x=300
-		y=285
-		width=140
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="Y out position"
-}
-"text entry" {
-	object {
-		x=445
-		y=285
-		width=100
-		height=20
-	}
-	control {
-		chan="$(P)$(R)SampleOutY"
-		clr=14
-		bclr=51
-	}
-	limits {
-	}
-}
-"text entry" {
-	object {
-		x=445
-		y=260
-		width=100
-		height=20
-	}
-	control {
-		chan="$(P)$(R)SampleInY"
-		clr=14
-		bclr=51
-	}
-	limits {
-	}
-}
-text {
-	object {
-		x=310
-		y=260
-		width=130
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="Y in position"
 }
 "text entry" {
 	object {
@@ -1268,6 +1160,141 @@ menu {
 	}
 	control {
 		chan="$(P)$(R)FlatExposureTime"
+		clr=14
+		bclr=51
+	}
+	limits {
+	}
+}
+text {
+	object {
+		x=25
+		y=260
+		width=130
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="X in "
+}
+"text entry" {
+	object {
+		x=73
+		y=260
+		width=100
+		height=20
+	}
+	control {
+		chan="$(P)$(R)SampleInX"
+		clr=14
+		bclr=51
+	}
+	limits {
+	}
+}
+"text entry" {
+	object {
+		x=73
+		y=285
+		width=100
+		height=20
+	}
+	control {
+		chan="$(P)$(R)SampleOutX"
+		clr=14
+		bclr=51
+	}
+	limits {
+	}
+}
+text {
+	object {
+		x=15
+		y=285
+		width=140
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="X out"
+}
+text {
+	object {
+		x=183
+		y=285
+		width=140
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Y out "
+}
+"text entry" {
+	object {
+		x=245
+		y=285
+		width=100
+		height=20
+	}
+	control {
+		chan="$(P)$(R)SampleOutY"
+		clr=14
+		bclr=51
+	}
+	limits {
+	}
+}
+"text entry" {
+	object {
+		x=245
+		y=260
+		width=100
+		height=20
+	}
+	control {
+		chan="$(P)$(R)SampleInY"
+		clr=14
+		bclr=51
+	}
+	limits {
+	}
+}
+text {
+	object {
+		x=193
+		y=260
+		width=130
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Y in"
+}
+text {
+	object {
+		x=356
+		y=284
+		width=140
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Angle out "
+}
+"text entry" {
+	object {
+		x=452
+		y=284
+		width=100
+		height=20
+	}
+	control {
+		chan="$(P)$(R)SampleOutAngle"
 		clr=14
 		bclr=51
 	}
