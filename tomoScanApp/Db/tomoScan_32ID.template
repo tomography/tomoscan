@@ -285,7 +285,7 @@ record(busy,"$(P)$(R)StartEnergyChange")
 {
    field(ZNAM,"Done")
    field(ZSV, "NO_ALARM")
-   field(ONAM,"Acquire")
+   field(ONAM,"Start")
    field(OSV, "MINOR")
    field(VAL, "0")
 }
