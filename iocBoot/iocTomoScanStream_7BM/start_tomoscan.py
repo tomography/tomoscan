@@ -7,4 +7,4 @@ ts = TomoScanStream7BM(["../../db/tomoScan_settings.req",
                         "../../db/tomoScan_PSO_settings.req", 
                         "../../db/tomoScanStream_settings.req",
                         "../../db/tomoScan_7BM_settings.req"], 
-                        {"$(P)":"7bmtomo:", "$(R)":"TomoScanStream:"})
+                        {"$(P)":"7bmtomo:", "$(R)":"TSS:"})
