@@ -169,7 +169,9 @@ class TomoScanSTEP(TomoScan):
         self.epics_pvs['CamAcquire'].put('Acquire')
         # Need to wait a short time for AcquireBusy to change to 1
         time.sleep(0.5)
-        
+        self.epics_pvs['HDF5Location'].put(self.epics_pvs['HDF5ProjectionLocation'].value)
+        self.epics_pvs['FrameType'].put('Projection')
+
         start_time = time.time()
         stabilization_time = self.epics_pvs['StabilizationTime'].get()
         log.info("stabilization time %f s", stabilization_time)
