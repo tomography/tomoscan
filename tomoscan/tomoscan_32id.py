@@ -57,9 +57,21 @@ class TomoScan32ID(TomoScanPSO):
 
         # Disable over writing warning
         self.epics_pvs['OverwriteWarning'].put('Yes')
-
+        self.epics_pvs['StartEnergyChange'].put(0,wait=True)
+        # energy scan
+        self.epics_pvs['StartEnergyChange'].add_callback(self.pv_callback_step)
+        
         log.setup_custom_logger("./tomoscan.log")
-   
+    
+    def pv_callback_step(self, pvname=None, value=None, char_value=None, **kw):
+        """Callback function that is called by pyEpics when certain EPICS PVs are changed
+        
+        """
+
+        log.debug('pv_callback_step pvName=%s, value=%s, char_value=%s', pvname, value, char_value)       
+        if (pvname.find('StartEnergyChange') != -1) and (value == 1):
+            self.energy_change()    
+            
     def open_frontend_shutter(self):
         """Opens the shutters to collect flat fields or projections.
 
@@ -225,7 +237,22 @@ class TomoScan32ID(TomoScanPSO):
          
         # Opens the front-end shutter
         self.open_frontend_shutter()
-        
+    
+    def energy_change(self):        
+        energy = float(self.epics_pvs["Energy"].get())
+        log.info("Tomoscan: change energy to %.3f",energy)
+        self.epics_pvs['DCMmvt'].put(1)
+        time.sleep(1)
+        self.epics_pvs['DCMputEnergy'].put(energy)
+        #self.epics_pvs['GAPputEnergy'].put(energy)
+        #self.wait_pv(self.epics_pvs['EnergyWait'], 0)
+        self.epics_pvs['GAPputEnergy'].put(energy + 0.17)
+        #self.wait_pv(self.epics_pvs['EnergyWait'], 0)
+        time.sleep(2)
+        self.epics_pvs['DCMmvt'].put(0)
+        time.sleep(1)
+        self.epics_pvs['StartEnergyChange'].put(0)
+            
     def end_scan(self):
         """Performs the operations needed at the very end of a scan.
 
