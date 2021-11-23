@@ -30,7 +30,6 @@ class TomoScanStreamPSO(TomoScan):
 
     def __init__(self, pv_files, macros):
         super().__init__(pv_files, macros)
-
         # On the A3200 we can read the number of encoder counts per rotation from the controller
         # Unfortunately the Ensemble does not support this
         pso_model = self.epics_pvs['PSOControllerModel'].get(as_string=True)
