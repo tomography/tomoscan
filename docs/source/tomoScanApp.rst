@@ -188,6 +188,9 @@ Flat field control
   * - $(P)$(R)SampleOutY
     - ao
     - Position of the Y stage when the sample is out for collecting flat fields.
+  * - $(P)$(R)SampleOutAngle
+    - ao
+    - Position of the raotary stage when the sample is moved out for collecting flat fields.
 
 Frame type
 ~~~~~~~~~~
