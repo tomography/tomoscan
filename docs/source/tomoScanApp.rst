@@ -191,6 +191,9 @@ Flat field control
   * - $(P)$(R)SampleOutAngle
     - ao
     - Position of the raotary stage when the sample is moved out for collecting flat fields.
+  * - $(P)$(R)SampleOutAngleEnable
+    - bo
+    - Flag controlling whether the flat fields are collected at the start/end position or at the value set by $(P)$(R)SampleOutAngle.
 
 Frame type
 ~~~~~~~~~~
