@@ -27,6 +27,7 @@ Classes
     TomoScanStream2BM
         Derived class for tomography scanning in streaming mode with EPICS at APS beamline 2-BM
 """
+import traceback
 import os
 import time
 from pathlib import Path
@@ -206,7 +207,7 @@ class TomoScanStream7BM(TomoScanStreamPSO):
         self.wait_pv(self.epics_pvs['FPCaptureRBV'], 0)
 
         # Add theta in the hdf file
-        self.add_theta()
+        #self.add_theta()
 
         # Call the base class method
         super().end_scan()
@@ -267,3 +268,45 @@ class TomoScanStream7BM(TomoScanStreamPSO):
             log.warning('Automatic data trasfer to data analysis computer is disabled.')
            
       
+    def move_sample_in(self):
+        """Moves the sample to the in beam position for collecting projections.
+
+        The in-beam position is defined by the ``SampleInX`` and ``SampleInY`` PVs.
+
+        Which axis to move is defined by the ``FlatFieldAxis`` PV,
+        which can be ``X``, ``Y``, or ``Both``.
+        """
+
+        axis = self.epics_pvs['FlatFieldAxis'].get(as_string=True)
+        log.info('move_sample_in axis: %s', axis)
+        if axis in ('X', 'Both'):
+            position = self.epics_pvs['SampleInX'].value
+            self.epics_pvs['SampleX'].put(position, wait=True, timeout=600)
+
+        if axis in ('Y', 'Both'):
+            position = self.epics_pvs['SampleInY'].value
+            self.epics_pvs['SampleY'].put(position, wait=True, timeout=600)
+
+        self.epics_pvs['MoveSampleIn'].put('Done')
+
+    def move_sample_out(self):
+        """Moves the sample to the out of beam position for collecting flat fields.
+
+        The out of beam position is defined by the ``SampleOutX`` and ``SampleOutY`` PVs.
+
+        Which axis to move is defined by the ``FlatFieldAxis`` PV,
+        which can be ``X``, ``Y``, or ``Both``.
+        """
+
+        axis = self.epics_pvs['FlatFieldAxis'].get(as_string=True)
+        log.info('move_sample_out axis: %s', axis)
+        if axis in ('X', 'Both'):
+            position = self.epics_pvs['SampleOutX'].value
+            self.epics_pvs['SampleX'].put(position, wait=True, timeout=600)
+
+        if axis in ('Y', 'Both'):
+            position = self.epics_pvs['SampleOutY'].value
+            self.epics_pvs['SampleY'].put(position, wait=True, timeout=600)
+
+        self.epics_pvs['MoveSampleOut'].put('Done')
+
