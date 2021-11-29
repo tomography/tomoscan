@@ -109,7 +109,6 @@ class TomoScan():
         self.control_pvs['CamTriggerMode']         = PV(camera_prefix + 'TriggerMode')
         self.control_pvs['CamNumImages']           = PV(camera_prefix + 'NumImages')
         self.control_pvs['CamNumImagesCounter']    = PV(camera_prefix + 'NumImagesCounter_RBV')
-        #self.control_pvs['CamArrayCounter']        = PV(camera_prefix + 'ArrayCounter') # TMP for Aravis at 32id
         self.control_pvs['CamAcquireTime']         = PV(camera_prefix + 'AcquireTime')
         self.control_pvs['CamAcquireTimeRBV']      = PV(camera_prefix + 'AcquireTime_RBV')
         self.control_pvs['CamBinX']                = PV(camera_prefix + 'BinX')
@@ -412,14 +411,15 @@ class TomoScan():
             position = self.epics_pvs['SampleInY'].value
             self.epics_pvs['SampleY'].put(position, wait=True, timeout=600)
 
-        cur_speed = self.epics_pvs['RotationSpeed'].get()
-        self.epics_pvs['RotationSpeed'].put(self.max_rotation_speed)                                        
-        if self.rotation_save is None:
-            self.epics_pvs['Rotation'].put(0, wait=True)          
-        else:
-            self.epics_pvs['Rotation'].put(self.rotation_save, wait=True)          
-        
-        self.epics_pvs['RotationSpeed'].put(cur_speed)
+        if self.epics_pvs['SampleOutAngleEnable'].get():
+            cur_speed = self.epics_pvs['RotationSpeed'].get()
+            self.epics_pvs['RotationSpeed'].put(self.max_rotation_speed)                                        
+            if self.rotation_save is None:
+                self.epics_pvs['Rotation'].put(0, wait=True)          
+            else:
+                self.epics_pvs['Rotation'].put(self.rotation_save, wait=True)          
+            
+            self.epics_pvs['RotationSpeed'].put(cur_speed)
                                 
         self.epics_pvs['MoveSampleIn'].put('Done')
 
@@ -432,17 +432,16 @@ class TomoScan():
         which can be ``X``, ``Y``, or ``Both``.
         """
 
-        axis = self.epics_pvs['FlatFieldAxis'].get(as_string=True)
-        
-        
-        cur_speed = self.epics_pvs['RotationSpeed'].get()
-        self.epics_pvs['RotationSpeed'].put(self.max_rotation_speed)                                
-        angle = self.epics_pvs['SampleOutAngle'].get()
-        log.info('move_sample_out angle: %s', angle)
-        self.rotation_save = self.epics_pvs['Rotation'].get()
-        self.epics_pvs['Rotation'].put(angle, wait=True)  
-        self.epics_pvs['RotationSpeed'].put(cur_speed)                        
-        
+        if self.epics_pvs['SampleOutAngleEnable'].get():
+            cur_speed = self.epics_pvs['RotationSpeed'].get()
+            self.epics_pvs['RotationSpeed'].put(self.max_rotation_speed)
+            angle = self.epics_pvs['SampleOutAngle'].get()
+            log.info('move_sample_out angle: %s', angle)
+            self.rotation_save = self.epics_pvs['Rotation'].get()
+            self.epics_pvs['Rotation'].put(angle, wait=True)  
+            self.epics_pvs['RotationSpeed'].put(cur_speed)                        
+
+        axis = self.epics_pvs['FlatFieldAxis'].get(as_string=True)        
         log.info('move_sample_out axis: %s', axis)
         if axis in ('X', 'Both'):
             position = self.epics_pvs['SampleOutX'].value

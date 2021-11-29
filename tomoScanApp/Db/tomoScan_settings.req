@@ -59,6 +59,7 @@ $(P)$(R)SampleOutX
 $(P)$(R)SampleInY
 $(P)$(R)SampleOutY
 $(P)$(R)SampleOutAngle
+$(P)$(R)SampleOutAngleEnable
 
 ############
 # Frame type
