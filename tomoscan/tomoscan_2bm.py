@@ -285,7 +285,8 @@ class TomoScan2BM(TomoScanPSO):
              # allow stage to stop
             log.info('wait until the stage is stopped')
             time.sleep(self.epics_pvs['RotationAccelTime'].get()*1.2)                        
-            current_angle = self.epics_pvs['RotationRBV'].get() %360
+            ang = self.epics_pvs['RotationRBV'].get()
+            current_angle = np.sign(ang)*(np.abs(ang)%360)
             self.epics_pvs['RotationSet'].put('Set', wait=True)
             self.epics_pvs['Rotation'].put(current_angle, wait=True)
             self.epics_pvs['RotationSet'].put('Use', wait=True)
