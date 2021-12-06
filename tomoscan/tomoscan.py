@@ -222,7 +222,9 @@ class TomoScan():
         for epics_pv in ('MoveSampleIn', 'MoveSampleOut', 'StartScan', 'AbortScan', 'ExposureTime',
                          'FilePath', 'FPFilePathExists'):
             self.epics_pvs[epics_pv].add_callback(self.pv_callback)
-
+        for epics_pv in ('MoveSampleIn', 'MoveSampleOut', 'StartScan', 'AbortScan'):
+            self.epics_pvs[epics_pv].put(0)
+            
         # Synchronize the FilePathExists PV
         self.copy_file_path_exists()
 
@@ -411,15 +413,13 @@ class TomoScan():
             position = self.epics_pvs['SampleInY'].value
             self.epics_pvs['SampleY'].put(position, wait=True, timeout=600)
 
-        if self.epics_pvs['SampleOutAngleEnable'].get():
-            cur_speed = self.epics_pvs['RotationSpeed'].get()
-            self.epics_pvs['RotationSpeed'].put(self.max_rotation_speed)                                        
-            if self.rotation_save is None:
-                self.epics_pvs['Rotation'].put(0, wait=True)          
-            else:
-                self.epics_pvs['Rotation'].put(self.rotation_save, wait=True)          
-            
-            self.epics_pvs['RotationSpeed'].put(cur_speed)
+        if self.epics_pvs['SampleOutAngleEnable'].get() and self.rotation_save != None:
+            if self.max_rotation_speed != None:# max_rotation_speed is not initialized when the scan has not been started            
+                cur_speed = self.epics_pvs['RotationSpeed'].get()
+                self.epics_pvs['RotationSpeed'].put(self.max_rotation_speed)                                                    
+            self.epics_pvs['Rotation'].put(self.rotation_save, wait=True)          
+            if self.max_rotation_speed != None:
+                self.epics_pvs['RotationSpeed'].put(cur_speed)
                                 
         self.epics_pvs['MoveSampleIn'].put('Done')
 
@@ -433,13 +433,15 @@ class TomoScan():
         """
 
         if self.epics_pvs['SampleOutAngleEnable'].get():
-            cur_speed = self.epics_pvs['RotationSpeed'].get()
-            self.epics_pvs['RotationSpeed'].put(self.max_rotation_speed)
+            if self.max_rotation_speed != None:# max_rotation_speed is not initialized when the scan has not been started
+                cur_speed = self.epics_pvs['RotationSpeed'].get()
+                self.epics_pvs['RotationSpeed'].put(self.max_rotation_speed)
             angle = self.epics_pvs['SampleOutAngle'].get()
             log.info('move_sample_out angle: %s', angle)
             self.rotation_save = self.epics_pvs['Rotation'].get()
             self.epics_pvs['Rotation'].put(angle, wait=True)  
-            self.epics_pvs['RotationSpeed'].put(cur_speed)                        
+            if self.max_rotation_speed != None:
+                self.epics_pvs['RotationSpeed'].put(cur_speed)                        
 
         axis = self.epics_pvs['FlatFieldAxis'].get(as_string=True)        
         log.info('move_sample_out axis: %s', axis)
