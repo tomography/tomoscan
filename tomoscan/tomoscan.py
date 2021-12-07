@@ -574,9 +574,6 @@ class TomoScan():
         self.epics_pvs['ScanStatus'].put('Beginning scan')
         # Stop the camera since it could be in free-run mode
         self.epics_pvs['CamAcquire'].put(0, wait=True)
-        # Zero array counter VN: tmp for aravis at 32id
-        #log.info('set counter 0')
-        #self.epics_pvs['CamArrayCounter'].put(0, wait=True)
         # Set the exposure time
         self.set_exposure_time()
         # Set the file path, file name and file number
