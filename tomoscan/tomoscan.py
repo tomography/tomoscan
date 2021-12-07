@@ -705,7 +705,7 @@ class TomoScan():
             # Collect the post-scan dark fields if required
             if (self.num_dark_fields > 0) and (self.dark_field_mode in ('End', 'Both')):
                 self.collect_dark_fields()
-                
+ 
         except ScanAbortError:
             log.error('Scan aborted')
         except CameraTimeoutError:
