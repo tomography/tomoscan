@@ -33,6 +33,12 @@ class TomoScan7BM(TomoScanPSO):
     def __init__(self, pv_files, macros):
         super().__init__(pv_files, macros)
         
+        # set TomoScan xml files
+        self.epics_pvs['CamNDAttributesFile'].put('TomoScanDetectorAttributes.xml')
+        self.epics_pvs['FPXMLFileName'].put('TomoScanLayout.xml')
+        macro = 'DET=' + self.pv_prefixes['Camera'] + ',' + 'TS=' + self.epics_pvs['Testing'].__dict__['pvname'].replace('Testing', '', 1)
+        self.control_pvs['CamNDAttributesMacros'].put(macro)
+
         # Set the detector running in FreeRun mode
         self.set_trigger_mode('FreeRun', 1)
         
@@ -176,6 +182,9 @@ class TomoScan7BM(TomoScanPSO):
 
         # Add theta in the hdf file
         self.add_theta()
+
+        # Copy file to the analysis computer, if desired
+        self.auto_copy_data()
 
         # Call the base class method
         super().end_scan()

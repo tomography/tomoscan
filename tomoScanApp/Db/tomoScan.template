@@ -176,6 +176,17 @@ record(ao, "$(P)$(R)SampleOutY")
    field(PREC,  "3")
 }
 
+record(ao, "$(P)$(R)SampleOutAngle")
+{
+   field(PREC,  "3")
+}
+
+record(bo, "$(P)$(R)SampleOutAngleEnable")
+{
+   field(ZNAM, "No")
+   field(ONAM, "Yes")
+}
+
 ############
 # Frame type
 ############

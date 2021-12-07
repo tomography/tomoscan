@@ -45,6 +45,12 @@ class TomoScan32IDSTEP(TomoScanSTEP):
         # self.epics_pvs['CamAcquire'].put('Acquire') ###
         # self.wait_pv(self.epics_pvs['CamAcquire'], 1) ###
 
+        # set TomoScan xml files        
+        self.epics_pvs['CamNDAttributesFile'].put('TomoScanDetectorAttributes.xml')
+        self.epics_pvs['FPXMLFileName'].put('TomoScanLayout.xml')
+        macro = 'DET=' + self.pv_prefixes['Camera'] + ',' + 'TS=' + self.epics_pvs['Testing'].__dict__['pvname'].replace('Testing', '', 1)
+        self.control_pvs['CamNDAttributesMacros'].put(macro)
+
         # Enable auto-increment on file writer
         self.epics_pvs['FPAutoIncrement'].put('Yes')
 
@@ -237,12 +243,6 @@ class TomoScan32IDSTEP(TomoScanSTEP):
         file_path = self.epics_pvs['DetectorTopDir'].get(as_string=True) + self.epics_pvs['ExperimentYearMonth'].get(as_string=True) + os.path.sep + self.epics_pvs['UserLastName'].get(as_string=True) + os.path.sep
         self.epics_pvs['FilePath'].put(file_path, wait=True)
 
-        # set TomoScan xml files        
-        # VN: changed to TomoScanStepDetectorAttributes 
-        self.epics_pvs['CamNDAttributesFile'].put('TomoScanDetectorAttributes.xml')
-        self.epics_pvs['FPXMLFileName'].put('TomoScanLayout.xml')
-        self.control_pvs['CamNDAttributesMacros'].put('DET=32idARV2:,TS=32id:TomoScanStep:')
-
         # Call the base class method
         super().begin_scan()
         # Opens the front-end shutter
@@ -275,7 +275,8 @@ class TomoScan32IDSTEP(TomoScanSTEP):
             # to start position is handled by super().end_scan()
             log.info('wait until the stage is stopped')
             time.sleep(self.epics_pvs['RotationAccelTime'].get()*1.2)                        
-            current_angle = self.epics_pvs['RotationRBV'].get() %360
+            ang = self.epics_pvs['RotationRBV'].get()
+            current_angle = np.sign(ang)*(np.abs(ang)%360)
             self.epics_pvs['RotationSet'].put('Set', wait=True)
             self.epics_pvs['Rotation'].put(current_angle, wait=True)
             self.epics_pvs['RotationSet'].put('Use', wait=True)

@@ -30,7 +30,7 @@ Classes
 import os
 import time
 import h5py 
-import numpy
+import numpy as np
 
 from tomoscan import TomoScanStreamPSO
 from tomoscan import log
@@ -57,6 +57,12 @@ class TomoScanStream2BM(TomoScanStreamPSO):
         # Set the detector in idle
         #self.set_trigger_mode('Internal', 1)
         
+        # set TomoScan xml files
+        self.epics_pvs['CamNDAttributesFile'].put('TomoScanDetectorAttributes.xml')
+        self.epics_pvs['FPXMLFileName'].put('TomoScanLayout.xml')
+        macro = 'DET=' + self.pv_prefixes['Camera'] + ',' + 'TS=' + self.epics_pvs['Testing'].__dict__['pvname'].replace('Testing', '', 1)
+        self.control_pvs['CamNDAttributesMacros'].put(macro)
+
         # Enable auto-increment on file writer
         self.epics_pvs['FPAutoIncrement'].put('Yes')
 
@@ -268,15 +274,11 @@ class TomoScanStream2BM(TomoScanStreamPSO):
         file_path = self.epics_pvs['DetectorTopDir'].get(as_string=True) + self.epics_pvs['ExperimentYearMonth'].get(as_string=True) + os.path.sep + self.epics_pvs['UserLastName'].get(as_string=True) + os.path.sep
         self.epics_pvs['FilePath'].put(file_path, wait=True)
 
-        # set TomoScan xml files
-        self.epics_pvs['CamNDAttributesFile'].put('TomoScanStreamDetectorAttributes.xml')
-        self.epics_pvs['FPXMLFileName'].put('TomoScanStreamLayout.xml')
-
         if self.return_rotation == 'Yes':
             # Reset rotation position by mod 360 , the actual return 
             # to start position is handled by super().end_scan()
             ang = self.epics_pvs['RotationRBV'].get()            
-            current_angle = numpy.sign(ang)*(numpy.abs(ang) % 360)
+            current_angle = np.sign(ang)*(np.abs(ang) % 360)
             log.info('reset position to %f',current_angle)            
             self.epics_pvs['RotationSet'].put('Set', wait=True)
             self.epics_pvs['Rotation'].put(current_angle, wait=True)

@@ -43,6 +43,12 @@ class TomoScan32ID(TomoScanPSO):
         # self.epics_pvs['CamAcquire'].put('Acquire') ###
         # self.wait_pv(self.epics_pvs['CamAcquire'], 1) ###
         
+        # set TomoScan xml files
+        self.epics_pvs['CamNDAttributesFile'].put('TomoScanDetectorAttributes.xml')
+        self.epics_pvs['FPXMLFileName'].put('TomoScanLayout.xml')
+        macro = 'DET=' + self.pv_prefixes['Camera'] + ',' + 'TS=' + self.epics_pvs['Testing'].__dict__['pvname'].replace('Testing', '', 1)
+        self.control_pvs['CamNDAttributesMacros'].put(macro)
+
         # Enable auto-increment on file writer
         self.epics_pvs['FPAutoIncrement'].put('Yes')
 
@@ -51,9 +57,21 @@ class TomoScan32ID(TomoScanPSO):
 
         # Disable over writing warning
         self.epics_pvs['OverwriteWarning'].put('Yes')
-
+        self.epics_pvs['StartEnergyChange'].put(0,wait=True)
+        # energy scan
+        self.epics_pvs['StartEnergyChange'].add_callback(self.pv_callback_step)
+        
         log.setup_custom_logger("./tomoscan.log")
-   
+    
+    def pv_callback_step(self, pvname=None, value=None, char_value=None, **kw):
+        """Callback function that is called by pyEpics when certain EPICS PVs are changed
+        
+        """
+
+        log.debug('pv_callback_step pvName=%s, value=%s, char_value=%s', pvname, value, char_value)       
+        if (pvname.find('StartEnergyChange') != -1) and (value == 1):
+            self.energy_change()    
+            
     def open_frontend_shutter(self):
         """Opens the shutters to collect flat fields or projections.
 
@@ -214,17 +232,27 @@ class TomoScan32ID(TomoScanPSO):
         file_path = self.epics_pvs['DetectorTopDir'].get(as_string=True) + self.epics_pvs['ExperimentYearMonth'].get(as_string=True) + os.path.sep + self.epics_pvs['UserLastName'].get(as_string=True) + os.path.sep
         self.epics_pvs['FilePath'].put(file_path, wait=True)
 
-        # set TomoScan xml files
-        self.epics_pvs['CamNDAttributesFile'].put('TomoScanDetectorAttributes.xml')
-        self.epics_pvs['FPXMLFileName'].put('TomoScanLayout.xml')
-        self.control_pvs['CamNDAttributesMacros'].put('DET=32idARV2:,TS=32id:TomoScan:')
-
         # Call the base class method
         super().begin_scan()
          
         # Opens the front-end shutter
         self.open_frontend_shutter()
-        
+    
+    def energy_change(self):        
+        energy = float(self.epics_pvs["Energy"].get())
+        log.info("Tomoscan: change energy to %.3f",energy)
+        self.epics_pvs['DCMmvt'].put(1)
+        time.sleep(1)
+        self.epics_pvs['DCMputEnergy'].put(energy)
+        #self.epics_pvs['GAPputEnergy'].put(energy)
+        #self.wait_pv(self.epics_pvs['EnergyWait'], 0)
+        self.epics_pvs['GAPputEnergy'].put(energy + 0.17)
+        #self.wait_pv(self.epics_pvs['EnergyWait'], 0)
+        time.sleep(2)
+        self.epics_pvs['DCMmvt'].put(0)
+        time.sleep(1)
+        self.epics_pvs['StartEnergyChange'].put(0)
+            
     def end_scan(self):
         """Performs the operations needed at the very end of a scan.
 
@@ -252,7 +280,8 @@ class TomoScan32ID(TomoScanPSO):
             # to start position is handled by super().end_scan()
             log.info('wait until the stage is stopped')
             time.sleep(self.epics_pvs['RotationAccelTime'].get()*1.2)                        
-            current_angle = self.epics_pvs['RotationRBV'].get() %360
+            ang = self.epics_pvs['RotationRBV'].get()
+            current_angle = np.sign(ang)*(np.abs(ang)%360)
             self.epics_pvs['RotationSet'].put('Set', wait=True)
             self.epics_pvs['Rotation'].put(current_angle, wait=True)
             self.epics_pvs['RotationSet'].put('Use', wait=True)

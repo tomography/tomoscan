@@ -56,6 +56,7 @@ class TomoScan():
         self.rotation_start = None
         self.rotation_step = None
         self.rotation_stop = None
+        self.rotation_save = None
         self.rotation_resolution = None
         self.max_rotation_speed = None
         self.return_rotation = None
@@ -221,7 +222,9 @@ class TomoScan():
         for epics_pv in ('MoveSampleIn', 'MoveSampleOut', 'StartScan', 'AbortScan', 'ExposureTime',
                          'FilePath', 'FPFilePathExists'):
             self.epics_pvs[epics_pv].add_callback(self.pv_callback)
-
+        for epics_pv in ('MoveSampleIn', 'MoveSampleOut', 'StartScan', 'AbortScan'):
+            self.epics_pvs[epics_pv].put(0)
+            
         # Synchronize the FilePathExists PV
         self.copy_file_path_exists()
 
@@ -410,6 +413,14 @@ class TomoScan():
             position = self.epics_pvs['SampleInY'].value
             self.epics_pvs['SampleY'].put(position, wait=True, timeout=600)
 
+        if self.epics_pvs['SampleOutAngleEnable'].get() and self.rotation_save != None:
+            if self.max_rotation_speed != None:# max_rotation_speed is not initialized when the scan has not been started            
+                cur_speed = self.epics_pvs['RotationSpeed'].get()
+                self.epics_pvs['RotationSpeed'].put(self.max_rotation_speed)                                                    
+            self.epics_pvs['Rotation'].put(self.rotation_save, wait=True)          
+            if self.max_rotation_speed != None:
+                self.epics_pvs['RotationSpeed'].put(cur_speed)
+                                
         self.epics_pvs['MoveSampleIn'].put('Done')
 
     def move_sample_out(self):
@@ -421,7 +432,18 @@ class TomoScan():
         which can be ``X``, ``Y``, or ``Both``.
         """
 
-        axis = self.epics_pvs['FlatFieldAxis'].get(as_string=True)
+        if self.epics_pvs['SampleOutAngleEnable'].get():
+            if self.max_rotation_speed != None:# max_rotation_speed is not initialized when the scan has not been started
+                cur_speed = self.epics_pvs['RotationSpeed'].get()
+                self.epics_pvs['RotationSpeed'].put(self.max_rotation_speed)
+            angle = self.epics_pvs['SampleOutAngle'].get()
+            log.info('move_sample_out angle: %s', angle)
+            self.rotation_save = self.epics_pvs['Rotation'].get()
+            self.epics_pvs['Rotation'].put(angle, wait=True)  
+            if self.max_rotation_speed != None:
+                self.epics_pvs['RotationSpeed'].put(cur_speed)                        
+
+        axis = self.epics_pvs['FlatFieldAxis'].get(as_string=True)        
         log.info('move_sample_out axis: %s', axis)
         if axis in ('X', 'Both'):
             position = self.epics_pvs['SampleOutX'].value
@@ -680,7 +702,7 @@ class TomoScan():
             # Collect the post-scan dark fields if required
             if (self.num_dark_fields > 0) and (self.dark_field_mode in ('End', 'Both')):
                 self.collect_dark_fields()
-
+ 
         except ScanAbortError:
             log.error('Scan aborted')
         except CameraTimeoutError:
@@ -851,6 +873,14 @@ class TomoScan():
                 'Mono8': 6.18,
                 'Mono12Packed': 8.20,
                 'Mono16': 12.34
+            }
+            readout = readout_times[pixel_format]/1000.
+        if camera_model == 'Oryx ORX-10G-310S9M':
+            pixel_format = self.epics_pvs['CamPixelFormat'].get(as_string=True) 
+            readout_times = {
+                'Mono8': 70.0,
+                'Mono12Packed': 70.0,
+                'Mono16': 70.0
             }
             readout = readout_times[pixel_format]/1000.
         if camera_model == 'Q-12A180-Fm/CXP-6':
