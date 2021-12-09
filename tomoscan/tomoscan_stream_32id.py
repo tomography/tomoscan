@@ -30,7 +30,7 @@ Classes
 import os
 import time
 import h5py 
-import numpy
+import numpy as np
 
 from tomoscan import TomoScanStreamPSO
 from tomoscan import log
@@ -236,7 +236,7 @@ class TomoScanStream32ID(TomoScanStreamPSO):
             # Reset rotation position by mod 360 , the actual return 
             # to start position is handled by super().end_scan()
             ang = self.epics_pvs['RotationRBV'].get()            
-            current_angle = numpy.sign(ang)*(numpy.abs(ang) % 360)
+            current_angle = np.sign(ang)*(np.abs(ang) % 360)
             log.info('reset position to %f',current_angle)            
             self.epics_pvs['RotationSet'].put('Set', wait=True)
             self.epics_pvs['Rotation'].put(current_angle, wait=True)
@@ -270,7 +270,7 @@ class TomoScanStream32ID(TomoScanStreamPSO):
             log.info('wait until the stage is stopped')
             time.sleep(self.epics_pvs['RotationAccelTime'].get()*1.2)                        
             ang = self.epics_pvs['RotationRBV'].get()            
-            current_angle = numpy.sign(ang)*(numpy.abs(ang) % 360)
+            current_angle = np.sign(ang)*(np.abs(ang) % 360)
             log.info('reset position to %f',current_angle)            
             self.epics_pvs['RotationSet'].put('Set', wait=True)
             self.epics_pvs['Rotation'].put(current_angle, wait=True)
