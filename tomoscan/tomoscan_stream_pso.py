@@ -7,6 +7,7 @@
 """
 
 import time
+import h5py
 import os
 import math
 import numpy as np
@@ -516,17 +517,15 @@ class TomoScanStreamPSO(TomoScan):
         num_captured = self.epics_pvs['StreamNumCaptured'].get()
 
         self.dump_theta(self.epics_pvs['FPFullFileName'].get(as_string=True))
-            
         basename = os.path.basename(self.epics_pvs['FPFullFileName'].get(as_string=True))
-        dirname = os.path.dirname(self.epics_pvs['FPFullFileName'].get(as_string=True))                
+        dirname = os.path.dirname(self.epics_pvs['FPFullFileName'].get(as_string=True))
+
+        #Create a thread to handle the bright and dark fields
+        flat_dark_thread = threading.Thread(target = self.copy_flat_dark_to_hdf,
+                                            args=(self.epics_pvs['FPFullFileName'].get(as_string=True),))
+        flat_dark_thread.start()
         
-        log.info('save dark fields')
-        cmd = 'cp '+ dirname+'/dark_fields.h5 '+ dirname + '/dark_fields_'+ basename
-        os.popen(cmd)
-        log.info('save flat fields')        
-        cmd = 'cp '+ dirname+'/flat_fields.h5 '+ dirname + '/flat_fields_'+ basename
-        os.popen(cmd)
-        
+            
         if(self.epics_pvs['StreamPreCount'].get()>0):
             self.epics_pvs['StreamMessage'].put('Capturing circular buffer')                    
             log.info('save pre-buffer')        
@@ -567,6 +566,37 @@ class TomoScanStreamPSO(TomoScan):
         self.epics_pvs['CBEnableCallbacks'].put('Enable')
         self.capturing = 0
         
+
+    def copy_flat_dark_to_hdf(self, fname):
+        """Copies the flat and dark field data to the HDF5 file with the
+        projection data.  This allows the file to be a fully valid
+        DXchange file.
+        """
+        log.info('save dark and flat to projection hdf file')
+        basename = os.path.basename(fname)
+        dirname = os.path.dirname(fname)
+        darkfield_name = dirname + '/dark_fields_' + basename
+        flatfield_name = dirname + '/flat_fields_' + basename
+        proj_name = dirname + '/' + basename 
+        
+        log.info('save dark fields')
+        cmd = 'cp '+ dirname+'/dark_fields.h5 '+ darkfield_name
+        os.system(cmd)
+        log.info('save flat fields')        
+        cmd = 'cp '+ dirname+'/flat_fields.h5 '+ flatfield_name
+        os.system(cmd)
+
+        with h5py.File(proj_name, 'r+') as proj_hdf:
+            if 'data_white' in proj_hdf['/exchange'].keys():
+                del(proj_hdf['/exchange/data_white'])
+            with h5py.File(flatfield_name, 'r') as flat_hdf:
+                proj_hdf['/exchange'].create_dataset('data_white', data=flat_hdf['/exchange/data_white'][...])
+            if 'data_dark' in proj_hdf['/exchange'].keys():
+                del(proj_hdf['/exchange/data_dark'])
+            with h5py.File(darkfield_name, 'r') as dark_hdf:
+                proj_hdf['/exchange'].create_dataset('data_dark', data=dark_hdf['/exchange/data_dark'][...])
+        log.info('done saving dark and flat to projection hdf file')
+
 
     def stop_capture_projections(self):  
         """Stop capturing projections"""  
