@@ -55,13 +55,13 @@ class TomoScan2BM(TomoScanPSO):
 
         This does the following:
 
-        - Checks if we are in testing mode. If we are, do nothing else opens the 2-BM-A front-end shutter.
+        - Checks if we are in testing mode. If we are, do nothing else opens the 2-BM front-end shutter.
 
         """
         if self.epics_pvs['Testing'].get():
             log.warning('In testing mode, so not opening shutters.')
         else:
-            # Open 2-BM-A front-end shutter
+            # Open 2-BM front-end shutter
             if not self.epics_pvs['OpenShutter'] is None:
                 pv = self.epics_pvs['OpenShutter']
                 value = self.epics_pvs['OpenShutterValue'].get(as_string=True)
@@ -79,29 +79,29 @@ class TomoScan2BM(TomoScanPSO):
 
         This does the following:
 
-        - Opens the 2-BM-A fast shutter.
+        - Opens the 2-BM fast shutter.
         """
 
-        # Open 2-BM-A fast shutter
+        # Open 2-BM fast shutter
         if not self.epics_pvs['OpenFastShutter'] is None:
             pv = self.epics_pvs['OpenFastShutter']
             value = self.epics_pvs['OpenFastShutterValue'].get(as_string=True)
             log.info('open fast shutter: %s, value: %s', pv, value)
             self.epics_pvs['OpenFastShutter'].put(value, wait=True)
-            #log.warning("Wait 2s  - Temporarily while there is no fast shutter at 2bmb ")
-            #time.sleep(2)
+            log.warning("Wait 2s  - Temporarily while there is no fast shutter at 2bmb ")
+            time.sleep(2)
 
     def close_frontend_shutter(self):
         """Closes the shutters to collect dark fields.
         This does the following:
 
-        - Closes the 2-BM-A front-end shutter.
+        - Closes the 2-BM front-end shutter.
 
         """
         if self.epics_pvs['Testing'].get():
             log.warning('In testing mode, so not opening shutters.')
         else:
-            # Close 2-BM-A front-end shutter
+            # Close 2-BM front-end shutter
             if not self.epics_pvs['CloseShutter'] is None:
                 pv = self.epics_pvs['CloseShutter']
                 value = self.epics_pvs['CloseShutterValue'].get(as_string=True)
@@ -117,17 +117,17 @@ class TomoScan2BM(TomoScanPSO):
         """Closes the shutters to collect dark fields.
         This does the following:
 
-        - Closes the 2-BM-A fast shutter.
+        - Closes the 2-BM fast shutter.
         """
 
-        # Close 2-BM-A fast shutter
+        # Close 2-BM fast shutter
         if not self.epics_pvs['CloseFastShutter'] is None:
             pv = self.epics_pvs['CloseFastShutter']
             value = self.epics_pvs['CloseFastShutterValue'].get(as_string=True)
             log.info('close fast shutter: %s, value: %s', pv, value)
             self.epics_pvs['CloseFastShutter'].put(value, wait=True)
-            #log.warning("Wait 2s  - Temporarily while there is no fast shutter at 2bmb ")
-            #time.sleep(2)
+            log.warning("Wait 2s  - Temporarily while there is no fast shutter at 2bmb ")
+            time.sleep(2)
 
     def set_trigger_mode(self, trigger_mode, num_images):
         """Sets the trigger mode SIS3820 and the camera.
