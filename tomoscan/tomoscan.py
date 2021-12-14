@@ -869,6 +869,7 @@ class TomoScan():
             readout = readout_times[pixel_format]/1000.            
         if camera_model == 'Oryx ORX-10G-51S5M':
             pixel_format = self.epics_pvs['CamPixelFormat'].get(as_string=True) 
+            readout_margin = 1.02
             readout_times = {
                 'Mono8': 6.18,
                 'Mono12Packed': 8.20,

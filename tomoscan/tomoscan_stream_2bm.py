@@ -113,6 +113,8 @@ class TomoScanStream2BM(TomoScanStreamPSO):
             value = self.epics_pvs['OpenFastShutterValue'].get(as_string=True)
             log.info('open fast shutter: %s, value: %s', pv, value)
             self.epics_pvs['OpenFastShutter'].put(value, wait=True)
+            log.warning("Wait 2s  - Temporarily while there is no fast shutter at 2bmb ")
+            time.sleep(2)
 
     def close_frontend_shutter(self):
         """Closes the shutters to collect dark fields.
@@ -149,8 +151,8 @@ class TomoScanStream2BM(TomoScanStreamPSO):
             value = self.epics_pvs['CloseFastShutterValue'].get(as_string=True)
             log.info('close fast shutter: %s, value: %s', pv, value)
             self.epics_pvs['CloseFastShutter'].put(value, wait=True)
-            #log.warning('close fast shutter sleep 2 sec')
-            #time.sleep(2)
+            log.warning('close fast shutter sleep 2 sec')
+            time.sleep(2)
 
     def set_trigger_mode(self, trigger_mode, num_images):
         """Sets the trigger mode SIS3820 and the camera.
