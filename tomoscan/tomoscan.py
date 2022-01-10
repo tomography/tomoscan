@@ -91,12 +91,16 @@ class TomoScan():
         self.control_pvs['RotationSpeed']      = PV(rotation_pv_name + '.VELO')
         self.control_pvs['RotationMaxSpeed']   = PV(rotation_pv_name + '.VMAX')
         self.control_pvs['RotationResolution'] = PV(rotation_pv_name + '.MRES')
+        self.control_pvs['RotationEResolution']= PV(rotation_pv_name + '.ERES')
         self.control_pvs['RotationSet']        = PV(rotation_pv_name + '.SET')
         self.control_pvs['RotationStop']       = PV(rotation_pv_name + '.STOP')
         self.control_pvs['RotationDmov']       = PV(rotation_pv_name + '.DMOV')
         self.control_pvs['RotationDirection']  = PV(rotation_pv_name + '.DIR')
         self.control_pvs['RotationAccelTime']  = PV(rotation_pv_name + '.ACCL')
         self.control_pvs['RotationRBV']        = PV(rotation_pv_name + '.RBV')
+        self.control_pvs['RotationJog']        = PV(rotation_pv_name + '.JOGF')
+        self.control_pvs['RotationSpeedJog']   = PV(rotation_pv_name + '.JVEL')
+        self.control_pvs['RotationOFF']   = PV(rotation_pv_name + '.OFF')
 
         #Define PVs from the camera IOC that we will need
         prefix = self.pv_prefixes['Camera']
@@ -522,10 +526,10 @@ class TomoScan():
         exposure_time : float, optional
             The exposure time to use. If None then the value of the ``ExposureTime`` PV is used.
         """
-
-        if exposure_time is None:
-            exposure_time = self.epics_pvs['ExposureTime'].value
-        self.epics_pvs['CamAcquireTime'].put(exposure_time, wait=True, timeout = 10.0)
+        if not self.scan_is_running:
+            if exposure_time is None:
+                exposure_time = self.epics_pvs['ExposureTime'].value
+            self.epics_pvs['CamAcquireTime'].put(exposure_time, wait=True, timeout = 10.0)
 
     def set_flat_exposure_time(self, exposure_time=None):
         """Sets the camera exposure time for flat fields.
