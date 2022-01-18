@@ -789,15 +789,10 @@ Optics information
     - Contains the pixel size of the detector.
   * - $(P)$(R)CameraObjective
     - stringout
-  * - $(P)$(R)CameraObjectiveSelector
-    - mbbo
-    - Optique Peter triple lens selector
+    - Description of the camera objective
   * - $(P)$(R)CameraTubeLength
     - stringout
     - Description of the camera objective
-  * - $(P)$(R)CameraSelector
-    - mbbo
-    - Optique Peter dual camera selector
 
 Sample information
 ^^^^^^^^^^^^^^^^^^
@@ -999,6 +994,9 @@ Stream control
   * - $(P)$(R)PvaStreamPVPrefix
     - stringout
     - Contains the prefix for the PVA server broadcasting dark and flat images in streaming mode, e.g. 2bmb:TomoScan:Stream:
+  * - $(P)$(R)StreamSync
+    - bo 
+    - when its value is set to Sync a callback synchronizes new angular step and exposure with rotation speed and brodcasts new array of angles for streaming reconstruction
 
 
 tomoScan_2BM_settings.req

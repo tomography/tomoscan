@@ -7,6 +7,7 @@
 """
 
 import time
+import h5py
 import os
 import math
 import numpy as np
@@ -94,7 +95,7 @@ class TomoScanStreamPSO(TomoScan):
         super().begin_scan()
  
         # Compute the time for each frame
-        time_per_angle = self.compute_frame_time()+7.2/1000 # temporary fix for 2-BM-B
+        time_per_angle = self.compute_frame_time()
         self.motor_speed = self.rotation_step / time_per_angle
         time.sleep(0.1)
 
@@ -186,7 +187,9 @@ class TomoScanStreamPSO(TomoScan):
         log.info('start fly scan')
 
         # Start fly scan
-        self.epics_pvs['Rotation'].put(self.epics_pvs['PSOEndTaxi'].get())
+        #self.epics_pvs['Rotation'].put(self.epics_pvs['PSOEndTaxi'].get())
+        self.epics_pvs['RotationJog'].put(1)
+
         time_per_angle = self.compute_frame_time()
         collection_time = self.num_angles * time_per_angle
         self.wait_camera_done(collection_time + 60.)
@@ -204,6 +207,7 @@ class TomoScanStreamPSO(TomoScan):
         self.epics_pvs['RotationSpeed'].put(self.max_rotation_speed)
         self.epics_pvs['Rotation'].put(self.rotation_start, wait=True)
         self.epics_pvs['RotationSpeed'].put(self.motor_speed)
+        self.epics_pvs['RotationSpeedJog'].put(self.motor_speed)
 
         # Make sure the PSO control is off
         pso_command.put('PSOCONTROL %s RESET' % pso_axis, wait=True, timeout=10.0)
@@ -240,6 +244,7 @@ class TomoScanStreamPSO(TomoScan):
         pso_command.put('PSOWINDOW %s 1 RANGE %d,%d' % (pso_axis, window_start-5, window_end+5), wait=True, timeout=10.0)
         # Arm the PSO
         pso_command.put('PSOCONTROL %s ARM' % pso_axis, wait=True, timeout=10.0)
+        #import pdb; pdb.set_trace()
 
     def cleanup_PSO(self):
         '''Cleanup activities after a PSO scan. 
@@ -313,10 +318,10 @@ class TomoScanStreamPSO(TomoScan):
         self.epics_pvs['PSOEndTaxi'].put(self.rotation_stop + taxi_dist * user_direction)
         
         # Assign the fly scan angular position to theta[]
-        self.theta = self.rotation_start + np.arange(self.num_angles) * self.rotation_step * user_direction
+        self.theta = self.rotation_start + np.arange(self.num_angles) * self.rotation_step * user_direction        
         self.pva_stream_theta['value'] = self.theta
         self.pva_stream_theta['sizex'] = self.num_angles
-
+        
 
 
 
@@ -341,7 +346,8 @@ class TomoScanStreamPSO(TomoScan):
         self.epics_pvs['ROIEnableCallbacks'].put('Enable')
         self.epics_pvs['CBEnableCallbacks'].put('Enable')
         self.epics_pvs['FPEnableCallbacks'].put('Enable')
-        
+        self.epics_pvs['StreamSync'].put('Done',wait=True)
+
     
 
     def begin_stream(self):
@@ -357,7 +363,8 @@ class TomoScanStreamPSO(TomoScan):
         
         - init flag for controling only one capturing at a time          
         """
-
+        self.capturing = 0        
+        
         self.epics_pvs['FlatFieldMode'].put('None', wait=True)
         self.epics_pvs['DarkFieldMode'].put('None', wait=True)
 
@@ -372,17 +379,18 @@ class TomoScanStreamPSO(TomoScan):
         
         self.change_cbsize()        
         
-        self.epics_pvs['StreamCapture'].add_callback(self.pv_callback_stream_capture)
-        self.epics_pvs['StreamRetakeDark'].add_callback(self.pv_callback_stream_capture)                
-        self.epics_pvs['StreamRetakeFlat'].add_callback(self.pv_callback_stream_capture)
-        self.epics_pvs['StreamPreCount'].add_callback(self.pv_callback_stream_change)
-        self.epics_pvs['StreamBinning'].add_callback(self.pv_callback_stream_change)        
-        self.epics_pvs['CBCurrentQtyRBV'].add_callback(self.pv_callback_stream_sync)        
-        self.epics_pvs['CBStatusMessage'].add_callback(self.pv_callback_stream_sync)
-        self.epics_pvs['FPNumCapture'].add_callback(self.pv_callback_stream_sync)
-        self.epics_pvs['FPNumCaptured'].add_callback(self.pv_callback_stream_sync)
+        self.epics_pvs['StreamCapture'].add_callback(self.pv_callback_stream)
+        self.epics_pvs['StreamRetakeDark'].add_callback(self.pv_callback_stream)                
+        self.epics_pvs['StreamRetakeFlat'].add_callback(self.pv_callback_stream)
+        self.epics_pvs['StreamPreCount'].add_callback(self.pv_callback_stream)
+        self.epics_pvs['StreamBinning'].add_callback(self.pv_callback_stream)        
+        self.epics_pvs['StreamSync'].add_callback(self.pv_callback_stream)        
+        self.epics_pvs['CBCurrentQtyRBV'].add_callback(self.pv_callback_stream)        
+        self.epics_pvs['CBStatusMessage'].add_callback(self.pv_callback_stream)
+        self.epics_pvs['FPNumCapture'].add_callback(self.pv_callback_stream)
+        self.epics_pvs['FPNumCaptured'].add_callback(self.pv_callback_stream)
         
-        self.capturing = 0              
+              
 
     def end_stream(self):
         """Stream settings adjustments at the end of the scan
@@ -409,44 +417,24 @@ class TomoScanStreamPSO(TomoScan):
         
         self.capturing = 0  
 
-    def pv_callback_stream_capture(self, pvname=None, value=None, char_value=None, **kw):
+    def pv_callback_stream(self, pvname=None, value=None, char_value=None, **kw):
         """Callback functions for capturing in the streaming mode"""
                 
-        if(self.capturing==1):# if capturing is happening dont allow anything except the stop capturing callback
-            if ((pvname.find('StreamCapture') != -1) and (value == 0)):
-                thread = threading.Thread(target=self.stop_capture_projections, args=())
-                thread.start()        
-            # switch pv value to Done to be able to start capturing again
-            self.epics_pvs[pvname[pvname.rfind(':')+1:]].put('Done')            
-        else:
-            if (pvname.find('StreamCapture') != -1) and (value == 1):
-                thread = threading.Thread(target=self.capture_projections, args=())
-                thread.start()            
-            if (pvname.find('StreamRetakeDark') != -1) and (value == 1):
-                thread = threading.Thread(target=self.retake_dark, args=())
-                thread.start()                 
-            if (pvname.find('StreamRetakeFlat') != -1) and (value == 1):
-                thread = threading.Thread(target=self.retake_flat, args=())
-                thread.start() 
-
-
-    def pv_callback_stream_change(self, pvname=None, value=None, char_value=None, **kw):
-        """Callback functions for changing parameters in the streaming mode"""      
-
-        if(self.capturing==0): # dont allow to change during capturing       
-            if (pvname.find('StreamPreCount') != -1):
-                thread = threading.Thread(target=self.change_cbsize, args=())
-                thread.start() 
-            if (pvname.find('StreamBinning') != -1):
-                thread = threading.Thread(target=self.change_binning, args=())
-                thread.start() 
-        else: # return to previous values
-            self.epics_pvs['StreamPreCount'].put(self.epics_pvs['CBPreCount'].get())
-            self.epics_pvs['StreamBinning'].put(int(np.log2(self.epics_pvs['ROIBinX'].get())))  
-    
-    def pv_callback_stream_sync(self, pvname=None, value=None, char_value=None, **kw):
-        """Callback functions for syncing tomoscan pvs in the streaming mode"""      
-        
+        if ((pvname.find('StreamCapture') != -1) and (value == 0)):
+            thread = threading.Thread(target=self.stop_capture_projections, args=())
+            thread.start()        
+        if (pvname.find('StreamCapture') != -1) and (value == 1):
+            thread = threading.Thread(target=self.capture_projections, args=())
+            thread.start()            
+        if (pvname.find('StreamRetakeDark') != -1) and (value == 1):
+            thread = threading.Thread(target=self.retake_dark, args=())
+            thread.start()                 
+        if (pvname.find('StreamRetakeFlat') != -1) and (value == 1):
+            thread = threading.Thread(target=self.retake_flat, args=())
+            thread.start() 
+        if ((pvname.find('StreamSync') != -1) and (value == 1)):
+            thread = threading.Thread(target=self.stream_sync, args=())
+            thread.start() 
         if (pvname.find('CurrentQty_RBV') != -1):
             thread = threading.Thread(target=self.change_cbqty, args=())
             thread.start() 
@@ -459,6 +447,109 @@ class TomoScanStreamPSO(TomoScan):
         if (pvname.find('NumCaptured_RBV') != -1):
             thread = threading.Thread(target=self.change_numcaptured, args=())
             thread.start() 
+        if (pvname.find('StreamPreCount') != -1):
+            thread = threading.Thread(target=self.change_cbsize, args=())
+            thread.start() 
+        if (pvname.find('StreamBinning') != -1):
+            thread = threading.Thread(target=self.change_binning, args=())
+            thread.start() 
+    
+    def stream_sync(self):
+        """Synchronize new angular step and exposure with rotation speed. Brodcast new array of angles for streaming reconstruction
+
+        - cleanup PSO
+        - save last unique ID of projection
+        - program pso (base part)
+        - change the JOG speed wrt exposure and angular step
+        - initiate DATAACQ in aerotech for saving encoder values
+        - ARM PSO
+        - wait exposure time to acquire 1 projection
+        - read encoder value for the projection unique_id + 1
+        - convert encoder value to the angle, form array of angles
+        - broadcast array of angles for streaming
+        """
+
+        print('stream sync callback')                        
+        if self.capturing==1:
+            return
+
+        if self.exposure_time!=self.epics_pvs['ExposureTime'].value or self.rotation_step!=self.epics_pvs['RotationStep'].value:            
+            self.exposure_time=self.epics_pvs['ExposureTime'].value
+            self.rotation_step=self.epics_pvs['RotationStep'].value
+            self.cleanup_PSO()
+            # wait until last projection is acquired            
+            time.sleep(self.exposure_time+0.1)                        
+            # save last unique id of the projection
+            last_uniqueid = self.epics_pvs['CamNumImagesCounter'].get()
+            
+            pso_command = self.epics_pvs['PSOCommand.BOUT']
+            pso_model = self.epics_pvs['PSOControllerModel'].get(as_string=True)
+            pso_axis = self.epics_pvs['PSOAxisName'].get(as_string=True)
+            pso_input = int(self.epics_pvs['PSOEncoderInput'].get(as_string=True))
+            overall_sense, user_direction = self._compute_senses()
+        
+            # Make sure the PSO control is off
+            pso_command.put('PSOCONTROL %s RESET' % pso_axis, wait=True, timeout=10.0)
+            # Set the output to occur from the I/O terminal on the controller
+            if (pso_model == 'Ensemble'):
+                pso_command.put('PSOOUTPUT %s CONTROL 1' % pso_axis, wait=True, timeout=10.0)
+            elif (pso_model == 'A3200'):
+                pso_command.put('PSOOUTPUT %s CONTROL 0 1' % pso_axis, wait=True, timeout=10.0)
+            # Set the pulse width.  The total width and active width are the same, since this is a single pulse.
+            pulse_width = self.epics_pvs['PSOPulseWidth'].get()
+            pso_command.put('PSOPULSE %s TIME %f,%f' % (pso_axis, pulse_width, pulse_width), wait=True, timeout=10.0)
+            # Set the pulses to only occur in a specific window
+            pso_command.put('PSOOUTPUT %s PULSE WINDOW MASK' % pso_axis, wait=True, timeout=10.0)
+            # Set which encoder we will use.  3 = the MXH (encoder multiplier) input, which is what we generally want
+            pso_command.put('PSOTRACK %s INPUT %d' % (pso_axis, pso_input), wait=True, timeout=10.0)
+            # Set the distance between pulses. Do this in encoder counts.
+            pso_command.put('PSODISTANCE %s FIXED %d' % (pso_axis, 
+                            int(np.abs(self.epics_pvs['PSOEncoderCountsPerStep'].get()))) , wait=True, timeout=10.0)
+            # Which encoder is being used to calculate whether we are in the window.  1 for single axis
+            pso_command.put('PSOWINDOW %s 1 INPUT %d' % (pso_axis, pso_input), wait=True, timeout=10.0)
+
+            # Calculate window function parameters.  Must be in encoder counts, and is 
+            # referenced from the stage location where we arm the PSO.  We are at that point now.
+            # We want pulses to start at start - delta/2, end at end + delta/2.  
+            range_start = -round(np.abs(self.epics_pvs['PSOEncoderCountsPerStep'].get())/ 2) * overall_sense
+            range_length = np.abs(self.epics_pvs['PSOEncoderCountsPerStep'].get()) * self.num_angles
+            # The start of the PSO window must be < end.  Handle this.
+            if overall_sense > 0:
+                window_start = range_start
+                window_end = window_start + range_length
+            else:
+                window_end = range_start
+                window_start = window_end - range_length
+            pso_command.put('PSOWINDOW %s 1 RANGE %d,%d' % (pso_axis, window_start-5, window_end+5), wait=True, timeout=10.0)
+
+            # recompute velocity
+            self.epics_pvs['CamAcquireTime'].put(self.exposure_time, wait=True, timeout = 10.0)
+            time_per_angle = self.compute_frame_time()
+            self.motor_speed = self.rotation_step / time_per_angle        
+            self.control_pvs['RotationSpeedJog'].put(self.motor_speed, wait=True)
+            pso_command.put('PROGRAM RUN 1, "dataacqoff.bcx"', wait=True, timeout=10.0)                                    
+            pso_command.put('PROGRAM RUN 1, "dataacqon.bcx"', wait=True, timeout=10.0)                                    
+            # wait 1s for acceleration? looks like this happens immediately
+            time.sleep(1)            
+            # Arm the PSO
+            log.warning(f'ARM PSO and wait until the first projection is acquired')        
+            pso_command.put('PSOCONTROL %s ARM' % pso_axis, wait=True, timeout=10.0)                        
+            # wait while 1 projection is acquired
+            time.sleep(self.exposure_time+0.4)
+            pso_command.put('PROGRAM RUN 1, "dataacqread.bcx"', wait=True, timeout=10.0)            
+            # need some delay here
+            time.sleep(0.1)
+            pso_command.put('IGLOBAL(0)', wait=True, timeout=10.0)            
+            reply = self.epics_pvs['PSOCommand.BINP'].get(as_string=True)
+            encoder_angle = int(reply[1:])
+            
+            self.rotation_start = self.control_pvs['RotationOFF'].value+encoder_angle*self.epics_pvs['RotationEResolution'].value            
+            self.compute_positions_PSO()
+            log.info(f'Angle {self.theta[0]} corresponds to unique ID {last_uniqueid+1}')
+
+            
+        self.epics_pvs['StreamSync'].put('Done',wait=True)
+    
 
     def capture_projections(self):
         """Monitor the capturing projections process: capture projections, save pre-buffer, 
@@ -471,7 +562,7 @@ class TomoScanStreamPSO(TomoScan):
         - set number of captured frames in the hdf5 plugin as StreamNumCapture parameter
         - start capturing to the hdf5 file
         - wait when capturing is started
-        - wait when captruing is finished
+        - wait when capturing is finished
         - dump angles
         - take basename and dirname from full file name                          
         - copy dark_flat fields file to the one having the same index as data (eg. copy dark_fields.h5 dark_fields_scan_045.h5)
@@ -498,7 +589,9 @@ class TomoScanStreamPSO(TomoScan):
         - set capturing flag to 0
         
         """
-        
+        if self.capturing==1:
+            return
+
         log.info('capture projections')
         self.epics_pvs['StreamMessage'].put('Capturing projections')
 
@@ -516,17 +609,15 @@ class TomoScanStreamPSO(TomoScan):
         num_captured = self.epics_pvs['StreamNumCaptured'].get()
 
         self.dump_theta(self.epics_pvs['FPFullFileName'].get(as_string=True))
-            
         basename = os.path.basename(self.epics_pvs['FPFullFileName'].get(as_string=True))
-        dirname = os.path.dirname(self.epics_pvs['FPFullFileName'].get(as_string=True))                
+        dirname = os.path.dirname(self.epics_pvs['FPFullFileName'].get(as_string=True))
+
+        #Create a thread to handle the bright and dark fields
+        flat_dark_thread = threading.Thread(target = self.copy_flat_dark_to_hdf,
+                                            args=(self.epics_pvs['FPFullFileName'].get(as_string=True),))
+        flat_dark_thread.start()
         
-        log.info('save dark fields')
-        cmd = 'cp '+ dirname+'/dark_fields.h5 '+ dirname + '/dark_fields_'+ basename
-        os.popen(cmd)
-        log.info('save flat fields')        
-        cmd = 'cp '+ dirname+'/flat_fields.h5 '+ dirname + '/flat_fields_'+ basename
-        os.popen(cmd)
-        
+            
         if(self.epics_pvs['StreamPreCount'].get()>0):
             self.epics_pvs['StreamMessage'].put('Capturing circular buffer')                    
             log.info('save pre-buffer')        
@@ -568,9 +659,42 @@ class TomoScanStreamPSO(TomoScan):
         self.capturing = 0
         
 
+    def copy_flat_dark_to_hdf(self, fname):
+        """Copies the flat and dark field data to the HDF5 file with the
+        projection data.  This allows the file to be a fully valid
+        DXchange file.
+        """
+        log.info('save dark and flat to projection hdf file')
+        basename = os.path.basename(fname)
+        dirname = os.path.dirname(fname)
+        darkfield_name = dirname + '/dark_fields_' + basename
+        flatfield_name = dirname + '/flat_fields_' + basename
+        proj_name = dirname + '/' + basename 
+        
+        log.info('save dark fields')
+        cmd = 'cp '+ dirname+'/dark_fields.h5 '+ darkfield_name
+        os.system(cmd)
+        log.info('save flat fields')        
+        cmd = 'cp '+ dirname+'/flat_fields.h5 '+ flatfield_name
+        os.system(cmd)
+
+        with h5py.File(proj_name, 'r+') as proj_hdf:
+            if 'data_white' in proj_hdf['/exchange'].keys():
+                del(proj_hdf['/exchange/data_white'])
+            with h5py.File(flatfield_name, 'r') as flat_hdf:
+                proj_hdf['/exchange'].create_dataset('data_white', data=flat_hdf['/exchange/data_white'][...])
+            if 'data_dark' in proj_hdf['/exchange'].keys():
+                del(proj_hdf['/exchange/data_dark'])
+            with h5py.File(darkfield_name, 'r') as dark_hdf:
+                proj_hdf['/exchange'].create_dataset('data_dark', data=dark_hdf['/exchange/data_dark'][...])
+        log.info('done saving dark and flat to projection hdf file')
+
+
     def stop_capture_projections(self):  
         """Stop capturing projections"""  
-        self.epics_pvs['FPCapture'].put('Done')
+        if self.capturing==1:
+            self.epics_pvs['FPCapture'].put('Done')
+            self.epics_pvs['StreamCapture'].put('Done')
 
 
     def retake_dark(self):
@@ -590,6 +714,8 @@ class TomoScanStreamPSO(TomoScan):
         - broadcast dark fields   
         - set capturing flag to 0
         """
+        if self.capturing==1:
+            return
         
         log.info('retake dark')
         self.epics_pvs['StreamMessage'].put('Capturing dark fields')        
@@ -653,7 +779,8 @@ class TomoScanStreamPSO(TomoScan):
         - broadcast flat fields   
         - set capturing flag to 0
         """
-        
+        if self.capturing==1:
+            return
         log.info('retake flat')
         self.epics_pvs['StreamMessage'].put('Capturing flat fields')        
         
@@ -706,7 +833,9 @@ class TomoScanStreamPSO(TomoScan):
         - stop cb capturing
         - start cb capturing
         """
-        
+        if self.capturing==1:
+            self.epics_pvs['StreamPreCount'].put(self.epics_pvs['CBPreCount'].get())
+            return
         log.info('change pre-count size in the circular buffer')
         self.epics_pvs['CBCapture'].put('Done', wait=True)
         self.wait_pv(self.epics_pvs['CBCaptureRBV'], 0)                            
@@ -745,6 +874,9 @@ class TomoScanStreamPSO(TomoScan):
         """
 
         log.info('change binning')
+        if self.capturing==1:
+            self.epics_pvs['StreamBinning'].put(int(np.log2(self.epics_pvs['ROIBinX'].get())))  
+            return
         binning = self.epics_pvs['StreamBinning'].get()        
         self.epics_pvs['ROIBinX'].put(2**binning)    
         self.epics_pvs['ROIBinY'].put(2**binning)    
