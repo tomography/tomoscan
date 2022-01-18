@@ -88,19 +88,19 @@ class TomoScan():
 
         #Define PVs we will need from the rotation motor, which is on another IOC
         rotation_pv_name = self.control_pvs['Rotation'].pvname
-        self.control_pvs['RotationSpeed']      = PV(rotation_pv_name + '.VELO')
-        self.control_pvs['RotationMaxSpeed']   = PV(rotation_pv_name + '.VMAX')
-        self.control_pvs['RotationResolution'] = PV(rotation_pv_name + '.MRES')
-        self.control_pvs['RotationEResolution']= PV(rotation_pv_name + '.ERES')
-        self.control_pvs['RotationSet']        = PV(rotation_pv_name + '.SET')
-        self.control_pvs['RotationStop']       = PV(rotation_pv_name + '.STOP')
-        self.control_pvs['RotationDmov']       = PV(rotation_pv_name + '.DMOV')
-        self.control_pvs['RotationDirection']  = PV(rotation_pv_name + '.DIR')
-        self.control_pvs['RotationAccelTime']  = PV(rotation_pv_name + '.ACCL')
-        self.control_pvs['RotationRBV']        = PV(rotation_pv_name + '.RBV')
-        self.control_pvs['RotationJog']        = PV(rotation_pv_name + '.JOGF')
-        self.control_pvs['RotationSpeedJog']   = PV(rotation_pv_name + '.JVEL')
-        self.control_pvs['RotationOFF']   = PV(rotation_pv_name + '.OFF')
+        self.control_pvs['RotationSpeed']          = PV(rotation_pv_name + '.VELO')
+        self.control_pvs['RotationMaxSpeed']       = PV(rotation_pv_name + '.VMAX')
+        self.control_pvs['RotationResolution']     = PV(rotation_pv_name + '.MRES')
+        self.control_pvs['RotationEResolution']    = PV(rotation_pv_name + '.ERES')
+        self.control_pvs['RotationSet']            = PV(rotation_pv_name + '.SET')
+        self.control_pvs['RotationStop']           = PV(rotation_pv_name + '.STOP')
+        self.control_pvs['RotationDmov']           = PV(rotation_pv_name + '.DMOV')
+        self.control_pvs['RotationDirection']      = PV(rotation_pv_name + '.DIR')
+        self.control_pvs['RotationAccelTime']      = PV(rotation_pv_name + '.ACCL')
+        self.control_pvs['RotationRBV']            = PV(rotation_pv_name + '.RBV')
+        self.control_pvs['RotationJog']            = PV(rotation_pv_name + '.JOGF')
+        self.control_pvs['RotationSpeedJog']       = PV(rotation_pv_name + '.JVEL')
+        self.control_pvs['RotationOFF']            = PV(rotation_pv_name + '.OFF')
 
         #Define PVs from the camera IOC that we will need
         prefix = self.pv_prefixes['Camera']
@@ -205,17 +205,17 @@ class TomoScan():
 
         if 'CbPlugin' in self.pv_prefixes:
             prefix = self.pv_prefixes['CbPlugin']
-            self.control_pvs['CBPortNameRBV']     = PV(prefix + 'PortName_RBV')                    
-            self.control_pvs['CBNDArrayPort']     = PV(prefix + 'NDArrayPort')        
-            self.control_pvs['CBPreCount']        = PV(prefix + 'PreCount')
-            self.control_pvs['CBPostCount']       = PV(prefix + 'PostCount')
-            self.control_pvs['CBCapture']         = PV(prefix + 'Capture')            
-            self.control_pvs['CBCaptureRBV']      = PV(prefix + 'Capture_RBV')
-            self.control_pvs['CBTrigger']         = PV(prefix + 'Trigger')
-            self.control_pvs['CBTriggerRBV']      = PV(prefix + 'Trigger_RBV')
-            self.control_pvs['CBCurrentQtyRBV']   = PV(prefix + 'CurrentQty_RBV')            
-            self.control_pvs['CBEnableCallbacks'] = PV(prefix + 'EnableCallbacks')
-            self.control_pvs['CBStatusMessage']   = PV(prefix + 'StatusMessage')
+            self.control_pvs['CBPortNameRBV']      = PV(prefix + 'PortName_RBV')                    
+            self.control_pvs['CBNDArrayPort']      = PV(prefix + 'NDArrayPort')        
+            self.control_pvs['CBPreCount']         = PV(prefix + 'PreCount')
+            self.control_pvs['CBPostCount']        = PV(prefix + 'PostCount')
+            self.control_pvs['CBCapture']          = PV(prefix + 'Capture')            
+            self.control_pvs['CBCaptureRBV']       = PV(prefix + 'Capture_RBV')
+            self.control_pvs['CBTrigger']          = PV(prefix + 'Trigger')
+            self.control_pvs['CBTriggerRBV']       = PV(prefix + 'Trigger_RBV')
+            self.control_pvs['CBCurrentQtyRBV']    = PV(prefix + 'CurrentQty_RBV')            
+            self.control_pvs['CBEnableCallbacks']  = PV(prefix + 'EnableCallbacks')
+            self.control_pvs['CBStatusMessage']    = PV(prefix + 'StatusMessage')
 
         self.epics_pvs = {**self.config_pvs, **self.control_pvs}
         # Wait 1 second for all PVs to connect
