@@ -13,6 +13,7 @@ import math
 import numpy as np
 import pvaccess
 import threading
+from epics import PV
 from tomoscan import util
 from tomoscan import TomoScan
 from tomoscan import log
@@ -208,7 +209,6 @@ class TomoScanStreamPSO(TomoScan):
         self.epics_pvs['Rotation'].put(self.rotation_start, wait=True)
         self.epics_pvs['RotationSpeed'].put(self.motor_speed)
         self.epics_pvs['RotationSpeedJog'].put(self.motor_speed)
-        print(self.epics_pvs['PSOEncoderCountsPerStep'].get())
         # Make sure the PSO control is off
         pso_command.put('PSOCONTROL %s RESET' % pso_axis, wait=True, timeout=10.0)
         # Set the output to occur from the I/O terminal on the controller
@@ -347,8 +347,9 @@ class TomoScanStreamPSO(TomoScan):
         self.epics_pvs['CBEnableCallbacks'].put('Enable')
         self.epics_pvs['FPEnableCallbacks'].put('Enable')
         self.epics_pvs['StreamSync'].put('Done',wait=True)
-
-    
+        # todo: add pvname,... to ioc
+        self.epics_pvs['LensSelect'] = PV('2bm:MCTOptics:LensSelect')    
+        self.lens_cur = self.epics_pvs['LensSelect'].get()
 
     def begin_stream(self):
         """Streaming settings adjustments at the beginning of the scan
@@ -389,7 +390,7 @@ class TomoScanStreamPSO(TomoScan):
         self.epics_pvs['CBStatusMessage'].add_callback(self.pv_callback_stream)
         self.epics_pvs['FPNumCapture'].add_callback(self.pv_callback_stream)
         self.epics_pvs['FPNumCaptured'].add_callback(self.pv_callback_stream)
-        
+        self.epics_pvs['LensSelect'].add_callback(self.pv_callback_stream)
               
 
     def end_stream(self):
@@ -414,7 +415,8 @@ class TomoScanStreamPSO(TomoScan):
         self.epics_pvs['CBStatusMessage'].clear_callbacks()
         self.epics_pvs['FPNumCapture'].clear_callbacks()        
         self.epics_pvs['FPNumCaptured'].clear_callbacks()
-        
+        self.epics_pvs['LensSelect'].clear_callbacks()
+
         self.capturing = 0  
 
     def pv_callback_stream(self, pvname=None, value=None, char_value=None, **kw):
@@ -453,7 +455,10 @@ class TomoScanStreamPSO(TomoScan):
         if (pvname.find('StreamBinning') != -1):
             thread = threading.Thread(target=self.change_binning, args=())
             thread.start() 
-    
+        if (pvname.find('LensSelect') != -1 and (value==0 or value==1 or value==2)):
+            thread = threading.Thread(target=self.lens_change_sync, args=())
+            thread.start()  
+
     def stream_sync(self):
         """Synchronize new angular step and exposure with rotation speed. Brodcast new array of angles for streaming reconstruction
 
@@ -955,3 +960,22 @@ class TomoScanStreamPSO(TomoScan):
     def change_numcaptured(self):
         """Update current number of captured frames """
         self.epics_pvs['StreamNumCaptured'].put(self.epics_pvs['FPNumCaptured'].get())
+
+    def lens_change_sync(self):
+        """Save/Update dark and flat fields for lenses"""
+        
+        log.info('switch lens from', self.lens_cur)
+        dirname = os.path.dirname(self.epics_pvs['FPFullFileName'].get(as_string=True))            
+        cmd = 'cp '+ dirname+'/dark_fields.h5 '+ dirname+'/dark_fields_'+str(lens_cur)+'.h5 2> /dev/null '
+        os.system(cmd)                
+        cmd = 'cp '+ dirname+'/flat_fields.h5 '+ dirname+'/flat_fields_'+str(lens_cur)+'.h5 2> /dev/null '
+        os.system(cmd)                
+        self.lens_cur = self.epics_pvs['LensSelect'].get()
+        log.info('to', self.lens_cur)
+        cmd = 'cp '+ dirname+'/dark_fields_'+str(lens_cur)+'.h5 '+ dirname+'/dark_fields.h5 2> /dev/null '
+        os.system(cmd)                
+        cmd = 'cp '+ dirname+'/flat_fields_'+str(lens_cur)+'.h5 '+ dirname+'/flat_fields_'+str(lens_cur)+'.h5 2> /dev/null '
+        os.system(cmd)                
+        self.broadcast_dark()
+        self.broadcast_flat()
+        
