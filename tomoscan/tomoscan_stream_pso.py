@@ -208,7 +208,7 @@ class TomoScanStreamPSO(TomoScan):
         self.epics_pvs['Rotation'].put(self.rotation_start, wait=True)
         self.epics_pvs['RotationSpeed'].put(self.motor_speed)
         self.epics_pvs['RotationSpeedJog'].put(self.motor_speed)
-
+        print(self.epics_pvs['PSOEncoderCountsPerStep'].get())
         # Make sure the PSO control is off
         pso_command.put('PSOCONTROL %s RESET' % pso_axis, wait=True, timeout=10.0)
         # Set the output to occur from the I/O terminal on the controller
@@ -476,6 +476,17 @@ class TomoScanStreamPSO(TomoScan):
         if self.exposure_time!=self.epics_pvs['ExposureTime'].value or self.rotation_step!=self.epics_pvs['RotationStep'].value:            
             self.exposure_time=self.epics_pvs['ExposureTime'].value
             self.rotation_step=self.epics_pvs['RotationStep'].value
+            #compute new counts per step
+            # Compute the actual delta to keep each interval an integer number of encoder counts
+            encoder_multiply = float(self.epics_pvs['PSOCountsPerRotation'].get()) / 360.
+            raw_delta_encoder_counts = self.rotation_step * encoder_multiply
+            delta_encoder_counts = round(raw_delta_encoder_counts)
+            if abs(raw_delta_encoder_counts - delta_encoder_counts) > 1e-4:
+                log.warning('  *** *** *** Requested scan would have used a non-integer number of encoder counts.')
+                log.warning('  *** *** *** Calculated # of encoder counts per step = {0:9.4f}'.format(raw_delta_encoder_counts))
+                log.warning('  *** *** *** Instead, using {0:d}'.format(delta_encoder_counts))
+            self.epics_pvs['PSOEncoderCountsPerStep'].put(delta_encoder_counts)
+
             self.cleanup_PSO()
             # wait until last projection is acquired            
             time.sleep(self.exposure_time+0.1)                        
@@ -540,13 +551,16 @@ class TomoScanStreamPSO(TomoScan):
             # need some delay here
             time.sleep(0.1)
             pso_command.put('IGLOBAL(0)', wait=True, timeout=10.0)            
+            time.sleep(0.1)
             reply = self.epics_pvs['PSOCommand.BINP'].get(as_string=True)
-            encoder_angle = int(reply[1:])
-            
-            self.rotation_start = self.control_pvs['RotationOFF'].value+encoder_angle*self.epics_pvs['RotationEResolution'].value            
-            self.compute_positions_PSO()
-            log.info(f'Angle {self.theta[0]} corresponds to unique ID {last_uniqueid+1}')
-
+            time.sleep(0.1)
+            if reply:
+                encoder_angle = int(reply[1:])                            
+                self.rotation_start = self.control_pvs['RotationOFF'].value+encoder_angle*self.epics_pvs['RotationEResolution'].value            
+                self.compute_positions_PSO()
+                log.info(f'Angle {self.theta[0]} corresponds to unique ID {last_uniqueid+1}')
+            else:
+                log.error('PSO didnt return encoder value')
             
         self.epics_pvs['StreamSync'].put('Done',wait=True)
     
