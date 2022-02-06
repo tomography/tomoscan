@@ -282,15 +282,16 @@ class TomoScanStream2BM(TomoScanStreamPSO):
         file_path = self.epics_pvs['DetectorTopDir'].get(as_string=True) + self.epics_pvs['ExperimentYearMonth'].get(as_string=True) + os.path.sep + self.epics_pvs['UserLastName'].get(as_string=True) + os.path.sep
         self.epics_pvs['FilePath'].put(file_path, wait=True)
 
-        if self.return_rotation == 'Yes':
-            # Reset rotation position by mod 360 , the actual return 
-            # to start position is handled by super().end_scan()
-            ang = self.epics_pvs['RotationRBV'].get()            
-            current_angle = np.sign(ang)*(np.abs(ang) % 360)
-            log.info('reset position to %f',current_angle)            
-            self.epics_pvs['RotationSet'].put('Set', wait=True)
-            self.epics_pvs['Rotation'].put(current_angle, wait=True)
-            self.epics_pvs['RotationSet'].put('Use', wait=True)            
+        # if self.return_rotation == 'Yes':
+        #     # Reset rotation position by mod 360 , the actual return 
+        #     # to start position is handled by super().end_scan()
+        #     # ang = self.epics_pvs['RotationRBV'].get()            
+        #     # current_angle = np.sign(ang)*(np.abs(ang) % 360)
+        #     # log.info('reset position to %f',current_angle)            
+        #     # self.epics_pvs['RotationSet'].put('Set', wait=True)
+        #     # self.epics_pvs['Rotation'].put(current_angle, wait=True)
+        #     # self.epics_pvs['RotationSet'].put('Use', wait=True)     
+        #     self.epics_pvs['RotationHomF'].put(1, wait=True)       
         
         self.lens_cur = self.epics_pvs['LensSelect'].get()
         # Call the base class method
@@ -319,13 +320,14 @@ class TomoScanStream2BM(TomoScanStreamPSO):
         # Reset rotation position by mod 360 , the actual return 
         # to start position is handled by super().end_scan()
             # allow stage to stop
-            log.info('wait until the stage is stopped')
-            time.sleep(self.epics_pvs['RotationAccelTime'].get()*1.2)                        
-            current_angle = self.epics_pvs['RotationRBV'].get() %360
-            log.info('reset position to %f',current_angle)            
-            self.epics_pvs['RotationSet'].put('Set', wait=True)
-            self.epics_pvs['Rotation'].put(current_angle, wait=True)
-            self.epics_pvs['RotationSet'].put('Use', wait=True)
+            # log.info('wait until the stage is stopped')
+            # time.sleep(self.epics_pvs['RotationAccelTime'].get()*1.2)                        
+            # current_angle = self.epics_pvs['RotationRBV'].get() %360
+            # log.info('reset position to %f',current_angle)            
+            # self.epics_pvs['RotationSet'].put('Set', wait=True)
+            # self.epics_pvs['Rotation'].put(current_angle, wait=True)
+            # self.epics_pvs['RotationSet'].put('Use', wait=True)
+            self.epics_pvs['RotationHomF'].put(1, wait=True)
         self.epics_pvs['LensSelect'].clear_callbacks()
         # Call the base class method
         super().end_scan()

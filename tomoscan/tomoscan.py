@@ -99,6 +99,8 @@ class TomoScan():
         self.control_pvs['RotationAccelTime']      = PV(rotation_pv_name + '.ACCL')
         self.control_pvs['RotationRBV']            = PV(rotation_pv_name + '.RBV')
         self.control_pvs['RotationJog']            = PV(rotation_pv_name + '.JOGF')
+        self.control_pvs['RotationHomR']           = PV(rotation_pv_name + '.HOMR')
+        self.control_pvs['RotationHomF']           = PV(rotation_pv_name + '.HOMF')
         self.control_pvs['RotationSpeedJog']       = PV(rotation_pv_name + '.JVEL')
         self.control_pvs['RotationAccelJog']       = PV(rotation_pv_name + '.JAR')
         self.control_pvs['RotationOFF']            = PV(rotation_pv_name + '.OFF')
