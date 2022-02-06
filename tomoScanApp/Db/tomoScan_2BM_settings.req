@@ -68,3 +68,8 @@ $(P)$(R)OpenFastShutterValue
 # Shutter status
 ################
 $(P)$(R)ShutterStatusPVName
+
+################
+# mctOptics
+################
+$(P)$(R)MctOpticsPVPrefix

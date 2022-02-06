@@ -13,7 +13,6 @@ import math
 import numpy as np
 import pvaccess
 import threading
-from epics import PV
 from tomoscan import util
 from tomoscan import TomoScan
 from tomoscan import log
@@ -56,7 +55,7 @@ class TomoScanStreamPSO(TomoScan):
                 'sizey': pvaccess.pvaccess.ScalarType.INT})
             self.pva_server_flat = pvaccess.PvaServer(prefix + 'StreamFlatFields', self.pva_stream_flat)
 
-            self.pva_stream_theta = pvaccess.PvObject({'value': [pvaccess.pvaccess.ScalarType.DOUBLE], 
+            self.pva_stream_theta = pvaccess.PvObject({'value': [pvaccess.pvaccess.ScalarType.FLOAT], 
                 'sizex': pvaccess.pvaccess.ScalarType.INT})
             self.pva_server_theta = pvaccess.PvaServer(prefix + 'StreamTheta', self.pva_stream_theta)
                                     
@@ -319,7 +318,7 @@ class TomoScanStreamPSO(TomoScan):
         
         # Assign the fly scan angular position to theta[]
         self.theta = self.rotation_start + np.arange(self.num_angles) * self.rotation_step * user_direction        
-        self.pva_stream_theta['value'] = self.theta
+        self.pva_stream_theta['value'] = self.theta.astype('float32')
         self.pva_stream_theta['sizex'] = self.num_angles
         
 
@@ -345,12 +344,9 @@ class TomoScanStreamPSO(TomoScan):
         self.epics_pvs['PVAEnableCallbacks'].put('Enable')
         self.epics_pvs['ROIEnableCallbacks'].put('Enable')
         self.epics_pvs['CBEnableCallbacks'].put('Enable')
-        self.epics_pvs['FPEnableCallbacks'].put('Enable')
-        self.epics_pvs['StreamSync'].put('Done',wait=True)
-        # todo: add pvname,... to ioc
-        self.epics_pvs['LensSelect'] = PV('2bm:MCTOptics:LensSelect')    
-        self.lens_cur = self.epics_pvs['LensSelect'].get()
-
+        self.epics_pvs['FPEnableCallbacks'].put('Enable')        
+        self.epics_pvs['StreamSync'].put('Done',wait=True)        
+        
     def begin_stream(self):
         """Streaming settings adjustments at the beginning of the scan
 
@@ -379,7 +375,8 @@ class TomoScanStreamPSO(TomoScan):
         self.epics_pvs['StreamRetakeFlat'].put('Done')                
         
         self.change_cbsize()        
-        
+        self.epics_pvs['FirstProjid'].put(0,wait=True)        
+
         self.epics_pvs['StreamCapture'].add_callback(self.pv_callback_stream)
         self.epics_pvs['StreamRetakeDark'].add_callback(self.pv_callback_stream)                
         self.epics_pvs['StreamRetakeFlat'].add_callback(self.pv_callback_stream)
@@ -389,8 +386,7 @@ class TomoScanStreamPSO(TomoScan):
         self.epics_pvs['CBCurrentQtyRBV'].add_callback(self.pv_callback_stream)        
         self.epics_pvs['CBStatusMessage'].add_callback(self.pv_callback_stream)
         self.epics_pvs['FPNumCapture'].add_callback(self.pv_callback_stream)
-        self.epics_pvs['FPNumCaptured'].add_callback(self.pv_callback_stream)
-        self.epics_pvs['LensSelect'].add_callback(self.pv_callback_stream)
+        self.epics_pvs['FPNumCaptured'].add_callback(self.pv_callback_stream)        
               
 
     def end_stream(self):
@@ -415,8 +411,7 @@ class TomoScanStreamPSO(TomoScan):
         self.epics_pvs['CBStatusMessage'].clear_callbacks()
         self.epics_pvs['FPNumCapture'].clear_callbacks()        
         self.epics_pvs['FPNumCaptured'].clear_callbacks()
-        self.epics_pvs['LensSelect'].clear_callbacks()
-
+        
         self.capturing = 0  
 
     def pv_callback_stream(self, pvname=None, value=None, char_value=None, **kw):
@@ -455,10 +450,7 @@ class TomoScanStreamPSO(TomoScan):
         if (pvname.find('StreamBinning') != -1):
             thread = threading.Thread(target=self.change_binning, args=())
             thread.start() 
-        if (pvname.find('LensSelect') != -1 and (value==0 or value==1 or value==2)):
-            thread = threading.Thread(target=self.lens_change_sync, args=())
-            thread.start()  
-
+ 
     def stream_sync(self):
         """Synchronize new angular step and exposure with rotation speed. Brodcast new array of angles for streaming reconstruction
 
@@ -495,8 +487,9 @@ class TomoScanStreamPSO(TomoScan):
             self.cleanup_PSO()
             # wait until last projection is acquired            
             time.sleep(self.exposure_time+0.1)                        
+            
             # save last unique id of the projection
-            last_uniqueid = self.epics_pvs['CamNumImagesCounter'].get()
+            projid = self.epics_pvs['CamNumImagesCounter'].get()
             
             pso_command = self.epics_pvs['PSOCommand.BOUT']
             pso_model = self.epics_pvs['PSOControllerModel'].get(as_string=True)
@@ -538,15 +531,19 @@ class TomoScanStreamPSO(TomoScan):
                 window_start = window_end - range_length
             pso_command.put('PSOWINDOW %s 1 RANGE %d,%d' % (pso_axis, window_start-5, window_end+5), wait=True, timeout=10.0)
 
-            # recompute velocity
+            
             self.epics_pvs['CamAcquireTime'].put(self.exposure_time, wait=True, timeout = 10.0)
             time_per_angle = self.compute_frame_time()
+            # compute acceleration time
+            accelJog_time = np.abs((self.motor_speed-self.rotation_step / time_per_angle))/self.control_pvs['RotationAccelJog'].value
+            # recompute velocity
             self.motor_speed = self.rotation_step / time_per_angle        
             self.control_pvs['RotationSpeedJog'].put(self.motor_speed, wait=True)
             pso_command.put('PROGRAM RUN 1, "dataacqoff.bcx"', wait=True, timeout=10.0)                                    
             pso_command.put('PROGRAM RUN 1, "dataacqon.bcx"', wait=True, timeout=10.0)                                    
-            # wait 1s for acceleration? looks like this happens immediately
-            time.sleep(1)            
+            # wait acceleration
+            log.warning(f'wait {accelJog_time+1} for acceleration')
+            time.sleep(accelJog_time+1)
             # Arm the PSO
             log.warning(f'ARM PSO and wait until the first projection is acquired')        
             pso_command.put('PSOCONTROL %s ARM' % pso_axis, wait=True, timeout=10.0)                        
@@ -561,9 +558,11 @@ class TomoScanStreamPSO(TomoScan):
             time.sleep(0.1)
             if reply:
                 encoder_angle = int(reply[1:])                            
+                
                 self.rotation_start = self.control_pvs['RotationOFF'].value+encoder_angle*self.epics_pvs['RotationEResolution'].value            
-                self.compute_positions_PSO()
-                log.info(f'Angle {self.theta[0]} corresponds to unique ID {last_uniqueid+1}')
+                self.epics_pvs['FirstProjid'].put(projid+1,wait=True)
+                self.compute_positions_PSO()                
+                log.info(f'Angle {self.theta[0]} corresponds to unique ID {projid+1}')
             else:
                 log.error('PSO didnt return encoder value')
             
@@ -961,21 +960,4 @@ class TomoScanStreamPSO(TomoScan):
         """Update current number of captured frames """
         self.epics_pvs['StreamNumCaptured'].put(self.epics_pvs['FPNumCaptured'].get())
 
-    def lens_change_sync(self):
-        """Save/Update dark and flat fields for lenses"""
-        
-        log.info('switch lens from', self.lens_cur)
-        dirname = os.path.dirname(self.epics_pvs['FPFullFileName'].get(as_string=True))            
-        cmd = 'cp '+ dirname+'/dark_fields.h5 '+ dirname+'/dark_fields_'+str(lens_cur)+'.h5 2> /dev/null '
-        os.system(cmd)                
-        cmd = 'cp '+ dirname+'/flat_fields.h5 '+ dirname+'/flat_fields_'+str(lens_cur)+'.h5 2> /dev/null '
-        os.system(cmd)                
-        self.lens_cur = self.epics_pvs['LensSelect'].get()
-        log.info('to', self.lens_cur)
-        cmd = 'cp '+ dirname+'/dark_fields_'+str(lens_cur)+'.h5 '+ dirname+'/dark_fields.h5 2> /dev/null '
-        os.system(cmd)                
-        cmd = 'cp '+ dirname+'/flat_fields_'+str(lens_cur)+'.h5 '+ dirname+'/flat_fields_'+str(lens_cur)+'.h5 2> /dev/null '
-        os.system(cmd)                
-        self.broadcast_dark()
-        self.broadcast_flat()
         

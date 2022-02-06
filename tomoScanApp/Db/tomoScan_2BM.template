@@ -224,3 +224,11 @@ record(stringout, "$(P)$(R)ShutterStatusPVName")
    field(VAL,  "$(SHUTTER_STATUS)")
 }
 
+###########
+# mctOptics
+###########
+
+record(stringout, "$(P)$(R)MctOpticsPVPrefix")
+{
+   field(VAL,  "$(MCT_OPTICS)")
+}

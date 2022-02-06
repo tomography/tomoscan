@@ -37,6 +37,8 @@ from tomoscan import log
 from tomoscan import util
 import threading
 import pvaccess
+from epics import PV
+
 
 EPSILON = .001
 
@@ -295,7 +297,7 @@ class TomoScanStream2BM(TomoScanStreamPSO):
         super().begin_scan()
         # Opens the front-end shutter
         self.open_frontend_shutter()
-        self.epics_pvs['LensSelect'].add_callback(self.pv_callback_stream)
+        self.epics_pvs['LensSelect'].add_callback(self.pv_callback_stream_2bm)
         
     def end_scan(self):
         """Performs the operations needed at the very end of a scan.
@@ -330,7 +332,7 @@ class TomoScanStream2BM(TomoScanStreamPSO):
         # Close shutter
         self.close_shutter()
     
-    def pv_callback_stream(self, pvname=None, value=None, char_value=None, **kw):
+    def pv_callback_stream_2bm(self, pvname=None, value=None, char_value=None, **kw):
         """Callback functions for capturing in the streaming mode"""
         if (pvname.find('LensSelect') != -1 and (value==0 or value==1 or value==2)):
             thread = threading.Thread(target=self.lens_change_sync, args=())

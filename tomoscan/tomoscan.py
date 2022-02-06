@@ -100,6 +100,7 @@ class TomoScan():
         self.control_pvs['RotationRBV']            = PV(rotation_pv_name + '.RBV')
         self.control_pvs['RotationJog']            = PV(rotation_pv_name + '.JOGF')
         self.control_pvs['RotationSpeedJog']       = PV(rotation_pv_name + '.JVEL')
+        self.control_pvs['RotationAccelJog']       = PV(rotation_pv_name + '.JAR')
         self.control_pvs['RotationOFF']            = PV(rotation_pv_name + '.OFF')
 
         #Define PVs from the camera IOC that we will need
