@@ -72,6 +72,10 @@ class TomoScanStream2BM(TomoScanStreamPSO):
         # Disable overw writing warning
         self.epics_pvs['OverwriteWarning'].put('Yes')
         
+        # Lens change functtionality
+        prefix = self.pv_prefixes['MctOptics']
+        self.epics_pvs['LensSelect'] = PV(prefix+'LensSelect')            
+
         log.setup_custom_logger("./tomoscan.log")
 
     
@@ -284,12 +288,14 @@ class TomoScanStream2BM(TomoScanStreamPSO):
             log.info('reset position to %f',current_angle)            
             self.epics_pvs['RotationSet'].put('Set', wait=True)
             self.epics_pvs['Rotation'].put(current_angle, wait=True)
-            self.epics_pvs['RotationSet'].put('Use', wait=True)
+            self.epics_pvs['RotationSet'].put('Use', wait=True)            
+        
+        self.lens_cur = self.epics_pvs['LensSelect'].get()
         # Call the base class method
         super().begin_scan()
         # Opens the front-end shutter
         self.open_frontend_shutter()
-         
+        self.epics_pvs['LensSelect'].add_callback(self.pv_callback_stream)
         
     def end_scan(self):
         """Performs the operations needed at the very end of a scan.
@@ -318,12 +324,18 @@ class TomoScanStream2BM(TomoScanStreamPSO):
             self.epics_pvs['RotationSet'].put('Set', wait=True)
             self.epics_pvs['Rotation'].put(current_angle, wait=True)
             self.epics_pvs['RotationSet'].put('Use', wait=True)
-            
+        self.epics_pvs['LensSelect'].clear_callbacks()
         # Call the base class method
         super().end_scan()
         # Close shutter
         self.close_shutter()
- 
+    
+    def pv_callback_stream(self, pvname=None, value=None, char_value=None, **kw):
+        """Callback functions for capturing in the streaming mode"""
+        if (pvname.find('LensSelect') != -1 and (value==0 or value==1 or value==2)):
+            thread = threading.Thread(target=self.lens_change_sync, args=())
+            thread.start() 
+    
     def wait_pv(self, epics_pv, wait_val, timeout=-1):
         """Wait on a pv to be a value until max_timeout (default forever)
            delay for pv to change
@@ -349,6 +361,21 @@ class TomoScanStream2BM(TomoScanStreamPSO):
             else:
                 return True
 
+    def lens_change_sync(self):
+        """Save/Update dark and flat fields for lenses"""
+        
+        log.info(f'switch lens from {self.lens_cur}')
+        dirname = os.path.dirname(self.epics_pvs['FPFullFileName'].get(as_string=True))            
+        cmd = 'cp '+ dirname+'/dark_fields.h5 '+ dirname+'/dark_fields_'+str(self.lens_cur)+'.h5 2> /dev/null '
+        os.system(cmd)                
+        cmd = 'cp '+ dirname+'/flat_fields.h5 '+ dirname+'/flat_fields_'+str(self.lens_cur)+'.h5 2> /dev/null '
+        os.system(cmd)                
+        self.lens_cur = self.epics_pvs['LensSelect'].get()
+        log.info(f'to {self.lens_cur}')
+        cmd = 'cp '+ dirname+'/dark_fields_'+str(self.lens_cur)+'.h5 '+ dirname+'/dark_fields.h5 2> /dev/null '
+        os.system(cmd)                
+        cmd = 'cp '+ dirname+'/flat_fields_'+str(self.lens_cur)+'.h5 '+ dirname+'/flat_fields.h5 2> /dev/null '
+        os.system(cmd)                
                 
     def wait_frontend_shutter_open(self, timeout=-1):
         """Waits for the front end shutter to open, or for ``abort_scan()`` to be called.
