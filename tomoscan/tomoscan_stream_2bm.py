@@ -316,7 +316,7 @@ class TomoScanStream2BM(TomoScanStreamPSO):
         - Closes shutter.
         """
         
-        if self.return_rotation == 'Yes':
+        # if self.return_rotation == 'Yes':
         # Reset rotation position by mod 360 , the actual return 
         # to start position is handled by super().end_scan()
             # allow stage to stop
@@ -327,7 +327,7 @@ class TomoScanStream2BM(TomoScanStreamPSO):
             # self.epics_pvs['RotationSet'].put('Set', wait=True)
             # self.epics_pvs['Rotation'].put(current_angle, wait=True)
             # self.epics_pvs['RotationSet'].put('Use', wait=True)
-            self.epics_pvs['RotationHomF'].put(1, wait=True)
+            # self.epics_pvs['RotationHomF'].put(1, wait=True)
         self.epics_pvs['LensSelect'].clear_callbacks()
         # Call the base class method
         super().end_scan()
@@ -379,7 +379,9 @@ class TomoScanStream2BM(TomoScanStreamPSO):
         cmd = 'cp '+ dirname+'/dark_fields_'+str(self.lens_cur)+'.h5 '+ dirname+'/dark_fields.h5 2> /dev/null '
         os.system(cmd)                
         cmd = 'cp '+ dirname+'/flat_fields_'+str(self.lens_cur)+'.h5 '+ dirname+'/flat_fields.h5 2> /dev/null '
-        os.system(cmd)                
+        os.system(cmd)   
+        self.broadcast_dark()             
+        self.broadcast_flat()             
                 
     def wait_frontend_shutter_open(self, timeout=-1):
         """Waits for the front end shutter to open, or for ``abort_scan()`` to be called.
