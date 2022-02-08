@@ -764,36 +764,6 @@ Beam status information
     - stringout
     - Enable testing mode 'Yes'.
 
-Optics information
-^^^^^^^^^^^^^^^^^^
-
-.. cssclass:: table-bordered table-striped table-hover
-.. list-table::
-  :header-rows: 1
-  :widths: 5 5 90
-
-  * - Record name
-    - Record type
-    - Description
-  * - $(P)$(R)ScintillatorType
-    - stringout
-    - Contains the type of scintillator being used.
-  * - $(P)$(R)ScintillatorThickness
-    - ao
-    - Contains the thickness of the scintillator in microns.
-  * - $(P)$(R)ImagePixelSize
-    - ao
-    - Contains the pixel size on the sample in microns (i.e. includes objective magnification)
-  * - $(P)$(R)DetectorPixelSize
-    - ao
-    - Contains the pixel size of the detector.
-  * - $(P)$(R)CameraObjective
-    - stringout
-    - Description of the camera objective
-  * - $(P)$(R)CameraTubeLength
-    - stringout
-    - Description of the camera objective
-
 Sample information
 ^^^^^^^^^^^^^^^^^^
 
