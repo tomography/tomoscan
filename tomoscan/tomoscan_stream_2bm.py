@@ -74,9 +74,13 @@ class TomoScanStream2BM(TomoScanStreamPSO):
         # Disable overw writing warning
         self.epics_pvs['OverwriteWarning'].put('Yes')
         
-        # Lens change functtionality
+        # Lens change functionality
         prefix = self.pv_prefixes['MctOptics']
         self.epics_pvs['LensSelect'] = PV(prefix+'LensSelect')            
+        # # ref to pixel size
+        # self.epics_pvs['MCTPixelSize'] = PV(prefix+'PixelSize')            
+        # # 
+        # self.epics_pvs['PixelSize'].put(self.epics_pvs['MCTPixelSize'])
 
         log.setup_custom_logger("./tomoscan.log")
 
@@ -282,16 +286,18 @@ class TomoScanStream2BM(TomoScanStreamPSO):
         file_path = self.epics_pvs['DetectorTopDir'].get(as_string=True) + self.epics_pvs['ExperimentYearMonth'].get(as_string=True) + os.path.sep + self.epics_pvs['UserLastName'].get(as_string=True) + os.path.sep
         self.epics_pvs['FilePath'].put(file_path, wait=True)
 
-        # if self.return_rotation == 'Yes':
-        #     # Reset rotation position by mod 360 , the actual return 
-        #     # to start position is handled by super().end_scan()
-        #     # ang = self.epics_pvs['RotationRBV'].get()            
-        #     # current_angle = np.sign(ang)*(np.abs(ang) % 360)
-        #     # log.info('reset position to %f',current_angle)            
-        #     # self.epics_pvs['RotationSet'].put('Set', wait=True)
-        #     # self.epics_pvs['Rotation'].put(current_angle, wait=True)
-        #     # self.epics_pvs['RotationSet'].put('Use', wait=True)     
-        #     self.epics_pvs['RotationHomF'].put(1, wait=True)       
+        
+        if self.epics_pvs['ReturnRotation'].get(as_string=True) == 'Yes':
+            # Reset rotation position by mod 360 , the actual return 
+            # to start position is handled by super().end_scan()
+            # ang = self.epics_pvs['RotationRBV'].get()            
+            # current_angle = np.sign(ang)*(np.abs(ang) % 360)
+            # log.info('reset position to %f',current_angle)            
+            # self.epics_pvs['RotationSet'].put('Set', wait=True)
+            # self.epics_pvs['Rotation'].put(current_angle, wait=True)
+            # self.epics_pvs['RotationSet'].put('Use', wait=True)     
+            log.warning('home stage')
+            self.epics_pvs['RotationHomF'].put(1, wait=True)                  
         
         self.lens_cur = self.epics_pvs['LensSelect'].get()
         # Call the base class method
@@ -316,7 +322,7 @@ class TomoScanStream2BM(TomoScanStreamPSO):
         - Closes shutter.
         """
         
-        # if self.return_rotation == 'Yes':
+        if self.epics_pvs['ReturnRotation'].get(as_string=True) == 'Yes':
         # Reset rotation position by mod 360 , the actual return 
         # to start position is handled by super().end_scan()
             # allow stage to stop
@@ -327,7 +333,10 @@ class TomoScanStream2BM(TomoScanStreamPSO):
             # self.epics_pvs['RotationSet'].put('Set', wait=True)
             # self.epics_pvs['Rotation'].put(current_angle, wait=True)
             # self.epics_pvs['RotationSet'].put('Use', wait=True)
-            # self.epics_pvs['RotationHomF'].put(1, wait=True)
+            log.warning('wait 5s to stop the stage')
+            time.sleep(5) 
+            log.warning('home stage')
+            self.epics_pvs['RotationHomF'].put(1, wait=True)                        
         self.epics_pvs['LensSelect'].clear_callbacks()
         # Call the base class method
         super().end_scan()
@@ -368,6 +377,11 @@ class TomoScanStream2BM(TomoScanStreamPSO):
     def lens_change_sync(self):
         """Save/Update dark and flat fields for lenses"""
         
+        # ref to pixel size
+        # self.epics_pvs['MCTPixelSize'] = PV(prefix+'PixelSize')            
+        # 
+        # self.epics_pvs['PixelSize'].put(self.epics_pvs['MCTPixelSize'])
+
         log.info(f'switch lens from {self.lens_cur}')
         dirname = os.path.dirname(self.epics_pvs['FPFullFileName'].get(as_string=True))            
         cmd = 'cp '+ dirname+'/dark_fields.h5 '+ dirname+'/dark_fields_'+str(self.lens_cur)+'.h5 2> /dev/null '

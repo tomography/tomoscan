@@ -61,25 +61,6 @@ class TomoScanStreamPSO(TomoScan):
                                     
         self.stream_init()
 
-
-    def collect_dark_fields(self):
-        """Collects dark field images.
-        Calls ``collect_static_frames()`` with the number of images specified
-        by the ``NumDarkFields`` PV.
-        """
-
-        log.info('collect dark fields')
-        super().collect_dark_fields()
-
-
-    def collect_flat_fields(self):
-        """Collects flat field images.
-        Calls ``collect_static_frames()`` with the number of images specified
-        by the ``NumFlatFields`` PV.
-        """
-        log.info('collect flat fields')
-        super().collect_flat_fields()
-
     def begin_scan(self):
         """Performs the operations needed at the very start of a scan.
 
@@ -101,9 +82,7 @@ class TomoScanStreamPSO(TomoScan):
 
         # Program the stage driver to provide PSO pulses
         self.compute_positions_PSO()
-
         self.program_PSO()
-
         self.begin_stream()  
 
         
@@ -123,7 +102,7 @@ class TomoScanStreamPSO(TomoScan):
         - Calls the base class method.
         """
         log.info('end scan')
-        self.end_stream()
+        self.end_stream()        
         # Save the configuration
         # Strip the extension from the FullFileName and add .config
         full_file_name = self.epics_pvs['FPFullFileName'].get(as_string=True)
@@ -142,7 +121,9 @@ class TomoScanStreamPSO(TomoScan):
         self.move_sample_in()
 
         # Call the base class method
+        self.epics_pvs['RotationJog'].put(0,wait=True)
         super().end_scan()
+    
 
     def collect_projections(self):
         """Collects projections in fly scan mode.
@@ -334,6 +315,7 @@ class TomoScanStreamPSO(TomoScan):
         - enable callbacks in the ports
         - create pvaccess servers for dark and flat fields
         """
+        log.info('stream init')
 
         port_name = self.epics_pvs['PortNameRBV'].get()
         self.epics_pvs['PVANDArrayPort'].put('ROI1')
@@ -345,7 +327,6 @@ class TomoScanStreamPSO(TomoScan):
         self.epics_pvs['ROIEnableCallbacks'].put('Enable')
         self.epics_pvs['CBEnableCallbacks'].put('Enable')
         self.epics_pvs['FPEnableCallbacks'].put('Enable')        
-        self.epics_pvs['StreamSync'].put('Done',wait=True)        
         
     def begin_stream(self):
         """Streaming settings adjustments at the beginning of the scan
@@ -356,27 +337,29 @@ class TomoScanStreamPSO(TomoScan):
         - set circular buffer            
         - add callbacks for capturing pvs
         - add callbacks for changing sizes pvs          
-        - add callbacks for syncing tomoscan pvs         
-        
-        - init flag for controling only one capturing at a time          
+        - add callbacks for syncing tomoscan pvs                 
         """
-        self.capturing = 0        
-        
+        log.info('begin stream')
+
         self.epics_pvs['FlatFieldMode'].put('None', wait=True)
         self.epics_pvs['DarkFieldMode'].put('None', wait=True)
 
         binning = self.epics_pvs['StreamBinning'].get()        
-        self.epics_pvs['ROIBinX'].put(2**binning)    
-        self.epics_pvs['ROIBinY'].put(2**binning)    
-        self.epics_pvs['ROIScale'].put(2**(2*binning))
+        self.epics_pvs['ROIBinX'].put(2**binning, wait=True)
+        self.epics_pvs['ROIBinY'].put(2**binning, wait=True)    
+        self.epics_pvs['ROIScale'].put(2**(2*binning), wait=True)
         
-        self.epics_pvs['StreamCapture'].put('Done')
-        self.epics_pvs['StreamRetakeDark'].put('Done')
-        self.epics_pvs['StreamRetakeFlat'].put('Done')                
-        
-        self.change_cbsize()        
-        self.epics_pvs['FirstProjid'].put(0,wait=True)        
+        self.epics_pvs['StreamCapture'].put('Done', wait=True)
+        self.epics_pvs['StreamMessage'].put('Done', wait=True)
+        self.epics_pvs['StreamRetakeDark'].put('Done', wait=True)
+        self.epics_pvs['StreamRetakeFlat'].put('Done', wait=True)     
+        self.epics_pvs['StreamSync'].put('Done', wait=True)   
+        # set first projection id as 0
+        self.epics_pvs['FirstProjid'].put(0, wait=True)        
+        # init circular buffer
+        self.change_cbsize()                
 
+        # stream callbacks
         self.epics_pvs['StreamCapture'].add_callback(self.pv_callback_stream)
         self.epics_pvs['StreamRetakeDark'].add_callback(self.pv_callback_stream)                
         self.epics_pvs['StreamRetakeFlat'].add_callback(self.pv_callback_stream)
@@ -398,9 +381,10 @@ class TomoScanStreamPSO(TomoScan):
         """
         log.info('end stream')
         
-        self.epics_pvs['StreamCapture'].put('Done')
-        self.epics_pvs['StreamRetakeDark'].put('Done')
-        self.epics_pvs['StreamRetakeFlat'].put('Done')        
+        self.epics_pvs['StreamCapture'].put('Done', wait=True)          
+        self.epics_pvs['StreamRetakeDark'].put('Done', wait=True)          
+        self.epics_pvs['StreamRetakeFlat'].put('Done', wait=True)          
+        self.epics_pvs['StreamMessage'].put('Done', wait=True)          
                         
         self.epics_pvs['StreamCapture'].clear_callbacks()
         self.epics_pvs['StreamRetakeDark'].clear_callbacks()                
@@ -411,8 +395,7 @@ class TomoScanStreamPSO(TomoScan):
         self.epics_pvs['CBStatusMessage'].clear_callbacks()
         self.epics_pvs['FPNumCapture'].clear_callbacks()        
         self.epics_pvs['FPNumCaptured'].clear_callbacks()
-        
-        self.capturing = 0  
+
 
     def pv_callback_stream(self, pvname=None, value=None, char_value=None, **kw):
         """Callback functions for capturing in the streaming mode"""
@@ -438,9 +421,6 @@ class TomoScanStreamPSO(TomoScan):
         if (pvname.find('StatusMessage') != -1):
             thread = threading.Thread(target=self.change_cbmessage, args=())
             thread.start() 
-        # if (pvname.find('NumCapture') != -1):
-        #     thread = threading.Thread(target=self.change_numcapture, args=())
-        #     thread.start() 
         if (pvname.find('NumCaptured_RBV') != -1):
             thread = threading.Thread(target=self.change_numcaptured, args=())
             thread.start() 
@@ -465,12 +445,10 @@ class TomoScanStreamPSO(TomoScan):
         - convert encoder value to the angle, form array of angles
         - broadcast array of angles for streaming
         """
+        log.info('stream sync')                        
+        
+        if self.epics_pvs['StreamMessage'].get(as_string=True)=='Done' and (self.exposure_time!=self.epics_pvs['ExposureTime'].value or self.rotation_step!=self.epics_pvs['RotationStep'].value): 
 
-        print('stream sync callback')                        
-        if self.capturing==1:
-            return
-
-        if self.exposure_time!=self.epics_pvs['ExposureTime'].value or self.rotation_step!=self.epics_pvs['RotationStep'].value:            
             self.exposure_time=self.epics_pvs['ExposureTime'].value
             self.rotation_step=self.epics_pvs['RotationStep'].value
             #compute new counts per step
@@ -566,7 +544,7 @@ class TomoScanStreamPSO(TomoScan):
             else:
                 log.error('PSO didnt return encoder value')
             
-        self.epics_pvs['StreamSync'].put('Done',wait=True)
+        self.epics_pvs['StreamSync'].put('Done', wait=True)
     
 
     def capture_projections(self):
@@ -575,7 +553,7 @@ class TomoScanStreamPSO(TomoScan):
         scan_045.h5 (captured projections), circular_buffer_scan_045.h5 (pre-buffer with projections), 
         dark_fields_scan_045.h5 (dark fields), and flat_fields_scan_045.h5 (flat fields)
 
-        - set capturing flag to 1
+        - set StreamMessage to 'Capturing projections'
         - disable cb plugin
         - set number of captured frames in the hdf5 plugin as StreamNumCapture parameter
         - start capturing to the hdf5 file
@@ -603,78 +581,74 @@ class TomoScanStreamPSO(TomoScan):
           - change hdf5 file name back to the initial             
         
         - set capturing status to Done      
-        - compute total number of captured frames and show it the medm screen
-        - set capturing flag to 0
-        
+        - compute total number of captured frames and show it the medm screen        
+        - set StreamMessage to 'Done'
         """
-        if self.capturing==1:
-            return
-
         log.info('capture projections')
-        self.epics_pvs['StreamMessage'].put('Capturing projections')
 
-        self.capturing = 1
-        self.epics_pvs['CBEnableCallbacks'].put('Disable')
-        
-        # set file name (extra check)
-        file_name = self.epics_pvs['FileName'].get(as_string=True)        
-        self.epics_pvs['FPFileName'].put(file_name,wait=True)                
-        
-        self.epics_pvs['FPNumCapture'].put(self.epics_pvs['StreamNumCapture'].get())
-        self.epics_pvs['FPCapture'].put('Capture')
-        self.wait_pv(self.epics_pvs['FPCaptureRBV'], 1)        
-        self.wait_pv(self.epics_pvs['FPCaptureRBV'], 0)
-        num_captured = self.epics_pvs['StreamNumCaptured'].get()
-
-        self.dump_theta(self.epics_pvs['FPFullFileName'].get(as_string=True))
-        basename = os.path.basename(self.epics_pvs['FPFullFileName'].get(as_string=True))
-        dirname = os.path.dirname(self.epics_pvs['FPFullFileName'].get(as_string=True))
-
-        #Create a thread to handle the bright and dark fields
-        flat_dark_thread = threading.Thread(target = self.copy_flat_dark_to_hdf,
-                                            args=(self.epics_pvs['FPFullFileName'].get(as_string=True),))
-        flat_dark_thread.start()
-        
+        if self.epics_pvs['StreamMessage'].get(as_string=True)=='Done':                                    
+            self.epics_pvs['StreamMessage'].put('Capturing projections')
+            self.epics_pvs['CBEnableCallbacks'].put('Disable')
             
-        if(self.epics_pvs['StreamPreCount'].get()>0):
-            self.epics_pvs['StreamMessage'].put('Capturing circular buffer')                    
-            log.info('save pre-buffer')        
-
-            file_name = self.epics_pvs['FPFileName'].get(as_string=True)
-            file_template = self.epics_pvs['FPFileTemplate'].get(as_string=True)
-            autoincrement =  self.epics_pvs['FPAutoIncrement'].get(as_string=True)
-
-            self.epics_pvs['FPFileName'].put('circular_buffer_'+ basename, wait=True)
-            self.epics_pvs['FPFileTemplate'].put('%s%s', wait=True)
-            self.epics_pvs['FPAutoIncrement'].put('No', wait=True)        
-            fp_port_name = self.epics_pvs['FPNDArrayPort'].get(as_string=True)
-            self.epics_pvs['FPNDArrayPort'].put(self.epics_pvs['CBPortNameRBV'].get())                
-
-            self.epics_pvs['FPNumCapture'].put(self.epics_pvs['CBCurrentQtyRBV'].get(), wait=True)
+            # set file name (extra check)
+            file_name = self.epics_pvs['FileName'].get(as_string=True)        
+            self.epics_pvs['FPFileName'].put(file_name,wait=True)                
+            
+            self.epics_pvs['FPNumCapture'].put(self.epics_pvs['StreamNumCapture'].get())
             self.epics_pvs['FPCapture'].put('Capture')
-            self.epics_pvs['CBPostCount'].put(self.epics_pvs['CBCurrentQtyRBV'].get(), wait=True)
-            self.epics_pvs['CBTrigger'].put('Trigger')      
-            self.wait_pv(self.epics_pvs['FPCaptureRBV'], 1)            
-            self.wait_pv(self.epics_pvs['CBTriggerRBV'], 1)                    
-            self.epics_pvs['CBEnableCallbacks'].put('Enable')     
-            self.wait_pv(self.epics_pvs['FPCaptureRBV'], 0)            
-            self.epics_pvs['CBCapture'].put('Capture')   
-            self.dump_theta(self.epics_pvs['FPFullFileName'].get(as_string=True))
-            self.epics_pvs['FPNDArrayPort'].put(fp_port_name)                        
-            self.epics_pvs['FPFileName'].put(file_name, wait=True)
-            self.epics_pvs['FPFileTemplate'].put(file_template, wait=True)        
-            self.epics_pvs['FPAutoIncrement'].put(autoincrement, wait=True)                        
-        
-        num_captured += self.epics_pvs['StreamNumCaptured'].get()
+            self.wait_pv(self.epics_pvs['FPCaptureRBV'], 1)        
+            self.wait_pv(self.epics_pvs['FPCaptureRBV'], 0)
+            num_captured = self.epics_pvs['StreamNumCaptured'].get()
 
-        self.epics_pvs['StreamCapture'].put('Done')
+            self.dump_theta(self.epics_pvs['FPFullFileName'].get(as_string=True))
+            basename = os.path.basename(self.epics_pvs['FPFullFileName'].get(as_string=True))
+            dirname = os.path.dirname(self.epics_pvs['FPFullFileName'].get(as_string=True))
+
+            # Create a thread to handle the flat and dark fields (to create a regular hdf5 file handled by tomopy-cli)
+            # Note: circular buffer is not saved to the file
+            flat_dark_thread = threading.Thread(target = self.copy_flat_dark_to_hdf,
+                                                args=(self.epics_pvs['FPFullFileName'].get(as_string=True),))
+            flat_dark_thread.start()        
+                
+            if(self.epics_pvs['StreamPreCount'].get()>0):
+                self.epics_pvs['StreamMessage'].put('Capturing circular buffer')                    
+                log.info('save pre-buffer')        
+
+                file_name = self.epics_pvs['FPFileName'].get(as_string=True)
+                file_template = self.epics_pvs['FPFileTemplate'].get(as_string=True)
+                autoincrement =  self.epics_pvs['FPAutoIncrement'].get(as_string=True)
+
+                self.epics_pvs['FPFileName'].put('circular_buffer_'+ basename, wait=True)
+                self.epics_pvs['FPFileTemplate'].put('%s%s', wait=True)
+                self.epics_pvs['FPAutoIncrement'].put('No', wait=True)        
+                fp_port_name = self.epics_pvs['FPNDArrayPort'].get(as_string=True)
+                self.epics_pvs['FPNDArrayPort'].put(self.epics_pvs['CBPortNameRBV'].get())                
+
+                self.epics_pvs['FPNumCapture'].put(self.epics_pvs['CBCurrentQtyRBV'].get(), wait=True)
+                self.epics_pvs['FPCapture'].put('Capture')
+                self.epics_pvs['CBPostCount'].put(self.epics_pvs['CBCurrentQtyRBV'].get(), wait=True)
+                self.epics_pvs['CBTrigger'].put('Trigger')      
+                self.wait_pv(self.epics_pvs['FPCaptureRBV'], 1)            
+                self.wait_pv(self.epics_pvs['CBTriggerRBV'], 1)                    
+                self.epics_pvs['CBEnableCallbacks'].put('Enable')     
+                self.wait_pv(self.epics_pvs['FPCaptureRBV'], 0)            
+                self.epics_pvs['CBCapture'].put('Capture')   
+                self.dump_theta(self.epics_pvs['FPFullFileName'].get(as_string=True))
+                self.epics_pvs['FPNDArrayPort'].put(fp_port_name)                        
+                self.epics_pvs['FPFileName'].put(file_name, wait=True)
+                self.epics_pvs['FPFileTemplate'].put(file_template, wait=True)        
+                self.epics_pvs['FPAutoIncrement'].put(autoincrement, wait=True)                        
+            
+            num_captured += self.epics_pvs['StreamNumCaptured'].get()
+
+            self.epics_pvs['StreamCapture'].put('Done')        
+            self.epics_pvs['StreamFileName'].put(basename)
+            self.epics_pvs['StreamNumTotalCaptured'].put(num_captured)
+    
+            #VN: Enable CB buffer again because if number of elements in CB==0 then the plugin will automatically turn off
+            self.epics_pvs['CBEnableCallbacks'].put('Enable')
+
         self.epics_pvs['StreamMessage'].put('Done')        
-        self.epics_pvs['StreamFileName'].put(basename)
-        self.epics_pvs['StreamNumTotalCaptured'].put(num_captured)
- 
-        #VN: Enable CB buffer again because if number of elements in CB==0 then the plugin will automatically turn off
-        self.epics_pvs['CBEnableCallbacks'].put('Enable')
-        self.capturing = 0
         
 
     def copy_flat_dark_to_hdf(self, fname):
@@ -683,6 +657,7 @@ class TomoScanStreamPSO(TomoScan):
         DXchange file.
         """
         log.info('save dark and flat to projection hdf file')
+
         basename = os.path.basename(fname)
         dirname = os.path.dirname(fname)
         darkfield_name = dirname + '/dark_fields_' + basename
@@ -710,9 +685,10 @@ class TomoScanStreamPSO(TomoScan):
 
     def stop_capture_projections(self):  
         """Stop capturing projections"""  
-        if self.capturing==1:
-            self.epics_pvs['FPCapture'].put('Done')
-            self.epics_pvs['StreamCapture'].put('Done')
+        log.info('stop capturing projections')
+
+        self.epics_pvs['FPCapture'].put('Done')
+        self.epics_pvs['StreamCapture'].put('Done')
 
 
     def retake_dark(self):
@@ -732,51 +708,47 @@ class TomoScanStreamPSO(TomoScan):
         - broadcast dark fields   
         - set capturing flag to 0
         """
-        if self.capturing==1:
-            return
-        
         log.info('retake dark')
-        self.epics_pvs['StreamMessage'].put('Capturing dark fields')        
-        self.capturing = 1
 
-        file_name = self.epics_pvs['FPFileName'].get(as_string=True)
-        file_template = self.epics_pvs['FPFileTemplate'].get(as_string=True)
-        autoincrement =  self.epics_pvs['FPAutoIncrement'].get(as_string=True)
+        if self.epics_pvs['StreamMessage'].get(as_string=True)=='Done':                    
+            self.epics_pvs['StreamMessage'].put('Capturing dark fields')        
 
-        self.epics_pvs['FPFileName'].put('dark_fields.h5', wait=True)        
-        self.epics_pvs['FPFileTemplate'].put('%s%s', wait=True)
-        self.epics_pvs['FPAutoIncrement'].put('No', wait=True)                                
-        
-        # switch frame type before closing the shutter to let the reconstruction engine 
-        # know that following frames should not be used for reconstruction 
-        self.epics_pvs['FrameType'].put('DarkField', wait=True)      
-        
-        self.epics_pvs['CBEnableCallbacks'].put('Disable')  
+            file_name = self.epics_pvs['FPFileName'].get(as_string=True)
+            file_template = self.epics_pvs['FPFileTemplate'].get(as_string=True)
+            autoincrement =  self.epics_pvs['FPAutoIncrement'].get(as_string=True)
 
-        super().collect_dark_fields()        
-        self.epics_pvs['FPNumCapture'].put(self.num_dark_fields, wait=True)        
-        self.epics_pvs['FPCapture'].put('Capture', wait=True)   
-        self.wait_pv(self.epics_pvs['FPCaptureRBV'], 0)                                        
+            self.epics_pvs['FPFileName'].put('dark_fields.h5', wait=True)        
+            self.epics_pvs['FPFileTemplate'].put('%s%s', wait=True)
+            self.epics_pvs['FPAutoIncrement'].put('No', wait=True)                                
+            
+            # switch frame type before closing the shutter to let the reconstruction engine 
+            # know that following frames should not be used for reconstruction 
+            self.epics_pvs['FrameType'].put('DarkField', wait=True)      
+            
+            self.epics_pvs['CBEnableCallbacks'].put('Disable')  
 
-        self.open_shutter()
+            self.collect_dark_fields()        
+            self.epics_pvs['FPNumCapture'].put(self.num_dark_fields, wait=True)        
+            self.epics_pvs['FPCapture'].put('Capture', wait=True)   
+            self.wait_pv(self.epics_pvs['FPCaptureRBV'], 0)                                        
 
-        self.epics_pvs['CBEnableCallbacks'].put('Enable')  
+            self.open_shutter()
 
-        self.epics_pvs['FPFileName'].put(file_name, wait=True)                        
-        self.epics_pvs['ScanStatus'].put('Collecting projections', wait=True)
+            self.epics_pvs['CBEnableCallbacks'].put('Enable')  
 
-        self.epics_pvs['HDF5Location'].put(self.epics_pvs['HDF5ProjectionLocation'].value)
-        self.epics_pvs['FrameType'].put('Projection', wait=True)
-        self.epics_pvs['StreamRetakeDark'].put('Done')   
-        
-        self.epics_pvs['FPFileName'].put(file_name, wait=True)
-        self.epics_pvs['FPFileTemplate'].put(file_template, wait=True)        
-        self.epics_pvs['FPAutoIncrement'].put(autoincrement, wait=True) 
-        
-        self.broadcast_dark()
+            self.epics_pvs['FPFileName'].put(file_name, wait=True)                        
+            self.epics_pvs['ScanStatus'].put('Collecting projections', wait=True)
+
+            self.epics_pvs['HDF5Location'].put(self.epics_pvs['HDF5ProjectionLocation'].value)
+            self.epics_pvs['FrameType'].put('Projection', wait=True)
+            self.epics_pvs['StreamRetakeDark'].put('Done')   
+            
+            self.epics_pvs['FPFileName'].put(file_name, wait=True)
+            self.epics_pvs['FPFileTemplate'].put(file_template, wait=True)        
+            self.epics_pvs['FPAutoIncrement'].put(autoincrement, wait=True) 
+            
+            self.broadcast_dark()
         self.epics_pvs['StreamMessage'].put('Done')        
-        
-        self.capturing = 0
  
 
     def retake_flat(self):
@@ -797,51 +769,47 @@ class TomoScanStreamPSO(TomoScan):
         - broadcast flat fields   
         - set capturing flag to 0
         """
-        if self.capturing==1:
-            return
         log.info('retake flat')
-        self.epics_pvs['StreamMessage'].put('Capturing flat fields')        
-        
-        self.capturing = 1
 
-        file_name = self.epics_pvs['FPFileName'].get(as_string=True)
-        file_template = self.epics_pvs['FPFileTemplate'].get(as_string=True)
-        autoincrement =  self.epics_pvs['FPAutoIncrement'].get(as_string=True)
+        if self.epics_pvs['StreamMessage'].get(as_string=True)=='Done':            
+            self.epics_pvs['StreamMessage'].put('Capturing flat fields')        
 
-        self.epics_pvs['FPFileName'].put('flat_fields.h5', wait=True)        
-        self.epics_pvs['FPFileTemplate'].put('%s%s', wait=True)
-        self.epics_pvs['FPAutoIncrement'].put('No', wait=True)                                
-        
-        # switch frame type before closing the shutter to let the reconstruction engine 
-        # know that following frames should not be used for reconstruction 
-        self.epics_pvs['FrameType'].put('FlatField', wait=True)
-        
-        self.epics_pvs['CBEnableCallbacks'].put('Disable')  
+            file_name = self.epics_pvs['FPFileName'].get(as_string=True)
+            file_template = self.epics_pvs['FPFileTemplate'].get(as_string=True)
+            autoincrement =  self.epics_pvs['FPAutoIncrement'].get(as_string=True)
 
-        super().collect_flat_fields()        
-        self.epics_pvs['FPNumCapture'].put(self.num_flat_fields, wait=True)        
-        self.epics_pvs['FPCapture'].put('Capture', wait=True)   
-        self.wait_pv(self.epics_pvs['FPCaptureRBV'], 0)      
+            self.epics_pvs['FPFileName'].put('flat_fields.h5', wait=True)        
+            self.epics_pvs['FPFileTemplate'].put('%s%s', wait=True)
+            self.epics_pvs['FPAutoIncrement'].put('No', wait=True)                                
+            
+            # switch frame type before closing the shutter to let the reconstruction engine 
+            # know that following frames should not be used for reconstruction 
+            self.epics_pvs['FrameType'].put('FlatField', wait=True)
+            
+            self.epics_pvs['CBEnableCallbacks'].put('Disable')  
 
-        self.move_sample_in()
-        self.set_exposure_time()
-        
-        self.epics_pvs['CBEnableCallbacks'].put('Enable')  
-                
-        self.epics_pvs['FPFileName'].put(file_name, wait=True)                        
-        self.epics_pvs['ScanStatus'].put('Collecting projections', wait=True)
-        self.epics_pvs['HDF5Location'].put(self.epics_pvs['HDF5ProjectionLocation'].value)        
-        self.epics_pvs['FrameType'].put('Projection', wait=True)
-        self.epics_pvs['StreamRetakeFlat'].put('Done')   
-        
-        self.epics_pvs['FPFileName'].put(file_name, wait=True)
-        self.epics_pvs['FPFileTemplate'].put(file_template, wait=True)        
-        self.epics_pvs['FPAutoIncrement'].put(autoincrement, wait=True) 
-        
-        self.broadcast_flat()
+            self.collect_flat_fields()        
+            self.epics_pvs['FPNumCapture'].put(self.num_flat_fields, wait=True)        
+            self.epics_pvs['FPCapture'].put('Capture', wait=True)   
+            self.wait_pv(self.epics_pvs['FPCaptureRBV'], 0)      
+
+            self.move_sample_in()
+            self.set_exposure_time()
+            
+            self.epics_pvs['CBEnableCallbacks'].put('Enable')  
+                    
+            self.epics_pvs['FPFileName'].put(file_name, wait=True)                        
+            self.epics_pvs['ScanStatus'].put('Collecting projections', wait=True)
+            self.epics_pvs['HDF5Location'].put(self.epics_pvs['HDF5ProjectionLocation'].value)        
+            self.epics_pvs['FrameType'].put('Projection', wait=True)
+            self.epics_pvs['StreamRetakeFlat'].put('Done')   
+            
+            self.epics_pvs['FPFileName'].put(file_name, wait=True)
+            self.epics_pvs['FPFileTemplate'].put(file_template, wait=True)        
+            self.epics_pvs['FPAutoIncrement'].put(autoincrement, wait=True) 
+            
+            self.broadcast_flat()
         self.epics_pvs['StreamMessage'].put('Done')                
-
-        self.capturing = 0
 
 
     def change_cbsize(self):
@@ -851,14 +819,15 @@ class TomoScanStreamPSO(TomoScan):
         - stop cb capturing
         - start cb capturing
         """
-        if self.capturing==1:
-            self.epics_pvs['StreamPreCount'].put(self.epics_pvs['CBPreCount'].get())
-            return
         log.info('change pre-count size in the circular buffer')
-        self.epics_pvs['CBCapture'].put('Done', wait=True)
-        self.wait_pv(self.epics_pvs['CBCaptureRBV'], 0)                            
-        self.epics_pvs['CBPreCount'].put(self.epics_pvs['StreamPreCount'].get(), wait=True)
-        self.epics_pvs['CBCapture'].put('Capture')
+            
+        if self.epics_pvs['StreamMessage'].get(as_string=True)=='Done':
+            self.epics_pvs['CBCapture'].put('Done', wait=True)
+            self.wait_pv(self.epics_pvs['CBCaptureRBV'], 0)                            
+            self.epics_pvs['CBPreCount'].put(self.epics_pvs['StreamPreCount'].get(), wait=True)
+            self.epics_pvs['CBCapture'].put('Capture')
+        else:
+            self.epics_pvs['StreamPreCount'].put(self.epics_pvs['CBPreCount'].get())
 
 
     def dump_theta(self, file_name):
@@ -868,17 +837,13 @@ class TomoScanStreamPSO(TomoScan):
         - take angles by ids from the PSO
         - dump angles into hdf5 file
         """
-
         log.info('dump theta into the hdf5 file %s',file_name)
+        
         with util.open_hdf5(file_name,'r+') as hdf_file:               
             unique_ids = hdf_file['/defaults/NDArrayUniqueId'][:]
             if '/exchange/theta' in hdf_file:
                 del hdf_file['/exchange/theta']
             dset = hdf_file.create_dataset('/exchange/theta', (len(unique_ids),), dtype='float32')
-            print(self.theta)
-            print(len(self.theta))
-            print(unique_ids)
-            print(len(unique_ids))
             dset[:] = self.theta[unique_ids]        
         log.info('saved theta: %s .. %s', self.theta[unique_ids[0]], self.theta[unique_ids[-1]])
         log.info('total saved theta: %s', len(unique_ids))        
@@ -889,20 +854,19 @@ class TomoScanStreamPSO(TomoScan):
         
         - change binning in the ROI1 plugin
         - broadcast binned dark and flat fields
-        """
-
+        """        
         log.info('change binning')
-        if self.capturing==1:
-            self.epics_pvs['StreamBinning'].put(int(np.log2(self.epics_pvs['ROIBinX'].get())))  
-            return
-        binning = self.epics_pvs['StreamBinning'].get()        
-        self.epics_pvs['ROIBinX'].put(2**binning)    
-        self.epics_pvs['ROIBinY'].put(2**binning)    
-        self.epics_pvs['ROIScale'].put(2**(2*binning))
-        
-        self.broadcast_dark()
-        self.broadcast_flat()
 
+        if self.epics_pvs['StreamMessage'].get(as_string=True)=='Done':            
+            binning = self.epics_pvs['StreamBinning'].get()        
+            self.epics_pvs['ROIBinX'].put(2**binning)    
+            self.epics_pvs['ROIBinY'].put(2**binning)    
+            self.epics_pvs['ROIScale'].put(2**(2*binning))            
+            self.broadcast_dark()
+            self.broadcast_flat()
+        else:        
+            self.epics_pvs['StreamBinning'].put(int(np.log2(self.epics_pvs['ROIBinX'].get())))  
+        
 
     def broadcast_dark(self):
         """Broadcast dark fields
@@ -911,8 +875,8 @@ class TomoScanStreamPSO(TomoScan):
         - take average and bin dark fields according to StreamBinning parameter
         - broadcast dark field with the pv variable    
         """
-
         log.info('broadcast dark fields')
+
         dirname = os.path.dirname(self.epics_pvs['FPFullFileName'].get(as_string=True))            
         with util.open_hdf5(dirname+'/dark_fields.h5','r') as h5file:
             data = h5file['exchange/data_dark'][:]
@@ -930,9 +894,9 @@ class TomoScanStreamPSO(TomoScan):
         - read flat fields from the file
         - take average and bin flat fields according to StreamBinning parameter
         - broadcast flat field with the pv variable    
-        """
-        
+        """        
         log.info('broadcast flat fields')        
+        
         dirname = os.path.dirname(self.epics_pvs['FPFullFileName'].get(as_string=True))            
         with util.open_hdf5(dirname+'/flat_fields.h5','r') as h5file:
             data = h5file['exchange/data_white'][:]
@@ -952,9 +916,6 @@ class TomoScanStreamPSO(TomoScan):
         """Update status message for the circular buffer """
         self.epics_pvs['StreamCBStatusMessage'].put(self.epics_pvs['CBStatusMessage'].get())
 
-    # def change_numcapture(self):
-    #     """Update number of frames to capture """
-    #     self.epics_pvs['StreamNumCapture'].put(self.epics_pvs['FPNumCapture'].get())
 
     def change_numcaptured(self):
         """Update current number of captured frames """
