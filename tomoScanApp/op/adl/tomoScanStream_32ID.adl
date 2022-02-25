@@ -1,6 +1,6 @@
 
 file {
-	name="/local/usertxm/epics/synApps/support/tomoscan/tomoScanApp/op/adl/tomoScan_32ID.adl"
+	name="/home/beams19/USERTXM/epics/synApps/support/tomoscan/tomoScanApp/op/adl/tomoScanStream_32ID.adl"
 	version=030111
 }
 display {
@@ -179,22 +179,6 @@ text {
 	object {
 		x=335
 		y=44
-		width=280
-		height=30
-	}
-	display[0] {
-		label="Optics Information"
-		name="$(BEAMLINE)_optics.adl"
-		args="P=$(P),R=$(R)"
-	}
-	clr=14
-	bclr=51
-	label="Optics"
-}
-"related display" {
-	object {
-		x=335
-		y=84
 		width=280
 		height=30
 	}
