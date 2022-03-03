@@ -16,6 +16,7 @@ import threading
 from tomoscan import util
 from tomoscan import TomoScan
 from tomoscan import log
+from tomoscan import data_management as dm
 
 class TomoScanStreamPSO(TomoScan):
     """Derived class used for tomography scanning with EPICS using Aerotech controllers and PSO trigger outputs
@@ -649,7 +650,7 @@ class TomoScanStreamPSO(TomoScan):
             self.epics_pvs['CBEnableCallbacks'].put('Enable')
 
         self.epics_pvs['StreamMessage'].put('Done')        
-        
+
 
     def copy_flat_dark_to_hdf(self, fname):
         """Copies the flat and dark field data to the HDF5 file with the
@@ -681,7 +682,14 @@ class TomoScanStreamPSO(TomoScan):
             with h5py.File(darkfield_name, 'r') as dark_hdf:
                 proj_hdf['/exchange'].create_dataset('data_dark', data=dark_hdf['/exchange/data_dark'][...])
         log.info('done saving dark and flat to projection hdf file')
-
+        # Copy raw data to data analysis computer    
+        if self.epics_pvs['CopyToAnalysisDir'].get():
+            log.info('Automatic data trasfer to data analysis computer is enabled.')
+            full_file_name = self.epics_pvs['FPFullFileName'].get(as_string=True)
+            remote_analysis_dir = self.epics_pvs['RemoteAnalysisDir'].get(as_string=True)
+            dm.scp(full_file_name, remote_analysis_dir)
+        else:
+            log.warning('Automatic data trasfer to data analysis computer is disabled.')      
 
     def stop_capture_projections(self):  
         """Stop capturing projections"""  
