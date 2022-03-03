@@ -664,6 +664,9 @@ class TomoScanStreamPSO(TomoScan):
         darkfield_name = dirname + '/dark_fields_' + basename
         flatfield_name = dirname + '/flat_fields_' + basename
         proj_name = dirname + '/' + basename 
+        # fdc: why in the above not to use: proj_name = fname 
+        # or actually even better do not pass fname and instead use
+        # fname = self.epics_pvs['FPFullFileName'].get(as_string=True) 
         
         log.info('save dark fields')
         cmd = 'cp '+ dirname+'/dark_fields.h5 '+ darkfield_name
