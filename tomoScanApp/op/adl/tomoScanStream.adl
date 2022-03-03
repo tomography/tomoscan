@@ -5,10 +5,10 @@ file {
 }
 display {
 	object {
-		x=402
-		y=286
+		x=1623
+		y=610
 		width=700
-		height=960
+		height=1042
 	}
 	clr=14
 	bclr=4
@@ -637,8 +637,8 @@ text {
 }
 text {
 	object {
-		x=380
-		y=310
+		x=34
+		y=694
 		width=190
 		height=20
 	}
@@ -650,8 +650,8 @@ text {
 }
 text {
 	object {
-		x=415
-		y=410
+		x=379
+		y=695
 		width=190
 		height=20
 	}
@@ -922,8 +922,8 @@ menu {
 }
 "message button" {
 	object {
-		x=575
-		y=310
+		x=229
+		y=695
 		width=100
 		height=20
 	}
@@ -937,8 +937,8 @@ menu {
 }
 "message button" {
 	object {
-		x=610
-		y=410
+		x=574
+		y=695
 		width=80
 		height=20
 	}
@@ -953,7 +953,7 @@ menu {
 rectangle {
 	object {
 		x=5
-		y=690
+		y=768
 		width=690
 		height=70
 	}
@@ -965,7 +965,7 @@ rectangle {
 rectangle {
 	object {
 		x=250
-		y=696
+		y=774
 		width=200
 		height=20
 	}
@@ -976,7 +976,7 @@ rectangle {
 text {
 	object {
 		x=275
-		y=696
+		y=774
 		width=150
 		height=20
 	}
@@ -989,7 +989,7 @@ text {
 rectangle {
 	object {
 		x=305
-		y=770
+		y=848
 		width=90
 		height=20
 	}
@@ -1000,7 +1000,7 @@ rectangle {
 text {
 	object {
 		x=314
-		y=770
+		y=848
 		width=72
 		height=20
 	}
@@ -1013,7 +1013,7 @@ text {
 "message button" {
 	object {
 		x=250
-		y=730
+		y=808
 		width=120
 		height=20
 	}
@@ -1028,7 +1028,7 @@ text {
 "message button" {
 	object {
 		x=375
-		y=730
+		y=808
 		width=120
 		height=20
 	}
@@ -1044,7 +1044,7 @@ text {
 text {
 	object {
 		x=15
-		y=730
+		y=808
 		width=130
 		height=20
 	}
@@ -1056,7 +1056,7 @@ text {
 "text entry" {
 	object {
 		x=150
-		y=730
+		y=808
 		width=70
 		height=20
 	}
@@ -1071,7 +1071,7 @@ text {
 rectangle {
 	object {
 		x=5
-		y=765
+		y=843
 		width=690
 		height=190
 	}
@@ -1083,7 +1083,7 @@ rectangle {
 "text update" {
 	object {
 		x=580
-		y=730
+		y=808
 		width=100
 		height=20
 	}
@@ -1100,7 +1100,7 @@ rectangle {
 text {
 	object {
 		x=515
-		y=730
+		y=808
 		width=60
 		height=20
 	}
@@ -1112,7 +1112,7 @@ text {
 text {
 	object {
 		x=65
-		y=925
+		y=1003
 		width=130
 		height=20
 	}
@@ -1124,7 +1124,7 @@ text {
 text {
 	object {
 		x=85
-		y=800
+		y=878
 		width=110
 		height=20
 	}
@@ -1136,7 +1136,7 @@ text {
 "text update" {
 	object {
 		x=201
-		y=800
+		y=878
 		width=400
 		height=20
 	}
@@ -1152,7 +1152,7 @@ text {
 text {
 	object {
 		x=55
-		y=900
+		y=978
 		width=140
 		height=20
 	}
@@ -1164,7 +1164,7 @@ text {
 text {
 	object {
 		x=75
-		y=875
+		y=953
 		width=120
 		height=20
 	}
@@ -1176,7 +1176,7 @@ text {
 "text update" {
 	object {
 		x=201
-		y=875
+		y=953
 		width=100
 		height=20
 	}
@@ -1192,7 +1192,7 @@ text {
 "text update" {
 	object {
 		x=200
-		y=900
+		y=978
 		width=100
 		height=20
 	}
@@ -1208,7 +1208,7 @@ text {
 text {
 	object {
 		x=35
-		y=825
+		y=903
 		width=160
 		height=20
 	}
@@ -1220,7 +1220,7 @@ text {
 "text update" {
 	object {
 		x=201
-		y=825
+		y=903
 		width=100
 		height=20
 	}
@@ -1236,7 +1236,7 @@ text {
 text {
 	object {
 		x=75
-		y=850
+		y=928
 		width=120
 		height=20
 	}
@@ -1248,7 +1248,7 @@ text {
 "text update" {
 	object {
 		x=201
-		y=850
+		y=928
 		width=100
 		height=20
 	}
@@ -1264,7 +1264,7 @@ text {
 "text update" {
 	object {
 		x=199
-		y=925
+		y=1003
 		width=100
 		height=20
 	}
@@ -1551,7 +1551,7 @@ rectangle {
 		x=5
 		y=555
 		width=690
-		height=130
+		height=208
 	}
 	"basic attribute" {
 		clr=14
@@ -1560,16 +1560,29 @@ rectangle {
 }
 "message button" {
 	object {
-		x=597
-		y=657
+		x=436
+		y=728
 		width=80
 		height=20
 	}
 	control {
 		chan="$(P)$(R)StreamSync"
 		clr=14
-		bclr=51
+		bclr=30
 	}
 	label="Sync"
 	press_msg="1"
+}
+text {
+	object {
+		x=236
+		y=727
+		width=190
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Sync exposure and rotation step"
+	align="horiz. right"
 }
