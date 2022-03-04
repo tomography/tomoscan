@@ -607,8 +607,8 @@ class TomoScanStreamPSO(TomoScan):
 
             # Create a thread to handle the flat and dark fields (to create a regular hdf5 file handled by tomopy-cli)
             # Note: circular buffer is not saved to the file
-            flat_dark_thread = threading.Thread(target = self.copy_flat_dark_to_hdf,
-                                                args=(self.epics_pvs['FPFullFileName'].get(as_string=True),))
+            flat_dark_thread = threading.Thread(target = self.copy_flat_dark_to_hdf, args=())
+
             flat_dark_thread.start()        
                 
             if(self.epics_pvs['StreamPreCount'].get()>0):
@@ -652,30 +652,27 @@ class TomoScanStreamPSO(TomoScan):
         self.epics_pvs['StreamMessage'].put('Done')        
 
 
-    def copy_flat_dark_to_hdf(self, fname):
+    def copy_flat_dark_to_hdf(self):
         """Copies the flat and dark field data to the HDF5 file with the
         projection data.  This allows the file to be a fully valid
-        DXchange file.
+        DXchange file. Once the file is created it will be copied to the remote 
+        data analysis computer (if CopyToAnalysisDir is set to yes)
         """
         log.info('save dark and flat to projection hdf file')
-
+        fname = self.epics_pvs['FPFullFileName'].get(as_string=True)
         basename = os.path.basename(fname)
         dirname = os.path.dirname(fname)
-        darkfield_name = dirname + '/dark_fields_' + basename
-        flatfield_name = dirname + '/flat_fields_' + basename
-        proj_name = dirname + '/' + basename 
-        # fdc: why in the above not to use: proj_name = fname 
-        # or actually even better do not pass fname and instead use
-        # fname = self.epics_pvs['FPFullFileName'].get(as_string=True) 
-        
+        darkfield_name = os.path.join(dirname, 'dark_fields_'+ basename) 
+        flatfield_name = os.path.join(dirname, 'flat_fields_'+ basename) 
+
         log.info('save dark fields')
-        cmd = 'cp '+ dirname+'/dark_fields.h5 '+ darkfield_name
+        cmd = 'cp '+ os.path.join(dirname, 'dark_fields.h5') + ' ' + darkfield_name
         os.system(cmd)
         log.info('save flat fields')        
-        cmd = 'cp '+ dirname+'/flat_fields.h5 '+ flatfield_name
+        cmd = 'cp '+ os.path.join(dirname, 'flat_fields.h5') + ' ' + flatfield_name
         os.system(cmd)
 
-        with h5py.File(proj_name, 'r+') as proj_hdf:
+        with h5py.File(fname, 'r+') as proj_hdf:
             if 'data_white' in proj_hdf['/exchange'].keys():
                 del(proj_hdf['/exchange/data_white'])
             with h5py.File(flatfield_name, 'r') as flat_hdf:
