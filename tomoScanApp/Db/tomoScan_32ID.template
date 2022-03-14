@@ -64,43 +64,6 @@ record(stringout, "$(P)$(R)SampleTopZPVName")
 }
 
 ####################
-# Optics information
-####################
-
-record(stringout, "$(P)$(R)ScintillatorType")
-{
-   field(VAL,  "Unknown")
-}
-
-record(ao, "$(P)$(R)ScintillatorThickness")
-{
-   field(PREC,  "0")
-}
-
-record(ao, "$(P)$(R)ImagePixelSize")
-{
-   field(PREC, "2")
-   field(EGU,  "microns")
-}
-
-record(ao, "$(P)$(R)DetectorPixelSize")
-{
-   field(PREC, "2")
-   field(EGU,  "microns")
-}
-
-record(stringout, "$(P)$(R)CameraObjective")
-{
-   field(VAL,  "Unknown")
-}
-
-record(ao, "$(P)$(R)CameraTubeLength")
-{
-   field(PREC, "0")
-   field(EGU,  "mm")
-}
-
-####################
 # Sample information
 ####################
 

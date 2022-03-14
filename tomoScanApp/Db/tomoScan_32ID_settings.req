@@ -24,16 +24,6 @@ $(P)$(R)SampleTopXPVName
 $(P)$(R)SampleTopZPVName
 
 ####################
-# Optics information
-####################
-$(P)$(R)ScintillatorType
-$(P)$(R)ScintillatorThickness
-$(P)$(R)ImagePixelSize
-$(P)$(R)DetectorPixelSize
-$(P)$(R)CameraObjective
-$(P)$(R)CameraTubeLength
-
-####################
 # Sample information
 ####################
 $(P)$(R)SampleName

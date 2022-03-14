@@ -127,3 +127,8 @@ record(bo, "$(P)$(R)StreamSync")
    field(ZNAM, "Done")
    field(ONAM, "Sync")
 }
+
+record(longout, "$(P)$(R)FirstProjid")
+{
+   field(LOPR, "0")
+}
