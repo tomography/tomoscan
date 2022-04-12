@@ -160,7 +160,7 @@ class TomoScanStreamPSO(TomoScan):
         # Taxi before starting capture
         self.epics_pvs['Rotation'].put(self.epics_pvs['PSOStartTaxi'].get(), wait=True)
 
-        self.set_trigger_mode('PSOExternal', self.num_angles)
+        self.set_trigger_mode('PSOExternal', 65535)
 
         # Start the camera
         self.epics_pvs['CamAcquire'].put('Acquire')
@@ -168,13 +168,30 @@ class TomoScanStreamPSO(TomoScan):
         time.sleep(0.5)
         log.info('start fly scan')
 
+        
+        # Assign the fly scan angular position to theta[]
         # Start fly scan
-        #self.epics_pvs['Rotation'].put(self.epics_pvs['PSOEndTaxi'].get())
-        self.epics_pvs['RotationJog'].put(1)
-
-        time_per_angle = self.compute_frame_time()
-        collection_time = self.num_angles * time_per_angle
-        self.wait_camera_done(collection_time + 60.)
+        if self.epics_pvs['StreamScanType'].get(as_string=True)=='backforth':
+            #0-180-0-180.. scan            
+            self.theta = self.rotation_start + np.arange(self.num_angles) * self.rotation_step * 1
+            self.theta = np.tile(np.concatenate((self.theta,self.theta[::-1])),65535//self.num_angles+1)
+            self.pva_stream_theta['value'] = self.theta.astype('float32')
+            self.pva_stream_theta['sizex'] = len(self.theta)
+    
+            st_ang = self.epics_pvs['PSOStartTaxi'].get()
+            end_ang = self.epics_pvs['PSOEndTaxi'].get()
+            threading.Thread(target=self.wait_camera_done, args=(-1,)).start()
+            for k in range(65535//self.num_angles+1):            
+                if self.scan_is_running:#for some reason abort didnt work, make sure to stop after the span is done
+                    self.epics_pvs['Rotation'].put(end_ang,wait=True)
+                    st_ang,end_ang = end_ang,st_ang
+        else:                
+            # continuous rotation scan
+            self.theta = self.rotation_start + np.arange(self.num_angles) * self.rotation_step * 1
+            self.pva_stream_theta['value'] = self.theta.astype('float32')
+            self.pva_stream_theta['sizex'] = len(self.theta)    
+            self.epics_pvs['RotationJog'].put(1)
+            self.wait_camera_done(-1)
 
     def program_PSO(self):
         '''Performs programming of PSO output on the Aerotech driver.
@@ -225,7 +242,6 @@ class TomoScanStreamPSO(TomoScan):
         pso_command.put('PSOWINDOW %s 1 RANGE %d,%d' % (pso_axis, window_start-5, window_end+5), wait=True, timeout=10.0)
         # Arm the PSO
         pso_command.put('PSOCONTROL %s ARM' % pso_axis, wait=True, timeout=10.0)
-        #import pdb; pdb.set_trace()
 
     def cleanup_PSO(self):
         '''Cleanup activities after a PSO scan. 
@@ -298,12 +314,7 @@ class TomoScanStreamPSO(TomoScan):
                                 + (self.num_angles - 1) * self.rotation_step * user_direction)
         self.epics_pvs['PSOEndTaxi'].put(self.rotation_stop + taxi_dist * user_direction)
         
-        # Assign the fly scan angular position to theta[]
-        self.theta = self.rotation_start + np.arange(self.num_angles) * self.rotation_step * user_direction        
-        self.pva_stream_theta['value'] = self.theta.astype('float32')
-        self.pva_stream_theta['sizex'] = self.num_angles
         
-
 
 
 
@@ -448,7 +459,8 @@ class TomoScanStreamPSO(TomoScan):
         """
         log.info('stream sync')                        
         
-        if self.epics_pvs['StreamMessage'].get(as_string=True)=='Done' and (self.exposure_time!=self.epics_pvs['ExposureTime'].value or self.rotation_step!=self.epics_pvs['RotationStep'].value): 
+        if self.epics_pvs['StreamMessage'].get(as_string=True)=='Done' and self.epics_pvs['StreamScanType'].get(as_string=True)!='backforth' and \
+            (self.exposure_time!=self.epics_pvs['ExposureTime'].value or self.rotation_step!=self.epics_pvs['RotationStep'].value): 
 
             self.exposure_time=self.epics_pvs['ExposureTime'].value
             self.rotation_step=self.epics_pvs['RotationStep'].value
@@ -540,11 +552,16 @@ class TomoScanStreamPSO(TomoScan):
                 
                 self.rotation_start = self.control_pvs['RotationOFF'].value+encoder_angle*self.epics_pvs['RotationEResolution'].value            
                 self.epics_pvs['FirstProjid'].put(projid+1,wait=True)
-                self.compute_positions_PSO()                
+                self.compute_positions_PSO()     
+                # Assign the fly scan angular position to theta[]
+                self.theta = self.rotation_start + np.arange(self.num_angles) * self.rotation_step        
+                self.pva_stream_theta['value'] = self.theta.astype('float32')
+                self.pva_stream_theta['sizex'] = len(self.theta)      
                 log.info(f'Angle {self.theta[0]} corresponds to unique ID {projid+1}')
             else:
                 log.error('PSO didnt return encoder value')
-            
+        else:
+            log.info('stream sync ignore')     
         self.epics_pvs['StreamSync'].put('Done', wait=True)
     
 
