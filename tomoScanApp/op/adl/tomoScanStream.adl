@@ -1,6 +1,6 @@
 
 file {
-	name="/home/beams/USER2BMB/epics/synApps/support/tomoscan/tomoScanApp/op/adl/tomoScanStream.adl"
+	name="/home/beams8/USER2BMB/epics/synApps/support/tomoscan/tomoScanApp/op/adl/tomoScanStream.adl"
 	version=030111
 }
 display {
@@ -1280,7 +1280,7 @@ text {
 }
 text {
 	object {
-		x=20
+		x=-32
 		y=625
 		width=170
 		height=20
@@ -1293,7 +1293,7 @@ text {
 }
 "text entry" {
 	object {
-		x=200
+		x=148
 		y=625
 		width=80
 		height=20
@@ -1308,7 +1308,7 @@ text {
 }
 "text update" {
 	object {
-		x=285
+		x=233
 		y=625
 		width=80
 		height=20
@@ -1323,9 +1323,9 @@ text {
 }
 "text update" {
 	object {
-		x=380
+		x=319
 		y=625
-		width=300
+		width=130
 		height=20
 	}
 	monitor {
@@ -1337,38 +1337,25 @@ text {
 	limits {
 	}
 }
-text {
-	object {
-		x=20
-		y=650
-		width=170
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="Capture proj"
-	align="horiz. right"
-}
 "message button" {
 	object {
-		x=200
-		y=650
-		width=80
-		height=20
+		x=459
+		y=625
+		width=130
+		height=50
 	}
 	control {
 		chan="$(P)$(R)StreamCapture"
 		clr=14
-		bclr=51
+		bclr=15
 	}
-	label="Start"
+	label="Capture"
 	press_msg="1"
 }
 "message button" {
 	object {
-		x=285
-		y=650
+		x=596
+		y=653
 		width=80
 		height=20
 	}
@@ -1382,7 +1369,7 @@ text {
 }
 text {
 	object {
-		x=370
+		x=54
 		y=650
 		width=90
 		height=20
@@ -1395,7 +1382,7 @@ text {
 }
 "text entry" {
 	object {
-		x=465
+		x=149
 		y=650
 		width=80
 		height=20
@@ -1410,7 +1397,7 @@ text {
 }
 "text update" {
 	object {
-		x=555
+		x=239
 		y=650
 		width=80
 		height=20
@@ -1449,7 +1436,7 @@ text {
 }
 "text update" {
 	object {
-		x=200
+		x=148
 		y=675
 		width=275
 		height=20
@@ -1465,7 +1452,7 @@ text {
 }
 text {
 	object {
-		x=20
+		x=-32
 		y=675
 		width=170
 		height=20
