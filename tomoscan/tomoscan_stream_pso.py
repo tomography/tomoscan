@@ -160,7 +160,7 @@ class TomoScanStreamPSO(TomoScan):
         # Taxi before starting capture
         self.epics_pvs['Rotation'].put(self.epics_pvs['PSOStartTaxi'].get(), wait=True)
 
-        self.set_trigger_mode('PSOExternal', 65535)
+        self.set_trigger_mode('PSOExternal', 65535000)
 
         # Start the camera
         self.epics_pvs['CamAcquire'].put('Acquire')
@@ -174,14 +174,14 @@ class TomoScanStreamPSO(TomoScan):
         if self.epics_pvs['StreamScanType'].get(as_string=True)=='backforth':
             #0-180-0-180.. scan            
             self.theta = self.rotation_start + np.arange(self.num_angles) * self.rotation_step * 1
-            self.theta = np.tile(np.concatenate((self.theta,self.theta[::-1])),65535//self.num_angles+1)
+            self.theta = np.tile(np.concatenate((self.theta,self.theta[::-1])),65535000//self.num_angles+1)
             self.pva_stream_theta['value'] = self.theta.astype('float32')
             self.pva_stream_theta['sizex'] = len(self.theta)
     
             st_ang = self.epics_pvs['PSOStartTaxi'].get()
             end_ang = self.epics_pvs['PSOEndTaxi'].get()
             threading.Thread(target=self.wait_camera_done, args=(-1,)).start()
-            for k in range(65535//self.num_angles+1):            
+            for k in range(65535000//self.num_angles+1):            
                 if self.scan_is_running:#for some reason abort didnt work, make sure to stop after the span is done
                     self.epics_pvs['Rotation'].put(end_ang,wait=True)
                     st_ang,end_ang = end_ang,st_ang
@@ -652,6 +652,8 @@ class TomoScanStreamPSO(TomoScan):
                 self.wait_pv(self.epics_pvs['FPCaptureRBV'], 0)            
                 self.epics_pvs['CBCapture'].put('Capture')   
                 self.dump_theta()
+                flat_dark_thread = threading.Thread(target = self.copy_flat_dark_to_hdf, args=())
+                flat_dark_thread.start()   
                 self.epics_pvs['FPNDArrayPort'].put(fp_port_name)                        
                 self.epics_pvs['FPFileName'].put(file_name, wait=True)
                 self.epics_pvs['FPFileTemplate'].put(file_template, wait=True)        
