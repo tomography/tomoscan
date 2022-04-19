@@ -207,7 +207,7 @@ class TomoScanStream2BM(TomoScanStreamPSO):
             self.epics_pvs['CamTriggerSource'].put('Line2', wait=True)
             self.epics_pvs['CamTriggerOverlap'].put('ReadOut', wait=True)
             self.epics_pvs['CamExposureMode'].put('Timed', wait=True)
-            self.epics_pvs['CamImageMode'].put('Multiple')            
+            self.epics_pvs['CamImageMode'].put('Continuous')     # switched to Continuous for tomostream       
             self.epics_pvs['CamArrayCallbacks'].put('Enable')
             self.epics_pvs['CamFrameRateEnable'].put(0)
 
