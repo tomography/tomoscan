@@ -14,7 +14,7 @@ drvAsynIPPortConfigure("PSO_PORT", "hexapod-1:8000", 0, 0, 0)
 asynOctetSetInputEos(PSO_PORT, 0, "\n")
 asynOctetSetOutputEos(PSO_PORT, 0, "\n")
 asynSetTraceIOMask(PSO_PORT, 0, ESCAPE)
-asynSetTraceMask(PSO_PORT, 0, DRIVER|ERROR)
+#asynSetTraceMask(PSO_PORT, 0, DRIVER|ERROR)
 
 dbLoadTemplate("tomoScan.substitutions")
 
