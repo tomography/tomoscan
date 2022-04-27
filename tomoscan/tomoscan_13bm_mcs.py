@@ -88,7 +88,9 @@ class TomoScan13BM_MCS(TomoScan):
         time.sleep(0.5)
         # Start the MCS
         self.epics_pvs['MCSEraseStart'].put(1)
-        collection_time = self.epics_pvs['MCSDwell'].value * num_frames
+        # We use num_frames+1 because the MCS does not put out a trigger when it starts.
+        # This means the camera will be waiting one full exposure time for the first trigger
+        collection_time = self.epics_pvs['MCSDwell'].value * (num_frames+1)
         self.wait_camera_done(collection_time + 5.0)
 
     def begin_scan(self):

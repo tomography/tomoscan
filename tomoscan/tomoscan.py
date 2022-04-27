@@ -693,8 +693,9 @@ class TomoScan():
         try:
             # Prepare for scan
             self.begin_scan()
+            self.epics_pvs['ScanStatus'].put('Moving rotation axis to start')
             # Move the rotation to the start
-            self.epics_pvs['Rotation'].put(self.rotation_start, wait=True)
+            self.epics_pvs['Rotation'].put(self.rotation_start, wait=True, timeout=600)
             # Collect the pre-scan dark fields if required
             if (self.num_dark_fields > 0) and (self.dark_field_mode in ('Start', 'Both')):
                 self.collect_dark_fields()
