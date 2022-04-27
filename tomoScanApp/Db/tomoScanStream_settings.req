@@ -33,3 +33,4 @@ $(P)$(R)StreamPreCounted
 $(P)$(R)PvaStreamPVPrefix
 $(P)$(R)StreamSync
 $(P)$(R)FirstProjid
+$(P)$(R)StreamScanType

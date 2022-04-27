@@ -132,3 +132,9 @@ record(longout, "$(P)$(R)FirstProjid")
 {
    field(LOPR, "0")
 }
+
+record(bo, "$(P)$(R)StreamScanType")
+{
+   field(ZNAM, "backforth")
+   field(ONAM, "continuous")
+}

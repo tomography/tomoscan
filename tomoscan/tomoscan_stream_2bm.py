@@ -207,11 +207,11 @@ class TomoScanStream2BM(TomoScanStreamPSO):
             self.epics_pvs['CamTriggerSource'].put('Line2', wait=True)
             self.epics_pvs['CamTriggerOverlap'].put('ReadOut', wait=True)
             self.epics_pvs['CamExposureMode'].put('Timed', wait=True)
-            self.epics_pvs['CamImageMode'].put('Multiple')            
+            self.epics_pvs['CamImageMode'].put('Continuous')     # switched to Continuous for tomostream       
             self.epics_pvs['CamArrayCallbacks'].put('Enable')
             self.epics_pvs['CamFrameRateEnable'].put(0)
 
-            self.epics_pvs['CamNumImages'].put(self.num_angles, wait=True)
+            self.epics_pvs['CamNumImages'].put(num_images, wait=True)
             self.epics_pvs['CamTriggerMode'].put('On', wait=True)
             self.wait_pv(self.epics_pvs['CamTriggerMode'], 1)
 
@@ -288,16 +288,9 @@ class TomoScanStream2BM(TomoScanStreamPSO):
 
         
         if self.epics_pvs['ReturnRotation'].get(as_string=True) == 'Yes':
-            # Reset rotation position by mod 360 , the actual return 
-            # to start position is handled by super().end_scan()
-            # ang = self.epics_pvs['RotationRBV'].get()            
-            # current_angle = np.sign(ang)*(np.abs(ang) % 360)
-            # log.info('reset position to %f',current_angle)            
-            # self.epics_pvs['RotationSet'].put('Set', wait=True)
-            # self.epics_pvs['Rotation'].put(current_angle, wait=True)
-            # self.epics_pvs['RotationSet'].put('Use', wait=True)     
-            log.warning('home stage')
-            self.epics_pvs['RotationHomF'].put(1, wait=True)                  
+            if np.abs(self.epics_pvs['RotationRBV'].get())>720:
+                log.warning('home stage')
+                self.epics_pvs['RotationHomF'].put(1, wait=True)                  
         
         self.lens_cur = self.epics_pvs['LensSelect'].get()
         # Call the base class method
@@ -322,21 +315,17 @@ class TomoScanStream2BM(TomoScanStreamPSO):
         - Closes shutter.
         """
         
-        if self.epics_pvs['ReturnRotation'].get(as_string=True) == 'Yes':
-        # Reset rotation position by mod 360 , the actual return 
-        # to start position is handled by super().end_scan()
-            # allow stage to stop
-            # log.info('wait until the stage is stopped')
-            # time.sleep(self.epics_pvs['RotationAccelTime'].get()*1.2)                        
-            # current_angle = self.epics_pvs['RotationRBV'].get() %360
-            # log.info('reset position to %f',current_angle)            
-            # self.epics_pvs['RotationSet'].put('Set', wait=True)
-            # self.epics_pvs['Rotation'].put(current_angle, wait=True)
-            # self.epics_pvs['RotationSet'].put('Use', wait=True)
-            log.warning('wait 5s to stop the stage')
-            time.sleep(5) 
-            log.warning('home stage')
-            self.epics_pvs['RotationHomF'].put(1, wait=True)                        
+        if self.epics_pvs['ReturnRotation'].get(as_string=True) == 'Yes':        
+            while True:
+                ang1 = self.epics_pvs['RotationRBV'].value
+                time.sleep(1)
+                ang2 = self.epics_pvs['RotationRBV'].value
+                print(ang1,ang2)
+                if np.abs(ang1-ang2)<1e-4:
+                    break
+            if np.abs(self.epics_pvs['RotationRBV'].value)>720:
+                log.warning('home stage')
+                self.epics_pvs['RotationHomF'].put(1, wait=True)                        
         self.epics_pvs['LensSelect'].clear_callbacks()
         # Call the base class method
         super().end_scan()

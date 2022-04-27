@@ -5,8 +5,8 @@ file {
 }
 display {
 	object {
-		x=1623
-		y=610
+		x=3768
+		y=365
 		width=700
 		height=1042
 	}
@@ -638,7 +638,7 @@ text {
 text {
 	object {
 		x=34
-		y=694
+		y=734
 		width=190
 		height=20
 	}
@@ -651,7 +651,7 @@ text {
 text {
 	object {
 		x=379
-		y=695
+		y=735
 		width=190
 		height=20
 	}
@@ -923,14 +923,14 @@ menu {
 "message button" {
 	object {
 		x=229
-		y=695
+		y=735
 		width=100
 		height=20
 	}
 	control {
 		chan="$(P)$(R)StreamRetakeFlat"
 		clr=14
-		bclr=51
+		bclr=15
 	}
 	label="Now"
 	press_msg="1"
@@ -938,7 +938,7 @@ menu {
 "message button" {
 	object {
 		x=574
-		y=695
+		y=735
 		width=80
 		height=20
 	}
@@ -1280,8 +1280,8 @@ text {
 }
 text {
 	object {
-		x=20
-		y=585
+		x=-32
+		y=625
 		width=170
 		height=20
 	}
@@ -1293,8 +1293,8 @@ text {
 }
 "text entry" {
 	object {
-		x=200
-		y=585
+		x=148
+		y=625
 		width=80
 		height=20
 	}
@@ -1308,8 +1308,8 @@ text {
 }
 "text update" {
 	object {
-		x=285
-		y=585
+		x=233
+		y=625
 		width=80
 		height=20
 	}
@@ -1323,9 +1323,9 @@ text {
 }
 "text update" {
 	object {
-		x=380
-		y=585
-		width=300
+		x=319
+		y=625
+		width=130
 		height=20
 	}
 	monitor {
@@ -1337,38 +1337,25 @@ text {
 	limits {
 	}
 }
-text {
-	object {
-		x=20
-		y=610
-		width=170
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="Capture proj"
-	align="horiz. right"
-}
 "message button" {
 	object {
-		x=200
-		y=610
-		width=80
-		height=20
+		x=459
+		y=625
+		width=130
+		height=50
 	}
 	control {
 		chan="$(P)$(R)StreamCapture"
 		clr=14
-		bclr=51
+		bclr=15
 	}
-	label="Start"
+	label="Capture"
 	press_msg="1"
 }
 "message button" {
 	object {
-		x=285
-		y=610
+		x=596
+		y=653
 		width=80
 		height=20
 	}
@@ -1382,8 +1369,8 @@ text {
 }
 text {
 	object {
-		x=370
-		y=610
+		x=54
+		y=650
 		width=90
 		height=20
 	}
@@ -1395,8 +1382,8 @@ text {
 }
 "text entry" {
 	object {
-		x=465
-		y=610
+		x=149
+		y=650
 		width=80
 		height=20
 	}
@@ -1410,8 +1397,8 @@ text {
 }
 "text update" {
 	object {
-		x=555
-		y=610
+		x=239
+		y=650
 		width=80
 		height=20
 	}
@@ -1449,8 +1436,8 @@ text {
 }
 "text update" {
 	object {
-		x=200
-		y=635
+		x=148
+		y=675
 		width=275
 		height=20
 	}
@@ -1465,8 +1452,8 @@ text {
 }
 text {
 	object {
-		x=20
-		y=635
+		x=-32
+		y=675
 		width=170
 		height=20
 	}
@@ -1479,7 +1466,7 @@ text {
 text {
 	object {
 		x=465
-		y=635
+		y=675
 		width=80
 		height=20
 	}
@@ -1492,7 +1479,7 @@ text {
 "text update" {
 	object {
 		x=555
-		y=635
+		y=675
 		width=80
 		height=20
 	}
@@ -1507,7 +1494,7 @@ text {
 text {
 	object {
 		x=20
-		y=660
+		y=700
 		width=170
 		height=20
 	}
@@ -1520,7 +1507,7 @@ text {
 menu {
 	object {
 		x=200
-		y=660
+		y=700
 		width=80
 		height=20
 	}
@@ -1533,7 +1520,7 @@ menu {
 "text update" {
 	object {
 		x=380
-		y=660
+		y=700
 		width=300
 		height=20
 	}
@@ -1560,8 +1547,8 @@ rectangle {
 }
 "message button" {
 	object {
-		x=436
-		y=728
+		x=608
+		y=587
 		width=80
 		height=20
 	}
@@ -1575,8 +1562,8 @@ rectangle {
 }
 text {
 	object {
-		x=236
-		y=727
+		x=408
+		y=586
 		width=190
 		height=20
 	}
@@ -1584,5 +1571,44 @@ text {
 		clr=14
 	}
 	textix="Sync exposure and rotation step"
+	align="horiz. right"
+}
+text {
+	object {
+		x=15
+		y=586
+		width=100
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Scan type"
+	align="horiz. right"
+}
+menu {
+	object {
+		x=131
+		y=588
+		width=140
+		height=20
+	}
+	control {
+		chan="$(P)$(R)StreamScanType"
+		clr=14
+		bclr=51
+	}
+}
+text {
+	object {
+		x=380
+		y=602
+		width=190
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="(only in continuous mode)"
 	align="horiz. right"
 }
