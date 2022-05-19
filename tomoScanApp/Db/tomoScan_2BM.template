@@ -195,3 +195,27 @@ record(stringout, "$(P)$(R)MctOpticsPVPrefix")
 {
    field(VAL,  "$(MCT_OPTICS)")
 }
+
+############
+# Scan Types
+############
+
+record(mbbo, "$(P)$(R)ScanType")
+{
+   field(ZRVL, "0")
+   field(ZRST, "Single")
+   field(ONVL, "1")
+   field(ONST, "Vertical")
+   field(TWVL, "2")
+   field(TWST, "Horizontal")
+   field(THVL, "3")
+   field(THST, "Mosaic")
+   field(FRVL, "4")
+   field(FRST, "Energy")
+}
+
+record(bo, "$(P)$(R)FlipStitch")
+{
+   field(ZNAM, "No")
+   field(ONAM, "Yes")
+}

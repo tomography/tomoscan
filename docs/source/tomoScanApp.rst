@@ -891,6 +891,40 @@ Fast shutter control
     - Contains the value to write to open the fast shutter
 
 
+
+mctOptics
+^^^^^^^^^
+
+.. cssclass:: table-bordered table-striped table-hover
+.. list-table::
+  :header-rows: 1
+  :widths: 5 5 90
+
+  * - Record name
+    - Record type
+    - Description
+  * - $(P)$(R)MctOpticsPVPrefix
+    - stringout
+    - Contains the prefix for the mctOptics IOC.
+
+Scan Types
+^^^^^^^^^^
+
+.. cssclass:: table-bordered table-striped table-hover
+.. list-table::
+  :header-rows: 1
+  :widths: 5 5 90
+
+  * - Record name
+    - Record type
+    - Description
+  * - $(P)$(R)ScanType
+    - mbbo
+    - Contains the scan type, e.g. 'Single', 'Vertical', 'Horizontal', 'Mosaic', 'Energy'.
+  * - $(P)$(R)FlipStitch
+    - bo
+    - Tells if the scan is a Flip&Stitch or not.
+
 Additional files that are specific to the TomoScanStream derived class used at APS beamline 2-BM:
 
 Pva, Roi and Cb Plugin PV Prefixes

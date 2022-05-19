@@ -63,3 +63,9 @@ $(P)$(R)ShutterStatusPVName
 # mctOptics
 ################
 $(P)$(R)MctOpticsPVPrefix
+
+############
+# Scan Types
+############
+$(P)$(R)ScanType
+$(P)$(R)FlipStitch

@@ -23,25 +23,28 @@ import epics
 def init_PVs(tomoscan_prefix):
     
     ts_pvs = {}
-    file_plugin_prefix = epics.caget(tomoscan_prefix + 'FilePluginPVPrefix')    
+    file_plugin_prefix      = epics.caget(tomoscan_prefix + 'FilePluginPVPrefix')    
 
-    ts_pvs['StartScan'] = PV(tomoscan_prefix + 'StartScan')
+    ts_pvs['StartScan']     = PV(tomoscan_prefix + 'StartScan')
     ts_pvs['ServerRunning'] = PV(tomoscan_prefix + 'ServerRunning')
-    ts_pvs['ScanStatus'] = PV(tomoscan_prefix + 'ScanStatus')
-    ts_pvs['SampleName'] = PV(tomoscan_prefix + 'SampleName')
-    ts_pvs['SampleInX'] = PV(tomoscan_prefix + 'SampleInX')
-    ts_pvs['SampleInY'] = PV(tomoscan_prefix + 'SampleInY')
+    ts_pvs['ScanStatus']    = PV(tomoscan_prefix + 'ScanStatus')
+    ts_pvs['SampleName']    = PV(tomoscan_prefix + 'SampleName')
+    ts_pvs['SampleInX']     = PV(tomoscan_prefix + 'SampleInX')
+    ts_pvs['SampleInY']     = PV(tomoscan_prefix + 'SampleInY')
     ts_pvs['FlatFieldAxis'] = PV(tomoscan_prefix + 'FlatFieldAxis')
     ts_pvs['FlatFieldMode'] = PV(tomoscan_prefix + 'FlatFieldMode')
-    ts_pvs['FileName'] = PV(tomoscan_prefix + 'FileName')
-    ts_pvs['FileTemplate'] = PV(file_plugin_prefix + 'FileTemplate')
-    ts_pvs['FileNumber'] = PV(file_plugin_prefix + 'FileNumber')
+    ts_pvs['FileName']      = PV(tomoscan_prefix + 'FileName')
+    ts_pvs['FileTemplate']  = PV(file_plugin_prefix + 'FileTemplate')
+    ts_pvs['FileNumber']    = PV(file_plugin_prefix + 'FileNumber')
 
-    sample_x_pv_name = PV(tomoscan_prefix + 'SampleXPVName').value
-    sample_y_pv_name  = PV(tomoscan_prefix + 'SampleYPVName').value
+    sample_x_pv_name        = PV(tomoscan_prefix + 'SampleXPVName').value
+    sample_y_pv_name        = PV(tomoscan_prefix + 'SampleYPVName').value
 
-    ts_pvs['SampleX'] = PV(sample_x_pv_name)
-    ts_pvs['SampleY'] = PV(sample_y_pv_name)
+    ts_pvs['SampleX']       = PV(sample_x_pv_name)
+    ts_pvs['SampleY']       = PV(sample_y_pv_name)
+
+    ts_pvs['ScanType']      = PV(tomoscan_prefix + 'ScanType')
+    ts_pvs['FlipStitch']    = PV(tomoscan_prefix + 'FlipStitch')
 
     return ts_pvs
 
@@ -56,23 +59,23 @@ def run_status(args):
     config.show_config(args)
 
 def run_single(args):
-    args.scan_type = 'single'
+    args.scan_type = 'Single'
 
     run_scan(args)
     config.write(args.config, args, sections=config.SINGLE_SCAN_PARAMS)
 
 def run_vertical(args):
-    args.scan_type = 'vertical'
+    args.scan_type = 'Vertical'
     run_scan(args)
     config.write(args.config, args, sections=config.VERTICAL_SCAN_PARAMS)
 
 def run_horizontal(args):
-    args.scan_type = 'horizontal'
+    args.scan_type = 'Horizontal'
     run_scan(args)
     config.write(args.config, args, sections=config.HORIZONTAL_SCAN_PARAMS)
 
 def run_mosaic(args):
-    args.scan_type = 'mosaic'
+    args.scan_type = 'Mosaic'
     run_scan(args)
     config.write(args.config, args, sections=config.MOSAIC_SCAN_PARAMS)
 
@@ -88,6 +91,7 @@ def run_scan(args):
     if ts_pvs['ServerRunning'].get():
         if ts_pvs['ScanStatus'].get(as_string=True) == 'Scan complete':
             log.warning('%s scan start', args.scan_type)
+            ts_pvs['ScanType'].put(args.scan_type, wait=True)
             if (args.sleep_steps >= 1) and (args.sleep == True):
                 log.warning('running %d x %2.2fs sleep scans', args.sleep_steps, args.sleep_time)
                 tic =  time.time()
@@ -108,6 +112,7 @@ def run_scan(args):
             else:
                 scan(args, ts_pvs)
             log.warning('%s scan end', args.scan_type)
+            ts_pvs['ScanType'].put('Single', wait=True)
         else:
             log.error('Server %s is busy. Please run a scan manually first.', args.tomoscan_prefix)
     else:
@@ -118,11 +123,11 @@ def scan(args, ts):
     tic_01 =  time.time()
     flat_field_axis = ts['FlatFieldAxis'].get(as_string=True)
     flat_field_mode = ts['FlatFieldMode'].get(as_string=True)
-    if (args.scan_type == 'single'):
+    if (args.scan_type == 'Single'):
         single_scan(args, ts)
     elif (args.scan_type == 'energy'):
         energy_scan(args, ts)        
-    elif (args.scan_type == 'mosaic'):
+    elif (args.scan_type == 'Mosaic'):
         start_y = args.vertical_start
         step_size_y = args.vertical_step_size  
         steps_y = args.vertical_steps
@@ -153,7 +158,7 @@ def scan(args, ts):
         dtime = (time.time() - tic_01)/60.
         log.info('%s scan time: %3.3f minutes', args.scan_type, dtime)
     else:
-        if (args.scan_type == 'horizontal'):
+        if (args.scan_type == 'Horizontal'):
             start = args.horizontal_start
             step_size = args.horizontal_step_size       
             steps = args.horizontal_steps
@@ -163,7 +168,7 @@ def scan(args, ts):
                 pv = "SampleX"
             else:
                 pv = "SampleInX"
-        elif (args.scan_type == 'vertical'):
+        elif (args.scan_type == 'Vertical'):
             start = args.vertical_start
             step_size = args.vertical_step_size
             steps = args.vertical_steps
