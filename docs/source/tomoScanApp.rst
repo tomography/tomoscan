@@ -352,6 +352,24 @@ Scan status via Channel Access
       It is controlled by a watchdog timer, and will change from ``Running`` to ``Stopped``
       within 5 seconds if the Python server exits.
 
+Scan Types
+----------
+
+.. cssclass:: table-bordered table-striped table-hover
+.. list-table::
+  :header-rows: 1
+  :widths: 5 5 90
+
+  * - Record name
+    - Record type
+    - Description
+  * - $(P)$(R)ScanType
+    - mbbo
+    - Contains the scan type, e.g. 'Single', 'Vertical', 'Horizontal', 'Mosaic', "File', 'Energy'.
+  * - $(P)$(R)FlipStitch
+    - bo
+    - Tells if the scan is a Flip&Stitch or not.
+
 tomoScan_settings.req
 ---------------------
 
@@ -907,23 +925,6 @@ mctOptics
     - stringout
     - Contains the prefix for the mctOptics IOC.
 
-Scan Types
-^^^^^^^^^^
-
-.. cssclass:: table-bordered table-striped table-hover
-.. list-table::
-  :header-rows: 1
-  :widths: 5 5 90
-
-  * - Record name
-    - Record type
-    - Description
-  * - $(P)$(R)ScanType
-    - mbbo
-    - Contains the scan type, e.g. 'Single', 'Vertical', 'Horizontal', 'Mosaic', "File', 'Energy'.
-  * - $(P)$(R)FlipStitch
-    - bo
-    - Tells if the scan is a Flip&Stitch or not.
 
 Additional files that are specific to the TomoScanStream derived class used at APS beamline 2-BM:
 
