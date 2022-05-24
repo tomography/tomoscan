@@ -72,7 +72,9 @@ SECTIONS['tomoscan'] = {
     'scan-type':{
         'default': '',
         'type': str,
-        'help': "For internal use to log the tomoscan status"},
+        'help': "Scan type",
+        'default' : "Single",
+        'choices': ['Single','Vertical', 'Horizontal', 'Mosaic', 'Energy', 'File']}, 
         }
 
 SECTIONS['in-situ'] = {
@@ -147,13 +149,29 @@ SECTIONS['energy'] = {
         'help': "Txt file with PV values corresponding to optics positions for the second energy"},    
     }
 
+SECTIONS['file'] = {
+    'file-scan': {
+        'default': '',
+        'type': str,
+        'help': "json file contaning a dictionary listing multiple scan parameters"},
+    'sample-x': {
+        'default': 0,
+        'type': float,
+        'help': "Horizontal scan position"},
+    'sample-y': {
+        'default': 0,
+        'type': float,
+        'help': "Vertical scan position"},
+    }
+
 SINGLE_SCAN_PARAMS = ('tomoscan', 'in-situ')
 VERTICAL_SCAN_PARAMS = SINGLE_SCAN_PARAMS + ('vertical',)
 HORIZONTAL_SCAN_PARAMS = SINGLE_SCAN_PARAMS + ('horizontal',)
 MOSAIC_SCAN_PARAMS = SINGLE_SCAN_PARAMS + ('vertical', 'horizontal')
 ENERGY_SCAN_PARAMS = SINGLE_SCAN_PARAMS + ('energy',)
+FILE_SCAN_PARAMS = SINGLE_SCAN_PARAMS + ('file', )
 
-NICE_NAMES = ('General', 'Tomoscan', 'In-situ Scans', 'Vertical Scan', "Horizonatal Scan")
+NICE_NAMES = ('General', 'Tomoscan', 'In-situ Scans', 'Vertical Scan', "Horizonatal Scan", "Energy", "File")
 
 def get_config_name():
     """Get the command line --config option."""

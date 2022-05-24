@@ -11,6 +11,7 @@ import argparse
 import time
 import shutil
 import pathlib
+import json
 import numpy as np
 from datetime import datetime
 
@@ -60,7 +61,6 @@ def run_status(args):
 
 def run_single(args):
     args.scan_type = 'Single'
-
     run_scan(args)
     config.write(args.config, args, sections=config.SINGLE_SCAN_PARAMS)
 
@@ -80,9 +80,16 @@ def run_mosaic(args):
     config.write(args.config, args, sections=config.MOSAIC_SCAN_PARAMS)
 
 def run_energy(args):
-    args.scan_type = 'energy'
+    args.scan_type = 'Energy'
     run_scan(args)
     config.write(args.config, args, sections=config.ENERGY_SCAN_PARAMS)    
+
+def run_file(args):
+
+    args.scan_type = 'File'
+    run_scan(args)
+    config.write(args.config, args, sections=config.ENERGY_SCAN_PARAMS)    
+
 
 def run_scan(args):
     
@@ -125,7 +132,9 @@ def scan(args, ts):
     flat_field_mode = ts['FlatFieldMode'].get(as_string=True)
     if (args.scan_type == 'Single'):
         single_scan(args, ts)
-    elif (args.scan_type == 'energy'):
+    elif (args.scan_type == 'File'):
+        file_scan(args, ts)   
+    elif (args.scan_type == 'Energy'):
         energy_scan(args, ts)        
     elif (args.scan_type == 'Mosaic'):
         start_y = args.vertical_start
@@ -184,6 +193,8 @@ def scan(args, ts):
             single_scan(args, ts)
         dtime = (time.time() - tic_01)/60.
         log.info('%s scan time: %3.3f minutes', args.scan_type, dtime)
+
+    ts['ScanType'].put('Single', wait=True)
 
 def single_scan(args, ts):
 
@@ -268,6 +279,42 @@ def energy_scan(args, ts):
             
     dtime = (time.time() - tic_01)/60.
     log.info('energy scan time: %3.3f minutes', dtime)
+    ts['ScanType'].put('Single', wait=True)
+
+
+def file_scan(args, ts):
+
+    tic_01 =  time.time()
+    log.info('file scan start')
+
+    with open(args.file_scan) as json_file:
+        scan_dict = json.load(json_file)
+
+    flat_field_axis = ts['FlatFieldAxis'].get(as_string=True)
+    flat_field_mode = ts['FlatFieldMode'].get(as_string=True)
+
+    for key, value in scan_dict.items():
+        ts['SampleX'].put(value['SampleX'], wait=True)
+        ts['SampleY'].put(value['SampleY'], wait=True)
+        log.warning('Scan key/number: %s ', key)
+        log.warning('%s stage position: %3.3f mm', 'Sample Y', value['SampleY'])
+        log.warning('%s stage position: %3.3f mm', 'Sample X', value['SampleX'])
+        if flat_field_axis in ('X') or flat_field_mode == 'None':
+            pv_y = "SampleY"
+        else:
+            pv_y = "SampleInY"
+        ts[pv_y].put(value['SampleY'], wait=True)
+        if flat_field_axis in ('Y') or flat_field_mode == 'None':
+            pv_x = "SampleX"
+        else:
+            pv_x = "SampleInX"
+        ts[pv_x].put(value['SampleX'], wait=True, timeout=600)
+        single_scan(args, ts)
+        # config.write(args.config, args, sections=config.SINGLE_SCAN_PARAMS)
+
+    dtime = (time.time() - tic_01)/60.
+    log.info('file scan time: %3.3f minutes', dtime)
+    ts['ScanType'].put('Single', wait=True)
 
 def main():
     # set logs directory
@@ -290,6 +337,7 @@ def main():
     horizontal_param = config.HORIZONTAL_SCAN_PARAMS
     mosaic_param = config.MOSAIC_SCAN_PARAMS
     energy_param = config.ENERGY_SCAN_PARAMS
+    file_param = config.FILE_SCAN_PARAMS
 
     cmd_parsers = [
         ('init',           init,              (),                   "Create configuration file"),
@@ -299,6 +347,7 @@ def main():
         ('horizontal',     run_horizontal,    horizontal_param,     "Run a horizontal tomographic scan"),
         ('mosaic',         run_mosaic,        mosaic_param,         "Run a mosaic tomographic scan"),
         ('energy',         run_energy,        energy_param,         "Run an energy tomographic scan"),
+        ('file',           run_file,          file_param,           "Run a series of scans using the position stored in a configuration file"),
     ]
 
     subparsers = parser.add_subparsers(title="Commands", metavar='')

@@ -920,7 +920,7 @@ Scan Types
     - Description
   * - $(P)$(R)ScanType
     - mbbo
-    - Contains the scan type, e.g. 'Single', 'Vertical', 'Horizontal', 'Mosaic', 'Energy'.
+    - Contains the scan type, e.g. 'Single', 'Vertical', 'Horizontal', 'Mosaic', "File', 'Energy'.
   * - $(P)$(R)FlipStitch
     - bo
     - Tells if the scan is a Flip&Stitch or not.
