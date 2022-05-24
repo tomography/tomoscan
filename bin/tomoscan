@@ -287,9 +287,15 @@ def file_scan(args, ts):
     tic_01 =  time.time()
     log.info('file scan start')
 
-    with open(args.file_scan) as json_file:
-        scan_dict = json.load(json_file)
-
+    try:
+        with open(args.file_scan) as json_file:
+            scan_dict = json.load(json_file)
+    except FileNotFoundError:
+        log.error('File %s not found', args.file_scan)
+        exit()
+    except:
+        log.error('File %s is not correcly formatted', args.file_scan)
+        exit()
     flat_field_axis = ts['FlatFieldAxis'].get(as_string=True)
     flat_field_mode = ts['FlatFieldMode'].get(as_string=True)
 
