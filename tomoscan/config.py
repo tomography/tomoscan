@@ -27,6 +27,7 @@ from tomoscan import __version__
 home = os.path.expanduser("~")
 LOGS_HOME = os.path.join(home, 'logs')
 CONFIG_FILE_NAME = os.path.join(home, 'tomoscan.conf')
+SCAN_FILE_NAME = os.path.join(home, 'scan.json')
 
 SECTIONS = OrderedDict()
 
@@ -34,7 +35,12 @@ SECTIONS['general'] = {
     'config': {
         'default': CONFIG_FILE_NAME,
         'type': str,
-        'help': "File name of configuration file",
+        'help': "File name of configuration file. Default: ~/tomoscan.conf",
+        'metavar': 'FILE'},
+    'scan-file': {
+        'default': SCAN_FILE_NAME,
+        'type': str,
+        'help': "File name of scan file. Default: ~/scan.json",
         'metavar': 'FILE'},
     'logs-home': {
         'default': LOGS_HOME,
@@ -154,6 +160,10 @@ SECTIONS['file'] = {
         'default': '',
         'type': str,
         'help': "json file contaning a dictionary listing multiple scan parameters"},
+    'num-scans': {
+        'default': 10,
+        'type': util.positive_int,
+        'help': "Horizontal scan position"},
     'sample-x': {
         'default': 0,
         'type': float,
@@ -164,6 +174,7 @@ SECTIONS['file'] = {
         'help': "Vertical scan position"},
     }
 
+INIT_PARAMS = ('tomoscan', 'file')
 SINGLE_SCAN_PARAMS = ('tomoscan', 'in-situ')
 VERTICAL_SCAN_PARAMS = SINGLE_SCAN_PARAMS + ('vertical',)
 HORIZONTAL_SCAN_PARAMS = SINGLE_SCAN_PARAMS + ('horizontal',)

@@ -24,28 +24,44 @@ import epics
 def init_PVs(tomoscan_prefix):
     
     ts_pvs = {}
-    file_plugin_prefix      = epics.caget(tomoscan_prefix + 'FilePluginPVPrefix')    
+    file_plugin_prefix              = epics.caget(tomoscan_prefix + 'FilePluginPVPrefix')    
+    
+    sample_x_pv_name                = PV(tomoscan_prefix + 'SampleXPVName').value
+    sample_y_pv_name                = PV(tomoscan_prefix + 'SampleYPVName').value
+    ts_pvs['SampleX']               = PV(sample_x_pv_name)
+    ts_pvs['SampleY']               = PV(sample_y_pv_name)
 
-    ts_pvs['StartScan']     = PV(tomoscan_prefix + 'StartScan')
-    ts_pvs['ServerRunning'] = PV(tomoscan_prefix + 'ServerRunning')
-    ts_pvs['ScanStatus']    = PV(tomoscan_prefix + 'ScanStatus')
-    ts_pvs['SampleName']    = PV(tomoscan_prefix + 'SampleName')
-    ts_pvs['SampleInX']     = PV(tomoscan_prefix + 'SampleInX')
-    ts_pvs['SampleInY']     = PV(tomoscan_prefix + 'SampleInY')
-    ts_pvs['FlatFieldAxis'] = PV(tomoscan_prefix + 'FlatFieldAxis')
-    ts_pvs['FlatFieldMode'] = PV(tomoscan_prefix + 'FlatFieldMode')
-    ts_pvs['FileName']      = PV(tomoscan_prefix + 'FileName')
-    ts_pvs['FileTemplate']  = PV(file_plugin_prefix + 'FileTemplate')
-    ts_pvs['FileNumber']    = PV(file_plugin_prefix + 'FileNumber')
+    ts_pvs['StartScan']             = PV(tomoscan_prefix + 'StartScan')
+    ts_pvs['ServerRunning']         = PV(tomoscan_prefix + 'ServerRunning')
+    ts_pvs['ScanStatus']            = PV(tomoscan_prefix + 'ScanStatus')
+    ts_pvs['SampleName']            = PV(tomoscan_prefix + 'SampleName')
 
-    sample_x_pv_name        = PV(tomoscan_prefix + 'SampleXPVName').value
-    sample_y_pv_name        = PV(tomoscan_prefix + 'SampleYPVName').value
+    ts_pvs['FileName']              = PV(tomoscan_prefix + 'FileName')
+    ts_pvs['FileTemplate']          = PV(file_plugin_prefix + 'FileTemplate')
+    ts_pvs['FileNumber']            = PV(file_plugin_prefix + 'FileNumber')
 
-    ts_pvs['SampleX']       = PV(sample_x_pv_name)
-    ts_pvs['SampleY']       = PV(sample_y_pv_name)
-
-    ts_pvs['ScanType']      = PV(tomoscan_prefix + 'ScanType')
-    ts_pvs['FlipStitch']    = PV(tomoscan_prefix + 'FlipStitch')
+    ts_pvs['RotationStart']         = PV(tomoscan_prefix + 'RotationStart')  
+    ts_pvs['RotationStep']          = PV(tomoscan_prefix + 'RotationStep')  
+    ts_pvs['NumAngles']             = PV(tomoscan_prefix + 'NumAngles')  
+    ts_pvs['ReturnRotation']        = PV(tomoscan_prefix + 'ReturnRotation')  
+    ts_pvs['NumDarkFields']         = PV(tomoscan_prefix + 'NumDarkFields')  
+    ts_pvs['DarkFieldMode']         = PV(tomoscan_prefix + 'DarkFieldMode')  
+    ts_pvs['DarkFieldValue']        = PV(tomoscan_prefix + 'DarkFieldValue')  
+    ts_pvs['NumFlatFields']         = PV(tomoscan_prefix + 'NumFlatFields')
+    ts_pvs['FlatFieldAxis']         = PV(tomoscan_prefix + 'FlatFieldAxis')
+    ts_pvs['FlatFieldMode']         = PV(tomoscan_prefix + 'FlatFieldMode')
+    ts_pvs['FlatFieldValue']        = PV(tomoscan_prefix + 'FlatFieldValue')  
+    ts_pvs['FlatExposureTime']      = PV(tomoscan_prefix + 'FlatExposureTime')  
+    ts_pvs['DifferentFlatExposure'] = PV(tomoscan_prefix + 'DifferentFlatExposure')
+    ts_pvs['SampleInX']             = PV(tomoscan_prefix + 'SampleInX')
+    ts_pvs['SampleOutX']            = PV(tomoscan_prefix + 'SampleOutX')  
+    ts_pvs['SampleInY']             = PV(tomoscan_prefix + 'SampleInY')
+    ts_pvs['SampleOutY']            = PV(tomoscan_prefix + 'SampleOutY')  
+    ts_pvs['SampleOutAngleEnable']  = PV(tomoscan_prefix + 'SampleOutAngleEnable') 
+    ts_pvs['SampleOutAngle']        = PV(tomoscan_prefix + 'SampleOutAngle')  
+    ts_pvs['ScanType']              = PV(tomoscan_prefix + 'ScanType')
+    ts_pvs['FlipStitch']            = PV(tomoscan_prefix + 'FlipStitch')
+    ts_pvs['ExposureTime']          = PV(tomoscan_prefix + 'ExposureTime')
 
     return ts_pvs
 
@@ -55,6 +71,65 @@ def init(args):
         config.write(args.config)
     else:
         log.error("{0} already exists".format(args.config))
+
+    ts_pvs = init_PVs(args.tomoscan_prefix)
+    scan_dict = {}
+
+    RotationStart         = ts_pvs['RotationStart'].get() 
+    RotationStep          = ts_pvs['RotationStep'].get()  
+    NumAngles             = ts_pvs['NumAngles'].get() 
+    ReturnRotation        = ts_pvs['ReturnRotation'].get() 
+    NumDarkFields         = ts_pvs['NumDarkFields'].get() 
+    DarkFieldMode         = ts_pvs['DarkFieldMode'].get(as_string=True) 
+    DarkFieldValue        = ts_pvs['DarkFieldValue'].get() 
+    NumFlatFields         = ts_pvs['NumFlatFields'].get() 
+    FlatFieldAxis         = ts_pvs['FlatFieldAxis'].get(as_string=True) 
+    FlatFieldMode         = ts_pvs['FlatFieldMode'].get(as_string=True) 
+    FlatFieldValue        = ts_pvs['FlatFieldValue'].get() 
+    FlatExposureTime      = ts_pvs['FlatExposureTime'].get() 
+    DifferentFlatExposure = ts_pvs['DifferentFlatExposure'].get(as_string=True) 
+    SampleInX             = ts_pvs['SampleInX'].get() 
+    SampleOutX            = ts_pvs['SampleOutX'].get() 
+    SampleInY             = ts_pvs['SampleInY'].get() 
+    SampleOutY            = ts_pvs['SampleOutY'].get() 
+    SampleOutAngleEnable  = ts_pvs['SampleOutAngleEnable'].get(as_string=True) 
+    SampleOutAngle        = ts_pvs['SampleOutAngle'].get() 
+    ScanType              = ts_pvs['ScanType'].get(as_string=True) 
+    FlipStitch            = ts_pvs['FlipStitch'].get(as_string=True) 
+    ExposureTime          = ts_pvs['ExposureTime'].get()
+
+    for x in range(args.num_scans):
+        key = str(x).zfill(3)
+        scan_dict[key] =  {'SampleX' : 0.0,  
+                           'SampleY' : 0.0,  
+                           'RotationStart'         : RotationStart, 
+                           'RotationStep'          : RotationStep,  
+                           'NumAngles'             : NumAngles, 
+                           'ReturnRotation'        : ReturnRotation, 
+                           'NumDarkFields'         : NumDarkFields, 
+                           'DarkFieldMode'         : DarkFieldMode, 
+                           'DarkFieldValue'        : DarkFieldValue, 
+                           'NumFlatFields'         : NumFlatFields, 
+                           'FlatFieldAxis'         : FlatFieldAxis, 
+                           'FlatFieldMode'         : FlatFieldMode, 
+                           'FlatFieldValue'        : FlatFieldValue, 
+                           'FlatExposureTime'      : FlatExposureTime, 
+                           'DifferentFlatExposure' : DifferentFlatExposure, 
+                           'SampleInX'             : SampleInX, 
+                           'SampleOutX'            : SampleOutX, 
+                           'SampleInY'             : SampleInY, 
+                           'SampleOutY'            : SampleOutY, 
+                           'SampleOutAngleEnable'  : SampleOutAngleEnable, 
+                           'SampleOutAngle'        : SampleOutAngle, 
+                           'ScanType'              : ScanType, 
+                           'FlipStitch'            : FlipStitch, 
+                           'ExposureTime'          : ExposureTime
+                           }
+
+    with open(args.scan_file, 'w') as fp:
+        json.dump(scan_dict, fp, indent=4, sort_keys=True)
+
+    log.info('For arbitrary scans location custormize (SampleX, SampleY) in {0}'.format(args.scan_file))
 
 def run_status(args):
     config.show_config(args)
@@ -338,15 +413,16 @@ def main():
     parser.add_argument('--version', action='version',
                         version='%(prog)s {}'.format(__version__))
 
-    single_param = config.SINGLE_SCAN_PARAMS
-    vertical_param = config.VERTICAL_SCAN_PARAMS
+    init_param       = config.INIT_PARAMS
+    single_param     = config.SINGLE_SCAN_PARAMS
+    vertical_param   = config.VERTICAL_SCAN_PARAMS
     horizontal_param = config.HORIZONTAL_SCAN_PARAMS
-    mosaic_param = config.MOSAIC_SCAN_PARAMS
-    energy_param = config.ENERGY_SCAN_PARAMS
-    file_param = config.FILE_SCAN_PARAMS
+    mosaic_param     = config.MOSAIC_SCAN_PARAMS
+    energy_param     = config.ENERGY_SCAN_PARAMS
+    file_param       = config.FILE_SCAN_PARAMS
 
     cmd_parsers = [
-        ('init',           init,              (),                   "Create configuration file"),
+        ('init',           init,              init_param,           "Create configuration file"),
         ('status',         run_status,        mosaic_param,         "Show tomoscan status"),
         ('single',         run_single,        single_param,         "Run a single tomographic scan"),
         ('vertical',       run_vertical,      vertical_param,       "Run a vertical tomographic scan"),
