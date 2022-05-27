@@ -40,7 +40,7 @@ SECTIONS['general'] = {
     'scan-file': {
         'default': SCAN_FILE_NAME,
         'type': str,
-        'help': "File name of scan file. Default: ~/scan.json",
+        'help': "File name of scan file contaning a dictionary listing multiple scan parameters. Default: ~/scan.json",
         'metavar': 'FILE'},
     'logs-home': {
         'default': LOGS_HOME,
@@ -156,10 +156,6 @@ SECTIONS['energy'] = {
     }
 
 SECTIONS['file'] = {
-    'file-scan': {
-        'default': '',
-        'type': str,
-        'help': "json file contaning a dictionary listing multiple scan parameters"},
     'num-scans': {
         'default': 10,
         'type': util.positive_int,
