@@ -375,8 +375,33 @@ def file_scan(args, ts):
     flat_field_mode = ts['FlatFieldMode'].get(as_string=True)
 
     for key, value in scan_dict.items():
+
+
         ts['SampleX'].put(value['SampleX'], wait=True)
         ts['SampleY'].put(value['SampleY'], wait=True)
+        ts['RotationStart'].put(value['RotationStart'], wait=True) 
+        ts['RotationStep'].put(value['RotationStep'], wait=True)
+        ts['NumAngles'].put(value['NumAngles'], wait=True) 
+        ts['ReturnRotation'].put(value['ReturnRotation'], wait=True) 
+        ts['NumDarkFields'].put(value['NumDarkFields'], wait=True) 
+        ts['DarkFieldMode'].put(value['DarkFieldMode'], wait=True) 
+        ts['DarkFieldValue'].put(value['DarkFieldValue'], wait=True) 
+        ts['NumFlatFields'].put(value['NumFlatFields'], wait=True) 
+        ts['FlatFieldAxis'].put(value['FlatFieldAxis'], wait=True) 
+        ts['FlatFieldMode'].put(value['FlatFieldMode'], wait=True) 
+        ts['FlatFieldValue'].put(value['FlatFieldValue'], wait=True) 
+        ts['FlatExposureTime'].put(value['FlatExposureTime'], wait=True) 
+        ts['DifferentFlatExposure'].put(value['DifferentFlatExposure'], wait=True) 
+        ts['SampleInX'].put(value['SampleInX'], wait=True) 
+        ts['SampleOutX'].put(value['SampleOutX'], wait=True) 
+        ts['SampleInY'].put(value['SampleInY'], wait=True) 
+        ts['SampleOutY'].put(value['SampleOutY'], wait=True) 
+        ts['SampleOutAngleEnable'].put(value['SampleOutAngleEnable'], wait=True) 
+        ts['SampleOutAngle'].put(value['SampleOutAngle'], wait=True) 
+        ts['ScanType'].put(value['ScanType'], wait=True) 
+        ts['FlipStitch'].put(value['FlipStitch'], wait=True) 
+        ts['ExposureTime'].put(value['ExposureTime'], wait=True)
+
         log.warning('Scan key/number: %s ', key)
         log.warning('%s stage position: %3.3f mm', 'Sample Y', value['SampleY'])
         log.warning('%s stage position: %3.3f mm', 'Sample X', value['SampleX'])
@@ -390,7 +415,7 @@ def file_scan(args, ts):
         else:
             pv_x = "SampleInX"
         ts[pv_x].put(value['SampleX'], wait=True, timeout=600)
-        single_scan(args, ts)
+        # single_scan(args, ts)
         # config.write(args.config, args, sections=config.SINGLE_SCAN_PARAMS)
 
     dtime = (time.time() - tic_01)/60.
