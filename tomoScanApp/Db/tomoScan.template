@@ -367,6 +367,8 @@ record(mbbo, "$(P)$(R)ScanType")
    field(FRST, "File")
    field(FVVL, "5")
    field(FVST, "Energy")
+   field(SXVL, "6")
+   field(SXST, "Helical")
 }
 
 record(bo, "$(P)$(R)FlipStitch")
