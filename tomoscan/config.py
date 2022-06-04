@@ -80,7 +80,7 @@ SECTIONS['tomoscan'] = {
         'type': str,
         'help': "Scan type",
         'default' : "Single",
-        'choices': ['Single','Vertical', 'Horizontal', 'Mosaic', 'Energy', 'File']}, 
+        'choices': ['Single','Vertical', 'Horizontal', 'Mosaic', 'Energy', 'File', 'Helical']}, 
         }
 
 SECTIONS['in-situ'] = {
