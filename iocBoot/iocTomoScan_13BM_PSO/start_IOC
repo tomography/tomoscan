@@ -1,2 +1,3 @@
 # Use this line to run the locally built tomoScanApp
+cd /home/epics/support/tomoscan/iocBoot/iocTomoScan_13BM_PSO
 ../../bin/linux-x86_64/tomoScanApp st.cmd

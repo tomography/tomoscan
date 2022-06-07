@@ -37,6 +37,8 @@ from tomoscan import log
 from tomoscan import util
 import threading
 import pvaccess
+from epics import PV
+
 
 EPSILON = .001
 
@@ -72,6 +74,14 @@ class TomoScanStream2BM(TomoScanStreamPSO):
         # Disable overw writing warning
         self.epics_pvs['OverwriteWarning'].put('Yes')
         
+        # Lens change functionality
+        prefix = self.pv_prefixes['MctOptics']
+        self.epics_pvs['LensSelect'] = PV(prefix+'LensSelect')            
+        # # ref to pixel size
+        # self.epics_pvs['MCTPixelSize'] = PV(prefix+'PixelSize')            
+        # # 
+        # self.epics_pvs['PixelSize'].put(self.epics_pvs['MCTPixelSize'])
+
         log.setup_custom_logger("./tomoscan.log")
 
     
@@ -197,11 +207,11 @@ class TomoScanStream2BM(TomoScanStreamPSO):
             self.epics_pvs['CamTriggerSource'].put('Line2', wait=True)
             self.epics_pvs['CamTriggerOverlap'].put('ReadOut', wait=True)
             self.epics_pvs['CamExposureMode'].put('Timed', wait=True)
-            self.epics_pvs['CamImageMode'].put('Multiple')            
+            self.epics_pvs['CamImageMode'].put('Continuous')     # switched to Continuous for tomostream       
             self.epics_pvs['CamArrayCallbacks'].put('Enable')
             self.epics_pvs['CamFrameRateEnable'].put(0)
 
-            self.epics_pvs['CamNumImages'].put(self.num_angles, wait=True)
+            self.epics_pvs['CamNumImages'].put(num_images, wait=True)
             self.epics_pvs['CamTriggerMode'].put('On', wait=True)
             self.wait_pv(self.epics_pvs['CamTriggerMode'], 1)
 
@@ -276,20 +286,18 @@ class TomoScanStream2BM(TomoScanStreamPSO):
         file_path = self.epics_pvs['DetectorTopDir'].get(as_string=True) + self.epics_pvs['ExperimentYearMonth'].get(as_string=True) + os.path.sep + self.epics_pvs['UserLastName'].get(as_string=True) + os.path.sep
         self.epics_pvs['FilePath'].put(file_path, wait=True)
 
-        if self.return_rotation == 'Yes':
-            # Reset rotation position by mod 360 , the actual return 
-            # to start position is handled by super().end_scan()
-            ang = self.epics_pvs['RotationRBV'].get()            
-            current_angle = np.sign(ang)*(np.abs(ang) % 360)
-            log.info('reset position to %f',current_angle)            
-            self.epics_pvs['RotationSet'].put('Set', wait=True)
-            self.epics_pvs['Rotation'].put(current_angle, wait=True)
-            self.epics_pvs['RotationSet'].put('Use', wait=True)
+        
+        if self.epics_pvs['ReturnRotation'].get(as_string=True) == 'Yes':
+            if np.abs(self.epics_pvs['RotationRBV'].get())>720:
+                log.warning('home stage')
+                self.epics_pvs['RotationHomF'].put(1, wait=True)                  
+        
+        self.lens_cur = self.epics_pvs['LensSelect'].get()
         # Call the base class method
         super().begin_scan()
         # Opens the front-end shutter
         self.open_frontend_shutter()
-         
+        self.epics_pvs['LensSelect'].add_callback(self.pv_callback_stream_2bm)
         
     def end_scan(self):
         """Performs the operations needed at the very end of a scan.
@@ -307,23 +315,29 @@ class TomoScanStream2BM(TomoScanStreamPSO):
         - Closes shutter.
         """
         
-        if self.return_rotation == 'Yes':
-        # Reset rotation position by mod 360 , the actual return 
-        # to start position is handled by super().end_scan()
-            # allow stage to stop
-            log.info('wait until the stage is stopped')
-            time.sleep(self.epics_pvs['RotationAccelTime'].get()*1.2)                        
-            current_angle = self.epics_pvs['RotationRBV'].get() %360
-            log.info('reset position to %f',current_angle)            
-            self.epics_pvs['RotationSet'].put('Set', wait=True)
-            self.epics_pvs['Rotation'].put(current_angle, wait=True)
-            self.epics_pvs['RotationSet'].put('Use', wait=True)
-            
+        if self.epics_pvs['ReturnRotation'].get(as_string=True) == 'Yes':        
+            while True:
+                ang1 = self.epics_pvs['RotationRBV'].value
+                time.sleep(1)
+                ang2 = self.epics_pvs['RotationRBV'].value
+                print(ang1,ang2)
+                if np.abs(ang1-ang2)<1e-4:
+                    break
+            if np.abs(self.epics_pvs['RotationRBV'].value)>720:
+                log.warning('home stage')
+                self.epics_pvs['RotationHomF'].put(1, wait=True)                        
+        self.epics_pvs['LensSelect'].clear_callbacks()
         # Call the base class method
         super().end_scan()
         # Close shutter
         self.close_shutter()
- 
+    
+    def pv_callback_stream_2bm(self, pvname=None, value=None, char_value=None, **kw):
+        """Callback functions for capturing in the streaming mode"""
+        if (pvname.find('LensSelect') != -1 and (value==0 or value==1 or value==2)):
+            thread = threading.Thread(target=self.lens_change_sync, args=())
+            thread.start() 
+    
     def wait_pv(self, epics_pv, wait_val, timeout=-1):
         """Wait on a pv to be a value until max_timeout (default forever)
            delay for pv to change
@@ -349,6 +363,28 @@ class TomoScanStream2BM(TomoScanStreamPSO):
             else:
                 return True
 
+    def lens_change_sync(self):
+        """Save/Update dark and flat fields for lenses"""
+        
+        # ref to pixel size
+        # self.epics_pvs['MCTPixelSize'] = PV(prefix+'PixelSize')            
+        # 
+        # self.epics_pvs['PixelSize'].put(self.epics_pvs['MCTPixelSize'])
+
+        log.info(f'switch lens from {self.lens_cur}')
+        dirname = os.path.dirname(self.epics_pvs['FPFullFileName'].get(as_string=True))            
+        cmd = 'cp '+ dirname+'/dark_fields.h5 '+ dirname+'/dark_fields_'+str(self.lens_cur)+'.h5 2> /dev/null '
+        os.system(cmd)                
+        cmd = 'cp '+ dirname+'/flat_fields.h5 '+ dirname+'/flat_fields_'+str(self.lens_cur)+'.h5 2> /dev/null '
+        os.system(cmd)                
+        self.lens_cur = self.epics_pvs['LensSelect'].get()
+        log.info(f'to {self.lens_cur}')
+        cmd = 'cp '+ dirname+'/dark_fields_'+str(self.lens_cur)+'.h5 '+ dirname+'/dark_fields.h5 2> /dev/null '
+        os.system(cmd)                
+        cmd = 'cp '+ dirname+'/flat_fields_'+str(self.lens_cur)+'.h5 '+ dirname+'/flat_fields.h5 2> /dev/null '
+        os.system(cmd)   
+        self.broadcast_dark()             
+        self.broadcast_flat()             
                 
     def wait_frontend_shutter_open(self, timeout=-1):
         """Waits for the front end shutter to open, or for ``abort_scan()`` to be called.

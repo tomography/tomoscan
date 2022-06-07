@@ -1,14 +1,14 @@
 
 file {
-	name="/home/beams8/USER2BMB/epics/synApps/support/tomoscan/tomoScanApp/op/adl/tomoScan_2BM_optics.adl"
+	name="/local/user2bmb/epics_new/synApps/support/tomoscan/tomoScanApp/op/adl/tomoScan_2BM_dm.adl"
 	version=030111
 }
 display {
 	object {
-		x=211
-		y=988
-		width=600
-		height=200
+		x=109
+		y=159
+		width=620
+		height=185
 	}
 	clr=14
 	bclr=4
@@ -91,7 +91,7 @@ rectangle {
 	object {
 		x=0
 		y=5
-		width=600
+		width=620
 		height=30
 	}
 	"basic attribute" {
@@ -102,89 +102,76 @@ text {
 	object {
 		x=0
 		y=3
-		width=600
+		width=620
 		height=30
 	}
 	"basic attribute" {
 		clr=54
 	}
-	textix="$(P)$(R)   Optics"
+	textix="$(P)$(R)   Data Management"
 	align="horiz. centered"
 }
 text {
 	object {
-		x=150
-		y=46
-		width=170
+		x=78
+		y=51
+		width=140
 		height=20
 	}
 	"basic attribute" {
 		clr=14
 	}
-	textix="Scintillator type"
+	textix="Detector top dir"
 	align="horiz. right"
 }
 text {
 	object {
-		x=60
-		y=71
-		width=260
+		x=88
+		y=76
+		width=130
 		height=20
 	}
 	"basic attribute" {
 		clr=14
 	}
-	textix="Scint. thickness (microns)"
+	textix="User last name"
 	align="horiz. right"
 }
 text {
 	object {
-		x=60
-		y=96
-		width=260
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="Image pixel size (microns)"
-	align="horiz. right"
-}
-text {
-	object {
-		x=30
-		y=121
-		width=290
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="Detector pixel size (microns)"
-	align="horiz. right"
-}
-text {
-	object {
-		x=160
-		y=146
+		x=58
+		y=101
 		width=160
 		height=20
 	}
 	"basic attribute" {
 		clr=14
 	}
-	textix="Camera objective mag. (x)"
+	textix="Experiment year month"
+	align="horiz. right"
+}
+text {
+	object {
+		x=88
+		y=126
+		width=130
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Remote analysis dir"
 	align="horiz. right"
 }
 "text entry" {
 	object {
-		x=325
-		y=71
-		width=230
+		x=223
+		y=51
+		width=380
 		height=20
 	}
 	control {
-		chan="$(P)$(R)ScintillatorThickness"
+		chan="$(P)$(R)DetectorTopDir"
 		clr=14
 		bclr=51
 	}
@@ -194,13 +181,13 @@ text {
 }
 "text entry" {
 	object {
-		x=325
-		y=46
-		width=230
+		x=223
+		y=76
+		width=380
 		height=20
 	}
 	control {
-		chan="$(P)$(R)ScintillatorType"
+		chan="$(P)$(R)UserLastName"
 		clr=14
 		bclr=51
 	}
@@ -210,13 +197,13 @@ text {
 }
 "text entry" {
 	object {
-		x=325
-		y=121
-		width=230
+		x=223
+		y=101
+		width=380
 		height=20
 	}
 	control {
-		chan="$(P)$(R)DetectorPixelSize"
+		chan="$(P)$(R)ExperimentYearMonth"
 		clr=14
 		bclr=51
 	}
@@ -226,13 +213,13 @@ text {
 }
 "text entry" {
 	object {
-		x=325
-		y=146
-		width=230
+		x=223
+		y=126
+		width=380
 		height=20
 	}
 	control {
-		chan="$(P)$(R)CameraObjective"
+		chan="$(P)$(R)RemoteAnalysisDir"
 		clr=14
 		bclr=51
 	}
@@ -240,59 +227,29 @@ text {
 	limits {
 	}
 }
-"text entry" {
+text {
 	object {
-		x=325
-		y=96
-		width=230
+		x=88
+		y=151
+		width=130
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Copy to analysis dir"
+	align="horiz. right"
+}
+menu {
+	object {
+		x=223
+		y=151
+		width=120
 		height=20
 	}
 	control {
-		chan="$(P)$(R)ImagePixelSize"
+		chan="$(P)$(R)CopyToAnalysisDir"
 		clr=14
 		bclr=51
-	}
-	format="string"
-	limits {
-	}
-}
-composite {
-	object {
-		x=160
-		y=171
-		width=395
-		height=20
-	}
-	"composite name"=""
-	children {
-		text {
-			object {
-				x=160
-				y=171
-				width=160
-				height=20
-			}
-			"basic attribute" {
-				clr=14
-			}
-			textix="Tube length (mm)"
-			align="horiz. right"
-		}
-		"text entry" {
-			object {
-				x=325
-				y=171
-				width=230
-				height=20
-			}
-			control {
-				chan="$(P)$(R)CameraTubeLength"
-				clr=14
-				bclr=51
-			}
-			format="string"
-			limits {
-			}
-		}
 	}
 }

@@ -50,43 +50,6 @@ record(bo, "$(P)$(R)Testing")
 }
 
 ####################
-# Optics information
-####################
-
-record(stringout, "$(P)$(R)ScintillatorType")
-{
-   field(VAL,  "Unknown")
-}
-
-record(ao, "$(P)$(R)ScintillatorThickness")
-{
-   field(PREC,  "0")
-}
-
-record(ao, "$(P)$(R)ImagePixelSize")
-{
-   field(PREC, "2")
-   field(EGU,  "microns")
-}
-
-record(ao, "$(P)$(R)DetectorPixelSize")
-{
-   field(PREC, "2")
-   field(EGU,  "microns")
-}
-
-record(stringout, "$(P)$(R)CameraObjective")
-{
-   field(VAL,  "Unknown")
-}
-
-record(ao, "$(P)$(R)CameraTubeLength")
-{
-   field(PREC, "0")
-   field(EGU,  "mm")
-}
-
-####################
 # Sample information
 ####################
 
@@ -224,3 +187,37 @@ record(stringout, "$(P)$(R)ShutterStatusPVName")
    field(VAL,  "$(SHUTTER_STATUS)")
 }
 
+###########
+# mctOptics
+###########
+
+record(stringout, "$(P)$(R)MctOpticsPVPrefix")
+{
+   field(VAL,  "$(MCT_OPTICS)")
+}
+
+############
+# Scan Types
+############
+
+record(mbbo, "$(P)$(R)ScanType")
+{
+   field(ZRVL, "0")
+   field(ZRST, "Single")
+   field(ONVL, "1")
+   field(ONST, "Vertical")
+   field(TWVL, "2")
+   field(TWST, "Horizontal")
+   field(THVL, "3")
+   field(THST, "Mosaic")
+   field(FRVL, "4")
+   field(FRST, "File")
+   field(FVVL, "5")
+   field(FVST, "Energy")
+}
+
+record(bo, "$(P)$(R)FlipStitch")
+{
+   field(ZNAM, "No")
+   field(ONAM, "Yes")
+}

@@ -352,6 +352,24 @@ Scan status via Channel Access
       It is controlled by a watchdog timer, and will change from ``Running`` to ``Stopped``
       within 5 seconds if the Python server exits.
 
+Scan Types
+----------
+
+.. cssclass:: table-bordered table-striped table-hover
+.. list-table::
+  :header-rows: 1
+  :widths: 5 5 90
+
+  * - Record name
+    - Record type
+    - Description
+  * - $(P)$(R)ScanType
+    - mbbo
+    - Contains the scan type, e.g. 'Single', 'Vertical', 'Horizontal', 'Mosaic', "File', 'Energy', "Helical'.
+  * - $(P)$(R)FlipStitch
+    - bo
+    - Tells if the scan is a Flip&Stitch or not.
+
 tomoScan_settings.req
 ---------------------
 
@@ -764,41 +782,6 @@ Beam status information
     - stringout
     - Enable testing mode 'Yes'.
 
-Optics information
-^^^^^^^^^^^^^^^^^^
-
-.. cssclass:: table-bordered table-striped table-hover
-.. list-table::
-  :header-rows: 1
-  :widths: 5 5 90
-
-  * - Record name
-    - Record type
-    - Description
-  * - $(P)$(R)ScintillatorType
-    - stringout
-    - Contains the type of scintillator being used.
-  * - $(P)$(R)ScintillatorThickness
-    - ao
-    - Contains the thickness of the scintillator in microns.
-  * - $(P)$(R)ImagePixelSize
-    - ao
-    - Contains the pixel size on the sample in microns (i.e. includes objective magnification)
-  * - $(P)$(R)DetectorPixelSize
-    - ao
-    - Contains the pixel size of the detector.
-  * - $(P)$(R)CameraObjective
-    - stringout
-  * - $(P)$(R)CameraObjectiveSelector
-    - mbbo
-    - Optique Peter triple lens selector
-  * - $(P)$(R)CameraTubeLength
-    - stringout
-    - Description of the camera objective
-  * - $(P)$(R)CameraSelector
-    - mbbo
-    - Optique Peter dual camera selector
-
 Sample information
 ^^^^^^^^^^^^^^^^^^
 
@@ -926,6 +909,23 @@ Fast shutter control
     - Contains the value to write to open the fast shutter
 
 
+
+mctOptics
+^^^^^^^^^
+
+.. cssclass:: table-bordered table-striped table-hover
+.. list-table::
+  :header-rows: 1
+  :widths: 5 5 90
+
+  * - Record name
+    - Record type
+    - Description
+  * - $(P)$(R)MctOpticsPVPrefix
+    - stringout
+    - Contains the prefix for the mctOptics IOC.
+
+
 Additional files that are specific to the TomoScanStream derived class used at APS beamline 2-BM:
 
 Pva, Roi and Cb Plugin PV Prefixes
@@ -999,6 +999,9 @@ Stream control
   * - $(P)$(R)PvaStreamPVPrefix
     - stringout
     - Contains the prefix for the PVA server broadcasting dark and flat images in streaming mode, e.g. 2bmb:TomoScan:Stream:
+  * - $(P)$(R)StreamSync
+    - bo 
+    - when its value is set to Sync a callback synchronizes new angular step and exposure with rotation speed and brodcasts new array of angles for streaming reconstruction
 
 
 tomoScan_2BM_settings.req
@@ -1085,36 +1088,6 @@ Sample top X and Y translation motors
   * - $(P)$(R)SampleTopZPVName
     - stringout
     - Contains the name of the sample Z translation located on top of the rotary stage PV, e.g. 13BMD:m85
-
-Optics information
-^^^^^^^^^^^^^^^^^^
-
-.. cssclass:: table-bordered table-striped table-hover
-.. list-table::
-  :header-rows: 1
-  :widths: 5 5 90
-
-  * - Record name
-    - Record type
-    - Description
-  * - $(P)$(R)ScintillatorType
-    - stringout
-    - Contains the type of scintillator being used.
-  * - $(P)$(R)ScintillatorThickness
-    - ao
-    - Contains the thickness of the scintillator in microns.
-  * - $(P)$(R)ImagePixelSize
-    - ao
-    - Contains the pixel size on the sample in microns (i.e. includes objective magnification)
-  * - $(P)$(R)DetectorPixelSize
-    - ao
-    - Contains the pixel size of the detector.
-  * - $(P)$(R)CameraObjective
-    - stringout
-    - Description of the camera objective
-  * - $(P)$(R)CameraTubeLength
-    - stringout
-    - Description of the camera objective
 
 Sample information
 ^^^^^^^^^^^^^^^^^^

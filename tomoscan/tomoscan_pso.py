@@ -183,11 +183,12 @@ class TomoScanPSO(TomoScan):
         self.epics_pvs['Rotation'].put(self.epics_pvs['PSOEndTaxi'].get())
         time_per_angle = self.compute_frame_time()
         collection_time = self.num_angles * time_per_angle
-        self.wait_camera_done(collection_time + 180.)
+        self.wait_camera_done(collection_time + 30.)
 
     def program_PSO(self):
         '''Performs programming of PSO output on the Aerotech driver.
         '''
+        self.epics_pvs['ScanStatus'].put('Programming PSO')
         overall_sense, user_direction = self._compute_senses()
         pso_command = self.epics_pvs['PSOCommand.BOUT']
         pso_model = self.epics_pvs['PSOControllerModel'].get(as_string=True)
@@ -196,7 +197,7 @@ class TomoScanPSO(TomoScan):
 
         # Place the motor at the position where the first PSO pulse should be triggered
         self.epics_pvs['RotationSpeed'].put(self.max_rotation_speed)
-        self.epics_pvs['Rotation'].put(self.rotation_start, wait=True)
+        self.epics_pvs['Rotation'].put(self.rotation_start, wait=True, timeout=600)
         self.epics_pvs['RotationSpeed'].put(self.motor_speed)
 
         # Make sure the PSO control is off
