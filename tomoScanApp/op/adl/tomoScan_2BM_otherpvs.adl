@@ -1,6 +1,6 @@
 
 file {
-	name="/home/beams/USER2BMB/epics/synApps/support/tomoscan/tomoScanApp/op/adl/tomoScan_2BM_otherpvs.adl"
+	name="/home/beams8/USER2BMB/epics/synApps/support/tomoscan/tomoScanApp/op/adl/tomoScan_2BM_otherpvs.adl"
 	version=030111
 }
 display {
@@ -373,7 +373,7 @@ menu {
 	object {
 		x=254
 		y=215
-		width=80
+		width=100
 		height=20
 	}
 	control {
@@ -386,7 +386,7 @@ menu {
 	object {
 		x=254
 		y=240
-		width=80
+		width=100
 		height=20
 	}
 	control {
