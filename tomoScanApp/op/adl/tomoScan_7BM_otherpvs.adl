@@ -1,14 +1,14 @@
 
 file {
-	name="/home/beams9/FUELSPRAY/epics/synApps/support/tomoscan/tomoScanApp/op/adl/tomoScan_7BM_otherpvs.adl"
+	name="/home/beams8/USER2BMB/epics/synApps/support/tomoscan/tomoScanApp/op/adl/tomoScan_7BM_otherpvs.adl"
 	version=030111
 }
 display {
 	object {
-		x=1238
-		y=514
+		x=726
+		y=235
 		width=640
-		height=260
+		height=320
 	}
 	clr=14
 	bclr=4
@@ -342,4 +342,85 @@ text {
 	format="string"
 	limits {
 	}
+}
+text {
+	object {
+		x=119
+		y=245
+		width=130
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Scan type"
+	align="horiz. right"
+}
+menu {
+	object {
+		x=254
+		y=245
+		width=80
+		height=20
+	}
+	control {
+		chan="$(P)$(R)ScanType"
+		clr=14
+		bclr=51
+	}
+}
+menu {
+	object {
+		x=254
+		y=270
+		width=80
+		height=20
+	}
+	control {
+		chan="$(P)$(R)FlipStitch"
+		clr=14
+		bclr=51
+	}
+}
+text {
+	object {
+		x=119
+		y=270
+		width=130
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Flip&Stitch"
+	align="horiz. right"
+}
+text {
+	object {
+		x=159
+		y=295
+		width=90
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="PSO setup"
+	align="horiz. right"
+}
+"related display" {
+	object {
+		x=254
+		y=295
+		width=100
+		height=20
+	}
+	display[0] {
+		label="PSO setup"
+		name="tomoScan_pso.adl"
+		args="P=$(P), R=$(R)"
+	}
+	clr=14
+	bclr=51
+	label="PSO setup"
 }
