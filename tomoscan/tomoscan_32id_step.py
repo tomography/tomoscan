@@ -312,17 +312,6 @@ class TomoScan32IDSTEP(TomoScanSTEP):
         self.epics_pvs['DCMmvt'].put(0)
         self.epics_pvs['StartEnergyChange'].put(0)
         self.epics_pvs['StartEnergyChange'].put(0,wait=True)
-        
-    def set_exposure_time(self, exposure_time=None):
-
-        camera_model = self.epics_pvs['CamModel'].get(as_string=True)        
-        if(camera_model=='Q-12A180-Fm/CXP-6'):
-            if exposure_time is None:
-                exposure_time = self.epics_pvs['ExposureTime'].value            
-            self.epics_pvs['CamAcquisitionFrameRate'].put(1/exposure_time, wait=True, timeout=10.0) 
-            self.epics_pvs['CamAcquireTime'].put(exposure_time, wait=True, timeout = 10.0)
-        else:
-            super().set_exposure_time(exposure_time)
 
     def add_theta(self):
         """Add theta at the end of a scan.

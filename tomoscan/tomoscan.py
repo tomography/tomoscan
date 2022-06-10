@@ -534,7 +534,7 @@ class TomoScan():
                 exposure_time = self.epics_pvs['ExposureTime'].value
             self.epics_pvs['CamAcquireTime'].put(exposure_time, wait=True, timeout = 10.0)
 
-    def set_flat_exposure_time(self, exposure_time=None):
+    def set_scan_exposure_time(self, exposure_time=None):
         """Sets the camera exposure time for flat fields.
 
         The exposure_time is written to the camera's ``AcquireTime`` PV.
@@ -545,12 +545,12 @@ class TomoScan():
             The exposure time to use. If None then the value of the ``FlatExposureTime`` PV is used.
         """
 
-        if self.epics_pvs['DifferentFlatExposure'].get(as_string=True) == 'Same':
-            self.set_exposure_time(exposure_time)
-            return
+        # if self.epics_pvs['DifferentFlatExposure'].get(as_string=True) == 'Same':
+        #     self.set_exposure_time(exposure_time)
+        #     return
         if exposure_time is None:
-            exposure_time = self.epics_pvs['FlatExposureTime'].value
-            log.warning('Setting flat field exposure time: %f s', exposure_time)
+            exposure_time = self.epics_pvs['ExposureTime'].value
+            log.warning('Setting exposure time: %f s', exposure_time)
         self.epics_pvs['CamAcquireTime'].put(exposure_time, wait=True, timeout = 10.)
 
     def begin_scan(self):
@@ -582,7 +582,7 @@ class TomoScan():
         # Stop the camera since it could be in free-run mode
         self.epics_pvs['CamAcquire'].put(0, wait=True)
         # Set the exposure time
-        self.set_exposure_time()
+        self.set_scan_exposure_time()
         # Set the file path, file name and file number
         self.epics_pvs['FPFilePath'].put(self.epics_pvs['FilePath'].value, wait=True)
         self.epics_pvs['FPFileName'].put(self.epics_pvs['FileName'].value, wait=True) 
@@ -745,7 +745,7 @@ class TomoScan():
         the beamline-specific operations.
         """
         self.epics_pvs['ScanStatus'].put('Collecting dark fields')
-        self.set_exposure_time()
+        self.set_scan_exposure_time()
         self.close_shutter()
         self.epics_pvs['HDF5Location'].put(self.epics_pvs['HDF5DarkLocation'].value)
         self.epics_pvs['FrameType'].put('DarkField')
@@ -770,7 +770,10 @@ class TomoScan():
         the beamline-specific operations.
         """
         self.epics_pvs['ScanStatus'].put('Collecting flat fields')
-        self.set_flat_exposure_time()
+        if self.epics_pvs['DifferentFlatExposure'].get(as_string=True) == 'Different':
+            self.set_scan_exposure_time(self.epics_pvs['FlatExposureTime'].value)
+        else:
+            self.set_scan_exposure_time()
         self.open_shutter()
         self.move_sample_out()
         self.epics_pvs['HDF5Location'].put(self.epics_pvs['HDF5FlatLocation'].value)
@@ -796,7 +799,7 @@ class TomoScan():
         the beamline-specific operations.
         """
         self.epics_pvs['ScanStatus'].put('Collecting projections')
-        self.set_exposure_time()
+        self.set_scan_exposure_time()
         self.open_shutter()
         self.move_sample_in()
         self.epics_pvs['HDF5Location'].put(self.epics_pvs['HDF5ProjectionLocation'].value)
