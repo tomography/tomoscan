@@ -535,19 +535,15 @@ class TomoScan():
             self.epics_pvs['CamAcquireTime'].put(exposure_time, wait=True, timeout = 10.0)
 
     def set_scan_exposure_time(self, exposure_time=None):
-        """Sets the camera exposure time for flat fields.
+        """Sets the camera exposure time during the scan.
 
         The exposure_time is written to the camera's ``AcquireTime`` PV.
 
         Parameters
         ----------
         exposure_time : float, optional
-            The exposure time to use. If None then the value of the ``FlatExposureTime`` PV is used.
+            The exposure time to use. If None then the value of the ``ExposureTime`` PV is used.
         """
-
-        # if self.epics_pvs['DifferentFlatExposure'].get(as_string=True) == 'Same':
-        #     self.set_exposure_time(exposure_time)
-        #     return
         if exposure_time is None:
             exposure_time = self.epics_pvs['ExposureTime'].value
             log.warning('Setting exposure time: %f s', exposure_time)

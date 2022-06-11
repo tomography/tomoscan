@@ -291,7 +291,6 @@ class TomoScanPSO(TomoScan):
         # Compute the time for each frame
         time_per_angle = self.compute_frame_time()
         self.motor_speed = np.abs(self.rotation_step) / time_per_angle
-        print(f'{self.rotation_step=}, {time_per_angle=}, {self.motor_speed=}')
         # Get the distance needed for acceleration = 1/2 a t^2 = 1/2 * v * t
         motor_accl_time = float(self.epics_pvs['RotationAccelTime'].get()) # Acceleration time in s
         accel_dist = motor_accl_time / 2.0 * float(self.motor_speed) 
