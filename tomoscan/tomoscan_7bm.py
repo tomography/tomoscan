@@ -14,12 +14,12 @@ import numpy as np
 from epics import PV
 
 from tomoscan import data_management as dm
-from tomoscan import TomoScanPSO
+from tomoscan import TomoScanHelical
 from tomoscan import log
 
 EPSILON = .001
 
-class TomoScan7BM(TomoScanPSO):
+class TomoScan7BM(TomoScanHelical):
     """Derived class used for tomography scanning with EPICS at APS beamline 7-BM-B
 
     Parameters
@@ -53,7 +53,7 @@ class TomoScan7BM(TomoScanPSO):
         # Enable auto-increment on file writer
         self.epics_pvs['FPAutoIncrement'].put('Yes')
 
-        # Eable over-writing warning
+        # Enable over-writing warning
         self.epics_pvs['OverwriteWarning'].put('Yes')
 
 
@@ -192,23 +192,45 @@ class TomoScan7BM(TomoScanPSO):
 
     def add_theta(self):
         """Add theta at the end of a scan.
+        Taken from tomoscan_2BM.py function.  This gives the correct theta for scans with missing frames
         """
         log.info('add theta')
-        self.theta = np.linspace(self.rotation_start, self.rotation_stop, self.num_angles)
+
+        if self.theta is None:
+            log.warning('no theta to add')
+            return
+
         full_file_name = self.epics_pvs['FPFullFileName'].get(as_string=True)
-        file_name_path = Path(full_file_name)
         if os.path.exists(full_file_name):
-            try:
-                f = h5py.File(full_file_name, "a")
-                with f:
-                    try:
-                        if self.theta is not None:
-                            theta_ds = f.create_dataset('/exchange/theta', data = self.theta)
-                    except:
-                        log.error('Add theta: Failed accessing: %s', full_file_name)
-                        traceback.print_exc(file=sys.stdout)
-            except OSError:
-                log.error('Add theta aborted')
+            try:                
+                with h5py.File(full_file_name, "a") as f:
+                    unique_ids = f['/defaults/NDArrayUniqueId']
+                    hdf_location = f['/defaults/HDF5FrameLocation']
+                    total_dark_fields = self.num_dark_fields * ((self.dark_field_mode in ('Start', 'Both')) + (self.dark_field_mode in ('End', 'Both')))
+                    total_flat_fields = self.num_flat_fields * ((self.flat_field_mode in ('Start', 'Both')) + (self.flat_field_mode in ('End', 'Both')))                        
+                    
+                    proj_ids = unique_ids[hdf_location[:] == b'/exchange/data']
+                    flat_ids = unique_ids[hdf_location[:] == b'/exchange/data_white']
+                    dark_ids = unique_ids[hdf_location[:] == b'/exchange/data_dark']
+
+                    # create theta dataset in hdf5 file
+                    if len(proj_ids) > 0:
+                        theta_ds = f.create_dataset('/exchange/theta', (len(proj_ids),))
+                        theta_ds[:] = self.theta[proj_ids - proj_ids[0]]
+
+                    # warnings that data is missing
+                    if len(proj_ids) != len(self.theta):
+                        log.warning(f'There are {len(self.theta) - len(proj_ids)} missing data frames')
+                        missed_ids = [ele for ele in range(len(self.theta)) if ele not in proj_ids-proj_ids[0]]
+                        missed_theta = self.theta[missed_ids]
+                        log.warning(f'Missed theta: {list(missed_theta)}')
+                    if len(flat_ids) != total_flat_fields:
+                        log.warning(f'There are {total_flat_fields - len(flat_ids)} missing flat field frames')
+                    if (len(dark_ids) != total_dark_fields):
+                        log.warning(f'There are {total_dark_fields - len(dark_ids)} missing dark field frames')
+            except:
+                log.error('Add theta: Failed accessing: %s', full_file_name)
+                traceback.print_exc(file=sys.stdout)
         else:
             log.error('Failed adding theta. %s file does not exist', full_file_name)
 

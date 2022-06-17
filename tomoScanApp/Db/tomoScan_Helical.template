@@ -1,0 +1,23 @@
+# Database for EPICS PVS for tomography data collection software at APS 7-BM
+# It contains the PVs that are required by the tomoscan_7bm derived class,
+# as well as additional PVs used for metadata about the scan that are stored
+# both in the configuration files written by tomoscan, and in the
+# files written by areaDetector file plugin.
+
+##########################
+# Helical Scan information
+##########################
+$(P)$(R)PixelsPer360Deg
+$(P)$(R)HelicalMisalignment
+
+record(ao, "$(P)$(R)PixelsPer360Deg")
+{
+   field(PREC, "2")
+   field(EGU,  "pixels")
+}
+
+record(ao, "$(P)$(R)HelicalMisalignment")
+{
+   field(PREC, "3")
+   field(EGU,  "mrad")
+}
