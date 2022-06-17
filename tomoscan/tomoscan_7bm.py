@@ -14,12 +14,12 @@ import numpy as np
 from epics import PV
 
 from tomoscan import data_management as dm
-from tomoscan import TomoScanPSO
+from tomoscan import TomoScanHelical
 from tomoscan import log
 
 EPSILON = .001
 
-class TomoScan7BM(TomoScanPSO):
+class TomoScan7BM(TomoScanHelical):
     """Derived class used for tomography scanning with EPICS at APS beamline 7-BM-B
 
     Parameters
@@ -57,13 +57,6 @@ class TomoScan7BM(TomoScanPSO):
         # Enable over-writing warning
         self.epics_pvs['OverwriteWarning'].put('Yes')
 
-        #Define PVs we will need from the SampleY  motor for helical scanning, 
-        # which is on another IOC
-        sample_y_pv_name = self.control_pvs['SampleY'].pvname
-        self.epics_pvs['SampleYSpeed']          = PV(sample_y_pv_name + '.VELO')
-        self.epics_pvs['SampleYMaxSpeed']       = PV(sample_y_pv_name + '.VMAX')
-        self.epics_pvs['SampleYStop']           = PV(sample_y_pv_name + '.STOP')
-        
 
     def open_shutter(self):
         """Opens the shutter to collect flat fields or projections.
@@ -131,125 +124,6 @@ class TomoScan7BM(TomoScanPSO):
             log.info('shutter status: %s', status)
 
 
-    def begin_scan(self):
-        """Performs the operations needed at the very start of a scan.
-
-        This does the following:
-
-        - Calls the base class method from tomoscan_pso.py
-        - If we are running a helical scan
-            - Compute the speed at which the motor needs to move
-            - Compute the range over which it must move, checking limits
-            - Start the Sample_Y motion
-        """
-        log.info('begin scan')
-        # Call the base class method
-        super().begin_scan()
- 
-        time.sleep(0.1)
-
-
-    def collect_projections(self):
-        """Collects projections in fly scan mode.
-
-        This does the following:
-
-        - Call the superclass collect_projections() function
-
-        - Taxi to the start position
-
-        - Set the trigger mode on the camera
-   
-        - Move the stage to the end position
-
-        - Computes and sets the speed of the rotation motor so that it reaches the next projection
-          angle just after the current exposure and readout are complete.
-
-        - These will be used by the PSO to calculate the Taxi distance and rotary stage acceleration.
-
-        - Starts the file plugin capturing in stream mode.
-
-        - Starts the camera acquiring in external trigger mode.
-
-        - Starts the PSOfly.
-
-        - Wait on the PSO done.
-        """
-
-        log.info('collect projections')
-        super().collect_projections()
-
-        log.info('taxi before starting capture')
-        # Taxi before starting capture
-        self.epics_pvs['Rotation'].put(self.epics_pvs['PSOStartTaxi'].get(), wait=True)
-
-        self.set_trigger_mode('PSOExternal', self.num_angles)
-
-        # Start the camera
-        self.epics_pvs['CamAcquire'].put('Acquire')
-
-        # If this is a helical scan, start Sample_Y moving
-        if self.epics_pvs['ScanType'] == 'Helical':
-            import pdb; pdb.set_trace()
-            end_Y, speed_Y = self.compute_helical_motion()
-            self.epics_pvs('SampleYSpeed').put(speed_Y)
-            self.epics_pvs('Sample_Y').put(end_Y)
-
-        # Need to wait a short time for AcquireBusy to change to 1
-        time.sleep(0.5)
-
-        # Start fly scan
-        log.info('start fly scan')
-        self.epics_pvs['Rotation'].put(self.epics_pvs['PSOEndTaxi'].get())
-        time_per_angle = self.compute_frame_time()
-        collection_time = self.num_angles * time_per_angle
-        self.wait_camera_done(collection_time + 30.)
-        
-
-    def abort_scan(self):
-        """Aborts a scan that is running and performs the operations 
-        needed when a scan is aborted.
-
-        This function mostly calls the super class.
-        It also stops vertical motion if the scan is helical.
-        """
-        super().abort_scan()
-        
-        log.info('stop vertical motion for helical scan')
-        self.epics_pvs['SampleYStop'].put(1, wait=True)
-        self.epics_pvs['RotationSpeed'].put(self.max_rotation_speed)
-
-
-    def end_scan(self):
-        """Performs the operations needed at the very end of a scan.
-
-        Mostly handled by the super class.
-        Logic here to reset the SampleY motor speed
-        """
-        log.info('end scan')
-        log.info('reset SampleY motor speed')
-        self.epics_pvs['SampleYSpeed'].put(self.epics_pvs['SampleYMaxSpeed'].get())
-
-        # Call the base class method
-        super().end_scan()
-
-
-    def compute_helical_motion():
-        """Computes the speed and magnitude from SampleY motion for helical
-        scans.
-        """
-        vertical_pixels_per_rotation = self.epics_pvs['PixelsYPer360Degrees'].get()
-        pixel_size = self.epics_pvs['ImagePixelSize']
-        angle_range = self.epics_pvs['RotationStep'].get() * (self.epics_pvs['NumAngles'] - 1)
-        rotation_speed = self.epics_pvs['RotationSpeed'].get()
-        speed_Y = np.abs(vertical_pixels_per_rotation * pixel_size / 360. * rotation_speed)
-        end_Y = (self.epics_pvs['SampleY'].get() + angle_range / 360. 
-                    * vertical_pixels_per_rotation * pixel_size)
-        #Arbitrarily add 5 s to the y motion to account for timing imperfections
-        end_Y += np.sign(vertical_pixels_per_rotation) * speed_Y * 5.0
-        return speed_Y, end_Y
-
- 
     def set_trigger_mode(self, trigger_mode, num_images):
         """Sets the trigger mode for the camera.
 
@@ -319,23 +193,45 @@ class TomoScan7BM(TomoScanPSO):
 
     def add_theta(self):
         """Add theta at the end of a scan.
+        Taken from tomoscan_2BM.py function.  This gives the correct theta for scans with missing frames
         """
         log.info('add theta')
-        self.theta = np.linspace(self.rotation_start, self.rotation_stop, self.num_angles)
+
+        if self.theta is None:
+            log.warning('no theta to add')
+            return
+
         full_file_name = self.epics_pvs['FPFullFileName'].get(as_string=True)
-        file_name_path = Path(full_file_name)
         if os.path.exists(full_file_name):
-            try:
-                f = h5py.File(full_file_name, "a")
-                with f:
-                    try:
-                        if self.theta is not None:
-                            theta_ds = f.create_dataset('/exchange/theta', data = self.theta)
-                    except:
-                        log.error('Add theta: Failed accessing: %s', full_file_name)
-                        traceback.print_exc(file=sys.stdout)
-            except OSError:
-                log.error('Add theta aborted')
+            try:                
+                with h5py.File(full_file_name, "a") as f:
+                    unique_ids = f['/defaults/NDArrayUniqueId']
+                    hdf_location = f['/defaults/HDF5FrameLocation']
+                    total_dark_fields = self.num_dark_fields * ((self.dark_field_mode in ('Start', 'Both')) + (self.dark_field_mode in ('End', 'Both')))
+                    total_flat_fields = self.num_flat_fields * ((self.flat_field_mode in ('Start', 'Both')) + (self.flat_field_mode in ('End', 'Both')))                        
+                    
+                    proj_ids = unique_ids[hdf_location[:] == b'/exchange/data']
+                    flat_ids = unique_ids[hdf_location[:] == b'/exchange/data_white']
+                    dark_ids = unique_ids[hdf_location[:] == b'/exchange/data_dark']
+
+                    # create theta dataset in hdf5 file
+                    if len(proj_ids) > 0:
+                        theta_ds = f.create_dataset('/exchange/theta', (len(proj_ids),))
+                        theta_ds[:] = self.theta[proj_ids - proj_ids[0]]
+
+                    # warnings that data is missing
+                    if len(proj_ids) != len(self.theta):
+                        log.warning(f'There are {len(self.theta) - len(proj_ids)} missing data frames')
+                        missed_ids = [ele for ele in range(len(self.theta)) if ele not in proj_ids-proj_ids[0]]
+                        missed_theta = self.theta[missed_ids]
+                        log.warning(f'Missed theta: {list(missed_theta)}')
+                    if len(flat_ids) != total_flat_fields:
+                        log.warning(f'There are {total_flat_fields - len(flat_ids)} missing flat field frames')
+                    if (len(dark_ids) != total_dark_fields):
+                        log.warning(f'There are {total_dark_fields - len(dark_ids)} missing dark field frames')
+            except:
+                log.error('Add theta: Failed accessing: %s', full_file_name)
+                traceback.print_exc(file=sys.stdout)
         else:
             log.error('Failed adding theta. %s file does not exist', full_file_name)
 
