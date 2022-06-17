@@ -36,7 +36,8 @@ class TomoScan7BM(TomoScanPSO):
         # set TomoScan xml files
         self.epics_pvs['CamNDAttributesFile'].put('TomoScanDetectorAttributes.xml')
         self.epics_pvs['FPXMLFileName'].put('TomoScanLayout.xml')
-        macro = 'DET=' + self.pv_prefixes['Camera'] + ',' + 'TS=' + self.epics_pvs['Testing'].__dict__['pvname'].replace('Testing', '', 1)
+        macro = ('DET=' + self.pv_prefixes['Camera'] + ',' 
+                + 'TS=' + self.epics_pvs['Testing'].__dict__['pvname'].replace('Testing', '', 1))
         self.control_pvs['CamNDAttributesMacros'].put(macro)
 
         # Set the detector running in FreeRun mode
@@ -53,9 +54,16 @@ class TomoScan7BM(TomoScanPSO):
         # Enable auto-increment on file writer
         self.epics_pvs['FPAutoIncrement'].put('Yes')
 
-        # Eable over-writing warning
+        # Enable over-writing warning
         self.epics_pvs['OverwriteWarning'].put('Yes')
 
+        #Define PVs we will need from the SampleY  motor for helical scanning, 
+        # which is on another IOC
+        sample_y_pv_name = self.control_pvs['SampleY'].pvname
+        self.epics_pvs['SampleYSpeed']          = PV(sample_y_pv_name + '.VELO')
+        self.epics_pvs['SampleYMaxSpeed']       = PV(sample_y_pv_name + '.VMAX')
+        self.epics_pvs['SampleYStop']           = PV(sample_y_pv_name + '.STOP')
+        
 
     def open_shutter(self):
         """Opens the shutter to collect flat fields or projections.
@@ -123,6 +131,125 @@ class TomoScan7BM(TomoScanPSO):
             log.info('shutter status: %s', status)
 
 
+    def begin_scan(self):
+        """Performs the operations needed at the very start of a scan.
+
+        This does the following:
+
+        - Calls the base class method from tomoscan_pso.py
+        - If we are running a helical scan
+            - Compute the speed at which the motor needs to move
+            - Compute the range over which it must move, checking limits
+            - Start the Sample_Y motion
+        """
+        log.info('begin scan')
+        # Call the base class method
+        super().begin_scan()
+ 
+        time.sleep(0.1)
+
+
+    def collect_projections(self):
+        """Collects projections in fly scan mode.
+
+        This does the following:
+
+        - Call the superclass collect_projections() function
+
+        - Taxi to the start position
+
+        - Set the trigger mode on the camera
+   
+        - Move the stage to the end position
+
+        - Computes and sets the speed of the rotation motor so that it reaches the next projection
+          angle just after the current exposure and readout are complete.
+
+        - These will be used by the PSO to calculate the Taxi distance and rotary stage acceleration.
+
+        - Starts the file plugin capturing in stream mode.
+
+        - Starts the camera acquiring in external trigger mode.
+
+        - Starts the PSOfly.
+
+        - Wait on the PSO done.
+        """
+
+        log.info('collect projections')
+        super().collect_projections()
+
+        log.info('taxi before starting capture')
+        # Taxi before starting capture
+        self.epics_pvs['Rotation'].put(self.epics_pvs['PSOStartTaxi'].get(), wait=True)
+
+        self.set_trigger_mode('PSOExternal', self.num_angles)
+
+        # Start the camera
+        self.epics_pvs['CamAcquire'].put('Acquire')
+
+        # If this is a helical scan, start Sample_Y moving
+        if self.epics_pvs['ScanType'] == 'Helical':
+            import pdb; pdb.set_trace()
+            end_Y, speed_Y = self.compute_helical_motion()
+            self.epics_pvs('SampleYSpeed').put(speed_Y)
+            self.epics_pvs('Sample_Y').put(end_Y)
+
+        # Need to wait a short time for AcquireBusy to change to 1
+        time.sleep(0.5)
+
+        # Start fly scan
+        log.info('start fly scan')
+        self.epics_pvs['Rotation'].put(self.epics_pvs['PSOEndTaxi'].get())
+        time_per_angle = self.compute_frame_time()
+        collection_time = self.num_angles * time_per_angle
+        self.wait_camera_done(collection_time + 30.)
+        
+
+    def abort_scan(self):
+        """Aborts a scan that is running and performs the operations 
+        needed when a scan is aborted.
+
+        This function mostly calls the super class.
+        It also stops vertical motion if the scan is helical.
+        """
+        super().abort_scan()
+        
+        log.info('stop vertical motion for helical scan')
+        self.epics_pvs['SampleYStop'].put(1, wait=True)
+        self.epics_pvs['RotationSpeed'].put(self.max_rotation_speed)
+
+
+    def end_scan(self):
+        """Performs the operations needed at the very end of a scan.
+
+        Mostly handled by the super class.
+        Logic here to reset the SampleY motor speed
+        """
+        log.info('end scan')
+        log.info('reset SampleY motor speed')
+        self.epics_pvs['SampleYSpeed'].put(self.epics_pvs['SampleYMaxSpeed'].get())
+
+        # Call the base class method
+        super().end_scan()
+
+
+    def compute_helical_motion():
+        """Computes the speed and magnitude from SampleY motion for helical
+        scans.
+        """
+        vertical_pixels_per_rotation = self.epics_pvs['PixelsYPer360Degrees'].get()
+        pixel_size = self.epics_pvs['ImagePixelSize']
+        angle_range = self.epics_pvs['RotationStep'].get() * (self.epics_pvs['NumAngles'] - 1)
+        rotation_speed = self.epics_pvs['RotationSpeed'].get()
+        speed_Y = np.abs(vertical_pixels_per_rotation * pixel_size / 360. * rotation_speed)
+        end_Y = (self.epics_pvs['SampleY'].get() + angle_range / 360. 
+                    * vertical_pixels_per_rotation * pixel_size)
+        #Arbitrarily add 5 s to the y motion to account for timing imperfections
+        end_Y += np.sign(vertical_pixels_per_rotation) * speed_Y * 5.0
+        return speed_Y, end_Y
+
+ 
     def set_trigger_mode(self, trigger_mode, num_images):
         """Sets the trigger mode for the camera.
 
