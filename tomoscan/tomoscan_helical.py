@@ -102,8 +102,7 @@ class TomoScanHelical(TomoScanPSO):
         self.epics_pvs['CamAcquire'].put('Acquire')
 
         # If this is a helical scan, start Sample_Y moving
-        if self.epics_pvs['ScanType'] == 'Helical':
-            import pdb; pdb.set_trace()
+        if self.epics_pvs['ScanType'].get(as_string=True) == 'Helical':
             self.program_helical_motion()
 
         # Need to wait a short time for AcquireBusy to change to 1
@@ -126,34 +125,33 @@ class TomoScanHelical(TomoScanPSO):
         log.info('end scan')
 
         # If this is a helical scan, stop Sample_Y moving
-        if self.epics_pvs['ScanType'] == 'Helical':
+        if self.epics_pvs['ScanType'].get(as_string=True) == 'Helical':
             log.info('helical: stop vertical motion')
             self.epics_pvs['SampleYStop'].put(1, wait=True)
             self.epics_pvs['SampleYSpeed'].put(self.epics_pvs['SampleYMaxSpeed'].get())
             log.info('helical: bring SampleY motor back to start position')
-            self.epics_pvs['SampleY'].put(self.epics_pvs['SampleYIn'].get())
+            self.epics_pvs['SampleY'].put(self.epics_pvs['SampleInY'].get())
 
         # Call the base class method
         super().end_scan()
 
 
-    def compute_helical_motion():
+    def program_helical_motion(self):
         """Computes the speed and magnitude from SampleY motion for helical
         scans.
         """
-        y_pixels_per_rotation = self.epics_pvs['PixelsYPer360Degrees'].get()
-        pixel_size = self.epics_pvs['ImagePixelSize'] / 1000.
-        angle_range = self.epics_pvs['RotationStep'].get() * (self.epics_pvs['NumAngles'] - 1)
+        y_pixels_per_rotation = self.epics_pvs['PixelsYPer360Deg'].get()
+        pixel_size = self.epics_pvs['ImagePixelSize'].get() / 1000.
+        angle_range = self.epics_pvs['RotationStep'].get() * (self.epics_pvs['NumAngles'].get() - 1)
         rotation_speed = self.epics_pvs['RotationSpeed'].get()
         speed_Y = np.abs(y_pixels_per_rotation * pixel_size / 360. * rotation_speed)
         end_Y = (self.epics_pvs['SampleY'].get() + angle_range / 360. 
-                    * vertical_pixels_per_rotation * pixel_size)
+                    * y_pixels_per_rotation * pixel_size)
         #Arbitrarily add 5 s to the y motion to account for timing imperfections
-        end_Y += np.sign(vertical_pixels_per_rotation) * speed_Y * 5.0
+        end_Y += np.sign(y_pixels_per_rotation) * speed_Y * 5.0
         #Check limits
         if end_Y > self.epics_pvs['SampleYHLM'].get() or end_Y < self.epics_pvs['SampleYLLM'].get():
             log.error('helical: Y range would fall outside SampleY motor limits')
             self.epics_pvs['AbortScan'].put(1)
-        self.epics_pvs('SampleYSpeed').put(speed_Y)
-        self.epics_pvs('Sample_Y').put(end_Y)
-        return speed_Y, end_Y
+        self.epics_pvs['SampleYSpeed'].put(speed_Y)
+        self.epics_pvs['SampleY'].put(end_Y)

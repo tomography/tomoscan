@@ -7,10 +7,8 @@
 ##########################
 # Helical Scan information
 ##########################
-$(P)$(R)PixelsPer360Deg
-$(P)$(R)HelicalMisalignment
 
-record(ao, "$(P)$(R)PixelsPer360Deg")
+record(ao, "$(P)$(R)PixelsYPer360Deg")
 {
    field(PREC, "2")
    field(EGU,  "pixels")

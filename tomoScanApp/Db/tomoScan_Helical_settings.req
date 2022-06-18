@@ -6,5 +6,5 @@
 ##########################
 # Helical Scan information
 ##########################
-$(P)$(R)PixelsPer360Deg
+$(P)$(R)PixelsYPer360Deg
 $(P)$(R)HelicalMisalignment

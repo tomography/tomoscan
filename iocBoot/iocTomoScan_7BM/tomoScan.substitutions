@@ -13,6 +13,13 @@ pattern
 {7bmtomo:, TomoScan:,    Ensemble,      PSO_PORT,      A,             3,           -4096000.}
 }
 
+file "$(TOP)/db/tomoScan_Helical.template"
+{
+pattern
+{  P,       R}
+{7bmtomo:, TomoScan:}
+}
+
 file "$(TOP)/db/tomoScan_7BM.template"
 {
 pattern

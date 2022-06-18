@@ -96,6 +96,12 @@ record(ao, "$(P)$(R)CameraTubeLength")
    field(EGU,  "mm")
 }
 
+record(ao, "$(P)$(R)CameraDistance")
+{
+   field(PREC, "0")
+   field(EGU,  "mm")
+   field(VAL, "0")
+}
 
 ####################
 # Sample information

@@ -889,9 +889,9 @@ class TomoScan():
         if camera_model == 'Oryx ORX-10G-310S9M':
             pixel_format = self.epics_pvs['CamPixelFormat'].get(as_string=True) 
             readout_times = {
-                'Mono8': 30.0,
-                'Mono12Packed': 30.0,
-                'Mono16': 30.0
+                'Mono8': 40.0,
+                'Mono12Packed': 40.0,
+                'Mono16': 40.0
             }
             readout = readout_times[pixel_format]/1000.
         if camera_model == 'Q-12A180-Fm/CXP-6':
