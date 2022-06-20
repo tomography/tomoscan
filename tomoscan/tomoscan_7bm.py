@@ -31,6 +31,7 @@ class TomoScan7BM(TomoScanHelical):
         reading the pv_files
     """
     def __init__(self, pv_files, macros):
+        log.setup_custom_logger(lfname=Path.home().joinpath('logs','TomoScan_7BM.log'), stream_to_console=True)
         super().__init__(pv_files, macros)
         
         # set TomoScan xml files
@@ -55,6 +56,19 @@ class TomoScan7BM(TomoScanHelical):
 
         # Enable over-writing warning
         self.epics_pvs['OverwriteWarning'].put('Yes')
+
+
+    def fly_scan(self):
+        """Overrides fly_scan in super class to catch a bad file path.
+        """
+        if self.epics_pvs['FilePathExists'].get() == 1:
+            log.info('file path for file writer exists')
+            super(TomoScanHelical, self).fly_scan()
+        else:
+            log.info('file path for file writer not found')
+            self.epics_pvs['ScanStatus'].put('Abort: Bad File Path')
+            self.epics_pvs['StartScan'].put(0)
+            self.scan_is_running = False
 
 
     def open_shutter(self):
@@ -177,7 +191,9 @@ class TomoScan7BM(TomoScanHelical):
         self.close_shutter()
 
         # Stop the file plugin, though it should be done already
+        log.info('stop the file plugin')
         self.epics_pvs['FPCapture'].put('Done')
+        log.info('Check the status of the plugin')
         self.wait_pv(self.epics_pvs['FPCaptureRBV'], 0)
 
         # Add theta in the hdf file
@@ -239,6 +255,7 @@ class TomoScan7BM(TomoScanHelical):
         """Wait on a pv to be a value until max_timeout (default forever)
            delay for pv to change
         """
+        log.info('wait_pv') 
         time.sleep(delta_t)
         start_time = time.time()
         while time.time() - start_time < timeout:
