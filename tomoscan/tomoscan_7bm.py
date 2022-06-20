@@ -211,6 +211,7 @@ class TomoScan7BM(TomoScanHelical):
         Taken from tomoscan_2BM.py function.  This gives the correct theta for scans with missing frames
         """
         log.info('add theta')
+        time.sleep(1.0)
 
         if self.theta is None:
             log.warning('no theta to add')
