@@ -308,8 +308,9 @@ class TomoScan():
             self.run_fly_scan()
         elif (pvname.find('AbortScan') != -1) and (value == 1):
             self.abort_scan()
-        elif (pvname.find('FPWriteStatus') != -1) and (value == 1):
+        elif (pvname.find('WriteStatus') != -1) and (value == 1):
             self.abort_scan()
+
 
     def show_pvs(self):
         """Prints the current values of all EPICS PVs in use.
@@ -667,6 +668,8 @@ class TomoScan():
 
         if self.return_rotation == 'Yes':
             self.epics_pvs['Rotation'].put(self.rotation_start)
+        elif self.return_rotation == "Home":
+            self.epics_pvs['RotationHomF'].put(1)
         log.info('Scan complete')
         self.epics_pvs['ScanStatus'].put('Scan complete')
         self.epics_pvs['StartScan'].put(0)
