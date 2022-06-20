@@ -171,6 +171,7 @@ class TomoScan():
         self.control_pvs['FPAutoSave']        = PV(prefix + 'AutoSave')
         self.control_pvs['FPEnableCallbacks'] = PV(prefix + 'EnableCallbacks')
         self.control_pvs['FPXMLFileName']     = PV(prefix + 'XMLFileName')
+        self.control_pvs['FPWriteStatus']     = PV(prefix + 'WriteStatus')
 
         # Set some initial PV values
         file_path = self.config_pvs['FilePath'].get(as_string=True)
@@ -227,7 +228,7 @@ class TomoScan():
 
         # Configure callbacks on a few PVs
         for epics_pv in ('MoveSampleIn', 'MoveSampleOut', 'StartScan', 'AbortScan', 'ExposureTime',
-                         'FilePath', 'FPFilePathExists'):
+                         'FilePath', 'FPFilePathExists', 'FPWriteStatus'):
             self.epics_pvs[epics_pv].add_callback(self.pv_callback)
         for epics_pv in ('MoveSampleIn', 'MoveSampleOut', 'StartScan', 'AbortScan'):
             self.epics_pvs[epics_pv].put(0)
@@ -283,6 +284,8 @@ class TomoScan():
         - ``FilePath`` : Runs ``copy_file_path`` in a new thread.
 
         - ``FPFilePathExists`` : Runs ``copy_file_path_exists`` in a new thread.
+
+        - ``FPWriteStatus``: Runs ``abort_scan()``
         """
 
         log.debug('pv_callback pvName=%s, value=%s, char_value=%s', pvname, value, char_value)
@@ -304,6 +307,8 @@ class TomoScan():
         elif (pvname.find('StartScan') != -1) and (value == 1):
             self.run_fly_scan()
         elif (pvname.find('AbortScan') != -1) and (value == 1):
+            self.abort_scan()
+        elif (pvname.find('FPWriteStatus') != -1) and (value == 1):
             self.abort_scan()
 
     def show_pvs(self):
@@ -479,9 +484,12 @@ class TomoScan():
         config = {}
         for key in self.config_pvs:
             config[key] = self.config_pvs[key].get(as_string=True)
-        out_file = open(file_name, 'w')
-        json.dump(config, out_file, indent=2)
-        out_file.close()
+        try:
+            out_file = open(file_name, 'w')
+            json.dump(config, out_file, indent=2)
+            out_file.close()
+        except (PermissionError, FileNotFoundError) as error:
+            self.epics_pvs['ScanStatus'].put('Error writing configuration')
 
     def load_configuration(self, file_name):
         """Loads a configuration from a file into the EPICS PVs.
