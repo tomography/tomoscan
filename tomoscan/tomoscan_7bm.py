@@ -279,8 +279,11 @@ class TomoScan7BM(TomoScanHelical):
         # Copy raw data to data analysis computer    
         if self.epics_pvs['CopyToAnalysisDir'].get():
             log.info('Automatic data trasfer to data analysis computer is enabled.')
+            self.epics_pvs['ScanStatus'].put('Auto File Transfer')
             full_file_name = self.epics_pvs['FPFullFileName'].get(as_string=True)
             remote_analysis_dir = self.epics_pvs['RemoteAnalysisDir'].get(as_string=True)
-            dm.scp(full_file_name, remote_analysis_dir)
+            dm.fdt_scp(full_file_name, remote_analysis_dir, Path(self.epics_pvs['DetectorTopDir'].get()))
+            self.epics_pvs['ScanStatus'].put('File Transfer Complete')
+            #dm.scp(full_file_name, remote_analysis_dir)
         else:
             log.warning('Automatic data trasfer to data analysis computer is disabled.')
