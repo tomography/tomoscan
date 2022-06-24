@@ -2,6 +2,7 @@ __version__ = '0.1'
 
 from tomoscan.tomoscan import *
 from tomoscan.tomoscan_pso import *
+from tomoscan.tomoscan_helical import *
 from tomoscan.tomoscan_step import *
 from tomoscan.tomoscan_stream_pso import *
 from tomoscan.tomoscan_13bm_pso import *
