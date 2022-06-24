@@ -14,12 +14,12 @@ import numpy as np
 from epics import PV
 
 from tomoscan import data_management as dm
-from tomoscan import TomoScanPSO
+from tomoscan import TomoScanHelical
 from tomoscan import log
 
 EPSILON = .001
 
-class TomoScan7BM(TomoScanPSO):
+class TomoScan7BM(TomoScanHelical):
     """Derived class used for tomography scanning with EPICS at APS beamline 7-BM-B
 
     Parameters
@@ -31,12 +31,13 @@ class TomoScan7BM(TomoScanPSO):
         reading the pv_files
     """
     def __init__(self, pv_files, macros):
+        log.setup_custom_logger(lfname=Path.home().joinpath('logs','TomoScan_7BM.log'), stream_to_console=True)
         super().__init__(pv_files, macros)
         
         # set TomoScan xml files
         self.epics_pvs['CamNDAttributesFile'].put('TomoScanDetectorAttributes.xml')
         self.epics_pvs['FPXMLFileName'].put('TomoScanLayout.xml')
-        macro = 'DET=' + self.pv_prefixes['Camera'] + ',' + 'TS=' + self.epics_pvs['Testing'].__dict__['pvname'].replace('Testing', '', 1)
+        macro = 'DET=' + self.pv_prefixes['Camera'] + ',' + 'TC=' + self.epics_pvs['Testing'].__dict__['pvname'].replace('Testing', '', 1)
         self.control_pvs['CamNDAttributesMacros'].put(macro)
 
         # Set the detector running in FreeRun mode
@@ -53,8 +54,21 @@ class TomoScan7BM(TomoScanPSO):
         # Enable auto-increment on file writer
         self.epics_pvs['FPAutoIncrement'].put('Yes')
 
-        # Eable over-writing warning
+        # Enable over-writing warning
         self.epics_pvs['OverwriteWarning'].put('Yes')
+
+
+    def fly_scan(self):
+        """Overrides fly_scan in super class to catch a bad file path.
+        """
+        if self.epics_pvs['FilePathExists'].get() == 1:
+            log.info('file path for file writer exists')
+            super(TomoScanHelical, self).fly_scan()
+        else:
+            log.info('file path for file writer not found')
+            self.epics_pvs['ScanStatus'].put('Abort: Bad File Path')
+            self.epics_pvs['StartScan'].put(0)
+            self.scan_is_running = False
 
 
     def open_shutter(self):
@@ -177,7 +191,9 @@ class TomoScan7BM(TomoScanPSO):
         self.close_shutter()
 
         # Stop the file plugin, though it should be done already
+        log.info('stop the file plugin')
         self.epics_pvs['FPCapture'].put('Done')
+        log.info('Check the status of the plugin')
         self.wait_pv(self.epics_pvs['FPCaptureRBV'], 0)
 
         # Add theta in the hdf file
@@ -192,23 +208,45 @@ class TomoScan7BM(TomoScanPSO):
 
     def add_theta(self):
         """Add theta at the end of a scan.
+        Taken from tomoscan_2BM.py function.  This gives the correct theta for scans with missing frames
         """
         log.info('add theta')
-        self.theta = np.linspace(self.rotation_start, self.rotation_stop, self.num_angles)
+
+        if self.theta is None:
+            log.warning('no theta to add')
+            return
+
         full_file_name = self.epics_pvs['FPFullFileName'].get(as_string=True)
-        file_name_path = Path(full_file_name)
         if os.path.exists(full_file_name):
-            try:
-                f = h5py.File(full_file_name, "a")
-                with f:
-                    try:
-                        if self.theta is not None:
-                            theta_ds = f.create_dataset('/exchange/theta', data = self.theta)
-                    except:
-                        log.error('Add theta: Failed accessing: %s', full_file_name)
-                        traceback.print_exc(file=sys.stdout)
-            except OSError:
-                log.error('Add theta aborted')
+            try:                
+                with h5py.File(full_file_name, "a") as f:
+                    unique_ids = f['/defaults/NDArrayUniqueId']
+                    hdf_location = f['/defaults/HDF5FrameLocation']
+                    total_dark_fields = self.num_dark_fields * ((self.dark_field_mode in ('Start', 'Both')) + (self.dark_field_mode in ('End', 'Both')))
+                    total_flat_fields = self.num_flat_fields * ((self.flat_field_mode in ('Start', 'Both')) + (self.flat_field_mode in ('End', 'Both')))                        
+                    
+                    proj_ids = unique_ids[hdf_location[:] == b'/exchange/data']
+                    flat_ids = unique_ids[hdf_location[:] == b'/exchange/data_white']
+                    dark_ids = unique_ids[hdf_location[:] == b'/exchange/data_dark']
+
+                    # create theta dataset in hdf5 file
+                    if len(proj_ids) > 0:
+                        theta_ds = f.create_dataset('/exchange/theta', (len(proj_ids),))
+                        theta_ds[:] = self.theta[proj_ids - proj_ids[0]]
+
+                    # warnings that data is missing
+                    if len(proj_ids) != len(self.theta):
+                        log.warning(f'There are {len(self.theta) - len(proj_ids)} missing data frames')
+                        missed_ids = [ele for ele in range(len(self.theta)) if ele not in proj_ids-proj_ids[0]]
+                        missed_theta = self.theta[missed_ids]
+                        log.warning(f'Missed theta: {list(missed_theta)}')
+                    if len(flat_ids) != total_flat_fields:
+                        log.warning(f'There are {total_flat_fields - len(flat_ids)} missing flat field frames')
+                    if (len(dark_ids) != total_dark_fields):
+                        log.warning(f'There are {total_dark_fields - len(dark_ids)} missing dark field frames')
+            except:
+                log.error('Add theta: Failed accessing: %s', full_file_name)
+                traceback.print_exc(file=sys.stdout)
         else:
             log.error('Failed adding theta. %s file does not exist', full_file_name)
 
@@ -217,6 +255,7 @@ class TomoScan7BM(TomoScanPSO):
         """Wait on a pv to be a value until max_timeout (default forever)
            delay for pv to change
         """
+        log.info('wait_pv') 
         time.sleep(delta_t)
         start_time = time.time()
         while time.time() - start_time < timeout:

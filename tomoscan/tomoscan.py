@@ -171,6 +171,7 @@ class TomoScan():
         self.control_pvs['FPAutoSave']        = PV(prefix + 'AutoSave')
         self.control_pvs['FPEnableCallbacks'] = PV(prefix + 'EnableCallbacks')
         self.control_pvs['FPXMLFileName']     = PV(prefix + 'XMLFileName')
+        self.control_pvs['FPWriteStatus']     = PV(prefix + 'WriteStatus')
 
         # Set some initial PV values
         file_path = self.config_pvs['FilePath'].get(as_string=True)
@@ -227,7 +228,7 @@ class TomoScan():
 
         # Configure callbacks on a few PVs
         for epics_pv in ('MoveSampleIn', 'MoveSampleOut', 'StartScan', 'AbortScan', 'ExposureTime',
-                         'FilePath', 'FPFilePathExists'):
+                         'FilePath', 'FPFilePathExists', 'FPWriteStatus'):
             self.epics_pvs[epics_pv].add_callback(self.pv_callback)
         for epics_pv in ('MoveSampleIn', 'MoveSampleOut', 'StartScan', 'AbortScan'):
             self.epics_pvs[epics_pv].put(0)
@@ -283,6 +284,8 @@ class TomoScan():
         - ``FilePath`` : Runs ``copy_file_path`` in a new thread.
 
         - ``FPFilePathExists`` : Runs ``copy_file_path_exists`` in a new thread.
+
+        - ``FPWriteStatus``: Runs ``abort_scan()``
         """
 
         log.debug('pv_callback pvName=%s, value=%s, char_value=%s', pvname, value, char_value)
@@ -305,6 +308,9 @@ class TomoScan():
             self.run_fly_scan()
         elif (pvname.find('AbortScan') != -1) and (value == 1):
             self.abort_scan()
+        elif (pvname.find('WriteStatus') != -1) and (value == 1):
+            self.abort_scan()
+
 
     def show_pvs(self):
         """Prints the current values of all EPICS PVs in use.
@@ -420,13 +426,14 @@ class TomoScan():
             position = self.epics_pvs['SampleInY'].value
             self.epics_pvs['SampleY'].put(position, wait=True, timeout=600)
 
-        if self.epics_pvs['SampleOutAngleEnable'].get() and self.rotation_save != None:
-            if self.max_rotation_speed != None:# max_rotation_speed is not initialized when the scan has not been started            
-                cur_speed = self.epics_pvs['RotationSpeed'].get()
-                self.epics_pvs['RotationSpeed'].put(self.max_rotation_speed)                                                    
-            self.epics_pvs['Rotation'].put(self.rotation_save, wait=True)          
-            if self.max_rotation_speed != None:
-                self.epics_pvs['RotationSpeed'].put(cur_speed)
+        if 'SampleOutAngleEnable' in self.epics_pvs:
+            if self.epics_pvs['SampleOutAngleEnable'].get() and self.rotation_save != None:
+                if self.max_rotation_speed != None:# max_rotation_speed is not initialized when the scan has not been started            
+                    cur_speed = self.epics_pvs['RotationSpeed'].get()
+                    self.epics_pvs['RotationSpeed'].put(self.max_rotation_speed)                                                    
+                self.epics_pvs['Rotation'].put(self.rotation_save, wait=True)          
+                if self.max_rotation_speed != None:
+                    self.epics_pvs['RotationSpeed'].put(cur_speed)
                                 
         self.epics_pvs['MoveSampleIn'].put('Done')
 
@@ -439,16 +446,17 @@ class TomoScan():
         which can be ``X``, ``Y``, or ``Both``.
         """
 
-        if self.epics_pvs['SampleOutAngleEnable'].get():
-            if self.max_rotation_speed != None:# max_rotation_speed is not initialized when the scan has not been started
-                cur_speed = self.epics_pvs['RotationSpeed'].get()
-                self.epics_pvs['RotationSpeed'].put(self.max_rotation_speed)
-            angle = self.epics_pvs['SampleOutAngle'].get()
-            log.info('move_sample_out angle: %s', angle)
-            self.rotation_save = self.epics_pvs['Rotation'].get()
-            self.epics_pvs['Rotation'].put(angle, wait=True)  
-            if self.max_rotation_speed != None:
-                self.epics_pvs['RotationSpeed'].put(cur_speed)                        
+        if 'SampleOutAngleEnable' in self.epics_pvs:
+            if self.epics_pvs['SampleOutAngleEnable'].get():
+                if self.max_rotation_speed != None:# max_rotation_speed is not initialized when the scan has not been started
+                    cur_speed = self.epics_pvs['RotationSpeed'].get()
+                    self.epics_pvs['RotationSpeed'].put(self.max_rotation_speed)
+                angle = self.epics_pvs['SampleOutAngle'].get()
+                log.info('move_sample_out angle: %s', angle)
+                self.rotation_save = self.epics_pvs['Rotation'].get()
+                self.epics_pvs['Rotation'].put(angle, wait=True)  
+                if self.max_rotation_speed != None:
+                    self.epics_pvs['RotationSpeed'].put(cur_speed)                        
 
         axis = self.epics_pvs['FlatFieldAxis'].get(as_string=True)        
         log.info('move_sample_out axis: %s', axis)
@@ -477,9 +485,12 @@ class TomoScan():
         config = {}
         for key in self.config_pvs:
             config[key] = self.config_pvs[key].get(as_string=True)
-        out_file = open(file_name, 'w')
-        json.dump(config, out_file, indent=2)
-        out_file.close()
+        try:
+            out_file = open(file_name, 'w')
+            json.dump(config, out_file, indent=2)
+            out_file.close()
+        except (PermissionError, FileNotFoundError) as error:
+            self.epics_pvs['ScanStatus'].put('Error writing configuration')
 
     def load_configuration(self, file_name):
         """Loads a configuration from a file into the EPICS PVs.
@@ -653,6 +664,8 @@ class TomoScan():
 
         if self.return_rotation == 'Yes':
             self.epics_pvs['Rotation'].put(self.rotation_start)
+        elif self.return_rotation == "Home":
+            self.epics_pvs['RotationHomF'].put(1)
         log.info('Scan complete')
         self.epics_pvs['ScanStatus'].put('Scan complete')
         self.epics_pvs['StartScan'].put(0)
@@ -886,9 +899,9 @@ class TomoScan():
         if camera_model == 'Oryx ORX-10G-310S9M':
             pixel_format = self.epics_pvs['CamPixelFormat'].get(as_string=True) 
             readout_times = {
-                'Mono8': 30.0,
-                'Mono12Packed': 30.0,
-                'Mono16': 30.0
+                'Mono8': 40.0,
+                'Mono12Packed': 40.0,
+                'Mono16': 40.0
             }
             readout = readout_times[pixel_format]/1000.
         if camera_model == 'Q-12A180-Fm/CXP-6':

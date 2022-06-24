@@ -122,7 +122,11 @@ class TomoScanPSO(TomoScan):
         full_file_name = self.epics_pvs['FPFullFileName'].get(as_string=True)
         log.info('data save location: %s', full_file_name)
         config_file_root = os.path.splitext(full_file_name)[0]
-        self.save_configuration(config_file_root + '.config')
+        try:
+            self.save_configuration(config_file_root + '.config')
+        except FileNotFoundError:
+            log.error('config file write error')
+            self.epics_pvs['ScanStatus'].put('Config File Write Error')
 
         # Put the camera back in FreeRun mode and acquiring
         self.set_trigger_mode('FreeRun', 1)
@@ -190,6 +194,8 @@ class TomoScanPSO(TomoScan):
         '''
         self.epics_pvs['ScanStatus'].put('Programming PSO')
         overall_sense, user_direction = self._compute_senses()
+        log.info(f'Overall sense = {overall_sense}')
+        log.info(f'User direction = {user_direction}')
         pso_command = self.epics_pvs['PSOCommand.BOUT']
         pso_model = self.epics_pvs['PSOControllerModel'].get(as_string=True)
         pso_axis = self.epics_pvs['PSOAxisName'].get(as_string=True)
@@ -256,12 +262,13 @@ class TomoScanPSO(TomoScan):
         user direction, overall sense.
         '''
         # Encoder direction compared to dial coordinates
-        encoder_dir = 1 if self.epics_pvs['PSOEncoderCountsPerStep'].get() > 0 else -1
+        encoder_dir = 1 if self.epics_pvs['PSOCountsPerRotation'].get() > 0 else -1
         # Get motor direction (dial vs. user); convert (0,1) = (pos, neg) to (1, -1)
         motor_dir = 1 if self.epics_pvs['RotationDirection'].get() == 0 else -1
         # Figure out whether motion is in positive or negative direction in user coordinates
         user_direction = 1 if self.rotation_stop > self.rotation_start else -1
         # Figure out overall sense: +1 if motion in + encoder direction, -1 otherwise
+        log.debug((encoder_dir, motor_dir, user_direction))
         return user_direction * motor_dir * encoder_dir, user_direction
         
     def compute_positions_PSO(self):
@@ -305,7 +312,7 @@ class TomoScanPSO(TomoScan):
         
         #Where will the last point actually be?
         self.rotation_stop = (self.rotation_start 
-                                + (self.num_angles - 1) * self.rotation_step * user_direction)
+                                + (self.num_angles - 1) * self.rotation_step)
         self.epics_pvs['PSOEndTaxi'].put(self.rotation_stop + taxi_dist * user_direction)
         
         # Assign the fly scan angular position to theta[]

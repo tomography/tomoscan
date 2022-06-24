@@ -90,10 +90,14 @@ record(longout, "$(P)$(R)NumAngles")
 {
 }
 
-record(bo, "$(P)$(R)ReturnRotation")
+record(mbbo, "$(P)$(R)ReturnRotation")
 {
-   field(ZNAM, "No")
-   field(ONAM, "Yes")
+   field(ZRVL, "0")
+   field(ZRST, "No")
+   field(ONVL, "1")
+   field(ONST, "Yes")
+   field(TWVL, "2")
+   field(TWST, "Home")
 }
 
 ####################
