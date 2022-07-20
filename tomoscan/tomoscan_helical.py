@@ -41,6 +41,7 @@ class TomoScanHelical(TomoScanPSO):
         self.epics_pvs['SampleYStop']           = PV(sample_y_pv_name + '.STOP')
         self.epics_pvs['SampleYHLM']            = PV(sample_y_pv_name + '.HLM')
         self.epics_pvs['SampleYLLM']            = PV(sample_y_pv_name + '.LLM')
+        self.epics_pvs['ImagePixelSize']        = PV('2bm:MCTOptics:ImagePixelSize')
 
 
     def begin_scan(self):

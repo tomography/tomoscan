@@ -25,12 +25,12 @@ import base64
 import string
 
 from tomoscan import data_management as dm
-from tomoscan import TomoScanPSO
+from tomoscan.tomoscan_helical import TomoScanHelical
 from tomoscan import log
 
 EPSILON = .001
 
-class TomoScan2BM(TomoScanPSO):
+class TomoScan2BM(TomoScanHelical):
     """Derived class used for tomography scanning with EPICS at APS beamline 2-BM
 
     Parameters
