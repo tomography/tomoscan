@@ -15,9 +15,8 @@ from epics import PV
 import threading
 
 from tomoscan import data_management as dm
-from tomoscan import TomoScanSTEP
+from tomoscan.tomoscan_step import TomoScanSTEP
 from tomoscan import log
-from tomoscan import ScanAbortError
 
 
 EPSILON = .001

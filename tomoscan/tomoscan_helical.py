@@ -14,7 +14,7 @@ import numpy as np
 from epics import PV
 
 from tomoscan import data_management as dm
-from tomoscan import TomoScanPSO
+from tomoscan.tomoscan_pso import TomoScanPSO
 from tomoscan import log
 
 EPSILON = .001

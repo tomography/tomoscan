@@ -34,7 +34,7 @@ from pathlib import Path
 import h5py 
 import numpy as np
 
-from tomoscan import TomoScanStreamPSO
+from tomoscan.tomoscan_stream_pso import TomoScanStreamPSO
 from tomoscan import log
 from tomoscan import util
 import threading

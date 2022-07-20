@@ -14,7 +14,7 @@ import numpy as np
 import pvaccess
 import threading
 from tomoscan import util
-from tomoscan import TomoScan
+from tomoscan.tomoscan import TomoScan
 from tomoscan import log
 from tomoscan import data_management as dm
 

@@ -11,7 +11,7 @@ import os
 import math
 import numpy as np
 from datetime import timedelta
-from tomoscan import TomoScan
+from tomoscan.tomoscan import TomoScan
 from tomoscan import log
 
 class TomoScanSTEP(TomoScan):
