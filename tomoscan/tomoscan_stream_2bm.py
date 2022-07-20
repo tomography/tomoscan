@@ -327,6 +327,7 @@ class TomoScanStream2BM(TomoScanStreamPSO):
                 log.warning('home stage')
                 self.epics_pvs['RotationHomF'].put(1, wait=True)                        
         self.epics_pvs['LensSelect'].clear_callbacks()
+        time.sleep(2)        
         # Call the base class method
         super().end_scan()
         # Close shutter
