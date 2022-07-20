@@ -17,9 +17,13 @@ import threading
 from tomoscan import data_management as dm
 from tomoscan import TomoScanPSO
 from tomoscan import log
+from tomoscan import ScanAbortError
 
 EPSILON = .001
-
+class SampleXError(Exception):
+    '''Exception raised when SampleX is not equal to SampleInX
+    '''
+    
 class TomoScan32ID(TomoScanPSO):
     """Derived class used for tomography scanning with EPICS at APS beamline 32-ID
 
@@ -38,7 +42,13 @@ class TomoScan32ID(TomoScanPSO):
         # self.set_trigger_mode('FreeRun', 1)
         # self.epics_pvs['CamAcquire'].put('Acquire') ###
         # self.wait_pv(self.epics_pvs['CamAcquire'], 1) ###
-       
+        
+        # set TomoScan xml files
+        self.epics_pvs['CamNDAttributesFile'].put('TomoScanDetectorAttributes.xml')
+        self.epics_pvs['FPXMLFileName'].put('TomoScanLayout.xml')
+        macro = 'DET=' + self.pv_prefixes['Camera'] + ',' + 'TS=' + self.epics_pvs['Testing'].__dict__['pvname'].replace('Testing', '', 1)
+        self.control_pvs['CamNDAttributesMacros'].put(macro)
+
         # Enable auto-increment on file writer
         self.epics_pvs['FPAutoIncrement'].put('Yes')
 
@@ -47,9 +57,21 @@ class TomoScan32ID(TomoScanPSO):
 
         # Disable over writing warning
         self.epics_pvs['OverwriteWarning'].put('Yes')
-
+        self.epics_pvs['StartEnergyChange'].put(0,wait=True)
+        # energy scan
+        self.epics_pvs['StartEnergyChange'].add_callback(self.pv_callback_step)
+        
         log.setup_custom_logger("./tomoscan.log")
-   
+    
+    def pv_callback_step(self, pvname=None, value=None, char_value=None, **kw):
+        """Callback function that is called by pyEpics when certain EPICS PVs are changed
+        
+        """
+
+        log.debug('pv_callback_step pvName=%s, value=%s, char_value=%s', pvname, value, char_value)       
+        if (pvname.find('StartEnergyChange') != -1) and (value == 1):
+            self.energy_change()    
+            
     def open_frontend_shutter(self):
         """Opens the shutters to collect flat fields or projections.
 
@@ -79,15 +101,14 @@ class TomoScan32ID(TomoScanPSO):
 
         This does the following:
 
-        - Opens the 2-BM-A fast shutter.
+        - Opens the 32-ID-C fast shutter.
         """
-
-        # Open 2-BM-A fast shutter
+        # Open 32-ID-C fast shutter
         if not self.epics_pvs['OpenFastShutter'] is None:
-            pv = self.epics_pvs['OpenFastShutter']
-            value = self.epics_pvs['OpenFastShutterValue'].get(as_string=True)
-            log.info('open fast shutter: %s, value: %s', pv, value)
-            self.epics_pvs['OpenFastShutter'].put(value, wait=True)
+           pv = self.epics_pvs['OpenFastShutter']
+           value = self.epics_pvs['OpenFastShutterValue'].get(as_string=True)
+           log.info('open fast shutter: %s, value: %s', pv, value)
+           self.epics_pvs['OpenFastShutter'].put(value, wait=True)
 
     def close_frontend_shutter(self):
         """Closes the shutters to collect dark fields.
@@ -118,15 +139,24 @@ class TomoScan32ID(TomoScanPSO):
         - Closes the 32-ID-C fast shutter.
         """
 
-        # Close 2-BM-A fast shutter
+        
+	    # Close 32-ID-C fast shutter
         if not self.epics_pvs['CloseFastShutter'] is None:
-            pv = self.epics_pvs['CloseFastShutter']
-            value = self.epics_pvs['CloseFastShutterValue'].get(as_string=True)
-            log.info('close fast shutter: %s, value: %s', pv, value)
-            self.epics_pvs['CloseFastShutter'].put(value, wait=True)
-
-
-
+           pv = self.epics_pvs['CloseFastShutter']
+           value = self.epics_pvs['CloseFastShutterValue'].get(as_string=True)
+           log.info('close fast shutter: %s, value: %s', pv, value)
+           self.epics_pvs['CloseFastShutter'].put(value, wait=True)
+        
+    def fly_scan(self):
+        """Control of Sample X position
+        """
+        if(abs(self.epics_pvs['SampleInX'].value-self.epics_pvs['SampleX'].value)>1e-4):
+            log.error('SampleInX is not the same as current SampleTopX')            
+            self.epics_pvs['ScanStatus'].put('SampleX error')
+            self.epics_pvs['StartScan'].put(0)        
+            return
+        super().fly_scan()
+    
     def set_trigger_mode(self, trigger_mode, num_images):
         """Sets the trigger mode SIS3820 and the camera.
 
@@ -142,6 +172,8 @@ class TomoScan32ID(TomoScanPSO):
         camera_model = self.epics_pvs['CamModel'].get(as_string=True)
         if(camera_model=='Grasshopper3 GS3-U3-51S5M'):        
             self.set_trigger_mode_grasshopper(trigger_mode, num_images)
+        elif(camera_model=='Blackfly S BFS-PGE-161S7M'):        
+            self.set_trigger_mode_grasshopper(trigger_mode, num_images)
         else:
             log.error('Camera is not supported')
             exit(1)
@@ -149,6 +181,7 @@ class TomoScan32ID(TomoScanPSO):
     def set_trigger_mode_grasshopper(self, trigger_mode, num_images):
         self.epics_pvs['CamAcquire'].put('Done') ###
         self.wait_pv(self.epics_pvs['CamAcquire'], 0) ###
+        
         log.info('set trigger mode: %s', trigger_mode)
         if trigger_mode == 'FreeRun':
             self.epics_pvs['CamImageMode'].put('Continuous', wait=True)
@@ -163,7 +196,7 @@ class TomoScan32ID(TomoScanPSO):
         else: # set camera to external triggering
             # These are just in case the scan aborted with the camera in another state 
             self.epics_pvs['CamTriggerMode'].put('On', wait=True)     # VN: For PG we need to switch to On to be able to switch to readout overlap mode                                                               
-            self.epics_pvs['CamTriggerSource'].put('Line0', wait=True)
+            self.epics_pvs['CamTriggerSource'].put('Line2', wait=True)
             self.epics_pvs['CamTriggerOverlap'].put('ReadOut', wait=True)
             self.epics_pvs['CamExposureMode'].put('Timed', wait=True)
             self.epics_pvs['CamImageMode'].put('Multiple')            
@@ -199,15 +232,27 @@ class TomoScan32ID(TomoScanPSO):
         file_path = self.epics_pvs['DetectorTopDir'].get(as_string=True) + self.epics_pvs['ExperimentYearMonth'].get(as_string=True) + os.path.sep + self.epics_pvs['UserLastName'].get(as_string=True) + os.path.sep
         self.epics_pvs['FilePath'].put(file_path, wait=True)
 
-        # set TomoScan xml files
-        self.epics_pvs['CamNDAttributesFile'].put('TomoScanDetectorAttributes.xml')
-        self.epics_pvs['FPXMLFileName'].put('TomoScanLayout.xml')
-
         # Call the base class method
         super().begin_scan()
+         
         # Opens the front-end shutter
         self.open_frontend_shutter()
-        
+    
+    def energy_change(self):        
+        energy = float(self.epics_pvs["Energy"].get())
+        log.info("Tomoscan: change energy to %.3f",energy)
+        self.epics_pvs['DCMmvt'].put(1)
+        time.sleep(1)
+        self.epics_pvs['DCMputEnergy'].put(energy)
+        #self.epics_pvs['GAPputEnergy'].put(energy)
+        #self.wait_pv(self.epics_pvs['EnergyWait'], 0)
+        self.epics_pvs['GAPputEnergy'].put(energy + 0.17)
+        #self.wait_pv(self.epics_pvs['EnergyWait'], 0)
+        time.sleep(2)
+        self.epics_pvs['DCMmvt'].put(0)
+        time.sleep(1)
+        self.epics_pvs['StartEnergyChange'].put(0)
+            
     def end_scan(self):
         """Performs the operations needed at the very end of a scan.
 
@@ -233,7 +278,10 @@ class TomoScan32ID(TomoScanPSO):
         if self.return_rotation == 'Yes':
             # Reset rotation position by mod 360 , the actual return 
             # to start position is handled by super().end_scan()
-            current_angle = self.epics_pvs['Rotation'].get() %360
+            log.info('wait until the stage is stopped')
+            time.sleep(self.epics_pvs['RotationAccelTime'].get()*1.2)                        
+            ang = self.epics_pvs['RotationRBV'].get()
+            current_angle = np.sign(ang)*(np.abs(ang)%360)
             self.epics_pvs['RotationSet'].put('Set', wait=True)
             self.epics_pvs['Rotation'].put(current_angle, wait=True)
             self.epics_pvs['RotationSet'].put('Use', wait=True)
@@ -257,17 +305,6 @@ class TomoScan32ID(TomoScanPSO):
         else:
             log.warning('Automatic data trasfer to data analysis computer is disabled.')
     
-    def set_exposure_time(self, exposure_time=None):
-
-        camera_model = self.epics_pvs['CamModel'].get(as_string=True)        
-        if(camera_model=='Q-12A180-Fm/CXP-6'):
-            if exposure_time is None:
-                exposure_time = self.epics_pvs['ExposureTime'].value            
-            self.epics_pvs['CamAcquisitionFrameRate'].put(1/exposure_time, wait=True, timeout=10.0) 
-            self.epics_pvs['CamAcquireTime'].put(exposure_time, wait=True, timeout = 10.0)
-        else:
-            super().set_exposure_time(exposure_time)
-
     def add_theta(self):
         """Add theta at the end of a scan.
         """

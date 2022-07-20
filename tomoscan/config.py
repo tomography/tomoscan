@@ -27,6 +27,7 @@ from tomoscan import __version__
 home = os.path.expanduser("~")
 LOGS_HOME = os.path.join(home, 'logs')
 CONFIG_FILE_NAME = os.path.join(home, 'tomoscan.conf')
+SCAN_FILE_NAME = os.path.join(home, 'scan.json')
 
 SECTIONS = OrderedDict()
 
@@ -34,7 +35,12 @@ SECTIONS['general'] = {
     'config': {
         'default': CONFIG_FILE_NAME,
         'type': str,
-        'help': "File name of configuration file",
+        'help': "File name of configuration file. Default: ~/tomoscan.conf",
+        'metavar': 'FILE'},
+    'scan-file': {
+        'default': SCAN_FILE_NAME,
+        'type': str,
+        'help': "File name of scan file contaning a dictionary listing multiple scan parameters. Default: ~/scan.json",
         'metavar': 'FILE'},
     'logs-home': {
         'default': LOGS_HOME,
@@ -72,7 +78,9 @@ SECTIONS['tomoscan'] = {
     'scan-type':{
         'default': '',
         'type': str,
-        'help': "For internal use to log the tomoscan status"},
+        'help': "Scan type",
+        'default' : "Single",
+        'choices': ['Single','Vertical', 'Horizontal', 'Mosaic', 'Energy', 'File', 'Helical']}, 
         }
 
 SECTIONS['in-situ'] = {
@@ -132,12 +140,45 @@ SECTIONS['horizontal'] = {
         'help': "Number of horizontal steps"},
     }
 
+SECTIONS['energy'] = {
+    'file-energies': {
+        'default': '',
+        'type': str,
+        'help': "Numpy file with an array of energies in keV"},
+    'file-params1': {
+        'default': '/home/beams/USERTXM/epics/synApps/support/txmoptics/iocBoot/iocTXMOptics/energy1.txt',
+        'type': str,
+        'help': "Txt file with PV values corresponding to optics positions for the first energy"},    
+    'file-params2': {
+        'default': '/home/beams/USERTXM/epics/synApps/support/txmoptics/iocBoot/iocTXMOptics/energy2.txt',
+        'type': str,
+        'help': "Txt file with PV values corresponding to optics positions for the second energy"},    
+    }
+
+SECTIONS['file'] = {
+    'num-scans': {
+        'default': 10,
+        'type': util.positive_int,
+        'help': "Horizontal scan position"},
+    'sample-x': {
+        'default': 0,
+        'type': float,
+        'help': "Horizontal scan position"},
+    'sample-y': {
+        'default': 0,
+        'type': float,
+        'help': "Vertical scan position"},
+    }
+
+INIT_PARAMS = ('tomoscan', 'file')
 SINGLE_SCAN_PARAMS = ('tomoscan', 'in-situ')
 VERTICAL_SCAN_PARAMS = SINGLE_SCAN_PARAMS + ('vertical',)
 HORIZONTAL_SCAN_PARAMS = SINGLE_SCAN_PARAMS + ('horizontal',)
 MOSAIC_SCAN_PARAMS = SINGLE_SCAN_PARAMS + ('vertical', 'horizontal')
+ENERGY_SCAN_PARAMS = SINGLE_SCAN_PARAMS + ('energy',)
+FILE_SCAN_PARAMS = SINGLE_SCAN_PARAMS + ('file', )
 
-NICE_NAMES = ('General', 'Tomoscan', 'In-situ Scans', 'Vertical Scan', "Horizonatal Scan")
+NICE_NAMES = ('General', 'Tomoscan', 'In-situ Scans', 'Vertical Scan', "Horizonatal Scan", "Energy", "File")
 
 def get_config_name():
     """Get the command line --config option."""

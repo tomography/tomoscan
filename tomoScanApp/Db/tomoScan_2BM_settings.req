@@ -18,16 +18,6 @@ $(P)$(R)BeamReadyValue
 $(P)$(R)Testing
 
 ####################
-# Optics information
-####################
-$(P)$(R)ScintillatorType
-$(P)$(R)ScintillatorThickness
-$(P)$(R)ImagePixelSize
-$(P)$(R)DetectorPixelSize
-$(P)$(R)CameraObjective
-$(P)$(R)CameraTubeLength
-
-####################
 # Sample information
 ####################
 $(P)$(R)SampleName
@@ -68,3 +58,9 @@ $(P)$(R)OpenFastShutterValue
 # Shutter status
 ################
 $(P)$(R)ShutterStatusPVName
+
+################
+# mctOptics
+################
+$(P)$(R)MctOpticsPVPrefix
+

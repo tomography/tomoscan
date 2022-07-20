@@ -33,6 +33,12 @@ class TomoScan2BMSTEP(TomoScanSTEP):
     def __init__(self, pv_files, macros):
         super().__init__(pv_files, macros)
 
+        # set TomoScan xml files
+        self.epics_pvs['CamNDAttributesFile'].put('TomoScanDetectorAttributes.xml')
+        self.epics_pvs['FPXMLFileName'].put('TomoScanLayout.xml')
+        macro = 'DET=' + self.pv_prefixes['Camera'] + ',' + 'TS=' + self.epics_pvs['Testing'].__dict__['pvname'].replace('Testing', '', 1)
+        self.control_pvs['CamNDAttributesMacros'].put(macro)
+
         # Enable auto-increment on file writer
         self.epics_pvs['FPAutoIncrement'].put('Yes')
 
@@ -180,10 +186,6 @@ class TomoScan2BMSTEP(TomoScanSTEP):
         # Set data directory
         file_path = self.epics_pvs['DetectorTopDir'].get(as_string=True) + self.epics_pvs['ExperimentYearMonth'].get(as_string=True) + os.path.sep + self.epics_pvs['UserLastName'].get(as_string=True) + os.path.sep
         self.epics_pvs['FilePath'].put(file_path, wait=True)
-
-        # set TomoScan xml files
-        self.epics_pvs['CamNDAttributesFile'].put('TomoScanDetectorAttributes.xml')
-        self.epics_pvs['FPXMLFileName'].put('TomoScanLayout.xml')
 
         # Call the base class method
         super().begin_scan()

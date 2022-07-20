@@ -91,9 +91,6 @@ class TomoScanPSO(TomoScan):
         # Call the base class method
         super().begin_scan()
  
-        # Compute the time for each frame
-        time_per_angle = self.compute_frame_time()
-        self.motor_speed = self.rotation_step / time_per_angle
         time.sleep(0.1)
 
         # Program the stage driver to provide PSO pulses
@@ -125,7 +122,11 @@ class TomoScanPSO(TomoScan):
         full_file_name = self.epics_pvs['FPFullFileName'].get(as_string=True)
         log.info('data save location: %s', full_file_name)
         config_file_root = os.path.splitext(full_file_name)[0]
-        self.save_configuration(config_file_root + '.config')
+        try:
+            self.save_configuration(config_file_root + '.config')
+        except FileNotFoundError:
+            log.error('config file write error')
+            self.epics_pvs['ScanStatus'].put('Config File Write Error')
 
         # Put the camera back in FreeRun mode and acquiring
         self.set_trigger_mode('FreeRun', 1)
@@ -186,12 +187,15 @@ class TomoScanPSO(TomoScan):
         self.epics_pvs['Rotation'].put(self.epics_pvs['PSOEndTaxi'].get())
         time_per_angle = self.compute_frame_time()
         collection_time = self.num_angles * time_per_angle
-        self.wait_camera_done(collection_time + 60.)
+        self.wait_camera_done(collection_time + 30.)
 
     def program_PSO(self):
         '''Performs programming of PSO output on the Aerotech driver.
         '''
+        self.epics_pvs['ScanStatus'].put('Programming PSO')
         overall_sense, user_direction = self._compute_senses()
+        log.info(f'Overall sense = {overall_sense}')
+        log.info(f'User direction = {user_direction}')
         pso_command = self.epics_pvs['PSOCommand.BOUT']
         pso_model = self.epics_pvs['PSOControllerModel'].get(as_string=True)
         pso_axis = self.epics_pvs['PSOAxisName'].get(as_string=True)
@@ -199,7 +203,7 @@ class TomoScanPSO(TomoScan):
 
         # Place the motor at the position where the first PSO pulse should be triggered
         self.epics_pvs['RotationSpeed'].put(self.max_rotation_speed)
-        self.epics_pvs['Rotation'].put(self.rotation_start, wait=True)
+        self.epics_pvs['Rotation'].put(self.rotation_start, wait=True, timeout=600)
         self.epics_pvs['RotationSpeed'].put(self.motor_speed)
 
         # Make sure the PSO control is off
@@ -218,15 +222,15 @@ class TomoScanPSO(TomoScan):
         pso_command.put('PSOTRACK %s INPUT %d' % (pso_axis, pso_input), wait=True, timeout=10.0)
         # Set the distance between pulses. Do this in encoder counts.
         pso_command.put('PSODISTANCE %s FIXED %d' % (pso_axis, 
-                        self.epics_pvs['PSOEncoderCountsPerStep'].get()) , wait=True, timeout=10.0)
+                        int(np.abs(self.epics_pvs['PSOEncoderCountsPerStep'].get()))) , wait=True, timeout=10.0)
         # Which encoder is being used to calculate whether we are in the window.  1 for single axis
         pso_command.put('PSOWINDOW %s 1 INPUT %d' % (pso_axis, pso_input), wait=True, timeout=10.0)
 
         # Calculate window function parameters.  Must be in encoder counts, and is 
         # referenced from the stage location where we arm the PSO.  We are at that point now.
         # We want pulses to start at start - delta/2, end at end + delta/2.  
-        range_start = -round(self.epics_pvs['PSOEncoderCountsPerStep'].get()/ 2) * overall_sense
-        range_length = self.epics_pvs['PSOEncoderCountsPerStep'].get() * self.num_angles
+        range_start = -round(np.abs(self.epics_pvs['PSOEncoderCountsPerStep'].get())/ 2) * overall_sense
+        range_length = np.abs(self.epics_pvs['PSOEncoderCountsPerStep'].get()) * self.num_angles
         # The start of the PSO window must be < end.  Handle this.
         if overall_sense > 0:
             window_start = range_start
@@ -258,12 +262,13 @@ class TomoScanPSO(TomoScan):
         user direction, overall sense.
         '''
         # Encoder direction compared to dial coordinates
-        encoder_dir = 1 if self.epics_pvs['PSOEncoderCountsPerStep'].get() > 0 else -1
+        encoder_dir = 1 if self.epics_pvs['PSOCountsPerRotation'].get() > 0 else -1
         # Get motor direction (dial vs. user); convert (0,1) = (pos, neg) to (1, -1)
         motor_dir = 1 if self.epics_pvs['RotationDirection'].get() == 0 else -1
         # Figure out whether motion is in positive or negative direction in user coordinates
         user_direction = 1 if self.rotation_stop > self.rotation_start else -1
         # Figure out overall sense: +1 if motion in + encoder direction, -1 otherwise
+        log.debug((encoder_dir, motor_dir, user_direction))
         return user_direction * motor_dir * encoder_dir, user_direction
         
     def compute_positions_PSO(self):
@@ -276,10 +281,7 @@ class TomoScanPSO(TomoScan):
         Assign the fly scan angular position to theta[]
         '''
         overall_sense, user_direction = self._compute_senses()
-        # Get the distance needed for acceleration = 1/2 a t^2 = 1/2 * v * t
-        motor_accl_time = float(self.epics_pvs['RotationAccelTime'].get()) # Acceleration time in s
-        accel_dist = motor_accl_time / 2.0 * float(self.motor_speed) 
-
+        
         # Compute the actual delta to keep each interval an integer number of encoder counts
         encoder_multiply = float(self.epics_pvs['PSOCountsPerRotation'].get()) / 360.
         raw_delta_encoder_counts = self.rotation_step * encoder_multiply
@@ -292,15 +294,27 @@ class TomoScanPSO(TomoScan):
         # Change the rotation step Python variable and PV
         self.rotation_step = delta_encoder_counts / encoder_multiply
         self.epics_pvs['RotationStep'].put(self.rotation_step)
+                
+        # Compute the time for each frame
+        time_per_angle = self.compute_frame_time()
+        self.motor_speed = np.abs(self.rotation_step) / time_per_angle
+        # Get the distance needed for acceleration = 1/2 a t^2 = 1/2 * v * t
+        motor_accl_time = float(self.epics_pvs['RotationAccelTime'].get()) # Acceleration time in s
+        accel_dist = motor_accl_time / 2.0 * float(self.motor_speed) 
           
         # Make taxi distance an integer number of measurement deltas >= accel distance
         # Add 1/2 of a delta to ensure that we are really up to speed.
-        taxi_dist = (math.ceil(accel_dist / self.rotation_step) + 0.5) * self.rotation_step 
+        if self.rotation_step > 0:
+            taxi_dist = math.ceil(accel_dist / self.rotation_step + 0.5) * self.rotation_step 
+        else:
+            taxi_dist = math.floor(accel_dist / self.rotation_step - 0.5) * self.rotation_step 
         self.epics_pvs['PSOStartTaxi'].put(self.rotation_start - taxi_dist * user_direction)
-        self.epics_pvs['PSOEndTaxi'].put(self.rotation_stop + taxi_dist * user_direction)
         
         #Where will the last point actually be?
         self.rotation_stop = (self.rotation_start 
-                                + (self.num_angles - 1) * self.rotation_step * user_direction)
+                                + (self.num_angles - 1) * self.rotation_step)
+        self.epics_pvs['PSOEndTaxi'].put(self.rotation_stop + taxi_dist * user_direction)
+        
         # Assign the fly scan angular position to theta[]
         self.theta = self.rotation_start + np.arange(self.num_angles) * self.rotation_step * user_direction
+        

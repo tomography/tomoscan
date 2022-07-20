@@ -30,13 +30,15 @@ Classes
 import os
 import time
 import h5py 
-import numpy
+import numpy as np
 
 from tomoscan import TomoScanStreamPSO
 from tomoscan import log
 from tomoscan import util
 import threading
 import pvaccess
+from epics import PV
+
 
 EPSILON = .001
 
@@ -55,8 +57,14 @@ class TomoScanStream2BM(TomoScanStreamPSO):
     def __init__(self, pv_files, macros):
         super().__init__(pv_files, macros)
         # Set the detector in idle
-        self.set_trigger_mode('Internal', 1)
+        #self.set_trigger_mode('Internal', 1)
         
+        # set TomoScan xml files
+        self.epics_pvs['CamNDAttributesFile'].put('TomoScanDetectorAttributes.xml')
+        self.epics_pvs['FPXMLFileName'].put('TomoScanLayout.xml')
+        macro = 'DET=' + self.pv_prefixes['Camera'] + ',' + 'TS=' + self.epics_pvs['Testing'].__dict__['pvname'].replace('Testing', '', 1)
+        self.control_pvs['CamNDAttributesMacros'].put(macro)
+
         # Enable auto-increment on file writer
         self.epics_pvs['FPAutoIncrement'].put('Yes')
 
@@ -66,6 +74,14 @@ class TomoScanStream2BM(TomoScanStreamPSO):
         # Disable overw writing warning
         self.epics_pvs['OverwriteWarning'].put('Yes')
         
+        # Lens change functionality
+        prefix = self.pv_prefixes['MctOptics']
+        self.epics_pvs['LensSelect'] = PV(prefix+'LensSelect')            
+        # # ref to pixel size
+        # self.epics_pvs['MCTPixelSize'] = PV(prefix+'PixelSize')            
+        # # 
+        # self.epics_pvs['PixelSize'].put(self.epics_pvs['MCTPixelSize'])
+
         log.setup_custom_logger("./tomoscan.log")
 
     
@@ -88,7 +104,8 @@ class TomoScanStream2BM(TomoScanStreamPSO):
                 log.info('shutter status: %s', status)
                 log.info('open shutter: %s, value: %s', pv, value)
                 self.epics_pvs['OpenShutter'].put(value, wait=True)
-                self.wait_pv(self.epics_pvs['ShutterStatus'], 1)
+                self.wait_frontend_shutter_open()
+                # self.wait_pv(self.epics_pvs['ShutterStatus'], 1)
                 status = self.epics_pvs['ShutterStatus'].get(as_string=True)
                 log.info('shutter status: %s', status)
 
@@ -106,6 +123,8 @@ class TomoScanStream2BM(TomoScanStreamPSO):
             value = self.epics_pvs['OpenFastShutterValue'].get(as_string=True)
             log.info('open fast shutter: %s, value: %s', pv, value)
             self.epics_pvs['OpenFastShutter'].put(value, wait=True)
+            log.warning("Wait 2s  - Temporarily while there is no fast shutter at 2bmb ")
+            time.sleep(2)
 
     def close_frontend_shutter(self):
         """Closes the shutters to collect dark fields.
@@ -157,43 +176,100 @@ class TomoScanStream2BM(TomoScanStreamPSO):
             Number of images to collect.  Ignored if trigger_mode="FreeRun".
             This is used to set the ``NumImages`` PV of the camera.
         """
+        camera_model = self.epics_pvs['CamModel'].get(as_string=True)
+        if(camera_model=='Oryx ORX-10G-51S5M'):            
+            self.set_trigger_mode_oryx(trigger_mode, num_images)
+        elif(camera_model=='Grasshopper3 GS3-U3-23S6M'):        
+            self.set_trigger_mode_grasshopper(trigger_mode, num_images)
+        elif(camera_model=='Q-12A180-Fm/CXP-6'):          
+            self.set_trigger_mode_adimec(trigger_mode, num_images)
+        else:
+            log.error('Camera is not supported')
+            exit(1)
+        
+    def set_trigger_mode_oryx(self, trigger_mode, num_images):
+        self.epics_pvs['CamAcquire'].put('Done') ###
+        self.wait_pv(self.epics_pvs['CamAcquire'], 0) ###
         log.info('set trigger mode: %s', trigger_mode)
         if trigger_mode == 'FreeRun':
             self.epics_pvs['CamImageMode'].put('Continuous', wait=True)
             self.epics_pvs['CamTriggerMode'].put('Off', wait=True)
             self.wait_pv(self.epics_pvs['CamTriggerMode'], 0)
-            self.epics_pvs['CamAcquire'].put('Acquire')
+            # self.epics_pvs['CamAcquire'].put('Acquire')
+        elif trigger_mode == 'Internal':
+            self.epics_pvs['CamTriggerMode'].put('Off', wait=True)
+            self.wait_pv(self.epics_pvs['CamTriggerMode'], 0)
+            self.epics_pvs['CamImageMode'].put('Multiple')            
+            self.epics_pvs['CamNumImages'].put(num_images, wait=True)
+        else: # set camera to external triggering
+            # These are just in case the scan aborted with the camera in another state 
+            self.epics_pvs['CamTriggerMode'].put('Off', wait=True)   # VN: For FLIR we first switch to Off and then change overlap. any reason of that?                                                 
+            self.epics_pvs['CamTriggerSource'].put('Line2', wait=True)
+            self.epics_pvs['CamTriggerOverlap'].put('ReadOut', wait=True)
+            self.epics_pvs['CamExposureMode'].put('Timed', wait=True)
+            self.epics_pvs['CamImageMode'].put('Continuous')     # switched to Continuous for tomostream       
+            self.epics_pvs['CamArrayCallbacks'].put('Enable')
+            self.epics_pvs['CamFrameRateEnable'].put(0)
+
+            self.epics_pvs['CamNumImages'].put(num_images, wait=True)
+            self.epics_pvs['CamTriggerMode'].put('On', wait=True)
+            self.wait_pv(self.epics_pvs['CamTriggerMode'], 1)
+
+    def set_trigger_mode_grasshopper(self, trigger_mode, num_images):
+        self.epics_pvs['CamAcquire'].put('Done') ###
+        self.wait_pv(self.epics_pvs['CamAcquire'], 0) ###
+        log.info('set trigger mode: %s', trigger_mode)
+        if trigger_mode == 'FreeRun':
+            self.epics_pvs['CamImageMode'].put('Continuous', wait=True)
+            self.epics_pvs['CamTriggerMode'].put('Off', wait=True)
+            self.wait_pv(self.epics_pvs['CamTriggerMode'], 0)
+            #self.epics_pvs['CamAcquire'].put('Acquire')
         elif trigger_mode == 'Internal':
             self.epics_pvs['CamTriggerMode'].put('Off', wait=True)
             self.wait_pv(self.epics_pvs['CamTriggerMode'], 0)
             self.epics_pvs['CamImageMode'].put('Multiple')
             self.epics_pvs['CamNumImages'].put(num_images, wait=True)
         else: # set camera to external triggering
-            # These are just in case the scan aborted with the camera in another state
-             # These are just in case the scan aborted with the camera in another state 
-            camera_model = self.epics_pvs['CamModel'].get(as_string=True)
-            if(camera_model=='Oryx ORX-10G-51S5M'):# 2bma            
-                self.epics_pvs['CamTriggerMode'].put('Off', wait=True)   # VN: For FLIR we first switch to Off and then change overlap. any reason of that?                                                 
-                self.epics_pvs['CamTriggerSource'].put('Line2', wait=True)
-            elif(camera_model=='Grasshopper3 GS3-U3-23S6M'):# 2bmb            
-                self.epics_pvs['CamTriggerMode'].put('On', wait=True)     # VN: For PG we need to switch to On to be able to switch to readout overlap mode                                                               
-                self.epics_pvs['CamTriggerSource'].put('Line0', wait=True)
+            # These are just in case the scan aborted with the camera in another state 
+            self.epics_pvs['CamTriggerMode'].put('On', wait=True)     # VN: For PG we need to switch to On to be able to switch to readout overlap mode                                                               
+            self.epics_pvs['CamTriggerSource'].put('Line0', wait=True)
             self.epics_pvs['CamTriggerOverlap'].put('ReadOut', wait=True)
             self.epics_pvs['CamExposureMode'].put('Timed', wait=True)
-            self.epics_pvs['CamImageMode'].put('Multiple')
+            self.epics_pvs['CamImageMode'].put('Multiple')            
             self.epics_pvs['CamArrayCallbacks'].put('Enable')
             self.epics_pvs['CamFrameRateEnable'].put(0)
 
             self.epics_pvs['CamNumImages'].put(self.num_angles, wait=True)
             self.epics_pvs['CamTriggerMode'].put('On', wait=True)
             self.wait_pv(self.epics_pvs['CamTriggerMode'], 1)
-    
+
+    def set_trigger_mode_adimec(self, trigger_mode, num_images):
+        self.epics_pvs['CamAcquire'].put('Done') ###
+        self.wait_pv(self.epics_pvs['CamAcquire'], 0) ###
+        log.info('set trigger mode: %s', trigger_mode)
+        if trigger_mode == 'FreeRun':
+            self.epics_pvs['CamImageMode'].put('Continuous', wait=True)
+            self.epics_pvs['CamExposureMode'].put('Timed', wait=True)
+            self.wait_pv(self.epics_pvs['CamExposureMode'], 0)                
+        elif trigger_mode == 'Internal':
+            self.epics_pvs['CamExposureMode'].put('Timed', wait=True)
+            self.wait_pv(self.epics_pvs['CamExposureMode'], 0)
+            self.epics_pvs['CamImageMode'].put('Multiple')            
+            self.epics_pvs['CamNumImages'].put(num_images, wait=True)
+        else: # set camera to external triggering
+            self.epics_pvs['CamExposureMode'].put('TimedTriggerCont', wait=True)                
+            self.wait_pv(self.epics_pvs['CamExposureMode'], 3)                
+            self.epics_pvs['CamImageMode'].put('Multiple')                        
+            self.epics_pvs['CamNumImages'].put(self.num_angles, wait=True)            
+
     def begin_scan(self):
         """Performs the operations needed at the very start of a scan.
 
         This does the following:
 
         - Set data directory.
+
+         - Set the TomoScan xml files
 
         - Calls the base class method.
 
@@ -210,21 +286,24 @@ class TomoScanStream2BM(TomoScanStreamPSO):
         file_path = self.epics_pvs['DetectorTopDir'].get(as_string=True) + self.epics_pvs['ExperimentYearMonth'].get(as_string=True) + os.path.sep + self.epics_pvs['UserLastName'].get(as_string=True) + os.path.sep
         self.epics_pvs['FilePath'].put(file_path, wait=True)
 
-        # set TomoScan xml files
-        self.epics_pvs['CamNDAttributesFile'].put('TomoScanStreamDetectorAttributes.xml')
-        self.epics_pvs['FPXMLFileName'].put('TomoScanStreamLayout.xml')
-
+        
+        if self.epics_pvs['ReturnRotation'].get(as_string=True) == 'Yes':
+            if np.abs(self.epics_pvs['RotationRBV'].get())>720:
+                log.warning('home stage')
+                self.epics_pvs['RotationHomF'].put(1, wait=True)                  
+        
+        self.lens_cur = self.epics_pvs['LensSelect'].get()
         # Call the base class method
         super().begin_scan()
         # Opens the front-end shutter
         self.open_frontend_shutter()
-         
+        self.epics_pvs['LensSelect'].add_callback(self.pv_callback_stream_2bm)
         
     def end_scan(self):
         """Performs the operations needed at the very end of a scan.
 
         This does the following:
-
+        - Calls ``save_configuration()``.
         - Put the camera back in "FreeRun" mode and acquiring so the user sees live images.
 
         - Sets the speed of the rotation stage back to the maximum value.
@@ -236,18 +315,29 @@ class TomoScanStream2BM(TomoScanStreamPSO):
         - Closes shutter.
         """
         
-        if self.return_rotation == 'Yes':
-        # Reset rotation position by mod 360 , the actual return 
-        # to start position is handled by super().end_scan()
-            current_angle = self.epics_pvs['Rotation'].get() %360
-            self.epics_pvs['RotationSet'].put('Set', wait=True)
-            self.epics_pvs['Rotation'].put(current_angle, wait=True)
-            self.epics_pvs['RotationSet'].put('Use', wait=True)
+        if self.epics_pvs['ReturnRotation'].get(as_string=True) == 'Yes':        
+            while True:
+                ang1 = self.epics_pvs['RotationRBV'].value
+                time.sleep(1)
+                ang2 = self.epics_pvs['RotationRBV'].value
+                print(ang1,ang2)
+                if np.abs(ang1-ang2)<1e-4:
+                    break
+            if np.abs(self.epics_pvs['RotationRBV'].value)>720:
+                log.warning('home stage')
+                self.epics_pvs['RotationHomF'].put(1, wait=True)                        
+        self.epics_pvs['LensSelect'].clear_callbacks()
         # Call the base class method
         super().end_scan()
         # Close shutter
         self.close_shutter()
- 
+    
+    def pv_callback_stream_2bm(self, pvname=None, value=None, char_value=None, **kw):
+        """Callback functions for capturing in the streaming mode"""
+        if (pvname.find('LensSelect') != -1 and (value==0 or value==1 or value==2)):
+            thread = threading.Thread(target=self.lens_change_sync, args=())
+            thread.start() 
+    
     def wait_pv(self, epics_pv, wait_val, timeout=-1):
         """Wait on a pv to be a value until max_timeout (default forever)
            delay for pv to change
@@ -273,6 +363,28 @@ class TomoScanStream2BM(TomoScanStreamPSO):
             else:
                 return True
 
+    def lens_change_sync(self):
+        """Save/Update dark and flat fields for lenses"""
+        
+        # ref to pixel size
+        # self.epics_pvs['MCTPixelSize'] = PV(prefix+'PixelSize')            
+        # 
+        # self.epics_pvs['PixelSize'].put(self.epics_pvs['MCTPixelSize'])
+
+        log.info(f'switch lens from {self.lens_cur}')
+        dirname = os.path.dirname(self.epics_pvs['FPFullFileName'].get(as_string=True))            
+        cmd = 'cp '+ dirname+'/dark_fields.h5 '+ dirname+'/dark_fields_'+str(self.lens_cur)+'.h5 2> /dev/null '
+        os.system(cmd)                
+        cmd = 'cp '+ dirname+'/flat_fields.h5 '+ dirname+'/flat_fields_'+str(self.lens_cur)+'.h5 2> /dev/null '
+        os.system(cmd)                
+        self.lens_cur = self.epics_pvs['LensSelect'].get()
+        log.info(f'to {self.lens_cur}')
+        cmd = 'cp '+ dirname+'/dark_fields_'+str(self.lens_cur)+'.h5 '+ dirname+'/dark_fields.h5 2> /dev/null '
+        os.system(cmd)                
+        cmd = 'cp '+ dirname+'/flat_fields_'+str(self.lens_cur)+'.h5 '+ dirname+'/flat_fields.h5 2> /dev/null '
+        os.system(cmd)   
+        self.broadcast_dark()             
+        self.broadcast_flat()             
                 
     def wait_frontend_shutter_open(self, timeout=-1):
         """Waits for the front end shutter to open, or for ``abort_scan()`` to be called.

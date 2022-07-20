@@ -58,6 +58,8 @@ $(P)$(R)SampleInX
 $(P)$(R)SampleOutX
 $(P)$(R)SampleInY
 $(P)$(R)SampleOutY
+$(P)$(R)SampleOutAngle
+$(P)$(R)SampleOutAngleEnable
 
 ############
 # Frame type
@@ -104,3 +106,9 @@ $(P)$(R)OverwriteWarning
 #controlPV $(P)$(R)ElapsedTime
 #controlPV $(P)$(R)RemainingTime
 #controlPV $(P)$(R)Watchdog
+
+############
+# Scan Types
+############
+$(P)$(R)ScanType
+$(P)$(R)FlipStitch

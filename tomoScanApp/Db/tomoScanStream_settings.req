@@ -31,3 +31,6 @@ $(P)$(R)StreamCBStatusMessage
 $(P)$(R)StreamFileName
 $(P)$(R)StreamPreCounted
 $(P)$(R)PvaStreamPVPrefix
+$(P)$(R)StreamSync
+$(P)$(R)FirstProjid
+$(P)$(R)StreamScanType

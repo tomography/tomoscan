@@ -1,14 +1,14 @@
 
 file {
-	name="/home/beams/7BMB/epics/synApps/support/tomoscan/tomoScanApp/op/adl/tomoScan_7BM_otherpvs.adl"
+	name="/home/beams9/7BMB/epics/synApps/support/tomoscan/tomoScanApp/op/adl/tomoScan_7BM_otherpvs.adl"
 	version=030111
 }
 display {
 	object {
-		x=129
-		y=172
+		x=1953
+		y=244
 		width=640
-		height=230
+		height=320
 	}
 	clr=14
 	bclr=4
@@ -114,7 +114,7 @@ text {
 "text entry" {
 	object {
 		x=254
-		y=41
+		y=70
 		width=380
 		height=20
 	}
@@ -130,7 +130,7 @@ text {
 "text entry" {
 	object {
 		x=254
-		y=66
+		y=95
 		width=380
 		height=20
 	}
@@ -146,7 +146,7 @@ text {
 text {
 	object {
 		x=89
-		y=66
+		y=95
 		width=160
 		height=20
 	}
@@ -159,7 +159,7 @@ text {
 text {
 	object {
 		x=119
-		y=41
+		y=70
 		width=130
 		height=20
 	}
@@ -171,9 +171,9 @@ text {
 }
 text {
 	object {
-		x=89
-		y=116
-		width=160
+		x=19
+		y=145
+		width=230
 		height=20
 	}
 	"basic attribute" {
@@ -185,7 +185,7 @@ text {
 "text entry" {
 	object {
 		x=254
-		y=116
+		y=145
 		width=380
 		height=20
 	}
@@ -200,9 +200,9 @@ text {
 }
 text {
 	object {
-		x=119
-		y=91
-		width=130
+		x=49
+		y=120
+		width=200
 		height=20
 	}
 	"basic attribute" {
@@ -214,7 +214,7 @@ text {
 "text entry" {
 	object {
 		x=254
-		y=91
+		y=120
 		width=380
 		height=20
 	}
@@ -229,9 +229,9 @@ text {
 }
 text {
 	object {
-		x=119
-		y=141
-		width=130
+		x=39
+		y=170
+		width=210
 		height=20
 	}
 	"basic attribute" {
@@ -242,9 +242,9 @@ text {
 }
 text {
 	object {
-		x=89
-		y=166
-		width=160
+		x=9
+		y=195
+		width=240
 		height=20
 	}
 	"basic attribute" {
@@ -256,7 +256,7 @@ text {
 "text entry" {
 	object {
 		x=254
-		y=166
+		y=195
 		width=380
 		height=20
 	}
@@ -272,7 +272,7 @@ text {
 "text entry" {
 	object {
 		x=254
-		y=141
+		y=170
 		width=380
 		height=20
 	}
@@ -287,9 +287,9 @@ text {
 }
 text {
 	object {
-		x=89
-		y=192
-		width=160
+		x=19
+		y=220
+		width=230
 		height=20
 	}
 	"basic attribute" {
@@ -301,12 +301,180 @@ text {
 "text entry" {
 	object {
 		x=254
-		y=192
+		y=220
 		width=380
 		height=20
 	}
 	control {
 		chan="$(P)$(R)ExternalTriggerSource"
+		clr=14
+		bclr=51
+	}
+	format="string"
+	limits {
+	}
+}
+text {
+	object {
+		x=79
+		y=45
+		width=170
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Shutter Status PV"
+	align="horiz. right"
+}
+"text entry" {
+	object {
+		x=254
+		y=45
+		width=380
+		height=20
+	}
+	control {
+		chan="$(P)$(R)ShutterStatusPVName"
+		clr=14
+		bclr=51
+	}
+	format="string"
+	limits {
+	}
+}
+text {
+	object {
+		x=10
+		y=245
+		width=130
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Scan type"
+	align="horiz. right"
+}
+menu {
+	object {
+		x=145
+		y=245
+		width=80
+		height=20
+	}
+	control {
+		chan="$(P)$(R)ScanType"
+		clr=14
+		bclr=51
+	}
+}
+menu {
+	object {
+		x=145
+		y=270
+		width=80
+		height=20
+	}
+	control {
+		chan="$(P)$(R)FlipStitch"
+		clr=14
+		bclr=51
+	}
+}
+text {
+	object {
+		x=10
+		y=270
+		width=130
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Flip&Stitch"
+	align="horiz. right"
+}
+text {
+	object {
+		x=159
+		y=295
+		width=90
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="PSO setup"
+	align="horiz. right"
+}
+"related display" {
+	object {
+		x=254
+		y=295
+		width=100
+		height=20
+	}
+	display[0] {
+		label="PSO setup"
+		name="tomoScan_pso.adl"
+		args="P=$(P), R=$(R)"
+	}
+	clr=14
+	bclr=51
+	label="PSO setup"
+}
+text {
+	object {
+		x=414
+		y=245
+		width=130
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Y Pixels Per 360 Deg"
+	align="horiz. right"
+}
+"text entry" {
+	object {
+		x=559
+		y=245
+		width=75
+		height=20
+	}
+	control {
+		chan="$(P)$(R)PixelsYPer360Deg"
+		clr=14
+		bclr=51
+	}
+	format="string"
+	limits {
+	}
+}
+text {
+	object {
+		x=413
+		y=270
+		width=130
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Helical Misalignment (mrad)"
+	align="horiz. right"
+}
+"text entry" {
+	object {
+		x=559
+		y=270
+		width=75
+		height=20
+	}
+	control {
+		chan="$(P)$(R)HelicalMisalignment"
 		clr=14
 		bclr=51
 	}

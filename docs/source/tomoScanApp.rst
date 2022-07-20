@@ -188,6 +188,12 @@ Flat field control
   * - $(P)$(R)SampleOutY
     - ao
     - Position of the Y stage when the sample is out for collecting flat fields.
+  * - $(P)$(R)SampleOutAngle
+    - ao
+    - Position of the raotary stage when the sample is moved out for collecting flat fields.
+  * - $(P)$(R)SampleOutAngleEnable
+    - bo
+    - Flag controlling whether the flat fields are collected at the start/end position or at the value set by $(P)$(R)SampleOutAngle.
 
 Frame type
 ~~~~~~~~~~
@@ -345,6 +351,24 @@ Scan status via Channel Access
     - This record will be ``Running`` if the Python server is running and ``Stopped`` if not.
       It is controlled by a watchdog timer, and will change from ``Running`` to ``Stopped``
       within 5 seconds if the Python server exits.
+
+Scan Types
+----------
+
+.. cssclass:: table-bordered table-striped table-hover
+.. list-table::
+  :header-rows: 1
+  :widths: 5 5 90
+
+  * - Record name
+    - Record type
+    - Description
+  * - $(P)$(R)ScanType
+    - mbbo
+    - Contains the scan type, e.g. 'Single', 'Vertical', 'Horizontal', 'Mosaic', "File', 'Energy', "Helical'.
+  * - $(P)$(R)FlipStitch
+    - bo
+    - Tells if the scan is a Flip&Stitch or not.
 
 tomoScan_settings.req
 ---------------------
@@ -758,36 +782,6 @@ Beam status information
     - stringout
     - Enable testing mode 'Yes'.
 
-Optics information
-^^^^^^^^^^^^^^^^^^
-
-.. cssclass:: table-bordered table-striped table-hover
-.. list-table::
-  :header-rows: 1
-  :widths: 5 5 90
-
-  * - Record name
-    - Record type
-    - Description
-  * - $(P)$(R)ScintillatorType
-    - stringout
-    - Contains the type of scintillator being used.
-  * - $(P)$(R)ScintillatorThickness
-    - ao
-    - Contains the thickness of the scintillator in microns.
-  * - $(P)$(R)ImagePixelSize
-    - ao
-    - Contains the pixel size on the sample in microns (i.e. includes objective magnification)
-  * - $(P)$(R)DetectorPixelSize
-    - ao
-    - Contains the pixel size of the detector.
-  * - $(P)$(R)CameraObjective
-    - stringout
-    - Description of the camera objective
-  * - $(P)$(R)CameraTubeLength
-    - stringout
-    - Description of the camera objective
-
 Sample information
 ^^^^^^^^^^^^^^^^^^
 
@@ -915,6 +909,23 @@ Fast shutter control
     - Contains the value to write to open the fast shutter
 
 
+
+mctOptics
+^^^^^^^^^
+
+.. cssclass:: table-bordered table-striped table-hover
+.. list-table::
+  :header-rows: 1
+  :widths: 5 5 90
+
+  * - Record name
+    - Record type
+    - Description
+  * - $(P)$(R)MctOpticsPVPrefix
+    - stringout
+    - Contains the prefix for the mctOptics IOC.
+
+
 Additional files that are specific to the TomoScanStream derived class used at APS beamline 2-BM:
 
 Pva, Roi and Cb Plugin PV Prefixes
@@ -988,6 +999,9 @@ Stream control
   * - $(P)$(R)PvaStreamPVPrefix
     - stringout
     - Contains the prefix for the PVA server broadcasting dark and flat images in streaming mode, e.g. 2bmb:TomoScan:Stream:
+  * - $(P)$(R)StreamSync
+    - bo 
+    - when its value is set to Sync a callback synchronizes new angular step and exposure with rotation speed and brodcasts new array of angles for streaming reconstruction
 
 
 tomoScan_2BM_settings.req
@@ -1074,36 +1088,6 @@ Sample top X and Y translation motors
   * - $(P)$(R)SampleTopZPVName
     - stringout
     - Contains the name of the sample Z translation located on top of the rotary stage PV, e.g. 13BMD:m85
-
-Optics information
-^^^^^^^^^^^^^^^^^^
-
-.. cssclass:: table-bordered table-striped table-hover
-.. list-table::
-  :header-rows: 1
-  :widths: 5 5 90
-
-  * - Record name
-    - Record type
-    - Description
-  * - $(P)$(R)ScintillatorType
-    - stringout
-    - Contains the type of scintillator being used.
-  * - $(P)$(R)ScintillatorThickness
-    - ao
-    - Contains the thickness of the scintillator in microns.
-  * - $(P)$(R)ImagePixelSize
-    - ao
-    - Contains the pixel size on the sample in microns (i.e. includes objective magnification)
-  * - $(P)$(R)DetectorPixelSize
-    - ao
-    - Contains the pixel size of the detector.
-  * - $(P)$(R)CameraObjective
-    - stringout
-    - Description of the camera objective
-  * - $(P)$(R)CameraTubeLength
-    - stringout
-    - Description of the camera objective
 
 Sample information
 ^^^^^^^^^^^^^^^^^^
@@ -1247,10 +1231,13 @@ Interlaced scan
     - Flag controlling whether the scan is regualr or interlaced. Choices are 'No' and 'Yes'. When "No" the angles are equally spaced using the Start angle, # of angles and Angle step parameters. When 'Yes' the list of angles is read from a file.
   * - $(P)$(R)InterlacedFileName
     - waveform
-    - The file name containing the list of interalced angles.
-  * - $(P)$(R)InterlacedRetakeFlat
-    - busy,
-    - Interlaced retake flat. Choices are 'Done' and 'Capture'. When 'Capture' a new set of flat field images will be collected.
+    - The file name containing the list of interalced angles in npy format.
+  * - $(P)$(R)InterlacedFileName
+    - waveform
+    - Interlaced file name containing the numpy list of angles to collect in interlaced mode.
+  * - $(P)$(R)StabilizationTime
+    - ao
+    - Settling time after the rotary stage motion is completed (used only in step scans).
 
 tomoScan_32ID_settings.req
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
