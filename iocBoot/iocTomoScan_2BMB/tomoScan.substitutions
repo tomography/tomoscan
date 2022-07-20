@@ -13,6 +13,12 @@ pattern
 {2bmb:, TomoScan:,    0,      PSO_PORT,      X,             3,            720000.}
 }
 
+file "$(TOP)/db/tomoScan_Helical.template"
+{
+pattern
+{  P,       R}
+{2bmb:, TomoScan:}
+}
 
 file "$(TOP)/db/tomoScan_2BM.template"
 {
