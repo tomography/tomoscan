@@ -25,12 +25,12 @@ import base64
 import string
 
 from tomoscan import data_management as dm
-from tomoscan import TomoScanPSO
+from tomoscan.tomoscan_helical import TomoScanHelical
 from tomoscan import log
 
 EPSILON = .001
 
-class TomoScan2BM(TomoScanPSO):
+class TomoScan2BM(TomoScanHelical):
     """Derived class used for tomography scanning with EPICS at APS beamline 2-BM
 
     Parameters
@@ -161,7 +161,7 @@ class TomoScan2BM(TomoScanPSO):
             This is used to set the ``NumImages`` PV of the camera.
         """
         camera_model = self.epics_pvs['CamModel'].get(as_string=True)
-        if(camera_model=='Oryx ORX-10G-51S5M'):            
+        if(camera_model=='Oryx ORX-10G-51S5M' or camera_model=='Oryx ORX-10G-310S9M'):            
             self.set_trigger_mode_oryx(trigger_mode, num_images)
         elif(camera_model=='Grasshopper3 GS3-U3-23S6M'):        
             self.set_trigger_mode_grasshopper(trigger_mode, num_images)
@@ -198,7 +198,7 @@ class TomoScan2BM(TomoScanPSO):
             self.epics_pvs['CamNumImages'].put(self.num_angles, wait=True)
             self.epics_pvs['CamTriggerMode'].put('On', wait=True)
             self.wait_pv(self.epics_pvs['CamTriggerMode'], 1)
-
+ 
     def set_trigger_mode_grasshopper(self, trigger_mode, num_images):
         self.epics_pvs['CamAcquire'].put('Done') ###
         self.wait_pv(self.epics_pvs['CamAcquire'], 0) ###
@@ -313,8 +313,6 @@ class TomoScan2BM(TomoScanPSO):
             self.epics_pvs['RotationSet'].put('Set', wait=True)
             self.epics_pvs['Rotation'].put(current_angle, wait=True)
             self.epics_pvs['RotationSet'].put('Use', wait=True)
-        # Call the base class method
-        super().end_scan()
         # Close shutter
         self.close_shutter()
 
@@ -333,7 +331,7 @@ class TomoScan2BM(TomoScanPSO):
         # log.info('wait 10 sec while the web camera has focused')
         # time.sleep(10)                       
         # ret, frame = cv2.VideoCapture('http://remotecam02bma:Cam-02-bm-a@164.54.113.137/cgi-bin/mjpeg?stream=1').read()# we should hide the password
-        # ret, frame = cv2.VideoCapture('http://' + self.access_dic['webcam_username'] +':' + self.access_dic['webcam_password'] + '@' + self.access_dic['webcam_ip_address'] + '/cgi-bin/mjpeg?stream=1').read()
+        #ret, frame = cv2.VideoCapture('http://' + self.access_dic['webcam_username'] +':' + self.access_dic['webcam_password'] + '@' + self.access_dic['webcam_ip_address'] + '/cgi-bin/mjpeg?stream=1').read()
         # NetBooter.power_off(1)                       
         
 
@@ -353,7 +351,10 @@ class TomoScan2BM(TomoScanPSO):
             dm.scp(full_file_name, remote_analysis_dir)
         else:
             log.warning('Automatic data trasfer to data analysis computer is disabled.')
-    
+        
+        # Call the base class method
+        super().end_scan()
+        
     def set_scan_exposure_time(self, exposure_time=None):
 
         camera_model = self.epics_pvs['CamModel'].get(as_string=True)        
