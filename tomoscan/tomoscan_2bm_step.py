@@ -13,7 +13,7 @@ import traceback
 import numpy as np
 
 from tomoscan import data_management as dm
-from tomoscan import TomoScanSTEP
+from tomoscan.tomoscan_step import TomoScanSTEP
 from tomoscan import log
 
 EPSILON = .001

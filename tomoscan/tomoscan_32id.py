@@ -16,9 +16,8 @@ import pvaccess as pva
 import threading
 
 from tomoscan import data_management as dm
-from tomoscan import TomoScanPSO
+from tomoscan.tomoscan_pso import TomoScanPSO
 from tomoscan import log
-from tomoscan import ScanAbortError
 
 EPSILON = .001
 class SampleXError(Exception):

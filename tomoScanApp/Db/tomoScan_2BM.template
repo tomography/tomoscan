@@ -4,31 +4,6 @@
 # both in the configuration files written by tomoscan, and in the
 # files written by areaDetector file plugin.
 
-####################
-# Energy information
-####################
-
-record(ao, "$(P)$(R)Energy") {
-    field(SCAN, "Passive")
-    field(DTYP, "Soft Channel")
-    field(PREC, 2)
-}
-
-record(mbbo, "$(P)$(R)EnergyMode")
-{
-   field(ZRVL, "0")
-   field(ZRST, "Mono")
-   field(ONVL, "1")
-   field(ONST, "Pink")
-   field(TWVL, "2")
-   field(TWST, "White")
-}
-
-record(stringout, "$(P)$(R)Filters")
-{
-   field(VAL,  "Unknown")
-}
-
 #########################
 # Beam status information
 #########################
