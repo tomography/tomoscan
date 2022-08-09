@@ -10,7 +10,7 @@ file "$(TOP)/db/tomoScan_PSO.template"
 {
 pattern
 {  P,       R,     PSO_MODEL, PSO_PORT, PSO_AXIS_NAME, PSO_ENC_INPUT, PSO_ENC_PER_ROTATION}
-{32id:, TomoScan:,    0,      PSO_PORT,      X,             3,            94400.}
+{32id:, TomoScan:,    0,      PSO_PORT,      X,             3,            755200.}
 }
 
 
