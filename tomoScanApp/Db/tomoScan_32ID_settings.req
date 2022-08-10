@@ -78,7 +78,17 @@ $(P)$(R)StabilizationTime
 $(P)$(R)Energy
 $(P)$(R)EnergySet
 
-###################
+#########
 # MicroCT
-###################
+#########
 $(P)$(R)CollectMicroCTdata
+
+###########
+# TXMOptics
+###########
+$(P)$(R)TxmOpticsPVPrefix
+
+#################
+# Image PV Prefix
+#################
+$(P)$(R)ImagePVPrefix

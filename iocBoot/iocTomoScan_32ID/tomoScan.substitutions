@@ -17,6 +17,6 @@ pattern
 file "$(TOP)/db/tomoScan_32ID.template"
 {
 pattern
-{  P,      R,          BEAM_READY,    READY_VALUE, CLOSE_FAST_SHUTTER,        CLOSE_FAST_VALUE,   OPEN_FAST_SHUTTER,        OPEN_FAST_VALUE,      SHUTTER_STATUS,         SAMPLE_TOP_X,     SAMPLE_TOP_Z, KOHZUMODE, USENERGY, USBUSY, BRAGG    }
-{32id:, TomoScan:, ACIS:ShutterPermit,    1,     32idcTXM:uniblitz:control,          0,          32idcTXM:uniblitz:control,         1,        PA:32ID:STA_B_SBS_OPEN_PL, 32idcTXM:mcs:c3:m7, 32idcTXM:mcs:c3:m7, 32ida:KohzuModeBO, 32id:ID32us_energy, ID32us:Busy, 32ida:BraggEAO  }
+{  P,      R,          BEAM_READY,    READY_VALUE, CLOSE_FAST_SHUTTER,        CLOSE_FAST_VALUE,   OPEN_FAST_SHUTTER,        OPEN_FAST_VALUE,      SHUTTER_STATUS,         SAMPLE_TOP_X,       SAMPLE_TOP_Z,        KOHZUMODE,           USENERGY,        USBUSY,         BRAGG,       TXM_OPTICS,      IMAGE    }
+{32id:, TomoScan:, ACIS:ShutterPermit,    1,     32idcTXM:uniblitz:control,          0,          32idcTXM:uniblitz:control,         1,        PA:32ID:STA_B_SBS_OPEN_PL, 32idcTXM:mcs:c3:m7, 32idcTXM:mcs:c3:m7, 32ida:KohzuModeBO, 32id:ID32us_energy, ID32us:Busy, 32ida:BraggEAO, 32id:TXMOptics:, 32idcSP1:Pva1:  }
 }

@@ -240,12 +240,30 @@ record(ao, "$(P)$(R)Energy")
 }
 
 
-###################
+#########
 # MicroCT
-###################
+#########
 
 record(bo, "$(P)$(R)CollectMicroCTdata")
 {
    field(ZNAM, "No")
    field(ONAM, "Yes")
+}
+
+###########
+# TXMOptics
+###########
+
+record(stringout, "$(P)$(R)TxmOpticsPVPrefix")
+{
+   field(VAL,  "$(TXM_OPTICS)")
+}
+
+#################
+# Image PV Prefix
+#################
+
+record(stringout, "$(P)$(R)ImagePVPrefix")
+{
+   field(VAL,  "$(IMAGE)")
 }

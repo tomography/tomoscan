@@ -58,20 +58,19 @@ class TomoScan32ID(TomoScanPSO):
         self.epics_pvs['OverwriteWarning'].put('Yes')
 
         # TXMOptics
-        txmoptics_prefix = '32id:TXMOptics:'
-        self.epics_pvs['TXMEnergySet'] = PV(txmoptics_prefix+'EnergySet')
-        self.epics_pvs['TXMEnergy'] = PV(txmoptics_prefix+'Energy')
-        self.epics_pvs['TXMMoveAllOut'] = PV(txmoptics_prefix+'MoveAllOut')
-        self.epics_pvs['TXMMoveAllIn'] = PV(txmoptics_prefix+'MoveAllIn')        
+        prefix = self.pv_prefixes['TxmOptics']
+        self.epics_pvs['TXMEnergySet'] = PV(prefix+'EnergySet')
+        self.epics_pvs['TXMEnergy'] = PV(prefix+'Energy')
+        self.epics_pvs['TXMMoveAllOut'] = PV(prefix+'MoveAllOut')
+        self.epics_pvs['TXMMoveAllIn'] = PV(prefix+'MoveAllIn')        
         # pva type channel that contains projection and metadata
-        image_pv_name = '32idcSP1:Pva1:'
-        self.epics_pvs['PvaPImage']          = pva.Channel(image_pv_name + 'Image')
-        self.epics_pvs['PvaPDataType_RBV']   = pva.Channel(image_pv_name + 'DataType_RBV')
+        prefix = self.pv_prefixes['Image']
+        self.epics_pvs['PvaPImage']          = pva.Channel(prefix + 'Image')
+        self.epics_pvs['PvaPDataType_RBV']   = pva.Channel(prefix + 'DataType_RBV')
         
         # energy scan
         self.epics_pvs['EnergySet'].put(0)
         self.epics_pvs['EnergySet'].add_callback(self.pv_callback_32id)
-        
 
         self.epics_pvs['SampleXSet'] = PV(self.control_pvs['SampleX'].pvname + '.SET')
         self.epics_pvs['SampleYSet'] = PV(self.control_pvs['SampleY'].pvname + '.SET')
