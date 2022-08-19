@@ -102,8 +102,20 @@ class TomoScan2BM(TomoScanHelical):
         """
 
         if not self.scan_is_running:
+            ########
+            prefix = self.pv_prefixes['MctOptics']
+            self.epics_pvs['CameraSelect'] = PV(prefix + 'CameraSelect')
             camera_select = self.epics_pvs['CameraSelect'].value
             log.info('changing camera prefix to: camera%s', camera_select)
+
+            if camera_select == None:
+                log.error('mctOptics is down. Please start mctOptics first')
+            else:
+                self.epics_pvs['Camera0'] = PV(prefix + 'Camera0PVPrefix')
+                self.epics_pvs['Camera1'] = PV(prefix + 'Camera1PVPrefix')
+                self.epics_pvs['FilePlugin0'] = PV(prefix + 'FilePlugin0PVPrefix')
+                self.epics_pvs['FilePlugin1'] = PV(prefix + 'FilePlugin1PVPrefix')
+
             if camera_select == 0:
                  camera_prefix = self.epics_pvs['Camera0'].get(as_string=True)
                  hdf_prefix    = self.epics_pvs['FilePlugin0'].get(as_string=True)
@@ -111,7 +123,15 @@ class TomoScan2BM(TomoScanHelical):
                  camera_prefix = self.epics_pvs['Camera1'].get(as_string=True)
                  hdf_prefix    = self.epics_pvs['FilePlugin1'].get(as_string=True)
 
-            self.pv_prefixes['Camera']     = camera_prefix
+
+            self.epics_pvs['CameraPVPrefix'].put(camera_prefix)
+            print(camera_prefix)
+            self.epics_pvs['FilePluginPVPrefix'].put(hdf_prefix)
+            print(hdf_prefix)
+
+            # self.epics_pvs['CameraPVPrefix'] = PV(prefix + 'Camera0PVPrefix')
+            # self.epics_pvs['Camera1'] = PV(prefix + 'Camera1PVPrefix')
+
             self.pv_prefixes['FilePlugin'] = hdf_prefix
             # need to update TomoScan PV Prefix to the new camera / hdf plugin
             self.epics_pvs['CameraPVPrefix'].put(camera_prefix, wait=True) 
@@ -182,6 +202,11 @@ class TomoScan2BM(TomoScanHelical):
             self.control_pvs['FPAutoSave'].put('No')
             self.control_pvs['FPFileWriteMode'].put('Stream')
             self.control_pvs['FPEnableCallbacks'].put('Enable')
+
+            self.epics_pvs = {**self.config_pvs, **self.control_pvs}
+            # Wait 1 second for all PVs to connect
+            time.sleep(1)
+            self.check_pvs_connected()
 
     def open_frontend_shutter(self):
         """Opens the shutters to collect flat fields or projections.
