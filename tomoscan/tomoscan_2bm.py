@@ -23,6 +23,9 @@ import telnetlib
 import http.client as httplib
 import base64
 import string
+import threading
+
+from epics import PV
 
 from tomoscan import data_management as dm
 from tomoscan.tomoscan_helical import TomoScanHelical
@@ -62,12 +65,148 @@ class TomoScan2BM(TomoScanHelical):
 
         log.setup_custom_logger("./tomoscan.log")
 
-
         # try to read username/password for pdu and webcam
-
         access_fname = os.path.join(str(pathlib.Path.home()), 'access.json')
         with open(access_fname, 'r') as fp:
             self.access_dic = json.load(fp)
+        
+        # Configure callbacks for mctoptics
+        prefix = self.pv_prefixes['MctOptics']
+        self.epics_pvs['CameraSelect'] = PV(prefix + 'CameraSelect')
+        camera_select = self.epics_pvs['CameraSelect'].value
+        if camera_select == None:
+            log.error('mctOptics is down. Please start mctOptics first')
+        else:
+            self.epics_pvs['Camera0'] = PV(prefix + 'Camera0PVPrefix')
+            self.epics_pvs['Camera1'] = PV(prefix + 'Camera1PVPrefix')
+            self.epics_pvs['CameraSelect'].add_callback(self.pv_callback_2bm)
+            self.epics_pvs['FilePlugin0'] = PV(prefix + 'FilePlugin0PVPrefix')
+            self.epics_pvs['FilePlugin1'] = PV(prefix + 'FilePlugin1PVPrefix')
+
+    def pv_callback_2bm(self, pvname=None, value=None, char_value=None, **kw):
+        """Callback function that is called by pyEpics when certain EPICS PVs are changed
+        
+        """
+        log.debug('pv_callback_2bm pvName=%s, value=%s, char_value=%s', pvname, value, char_value)
+        if (pvname.find('CameraSelect') != -1):
+            thread = threading.Thread(target=self.reinit_camera, args=())
+            thread.start()
+
+    def reinit_camera(self):
+        """Init camera PVs based on the mctOptics selection.
+
+        Parameters
+        ----------
+       camera : int, optional
+            The camera to use. Optique Peter system support 2 cameras
+        """
+
+        if not self.scan_is_running:
+            ########
+            prefix = self.pv_prefixes['MctOptics']
+            self.epics_pvs['CameraSelect'] = PV(prefix + 'CameraSelect')
+            camera_select = self.epics_pvs['CameraSelect'].value
+            log.info('changing camera prefix to: camera%s', camera_select)
+
+            if camera_select == None:
+                log.error('mctOptics is down. Please start mctOptics first')
+            else:
+                self.epics_pvs['Camera0'] = PV(prefix + 'Camera0PVPrefix')
+                self.epics_pvs['Camera1'] = PV(prefix + 'Camera1PVPrefix')
+                self.epics_pvs['FilePlugin0'] = PV(prefix + 'FilePlugin0PVPrefix')
+                self.epics_pvs['FilePlugin1'] = PV(prefix + 'FilePlugin1PVPrefix')
+
+            if camera_select == 0:
+                 camera_prefix = self.epics_pvs['Camera0'].get(as_string=True)
+                 hdf_prefix    = self.epics_pvs['FilePlugin0'].get(as_string=True)
+            else:
+                 camera_prefix = self.epics_pvs['Camera1'].get(as_string=True)
+                 hdf_prefix    = self.epics_pvs['FilePlugin1'].get(as_string=True)
+
+
+            self.epics_pvs['CameraPVPrefix'].put(camera_prefix)
+            print(camera_prefix)
+            self.epics_pvs['FilePluginPVPrefix'].put(hdf_prefix)
+            print(hdf_prefix)
+
+            # self.epics_pvs['CameraPVPrefix'] = PV(prefix + 'Camera0PVPrefix')
+            # self.epics_pvs['Camera1'] = PV(prefix + 'Camera1PVPrefix')
+
+            self.pv_prefixes['FilePlugin'] = hdf_prefix
+            # need to update TomoScan PV Prefix to the new camera / hdf plugin
+            self.epics_pvs['CameraPVPrefix'].put(camera_prefix, wait=True) 
+            self.epics_pvs['FilePluginPVPrefix'].put(hdf_prefix, wait=True) 
+
+            # Update PVPrefix PV
+            camera_prefix = camera_prefix + 'cam1:'
+            self.control_pvs['CamManufacturer']        = PV(camera_prefix + 'Manufacturer_RBV')
+            self.control_pvs['CamModel']               = PV(camera_prefix + 'Model_RBV')
+            self.control_pvs['CamAcquire']             = PV(camera_prefix + 'Acquire')
+            self.control_pvs['CamAcquireBusy']         = PV(camera_prefix + 'AcquireBusy')
+            self.control_pvs['CamImageMode']           = PV(camera_prefix + 'ImageMode')
+            self.control_pvs['CamTriggerMode']         = PV(camera_prefix + 'TriggerMode')
+            self.control_pvs['CamNumImages']           = PV(camera_prefix + 'NumImages')
+            self.control_pvs['CamNumImagesCounter']    = PV(camera_prefix + 'NumImagesCounter_RBV')
+            self.control_pvs['CamAcquireTime']         = PV(camera_prefix + 'AcquireTime')
+            self.control_pvs['CamAcquireTimeRBV']      = PV(camera_prefix + 'AcquireTime_RBV')
+            self.control_pvs['CamBinX']                = PV(camera_prefix + 'BinX')
+            self.control_pvs['CamBinY']                = PV(camera_prefix + 'BinY')
+            self.control_pvs['CamWaitForPlugins']      = PV(camera_prefix + 'WaitForPlugins')
+            self.control_pvs['PortNameRBV']            = PV(camera_prefix + 'PortName_RBV')
+            self.control_pvs['CamNDAttributesFile']    = PV(camera_prefix + 'NDAttributesFile')
+            self.control_pvs['CamNDAttributesMacros']  = PV(camera_prefix + 'NDAttributesMacros')
+
+            # If this is a Point Grey camera then assume we are running ADSpinnaker
+            # and create some PVs specific to that driver
+            manufacturer = self.control_pvs['CamManufacturer'].get(as_string=True)
+            model = self.control_pvs['CamModel'].get(as_string=True)
+            if (manufacturer.find('Point Grey') != -1) or (manufacturer.find('FLIR') != -1):
+                self.control_pvs['CamExposureMode']     = PV(camera_prefix + 'ExposureMode')
+                self.control_pvs['CamTriggerOverlap']   = PV(camera_prefix + 'TriggerOverlap')
+                self.control_pvs['CamPixelFormat']      = PV(camera_prefix + 'PixelFormat')
+                self.control_pvs['CamArrayCallbacks']   = PV(camera_prefix + 'ArrayCallbacks')
+                self.control_pvs['CamFrameRateEnable']  = PV(camera_prefix + 'FrameRateEnable')
+                self.control_pvs['CamTriggerSource']    = PV(camera_prefix + 'TriggerSource')
+                self.control_pvs['CamTriggerSoftware']  = PV(camera_prefix + 'TriggerSoftware')
+                if model.find('Grasshopper3 GS3-U3-23S6M') != -1:
+                    self.control_pvs['CamVideoMode']    = PV(camera_prefix + 'GC_VideoMode_RBV')
+                if model.find('Blackfly S BFS-PGE-161S7M') != -1:
+                    self.control_pvs['GC_ExposureAuto'] = PV(camera_prefix + 'GC_ExposureAuto')       
+
+            prefix = hdf_prefix
+            self.control_pvs['FPNDArrayPort']     = PV(prefix + 'NDArrayPort')        
+            self.control_pvs['FPFileWriteMode']   = PV(prefix + 'FileWriteMode')
+            self.control_pvs['FPNumCapture']      = PV(prefix + 'NumCapture')
+            self.control_pvs['FPNumCaptured']     = PV(prefix + 'NumCaptured_RBV')
+            self.control_pvs['FPCapture']         = PV(prefix + 'Capture')
+            self.control_pvs['FPCaptureRBV']      = PV(prefix + 'Capture_RBV')
+            self.control_pvs['FPFilePath']        = PV(prefix + 'FilePath')
+            self.control_pvs['FPFilePathRBV']     = PV(prefix + 'FilePath_RBV')
+            self.control_pvs['FPFilePathExists']  = PV(prefix + 'FilePathExists_RBV')
+            self.control_pvs['FPFileName']        = PV(prefix + 'FileName')
+            self.control_pvs['FPFileNameRBV']     = PV(prefix + 'FileName_RBV')
+            self.control_pvs['FPFileNumber']      = PV(prefix + 'FileNumber')
+            self.control_pvs['FPAutoIncrement']   = PV(prefix + 'AutoIncrement')
+            self.control_pvs['FPFileTemplate']    = PV(prefix + 'FileTemplate')
+            self.control_pvs['FPFullFileName']    = PV(prefix + 'FullFileName_RBV')
+            self.control_pvs['FPAutoSave']        = PV(prefix + 'AutoSave')
+            self.control_pvs['FPEnableCallbacks'] = PV(prefix + 'EnableCallbacks')
+            self.control_pvs['FPXMLFileName']     = PV(prefix + 'XMLFileName')
+            self.control_pvs['FPWriteStatus']     = PV(prefix + 'WriteStatus')
+
+            # Set some initial PV values
+            file_path = self.config_pvs['FilePath'].get(as_string=True)
+            self.control_pvs['FPFilePath'].put(file_path)
+            file_name = self.config_pvs['FileName'].get(as_string=True)
+            self.control_pvs['FPFileName'].put(file_name)
+            self.control_pvs['FPAutoSave'].put('No')
+            self.control_pvs['FPFileWriteMode'].put('Stream')
+            self.control_pvs['FPEnableCallbacks'].put('Enable')
+
+            self.epics_pvs = {**self.config_pvs, **self.control_pvs}
+            # Wait 1 second for all PVs to connect
+            time.sleep(1)
+            self.check_pvs_connected()
 
     def open_frontend_shutter(self):
         """Opens the shutters to collect flat fields or projections.

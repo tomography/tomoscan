@@ -224,27 +224,7 @@ record(ao, "$(P)$(R)StabilizationTime")
 ###################
 # Energy change
 ###################
-record(stringout, "$(P)$(R)DCMmvtPVName")
-{
-   field(VAL,  "$(KOHZUMODE)")
-}
-
-record(stringout, "$(P)$(R)GAPputEnergyPVName")
-{
-   field(VAL,  "$(USENERGY)")
-}
-
-record(stringout, "$(P)$(R)EnergyWaitPVName")
-{
-   field(VAL,  "$(USBUSY)")
-}
-
-record(stringout, "$(P)$(R)DCMputEnergyPVName")
-{
-   field(VAL,  "$(BRAGG)")
-}
-
-record(busy,"$(P)$(R)StartEnergyChange")
+record(busy,"$(P)$(R)EnergySet")
 {
    field(ZNAM,"Done")
    field(ZSV, "NO_ALARM")
@@ -257,4 +237,33 @@ record(ao, "$(P)$(R)Energy")
 {
    field(PREC,  "3")
    field(VAL,  "8")
+}
+
+
+#########
+# MicroCT
+#########
+
+record(bo, "$(P)$(R)CollectMicroCTdata")
+{
+   field(ZNAM, "No")
+   field(ONAM, "Yes")
+}
+
+###########
+# TXMOptics
+###########
+
+record(stringout, "$(P)$(R)TxmOpticsPVPrefix")
+{
+   field(VAL,  "$(TXM_OPTICS)")
+}
+
+#################
+# Image PV Prefix
+#################
+
+record(stringout, "$(P)$(R)ImagePVPrefix")
+{
+   field(VAL,  "$(IMAGE)")
 }
