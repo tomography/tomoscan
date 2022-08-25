@@ -14,7 +14,7 @@ import numpy as np
 from epics import PV
 
 from tomoscan import data_management as dm
-from tomoscan import TomoScanHelical
+from tomoscan.tomoscan_helical import TomoScanHelical
 from tomoscan import log
 
 EPSILON = .001

@@ -14,7 +14,7 @@ import numpy as np
 from epics import PV
 
 from tomoscan import data_management as dm
-from tomoscan import TomoScanPSO
+from tomoscan.tomoscan_pso import TomoScanPSO
 from tomoscan import log
 
 EPSILON = .001
@@ -41,6 +41,9 @@ class TomoScanHelical(TomoScanPSO):
         self.epics_pvs['SampleYStop']           = PV(sample_y_pv_name + '.STOP')
         self.epics_pvs['SampleYHLM']            = PV(sample_y_pv_name + '.HLM')
         self.epics_pvs['SampleYLLM']            = PV(sample_y_pv_name + '.LLM')
+
+        prefix = self.pv_prefixes['MctOptics']
+        self.epics_pvs['ImagePixelSize']        = PV(prefix + 'ImagePixelSize')
 
 
     def begin_scan(self):

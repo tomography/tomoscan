@@ -9,7 +9,7 @@
 import time
 import math
 import os
-from tomoscan import TomoScan
+from tomoscan.tomoscan import TomoScan
 from tomoscan import log
 
 class TomoScan13BM_MCS(TomoScan):

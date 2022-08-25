@@ -229,7 +229,7 @@ def scan(args, ts):
                 pv_y = "SampleY"
             else:
                 pv_y = "SampleInY"
-            ts[pv_y].put(i, wait=True)
+            ts[pv_y].put(i, wait=True, timeout=600)
             log.info('horizontal positions (mm): %s', np.linspace(start_x, end_x, steps_x, endpoint=False))
             for j in np.linspace(start_x, end_x, steps_x, endpoint=False):
                 log.warning('%s stage start position: %3.3f mm', 'SampleInX', j)
@@ -409,7 +409,7 @@ def file_scan(args, ts):
             pv_y = "SampleY"
         else:
             pv_y = "SampleInY"
-        ts[pv_y].put(value['SampleY'], wait=True)
+        ts[pv_y].put(value['SampleY'], wait=True, timeout=600)
         if flat_field_axis in ('Y') or flat_field_mode == 'None':
             pv_x = "SampleX"
         else:

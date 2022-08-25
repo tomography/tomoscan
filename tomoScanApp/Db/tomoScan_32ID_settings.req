@@ -75,9 +75,20 @@ $(P)$(R)StabilizationTime
 ###################
 # Energy change
 ###################
-$(P)$(R)DCMmvtPVName
-$(P)$(R)GAPputEnergyPVName
-$(P)$(R)EnergyWaitPVName
-$(P)$(R)DCMputEnergyPVName
-$(P)$(R)StartEnergyChange
 $(P)$(R)Energy
+$(P)$(R)EnergySet
+
+#########
+# MicroCT
+#########
+$(P)$(R)CollectMicroCTdata
+
+###########
+# TXMOptics
+###########
+$(P)$(R)TxmOpticsPVPrefix
+
+#################
+# Image PV Prefix
+#################
+$(P)$(R)ImagePVPrefix
