@@ -106,7 +106,7 @@ class TomoScan2BM(TomoScanHelical):
             prefix = self.pv_prefixes['MctOptics']
             self.epics_pvs['CameraSelect'] = PV(prefix + 'CameraSelect')
             camera_select = self.epics_pvs['CameraSelect'].value
-            log.info('changing camera prefix to: camera%s', camera_select)
+            log.info('changing camera prefix to camera %s', camera_select)
 
             if camera_select == None:
                 log.error('mctOptics is down. Please start mctOptics first')
@@ -125,9 +125,9 @@ class TomoScan2BM(TomoScanHelical):
 
 
             self.epics_pvs['CameraPVPrefix'].put(camera_prefix)
-            print(camera_prefix)
+            log.info(camera_prefix)
             self.epics_pvs['FilePluginPVPrefix'].put(hdf_prefix)
-            print(hdf_prefix)
+            log.info(hdf_prefix)
 
             # self.epics_pvs['CameraPVPrefix'] = PV(prefix + 'Camera0PVPrefix')
             # self.epics_pvs['Camera1'] = PV(prefix + 'Camera1PVPrefix')
