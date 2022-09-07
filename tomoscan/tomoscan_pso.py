@@ -10,7 +10,7 @@ import time
 import os
 import math
 import numpy as np
-from tomoscan import TomoScan
+from tomoscan.tomoscan import TomoScan
 from tomoscan import log
 
 class TomoScanPSO(TomoScan):

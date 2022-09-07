@@ -1,6 +1,6 @@
 
 file {
-	name="/home/beams8/USER2BMB/epics/synApps/support/tomoscan/tomoScanApp/op/adl/tomoScan_2BM.adl"
+	name="/home/beams8/USER2BMB/epics/synApps/support/mctoptics/mctOpticsApp/op/adl/../../../../tomoscan/tomoScanApp/op/adl/tomoScan_2BM.adl"
 	version=030111
 }
 display {
@@ -142,22 +142,6 @@ text {
 	clr=14
 	bclr=51
 	label="Experiment"
-}
-"related display" {
-	object {
-		x=10
-		y=164
-		width=280
-		height=30
-	}
-	display[0] {
-		label="Energy Information"
-		name="$(BEAMLINE)_energy.adl"
-		args="P=$(P),R=$(R)"
-	}
-	clr=14
-	bclr=51
-	label="Energy & Filters"
 }
 "related display" {
 	object {

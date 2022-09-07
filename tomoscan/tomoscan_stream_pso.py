@@ -14,7 +14,7 @@ import numpy as np
 import pvaccess
 import threading
 from tomoscan import util
-from tomoscan import TomoScan
+from tomoscan.tomoscan import TomoScan
 from tomoscan import log
 from tomoscan import data_management as dm
 
@@ -821,7 +821,7 @@ class TomoScanStreamPSO(TomoScan):
             self.wait_pv(self.epics_pvs['FPCaptureRBV'], 0)      
 
             self.move_sample_in()
-            self.set_exposure_time()
+            self.set_scan_exposure_time()
             
             self.epics_pvs['CBEnableCallbacks'].put('Enable')  
                     

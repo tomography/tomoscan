@@ -740,27 +740,6 @@ This file is used for records needed by the tomoscan_2bm derived class, and also
 for metadata PVs that should be saved in the tomoscan configuration file and files 
 written by the areaDetector file plugins.
 
-Energy information
-^^^^^^^^^^^^^^^^^^
-
-.. cssclass:: table-bordered table-striped table-hover
-.. list-table::
-  :header-rows: 1
-  :widths: 5 5 90
-
-  * - Record name
-    - Record type
-    - Description
-  * - $(P)$(R)Energy
-    - mbbo
-    - Contains the energy of the beamline.
-  * - $(P)$(R)EnergyMode
-    - mbbo
-    - Contains the energy mode of the beamline, e.g. 'Mono', 'Pink', 'White'.
-  * - $(P)$(R)Filters
-    - stringout
-    - Contains the material and thickness of the filters manually set in the beam path, e.g. Al 1mm; Glass 5mm.
-
 Beam status information
 ^^^^^^^^^^^^^^^^^^^^^^^
 
