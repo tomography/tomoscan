@@ -124,7 +124,7 @@ def start_remote_fdt(remote_server):
     cmd = 'java -jar /APSshare/bin/fdt.jar -S'
     try:
         log.info(f'      *** starting fdt server on {remote_server}')
-        log.info('ssh -f {remote_server} {cmd}')
+        log.info(f'ssh -f {remote_server} {cmd}')
         subprocess.check_call(['ssh', '-f', remote_server, cmd])
         log.info(f'      *** starting fdt server on {remote_server}: Done!')
         time.sleep(5)
