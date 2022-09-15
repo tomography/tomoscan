@@ -121,27 +121,34 @@ def create_remote_directory(remote_server, remote_dir):
 
 
 def start_remote_fdt(remote_server):
-    cmd = 'java -jar /APSshare/bin/fdt.jar -S'
+    cmd_start_server = 'java -jar /APSshare/bin/fdt.jar -S'
+    cmd_kill_server = 'lsof -t -i:54321 | xargs -r kill -9'
     try:
-        log.info(f'      *** starting fdt server on {remote_server}')
-        log.info(f'ssh -f {remote_server} {cmd}')
-        subprocess.check_call(['ssh', '-f', remote_server, cmd])
+        log.info('kill everything working with port 54321 on the server')
+        log.info(f'ssh -f {remote_server} {cmd_kill_server}')
+        subprocess.check_call(['ssh', '-f', remote_server, cmd_kill_server])        
+        time.sleep(1) 
+        log.info(f'      *** starting fdt server on {remote_server}')        
+        log.info(f'ssh -f {remote_server} {cmd_start_server}')        
+        subprocess.check_call(['ssh', '-f', remote_server, cmd_start_server])
         log.info(f'      *** starting fdt server on {remote_server}: Done!')
-        time.sleep(5)
-        return 0
-
+        time.sleep(5)        
     except subprocess.CalledProcessError as e:
         log.error('  *** Error while starting remote fdt server. Error code: %d' % (e.returncode))
         return -1
     
 
 def start_fdt_transfer(remote_server, remote_dir, local_fname):
+
+    remote_server = remote_server.split('@')[-1]
+    cmd = f'java -jar /APSshare/bin/fdt.jar -c {remote_server} -d {remote_dir} {local_fname} &'
     try:
         log.info(f'      *** starting fdt transfer to {remote_server}')
-        log.info(f'java -jar /APSshare/bin/fdt.jar -c {remote_server} -d {remote_dir} {local_fname}')
-        os.system(f'java -jar /APSshare/bin/fdt.jar -c {remote_server} -d {remote_dir} {local_fname}')
+        log.info(cmd)
+        os.system(cmd)
         log.info(f'      *** starting fdt transfer to {remote_server}: Done!')
         return 0
-
     except:
         log.error(f'  *** Error during fdt transfer to {remote_server}')
+    
+
