@@ -68,8 +68,8 @@ class TomoScanStream2BM(TomoScanStreamPSO):
         # Enable auto-increment on file writer
         self.epics_pvs['FPAutoIncrement'].put('Yes')
 
-        # Set standard file template on file writer
-        self.epics_pvs['FPFileTemplate'].put("%s%s_%3.3d.h5", wait=True)
+        # # Set standard file template on file writer
+        # self.epics_pvs['FPFileTemplate'].put("%s%s_%3.3d.h5", wait=True)
 
         # Disable overw writing warning
         self.epics_pvs['OverwriteWarning'].put('Yes')
