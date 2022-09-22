@@ -14,6 +14,7 @@ import numpy as np
 from epics import PV
 import pvaccess as pva
 import threading
+from pathlib import Path
 
 from tomoscan import data_management as dm
 from tomoscan.tomoscan_pso import TomoScanPSO
@@ -341,7 +342,8 @@ class TomoScan32ID(TomoScanPSO):
             log.info('Automatic data trasfer to data analysis computer is enabled.')
             full_file_name = self.epics_pvs['FPFullFileName'].get(as_string=True)
             remote_analysis_dir = self.epics_pvs['RemoteAnalysisDir'].get(as_string=True)
-            dm.scp(full_file_name, remote_analysis_dir)
+            # dm.scp(full_file_name, remote_analysis_dir)
+            dm.fdt_scp(full_file_name, remote_analysis_dir, Path(self.epics_pvs['DetectorTopDir'].get()))
         else:
             log.warning('Automatic data trasfer to data analysis computer is disabled.')
 
