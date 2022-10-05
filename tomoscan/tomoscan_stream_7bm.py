@@ -134,7 +134,7 @@ class TomoScanStream7BM(TomoScanStreamPSO):
             value = self.epics_pvs['CloseFastShutterValue'].get(as_string=True)
             log.info('close fast shutter: %s, value: %s', pv, value)
             self.epics_pvs['CloseFastShutter'].put(value, wait=False)
-        # Call the base class method
+        # Close the beamline shutter
         if not self.epics_pvs['CloseShutter'] is None:
             pv = self.epics_pvs['CloseShutter']
             value = self.epics_pvs['CloseShutterValue'].get(as_string=True)
