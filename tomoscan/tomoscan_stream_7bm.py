@@ -68,6 +68,9 @@ class TomoScanStream7BM(TomoScanStreamPSO):
                                        + self.epics_pvs['ProposalNumber'].get(as_string=True)) 
         self.epics_pvs['FilePath'].put(str(file_path), wait=True)
         
+        macro = 'DET=' + self.pv_prefixes['Camera'] + ',' + 'TC=' + self.epics_pvs['Testing'].__dict__['pvname'].replace('Testing', '', 1)
+        self.control_pvs['CamNDAttributesMacros'].put(macro)
+
         # Enable auto-increment on file writer
         self.epics_pvs['FPAutoIncrement'].put('Yes')
 
