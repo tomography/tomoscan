@@ -159,6 +159,7 @@ class TomoScanStream7BM(TomoScanStreamPSO):
             This is used to set the ``NumImages`` PV of the camera.
         """
         if trigger_mode == 'FreeRun':
+            self.epics_pvs['CamAcquire'].put('Done', wait=True)
             self.epics_pvs['CamImageMode'].put('Continuous', wait=True)
             self.epics_pvs['CamTriggerMode'].put('Off', wait=True)
             self.epics_pvs['CamAcquire'].put('Acquire')
