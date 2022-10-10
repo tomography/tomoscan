@@ -74,3 +74,8 @@ $(P)$(R)ExternalTriggerSource
 # Shutter status
 ################
 $(P)$(R)ShutterStatusPVName
+
+################################
+# Location for data in HDF5 file
+################################
+#controlPV $(P)$(R)HDF5GainsLocation

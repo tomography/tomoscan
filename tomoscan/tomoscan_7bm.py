@@ -174,6 +174,33 @@ class TomoScan7BM(TomoScanHelical):
             self.wait_pv(self.epics_pvs['CamTriggerMode'], 1)
 
 
+    def collect_flat_fields(self):
+        """Collects flat field data
+
+        This overrides the super class's method to allow for camera gain
+        images to be acquired.
+        
+        - Performs the normal flat corrections
+
+        - Set the FrameType to the appropriate value
+
+        - For 11 exposure times from 0 to the flat exposure time:  
+    
+            - Change exposure time to the appropriate value
+
+            - Take a single frame
+        """
+        super().collect_flat_fields()
+        self.epics_pvs['ScanStatus'].put('Collecting camera gains')
+        log.info('collecting camera gains')
+        self.epics_pvs['HDF5Location'].put(self.epics_pvs['HDF5GainsLocation'].value)
+        self.epics_pvs['FrameType'].put('CameraGains')
+        gain_exp_times = np.linspace(0, self.epics_pvs['FlatExposureTime'].value, 11)
+        for gain_time in gain_exp_times:
+            self.set_scan_exposure_time(gain_time, wait=True)
+            collect_static_frames(1) 
+
+
     def end_scan(self):
         """Performs the operations needed at the very end of a scan.
 

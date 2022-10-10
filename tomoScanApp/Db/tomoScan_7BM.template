@@ -240,3 +240,12 @@ record(stringout, "$(P)$(R)ExternalTriggerSource")
 {
     field(VAL, "$(LINE)")
 }
+
+################################
+# Location for data in HDF5 file
+################################
+
+record(stringout, "$(P)$(R)HDF5GainsLocation")
+{
+   field(VAL, "/exchange/data_gains")
+}
