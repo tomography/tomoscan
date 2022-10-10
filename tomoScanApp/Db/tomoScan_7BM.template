@@ -249,3 +249,27 @@ record(stringout, "$(P)$(R)HDF5GainsLocation")
 {
    field(VAL, "/exchange/data_gains")
 }
+
+############
+# Frame type
+############
+
+record(mbbi, "$(P)$(R)FrameType")
+{
+   field(ZRVL, "0")
+   field(ZRST, "DarkField")
+   field(ONVL, "1")
+   field(ONST, "FlatField")
+   field(TWVL, "2")
+   field(TWST, "Projection")
+   field(THVL, "3")
+   field(THST, "Gains")
+}
+
+####################
+# Gain field control
+####################
+
+record(longout, "$(P)$(R)NumGainFields")
+{
+}

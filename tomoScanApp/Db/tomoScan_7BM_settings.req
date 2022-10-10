@@ -79,3 +79,13 @@ $(P)$(R)ShutterStatusPVName
 # Location for data in HDF5 file
 ################################
 #controlPV $(P)$(R)HDF5GainsLocation
+
+############
+# Frame type
+############
+#controlPV $(P)$(R)FrameType
+
+####################
+# Gain field control
+####################
+$(P)$(R)NumGainFields
