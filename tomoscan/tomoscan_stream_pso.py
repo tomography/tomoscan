@@ -661,7 +661,7 @@ class TomoScanStreamPSO(TomoScan):
             
             num_captured += self.epics_pvs['StreamNumCaptured'].get()
 
-            self.epics_pvs['StreamCapture'].put('Done')        
+            self.epics_pvs['StreamCapture'].put('Done', wait=True)        
             self.epics_pvs['StreamFileName'].put(basename)
             self.epics_pvs['StreamNumTotalCaptured'].put(num_captured)
     
