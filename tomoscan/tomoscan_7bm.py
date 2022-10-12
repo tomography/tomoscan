@@ -215,8 +215,8 @@ class TomoScan7BM(TomoScanHelical):
             log.info('collecting camera gains')
             self.epics_pvs['HDF5Location'].put(self.epics_pvs['HDF5GainsLocation'].value)
             self.epics_pvs['FrameType'].put('Gains')
-            gain_exp_times = np.linspace(0, self.epics_pvs['FlatExposureTime'].value, self.num_gain_fields)
-            for gain_time in gain_exp_times:
+            self.gain_exp_times = np.linspace(0, self.epics_pvs['FlatExposureTime'].value, self.num_gain_fields)
+            for gain_time in self.gain_exp_times:
                 log.info('image at exposure time = {0:6.4f}'.format(gain_time))
                 self.control_pvs['CamAcquireTime'].put(gain_time, wait=True)
                 self.collect_static_frame() 
@@ -281,6 +281,9 @@ class TomoScan7BM(TomoScanHelical):
         # Add theta in the hdf file
         self.add_theta()
 
+        # Add the exposure times for the gain images
+        self.add_gain_exp_times()
+
         # Copy file to the analysis computer, if desired
         self.auto_copy_data()
 
@@ -321,6 +324,7 @@ class TomoScan7BM(TomoScanHelical):
                     if len(proj_ids) > 0:
                         theta_ds = f.create_dataset('/exchange/theta', (len(proj_ids),))
                         theta_ds[:] = self.theta[proj_ids - proj_ids[0]]
+                        theta_ds.attrs['units'] = 'degrees'
 
                     # warnings that data is missing
                     if len(proj_ids) != len(self.theta):
@@ -337,6 +341,32 @@ class TomoScan7BM(TomoScanHelical):
                 traceback.print_exc(file=sys.stdout)
         else:
             log.error('Failed adding theta. %s file does not exist', full_file_name)
+
+
+    def add_gain_exp_times(self):
+        """Add gain exposure times to the output file.
+        """
+        log.info('add gain exposure times')
+        time.sleep(1.0)
+
+        if self.gain_exp_times is None:
+            log.warning('no gain exposure times to add')
+            return
+
+        full_file_name = self.epics_pvs['FPFullFileName'].get(as_string=True)
+        if os.path.exists(full_file_name):
+            try:                
+                with h5py.File(full_file_name, "a") as f:
+                    gain_exp_times_ds = f.create_dataset(
+                                                        '/exchange/gain_exp_times',
+                                                        data = self.gain_exp_times,
+                                                        )
+                    gain_exp_times_ds.attrs['units'] = 's'
+            except:
+                log.error('Add gain exposure times: Failed accessing: %s', full_file_name)
+                traceback.print_exc(file=sys.stdout)
+        else:
+            log.error('Failed adding gain exposure times. %s file does not exist', full_file_name)
 
 
     def wait_pv(self, epics_pv, wait_val, timeout=np.inf, delta_t=0.01):
