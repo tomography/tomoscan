@@ -14,6 +14,7 @@ import numpy as np
 from epics import PV
 
 from tomoscan import data_management as dm
+from tomoscan.tomoscan import TomoScan
 from tomoscan.tomoscan_helical import TomoScanHelical
 from tomoscan import log
 
@@ -69,6 +70,21 @@ class TomoScan7BM(TomoScanHelical):
             self.epics_pvs['ScanStatus'].put('Abort: Bad File Path')
             self.epics_pvs['StartScan'].put(0)
             self.scan_is_running = False
+
+
+    def collect_static_frame(self):
+        """Collects num_frames images in "InternalSingle" trigger mode for gains
+
+        """
+        # This is called when collecting dark fields or flat fields
+
+        log.info('collect static frame')
+        self.set_trigger_mode('InternalSingle', 1)
+        self.epics_pvs['CamAcquire'].put('Acquire')
+        # Wait for detector and file plugin to be ready
+        time.sleep(0.5)
+        frame_time = self.compute_frame_time()
+        self.wait_camera_done(frame_time + 5.0)
 
 
     def open_shutter(self):
@@ -157,6 +173,9 @@ class TomoScan7BM(TomoScanHelical):
             self.epics_pvs['CamTriggerMode'].put('Off', wait=True)
             self.epics_pvs['CamImageMode'].put('Multiple')
             self.epics_pvs['CamNumImages'].put(num_images, wait=True)
+        elif trigger_mode == 'InternalSingle':
+            self.epics_pvs['CamTriggerMode'].put('Off', wait=True)
+            self.epics_pvs['CamImageMode'].put('Single')
         else: # set camera to external triggering
             self.epics_pvs['CamTriggerMode'].put('On', wait=True)
             ext_source = str(self.epics_pvs['ExternalTriggerSource'].get())
@@ -172,6 +191,69 @@ class TomoScan7BM(TomoScanHelical):
 
             self.epics_pvs['CamTriggerMode'].put('On', wait=True)
             self.wait_pv(self.epics_pvs['CamTriggerMode'], 1)
+
+
+    def collect_flat_fields(self):
+        """Collects flat field data
+
+        This overrides the super class's method to allow for camera gain
+        images to be acquired.
+        
+        - Performs the normal flat corrections
+
+        - Set the FrameType to the appropriate value
+
+        - For exposure times from 0 to the flat exposure time:  
+    
+            - Change exposure time to the appropriate value
+
+            - Take a single frame
+        """
+        super().collect_flat_fields()
+        if self.num_gain_fields:
+            self.epics_pvs['ScanStatus'].put('Collecting camera gains')
+            log.info('collecting camera gains')
+            self.epics_pvs['HDF5Location'].put(self.epics_pvs['HDF5GainsLocation'].value)
+            self.epics_pvs['FrameType'].put('Gains')
+            self.gain_exp_times = np.linspace(0, self.epics_pvs['FlatExposureTime'].value, self.num_gain_fields)
+            for gain_time in self.gain_exp_times:
+                log.info('image at exposure time = {0:6.4f}'.format(gain_time))
+                self.control_pvs['CamAcquireTime'].put(gain_time, wait=True)
+                self.collect_static_frame() 
+
+
+    def begin_scan(self):
+        """Performs the operations needed at the very start of a scan.
+
+        This is an override of the begin_scan in TomoScanPSO to account for
+        the extra frames due to saving camera gains.
+        This does the following:
+
+        - Calls the base class method.
+        - Sets the speed of the rotation motor
+        - Computes the delta theta, start and stop motor positions for the scan
+        - Programs the Aerotech driver to provide pulses at the right positions
+        """
+        log.info('begin scan')
+        # Call the base class method from TomoScan
+        TomoScan.begin_scan(self)
+ 
+        time.sleep(0.1)
+
+        # Program the stage driver to provide PSO pulses
+        self.compute_positions_PSO()
+        self.program_PSO()
+        
+        # Insert the number of gain images
+        self.num_gain_fields = self.epics_pvs['NumGainFields'].value
+        if self.num_gain_fields:
+            if self.flat_field_mode != 'None':
+                self.total_images += self.num_gain_fields
+            if self.flat_field_mode == 'Both':
+                self.total_images += self.num_gain_fields
+
+        self.epics_pvs['FPNumCapture'].put(self.total_images, wait=True)
+        self.epics_pvs['FPCapture'].put('Capture')
 
 
     def end_scan(self):
@@ -198,6 +280,9 @@ class TomoScan7BM(TomoScanHelical):
 
         # Add theta in the hdf file
         self.add_theta()
+
+        # Add the exposure times for the gain images
+        self.add_gain_exp_times()
 
         # Copy file to the analysis computer, if desired
         self.auto_copy_data()
@@ -231,9 +316,15 @@ class TomoScan7BM(TomoScanHelical):
                     dark_ids = unique_ids[hdf_location[:] == b'/exchange/data_dark']
 
                     # create theta dataset in hdf5 file
+                    if len(proj_ids) == 0 or len(self.theta) == 0:
+                        log.error('No value theta values')
+                        log.error('Abort adding theta')
+                        return
+
                     if len(proj_ids) > 0:
                         theta_ds = f.create_dataset('/exchange/theta', (len(proj_ids),))
                         theta_ds[:] = self.theta[proj_ids - proj_ids[0]]
+                        theta_ds.attrs['units'] = 'degrees'
 
                     # warnings that data is missing
                     if len(proj_ids) != len(self.theta):
@@ -250,6 +341,32 @@ class TomoScan7BM(TomoScanHelical):
                 traceback.print_exc(file=sys.stdout)
         else:
             log.error('Failed adding theta. %s file does not exist', full_file_name)
+
+
+    def add_gain_exp_times(self):
+        """Add gain exposure times to the output file.
+        """
+        log.info('add gain exposure times')
+        time.sleep(1.0)
+
+        if self.gain_exp_times is None:
+            log.warning('no gain exposure times to add')
+            return
+
+        full_file_name = self.epics_pvs['FPFullFileName'].get(as_string=True)
+        if os.path.exists(full_file_name):
+            try:                
+                with h5py.File(full_file_name, "a") as f:
+                    gain_exp_times_ds = f.create_dataset(
+                                                        '/exchange/gain_exp_times',
+                                                        data = self.gain_exp_times,
+                                                        )
+                    gain_exp_times_ds.attrs['units'] = 's'
+            except:
+                log.error('Add gain exposure times: Failed accessing: %s', full_file_name)
+                traceback.print_exc(file=sys.stdout)
+        else:
+            log.error('Failed adding gain exposure times. %s file does not exist', full_file_name)
 
 
     def wait_pv(self, epics_pv, wait_val, timeout=np.inf, delta_t=0.01):

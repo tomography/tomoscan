@@ -68,6 +68,9 @@ class TomoScanStream7BM(TomoScanStreamPSO):
                                        + self.epics_pvs['ProposalNumber'].get(as_string=True)) 
         self.epics_pvs['FilePath'].put(str(file_path), wait=True)
         
+        macro = 'DET=' + self.pv_prefixes['Camera'] + ',' + 'TC=' + self.epics_pvs['Testing'].__dict__['pvname'].replace('Testing', '', 1)
+        self.control_pvs['CamNDAttributesMacros'].put(macro)
+
         # Enable auto-increment on file writer
         self.epics_pvs['FPAutoIncrement'].put('Yes')
 
@@ -131,7 +134,7 @@ class TomoScanStream7BM(TomoScanStreamPSO):
             value = self.epics_pvs['CloseFastShutterValue'].get(as_string=True)
             log.info('close fast shutter: %s, value: %s', pv, value)
             self.epics_pvs['CloseFastShutter'].put(value, wait=False)
-        # Call the base class method
+        # Close the beamline shutter
         if not self.epics_pvs['CloseShutter'] is None:
             pv = self.epics_pvs['CloseShutter']
             value = self.epics_pvs['CloseShutterValue'].get(as_string=True)
@@ -156,6 +159,7 @@ class TomoScanStream7BM(TomoScanStreamPSO):
             This is used to set the ``NumImages`` PV of the camera.
         """
         if trigger_mode == 'FreeRun':
+            self.epics_pvs['CamAcquire'].put('Done', wait=True)
             self.epics_pvs['CamImageMode'].put('Continuous', wait=True)
             self.epics_pvs['CamTriggerMode'].put('Off', wait=True)
             self.epics_pvs['CamAcquire'].put('Acquire')
@@ -170,7 +174,7 @@ class TomoScanStream7BM(TomoScanStreamPSO):
             self.epics_pvs['CamTriggerOverlap'].put('ReadOut', wait=True)
             self.epics_pvs['CamExposureMode'].put('Timed', wait=True)
 
-            self.epics_pvs['CamImageMode'].put('Multiple')
+            self.epics_pvs['CamImageMode'].put('Continuous')
             self.epics_pvs['CamArrayCallbacks'].put('Enable')
             self.epics_pvs['CamFrameRateEnable'].put(0)
 
