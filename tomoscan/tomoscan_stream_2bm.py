@@ -86,7 +86,132 @@ class TomoScanStream2BM(TomoScanStreamPSO):
             self.epics_pvs['FilePlugin1'] = PV(prefix + 'FilePlugin1PVPrefix')
         
         log.setup_custom_logger("./tomoscan.log")
+    
+    def pv_callback_stream_2bm(self, pvname=None, value=None, char_value=None, **kw):
+        """Callback functions for lens and camera change"""
+        if (pvname.find('LensSelect') != -1 and (value==0 or value==1 or value==2)):
+            thread = threading.Thread(target=self.lens_change_sync, args=())
+            thread.start() 
+        if (pvname.find('CameraSelect') != -1):
+            thread = threading.Thread(target=self.reinit_camera, args=())
+            thread.start()
 
+    def reinit_camera(self):
+
+        """Init camera PVs based on the mctOptics selection.
+
+        Parameters
+        ----------
+       camera : int, optional
+            The camera to use. Optique Peter system support 2 cameras
+        """
+
+        if not self.scan_is_running:
+            ########
+            prefix = self.pv_prefixes['MctOptics']
+            self.epics_pvs['CameraSelect'] = PV(prefix + 'CameraSelect')
+            camera_select = self.epics_pvs['CameraSelect'].value
+            log.info('changing camera prefix to camera %s', camera_select)
+
+            if camera_select == None:
+                log.error('mctOptics is down. Please start mctOptics first')
+            else:
+                self.epics_pvs['Camera0'] = PV(prefix + 'Camera0PVPrefix')
+                self.epics_pvs['Camera1'] = PV(prefix + 'Camera1PVPrefix')
+                self.epics_pvs['FilePlugin0'] = PV(prefix + 'FilePlugin0PVPrefix')
+                self.epics_pvs['FilePlugin1'] = PV(prefix + 'FilePlugin1PVPrefix')
+
+            if camera_select == 0:
+                 camera_prefix = self.epics_pvs['Camera0'].get(as_string=True)
+                 hdf_prefix    = self.epics_pvs['FilePlugin0'].get(as_string=True)
+            else:
+                 camera_prefix = self.epics_pvs['Camera1'].get(as_string=True)
+                 hdf_prefix    = self.epics_pvs['FilePlugin1'].get(as_string=True)
+
+
+            self.epics_pvs['CameraPVPrefix'].put(camera_prefix)
+            log.info(camera_prefix)
+            self.epics_pvs['FilePluginPVPrefix'].put(hdf_prefix)
+            log.info(hdf_prefix)
+
+            # self.epics_pvs['CameraPVPrefix'] = PV(prefix + 'Camera0PVPrefix')
+            # self.epics_pvs['Camera1'] = PV(prefix + 'Camera1PVPrefix')
+
+            self.pv_prefixes['FilePlugin'] = hdf_prefix
+            # need to update TomoScan PV Prefix to the new camera / hdf plugin
+            self.epics_pvs['CameraPVPrefix'].put(camera_prefix, wait=True) 
+            self.epics_pvs['FilePluginPVPrefix'].put(hdf_prefix, wait=True) 
+
+            # Update PVPrefix PV
+            camera_prefix = camera_prefix + 'cam1:'
+            self.control_pvs['CamManufacturer']        = PV(camera_prefix + 'Manufacturer_RBV')
+            self.control_pvs['CamModel']               = PV(camera_prefix + 'Model_RBV')
+            self.control_pvs['CamAcquire']             = PV(camera_prefix + 'Acquire')
+            self.control_pvs['CamAcquireBusy']         = PV(camera_prefix + 'AcquireBusy')
+            self.control_pvs['CamImageMode']           = PV(camera_prefix + 'ImageMode')
+            self.control_pvs['CamTriggerMode']         = PV(camera_prefix + 'TriggerMode')
+            self.control_pvs['CamNumImages']           = PV(camera_prefix + 'NumImages')
+            self.control_pvs['CamNumImagesCounter']    = PV(camera_prefix + 'NumImagesCounter_RBV')
+            self.control_pvs['CamAcquireTime']         = PV(camera_prefix + 'AcquireTime')
+            self.control_pvs['CamAcquireTimeRBV']      = PV(camera_prefix + 'AcquireTime_RBV')
+            self.control_pvs['CamBinX']                = PV(camera_prefix + 'BinX')
+            self.control_pvs['CamBinY']                = PV(camera_prefix + 'BinY')
+            self.control_pvs['CamWaitForPlugins']      = PV(camera_prefix + 'WaitForPlugins')
+            self.control_pvs['PortNameRBV']            = PV(camera_prefix + 'PortName_RBV')
+            self.control_pvs['CamNDAttributesFile']    = PV(camera_prefix + 'NDAttributesFile')
+            self.control_pvs['CamNDAttributesMacros']  = PV(camera_prefix + 'NDAttributesMacros')
+
+            # If this is a Point Grey camera then assume we are running ADSpinnaker
+            # and create some PVs specific to that driver
+            manufacturer = self.control_pvs['CamManufacturer'].get(as_string=True)
+            model = self.control_pvs['CamModel'].get(as_string=True)
+            if (manufacturer.find('Point Grey') != -1) or (manufacturer.find('FLIR') != -1):
+                self.control_pvs['CamExposureMode']     = PV(camera_prefix + 'ExposureMode')
+                self.control_pvs['CamTriggerOverlap']   = PV(camera_prefix + 'TriggerOverlap')
+                self.control_pvs['CamPixelFormat']      = PV(camera_prefix + 'PixelFormat')
+                self.control_pvs['CamArrayCallbacks']   = PV(camera_prefix + 'ArrayCallbacks')
+                self.control_pvs['CamFrameRateEnable']  = PV(camera_prefix + 'FrameRateEnable')
+                self.control_pvs['CamTriggerSource']    = PV(camera_prefix + 'TriggerSource')
+                self.control_pvs['CamTriggerSoftware']  = PV(camera_prefix + 'TriggerSoftware')
+                if model.find('Grasshopper3 GS3-U3-23S6M') != -1:
+                    self.control_pvs['CamVideoMode']    = PV(camera_prefix + 'GC_VideoMode_RBV')
+                if model.find('Blackfly S BFS-PGE-161S7M') != -1:
+                    self.control_pvs['GC_ExposureAuto'] = PV(camera_prefix + 'GC_ExposureAuto')       
+
+            prefix = hdf_prefix
+            self.control_pvs['FPNDArrayPort']     = PV(prefix + 'NDArrayPort')        
+            self.control_pvs['FPFileWriteMode']   = PV(prefix + 'FileWriteMode')
+            self.control_pvs['FPNumCapture']      = PV(prefix + 'NumCapture')
+            self.control_pvs['FPNumCaptured']     = PV(prefix + 'NumCaptured_RBV')
+            self.control_pvs['FPCapture']         = PV(prefix + 'Capture')
+            self.control_pvs['FPCaptureRBV']      = PV(prefix + 'Capture_RBV')
+            self.control_pvs['FPFilePath']        = PV(prefix + 'FilePath')
+            self.control_pvs['FPFilePathRBV']     = PV(prefix + 'FilePath_RBV')
+            self.control_pvs['FPFilePathExists']  = PV(prefix + 'FilePathExists_RBV')
+            self.control_pvs['FPFileName']        = PV(prefix + 'FileName')
+            self.control_pvs['FPFileNameRBV']     = PV(prefix + 'FileName_RBV')
+            self.control_pvs['FPFileNumber']      = PV(prefix + 'FileNumber')
+            self.control_pvs['FPAutoIncrement']   = PV(prefix + 'AutoIncrement')
+            self.control_pvs['FPFileTemplate']    = PV(prefix + 'FileTemplate')
+            self.control_pvs['FPFullFileName']    = PV(prefix + 'FullFileName_RBV')
+            self.control_pvs['FPAutoSave']        = PV(prefix + 'AutoSave')
+            self.control_pvs['FPEnableCallbacks'] = PV(prefix + 'EnableCallbacks')
+            self.control_pvs['FPXMLFileName']     = PV(prefix + 'XMLFileName')
+            self.control_pvs['FPWriteStatus']     = PV(prefix + 'WriteStatus')
+
+            # Set some initial PV values
+            file_path = self.config_pvs['FilePath'].get(as_string=True)
+            self.control_pvs['FPFilePath'].put(file_path)
+            file_name = self.config_pvs['FileName'].get(as_string=True)
+            self.control_pvs['FPFileName'].put(file_name)
+            self.control_pvs['FPAutoSave'].put('No')
+            self.control_pvs['FPFileWriteMode'].put('Stream')
+            self.control_pvs['FPEnableCallbacks'].put('Enable')
+
+            self.epics_pvs = {**self.config_pvs, **self.control_pvs}
+            # Wait 1 second for all PVs to connect
+            time.sleep(1)
+            self.check_pvs_connected()
     
     def open_frontend_shutter(self):
         """Opens the shutters to collect flat fields or projections.
@@ -99,7 +224,7 @@ class TomoScanStream2BM(TomoScanStreamPSO):
         if self.epics_pvs['Testing'].get():
             log.warning('In testing mode, so not opening shutters.')
         else:
-            # Open 2-BM-A front-end shutter
+            # Open 2-BM front-end shutter
             if not self.epics_pvs['OpenShutter'] is None:
                 pv = self.epics_pvs['OpenShutter']
                 value = self.epics_pvs['OpenShutterValue'].get(as_string=True)
@@ -133,13 +258,13 @@ class TomoScanStream2BM(TomoScanStreamPSO):
         """Closes the shutters to collect dark fields.
         This does the following:
 
-        - Closes the 2-BM-A front-end shutter.
+        - Closes the 2-BM front-end shutter.
 
         """
         if self.epics_pvs['Testing'].get():
             log.warning('In testing mode, so not opening shutters.')
         else:
-            # Close 2-BM-A front-end shutter
+            # Close 2-BM front-end shutter
             if not self.epics_pvs['CloseShutter'] is None:
                 pv = self.epics_pvs['CloseShutter']
                 value = self.epics_pvs['CloseShutterValue'].get(as_string=True)
@@ -155,10 +280,10 @@ class TomoScanStream2BM(TomoScanStreamPSO):
         """Closes the shutters to collect dark fields.
         This does the following:
 
-        - Closes the 2-BM-A fast shutter.
+        - Closes the 2-BM fast shutter.
         """
 
-        # Close 2-BM-A fast shutter
+        # Close 2-BM fast shutter
         if not self.epics_pvs['CloseFastShutter'] is None:
             pv = self.epics_pvs['CloseFastShutter']
             value = self.epics_pvs['CloseFastShutterValue'].get(as_string=True)
@@ -180,7 +305,7 @@ class TomoScanStream2BM(TomoScanStreamPSO):
             This is used to set the ``NumImages`` PV of the camera.
         """
         camera_model = self.epics_pvs['CamModel'].get(as_string=True)
-        if(camera_model=='Oryx ORX-10G-51S5M'):            
+        if(camera_model=='Oryx ORX-10G-51S5M' or camera_model=='Oryx ORX-10G-310S9M'):           
             self.set_trigger_mode_oryx(trigger_mode, num_images)
         elif(camera_model=='Grasshopper3 GS3-U3-23S6M'):        
             self.set_trigger_mode_grasshopper(trigger_mode, num_images)
@@ -298,156 +423,29 @@ class TomoScanStream2BM(TomoScanStreamPSO):
     def end_scan(self):
         """Performs the operations needed at the very end of a scan.
 
-        This does the following:
-        - Calls ``save_configuration()``.
-        - Put the camera back in "FreeRun" mode and acquiring so the user sees live images.
-        - Sets the speed of the rotation stage back to the maximum value.
-        - Calls ``move_sample_in()``.
-        - Calls the base class method.
-        - Closes shutter.
+        - clears callback for lens change
+        - call end_scan from super
+        - close shutter
         """
         
-        if self.epics_pvs['ReturnRotation'].get(as_string=True) == 'Yes':        
-            while True:
-                ang1 = self.epics_pvs['RotationRBV'].value
-                time.sleep(1)
-                ang2 = self.epics_pvs['RotationRBV'].value
-                if np.abs(ang1-ang2)<1e-4:
-                    break
-            if np.abs(self.epics_pvs['RotationRBV'].value)>720:
-                log.warning('home stage')
-                self.epics_pvs['RotationHomF'].put(1, wait=True)                        
+        # NOTE: the following is implemented in the base class, however, it doesnt check that the stage is stopped there
+        
+        # if self.epics_pvs['ReturnRotation'].get(as_string=True) == 'Yes':        
+        #     while True:
+        #         ang1 = self.epics_pvs['RotationRBV'].value
+        #         time.sleep(1)
+        #         ang2 = self.epics_pvs['RotationRBV'].value
+        #         if np.abs(ang1-ang2)<1e-4:
+        #             break
+        #     if np.abs(self.epics_pvs['RotationRBV'].value)>720:
+        #         log.warning('home stage')
+        #         self.epics_pvs['RotationHomF'].put(1, wait=True)                        
         self.epics_pvs['LensSelect'].clear_callbacks()
         time.sleep(2)        
         # Call the base class method
         super().end_scan()
         # Close shutter
         self.close_shutter()
-    
-    def pv_callback_stream_2bm(self, pvname=None, value=None, char_value=None, **kw):
-        """Callback functions for capturing in the streaming mode"""
-        if (pvname.find('LensSelect') != -1 and (value==0 or value==1 or value==2)):
-            thread = threading.Thread(target=self.lens_change_sync, args=())
-            thread.start() 
-        if (pvname.find('CameraSelect') != -1):
-            thread = threading.Thread(target=self.reinit_camera, args=())
-            thread.start()
-
-    def reinit_camera(self):
-        """Init camera PVs based on the mctOptics selection.
-
-        Parameters
-        ----------
-       camera : int, optional
-            The camera to use. Optique Peter system support 2 cameras
-        """
-
-        if not self.scan_is_running:
-            ########
-            prefix = self.pv_prefixes['MctOptics']
-            self.epics_pvs['CameraSelect'] = PV(prefix + 'CameraSelect')
-            camera_select = self.epics_pvs['CameraSelect'].value
-            log.info('changing camera prefix to camera %s', camera_select)
-
-            if camera_select == None:
-                log.error('mctOptics is down. Please start mctOptics first')
-            else:
-                self.epics_pvs['Camera0'] = PV(prefix + 'Camera0PVPrefix')
-                self.epics_pvs['Camera1'] = PV(prefix + 'Camera1PVPrefix')
-                self.epics_pvs['FilePlugin0'] = PV(prefix + 'FilePlugin0PVPrefix')
-                self.epics_pvs['FilePlugin1'] = PV(prefix + 'FilePlugin1PVPrefix')
-
-            if camera_select == 0:
-                 camera_prefix = self.epics_pvs['Camera0'].get(as_string=True)
-                 hdf_prefix    = self.epics_pvs['FilePlugin0'].get(as_string=True)
-            else:
-                 camera_prefix = self.epics_pvs['Camera1'].get(as_string=True)
-                 hdf_prefix    = self.epics_pvs['FilePlugin1'].get(as_string=True)
-
-
-            self.epics_pvs['CameraPVPrefix'].put(camera_prefix)
-            log.info(camera_prefix)
-            self.epics_pvs['FilePluginPVPrefix'].put(hdf_prefix)
-            log.info(hdf_prefix)
-
-            # self.epics_pvs['CameraPVPrefix'] = PV(prefix + 'Camera0PVPrefix')
-            # self.epics_pvs['Camera1'] = PV(prefix + 'Camera1PVPrefix')
-
-            self.pv_prefixes['FilePlugin'] = hdf_prefix
-            # need to update TomoScan PV Prefix to the new camera / hdf plugin
-            self.epics_pvs['CameraPVPrefix'].put(camera_prefix, wait=True) 
-            self.epics_pvs['FilePluginPVPrefix'].put(hdf_prefix, wait=True) 
-
-            # Update PVPrefix PV
-            camera_prefix = camera_prefix + 'cam1:'
-            self.control_pvs['CamManufacturer']        = PV(camera_prefix + 'Manufacturer_RBV')
-            self.control_pvs['CamModel']               = PV(camera_prefix + 'Model_RBV')
-            self.control_pvs['CamAcquire']             = PV(camera_prefix + 'Acquire')
-            self.control_pvs['CamAcquireBusy']         = PV(camera_prefix + 'AcquireBusy')
-            self.control_pvs['CamImageMode']           = PV(camera_prefix + 'ImageMode')
-            self.control_pvs['CamTriggerMode']         = PV(camera_prefix + 'TriggerMode')
-            self.control_pvs['CamNumImages']           = PV(camera_prefix + 'NumImages')
-            self.control_pvs['CamNumImagesCounter']    = PV(camera_prefix + 'NumImagesCounter_RBV')
-            self.control_pvs['CamAcquireTime']         = PV(camera_prefix + 'AcquireTime')
-            self.control_pvs['CamAcquireTimeRBV']      = PV(camera_prefix + 'AcquireTime_RBV')
-            self.control_pvs['CamBinX']                = PV(camera_prefix + 'BinX')
-            self.control_pvs['CamBinY']                = PV(camera_prefix + 'BinY')
-            self.control_pvs['CamWaitForPlugins']      = PV(camera_prefix + 'WaitForPlugins')
-            self.control_pvs['PortNameRBV']            = PV(camera_prefix + 'PortName_RBV')
-            self.control_pvs['CamNDAttributesFile']    = PV(camera_prefix + 'NDAttributesFile')
-            self.control_pvs['CamNDAttributesMacros']  = PV(camera_prefix + 'NDAttributesMacros')
-
-            # If this is a Point Grey camera then assume we are running ADSpinnaker
-            # and create some PVs specific to that driver
-            manufacturer = self.control_pvs['CamManufacturer'].get(as_string=True)
-            model = self.control_pvs['CamModel'].get(as_string=True)
-            if (manufacturer.find('Point Grey') != -1) or (manufacturer.find('FLIR') != -1):
-                self.control_pvs['CamExposureMode']     = PV(camera_prefix + 'ExposureMode')
-                self.control_pvs['CamTriggerOverlap']   = PV(camera_prefix + 'TriggerOverlap')
-                self.control_pvs['CamPixelFormat']      = PV(camera_prefix + 'PixelFormat')
-                self.control_pvs['CamArrayCallbacks']   = PV(camera_prefix + 'ArrayCallbacks')
-                self.control_pvs['CamFrameRateEnable']  = PV(camera_prefix + 'FrameRateEnable')
-                self.control_pvs['CamTriggerSource']    = PV(camera_prefix + 'TriggerSource')
-                self.control_pvs['CamTriggerSoftware']  = PV(camera_prefix + 'TriggerSoftware')
-                if model.find('Grasshopper3 GS3-U3-23S6M') != -1:
-                    self.control_pvs['CamVideoMode']    = PV(camera_prefix + 'GC_VideoMode_RBV')
-                if model.find('Blackfly S BFS-PGE-161S7M') != -1:
-                    self.control_pvs['GC_ExposureAuto'] = PV(camera_prefix + 'GC_ExposureAuto')       
-
-            prefix = hdf_prefix
-            self.control_pvs['FPNDArrayPort']     = PV(prefix + 'NDArrayPort')        
-            self.control_pvs['FPFileWriteMode']   = PV(prefix + 'FileWriteMode')
-            self.control_pvs['FPNumCapture']      = PV(prefix + 'NumCapture')
-            self.control_pvs['FPNumCaptured']     = PV(prefix + 'NumCaptured_RBV')
-            self.control_pvs['FPCapture']         = PV(prefix + 'Capture')
-            self.control_pvs['FPCaptureRBV']      = PV(prefix + 'Capture_RBV')
-            self.control_pvs['FPFilePath']        = PV(prefix + 'FilePath')
-            self.control_pvs['FPFilePathRBV']     = PV(prefix + 'FilePath_RBV')
-            self.control_pvs['FPFilePathExists']  = PV(prefix + 'FilePathExists_RBV')
-            self.control_pvs['FPFileName']        = PV(prefix + 'FileName')
-            self.control_pvs['FPFileNameRBV']     = PV(prefix + 'FileName_RBV')
-            self.control_pvs['FPFileNumber']      = PV(prefix + 'FileNumber')
-            self.control_pvs['FPAutoIncrement']   = PV(prefix + 'AutoIncrement')
-            self.control_pvs['FPFileTemplate']    = PV(prefix + 'FileTemplate')
-            self.control_pvs['FPFullFileName']    = PV(prefix + 'FullFileName_RBV')
-            self.control_pvs['FPAutoSave']        = PV(prefix + 'AutoSave')
-            self.control_pvs['FPEnableCallbacks'] = PV(prefix + 'EnableCallbacks')
-            self.control_pvs['FPXMLFileName']     = PV(prefix + 'XMLFileName')
-            self.control_pvs['FPWriteStatus']     = PV(prefix + 'WriteStatus')
-
-            # Set some initial PV values
-            file_path = self.config_pvs['FilePath'].get(as_string=True)
-            self.control_pvs['FPFilePath'].put(file_path)
-            file_name = self.config_pvs['FileName'].get(as_string=True)
-            self.control_pvs['FPFileName'].put(file_name)
-            self.control_pvs['FPAutoSave'].put('No')
-            self.control_pvs['FPFileWriteMode'].put('Stream')
-            self.control_pvs['FPEnableCallbacks'].put('Enable')
-
-            self.epics_pvs = {**self.config_pvs, **self.control_pvs}
-            # Wait 1 second for all PVs to connect
-            time.sleep(1)
-            self.check_pvs_connected()
 
     def wait_pv(self, epics_pv, wait_val, timeout=-1):
         """Wait on a pv to be a value until max_timeout (default forever)
@@ -475,7 +473,12 @@ class TomoScanStream2BM(TomoScanStreamPSO):
                 return True
 
     def lens_change_sync(self):
-        """Save/Update dark and flat fields for lenses"""
+        """Save/Update dark and flat fields for lenses. This way we dont always need to retake flat fields when the lens is changed
+        
+        - copy dark and flat fields for the current lens to dark_fields_<lens_cur>.h5, flat_fields_<lens_cur>.h5
+        - copy dark and flat fields for the new lens from dark_fields_<lens_new>.h5, flat_fields_<lens_new>.h5 to  dark_fields.h5, flat_fields.h5 
+        - broadcast flat and dark
+        """
                 
         log.info(f'switch lens from {self.lens_cur}')
         dirname = os.path.dirname(self.epics_pvs['FPFullFileName'].get(as_string=True))            
