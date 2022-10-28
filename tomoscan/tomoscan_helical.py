@@ -42,27 +42,6 @@ class TomoScanHelical(TomoScanPSO):
         self.epics_pvs['SampleYHLM']            = PV(sample_y_pv_name + '.HLM')
         self.epics_pvs['SampleYLLM']            = PV(sample_y_pv_name + '.LLM')
 
-        prefix = self.pv_prefixes['MctOptics']
-        self.epics_pvs['ImagePixelSize']        = PV(prefix + 'ImagePixelSize')
-
-
-    def begin_scan(self):
-        """Performs the operations needed at the very start of a scan.
-
-        This does the following:
-
-        - Calls the base class method from tomoscan_pso.py
-        - If we are running a helical scan
-            - Compute the speed at which the motor needs to move
-            - Compute the range over which it must move, checking limits
-            - Start the Sample_Y motion
-        """
-        log.info('begin scan')
-        # Call the base class method
-        super().begin_scan()
- 
-        time.sleep(0.1)
-
 
     def collect_projections(self):
         """Collects projections in fly scan mode.

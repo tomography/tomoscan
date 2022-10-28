@@ -49,6 +49,9 @@ class TomoScan2BM(TomoScanHelical):
     def __init__(self, pv_files, macros):
         super().__init__(pv_files, macros)
 
+        prefix = self.pv_prefixes['MctOptics']
+        self.epics_pvs['ImagePixelSize']        = PV(prefix + 'ImagePixelSize')
+
         # set TomoScan xml files
         self.epics_pvs['CamNDAttributesFile'].put('TomoScanDetectorAttributes.xml')
         self.epics_pvs['FPXMLFileName'].put('TomoScanLayout.xml')
