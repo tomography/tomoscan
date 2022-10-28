@@ -26,6 +26,7 @@ import string
 import threading
 
 from epics import PV
+from pathlib import Path
 
 from tomoscan import data_management as dm
 from tomoscan.tomoscan_helical import TomoScanHelical
@@ -60,8 +61,8 @@ class TomoScan2BM(TomoScanHelical):
         # Enable auto-increment on file writer
         self.epics_pvs['FPAutoIncrement'].put('Yes')
 
-        # Set standard file template on file writer
-        self.epics_pvs['FPFileTemplate'].put("%s%s_%3.3d.h5", wait=True)
+        # # Set standard file template on file writer
+        # self.epics_pvs['FPFileTemplate'].put("%s%s_%3.3d.h5", wait=True)
 
         # Disable over writing warning
         self.epics_pvs['OverwriteWarning'].put('Yes')
@@ -490,7 +491,9 @@ class TomoScan2BM(TomoScanHelical):
             log.info('Automatic data trasfer to data analysis computer is enabled.')
             full_file_name = self.epics_pvs['FPFullFileName'].get(as_string=True)
             remote_analysis_dir = self.epics_pvs['RemoteAnalysisDir'].get(as_string=True)
-            dm.scp(full_file_name, remote_analysis_dir)
+            # dm.scp(full_file_name, remote_analysis_dir)
+            dm.fdt_scp(full_file_name, remote_analysis_dir, Path(self.epics_pvs['DetectorTopDir'].get()))
+            self.epics_pvs['ScanStatus'].put('File Transfer Complete')
         else:
             log.warning('Automatic data trasfer to data analysis computer is disabled.')
         
