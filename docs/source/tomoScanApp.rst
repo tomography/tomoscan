@@ -512,6 +512,10 @@ PSO configuration
     - This record is needed on the Ensemble to keep the socket from timing out.
       It is not needed on the A3200, but does not hurt. 
       SCAN could be set to Passive on the A3200.
+  * - $(P)$(R)ProgramPSO
+    - bo
+    - Write/read
+    - Enable PSO programming 'Yes'.
 
 medm files
 ----------
@@ -758,7 +762,7 @@ Beam status information
     - stringout
     - Contains the value of the beam ready PV when beam is ready.
   * - $(P)$(R)Testing
-    - stringout
+    - bo
     - Enable testing mode 'Yes'.
 
 Sample information

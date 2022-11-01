@@ -27,7 +27,7 @@ class TomoScanPSO(TomoScan):
 
     def __init__(self, pv_files, macros):
         super().__init__(pv_files, macros)
-
+        self.epics_pvs['ProgramPSO'].put('Yes')
         # On the A3200 we can read the number of encoder counts per rotation from the controller
         # Unfortunately the Ensemble does not support this
         pso_model = self.epics_pvs['PSOControllerModel'].get(as_string=True)
@@ -95,8 +95,12 @@ class TomoScanPSO(TomoScan):
 
         # Program the stage driver to provide PSO pulses
         self.compute_positions_PSO()
-        self.program_PSO()
-
+        if self.num_angles>0 and self.epics_pvs['ProgramPSO'].get():  
+            self.cleanup_PSO()
+            self.program_PSO()
+        else:
+            log.warning('skip programPSO')
+        
         self.epics_pvs['FPNumCapture'].put(self.total_images, wait=True)
         self.epics_pvs['FPCapture'].put('Capture')
 
@@ -132,8 +136,9 @@ class TomoScanPSO(TomoScan):
         self.set_trigger_mode('FreeRun', 1)
 
         # Set the rotation speed to maximum
-        self.epics_pvs['RotationSpeed'].put(self.max_rotation_speed)
-        self.cleanup_PSO()
+        if self.epics_pvs['ProgramPSO'].get():       
+            self.epics_pvs['RotationSpeed'].put(self.max_rotation_speed)        
+            self.cleanup_PSO()
 
         # Move the sample in.  Could be out if scan was aborted while taking flat fields
         self.move_sample_in()
@@ -167,8 +172,10 @@ class TomoScanPSO(TomoScan):
 
         - Wait on the PSO done.
         """
-
         log.info('collect projections')
+        
+        if self.num_angles==0:
+            return
         super().collect_projections()
 
         log.info('taxi before starting capture')
