@@ -704,8 +704,6 @@ class TomoScan():
             # Prepare for scan
             self.begin_scan()
             self.epics_pvs['ScanStatus'].put('Moving rotation axis to start')
-            # Move the rotation to the start
-            self.epics_pvs['Rotation'].put(self.rotation_start, wait=True, timeout=600)
             # Collect the pre-scan dark fields if required
             if (self.num_dark_fields > 0) and (self.dark_field_mode in ('Start', 'Both')):
                 self.collect_dark_fields()
@@ -929,6 +927,7 @@ class TomoScan():
         # We need to use the actual exposure time that the camera is using, not the requested time
         exposure = self.epics_pvs['CamAcquireTimeRBV'].value
         # Add some extra time to exposure time for margin.
+
         frame_time = exposure * readout_margin        
         # If the time is less than the readout time then use the readout time plus 1 ms.
         if frame_time < readout:
