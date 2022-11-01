@@ -124,6 +124,8 @@ class TomoScan():
         self.control_pvs['PortNameRBV']            = PV(camera_prefix + 'PortName_RBV')
         self.control_pvs['CamNDAttributesFile']    = PV(camera_prefix + 'NDAttributesFile')
         self.control_pvs['CamNDAttributesMacros']  = PV(camera_prefix + 'NDAttributesMacros')
+        self.control_pvs['CamArrayCounterRBV']     = PV(camera_prefix + 'ArrayCounter_RBV')
+        self.control_pvs['CamUniqueIdMode']        = PV(camera_prefix + 'UniqueIdMode')
 
         # If this is a Point Grey camera then assume we are running ADSpinnaker
         # and create some PVs specific to that driver
