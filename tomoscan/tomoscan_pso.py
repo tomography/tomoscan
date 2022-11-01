@@ -323,5 +323,5 @@ class TomoScanPSO(TomoScan):
         self.epics_pvs['PSOEndTaxi'].put(self.rotation_stop + taxi_dist * user_direction)
         
         # Assign the fly scan angular position to theta[]
-        self.theta = self.rotation_start + np.arange(self.num_angles) * self.rotation_step * user_direction
+        self.theta = self.rotation_start + np.arange(self.num_angles) * self.rotation_step
         
