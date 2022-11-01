@@ -13,3 +13,4 @@ $(P)$(R)PSOPulseWidth
 #controlPV $(P)$(R)PSOEndTaxi
 #controlPV $(P)$(R)PSOCommand.BOUT
 #controlPV $(P)$(R)PSOCommand.BINP
+$(P)$(R)ProgramPSO
