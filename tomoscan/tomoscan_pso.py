@@ -37,6 +37,7 @@ class TomoScanPSO(TomoScan):
             reply = self.epics_pvs['PSOCommand.BINP'].get(as_string=True)
             counts_per_rotation = float(reply[1:])
             self.epics_pvs['PSOCountsPerRotation'].put(counts_per_rotation)
+        self.epics_pvs['CamUniqueIdMode'].put('Camera',wait=True)
 
     def collect_static_frames(self, num_frames):
         """Collects num_frames images in "Internal" trigger mode for dark fields and flat fields.
