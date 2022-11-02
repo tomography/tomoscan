@@ -245,7 +245,6 @@ class TomoScanPSO(TomoScan):
         else:
             window_end = range_start
             window_start = window_end - range_length
-        print(f"{window_start=},{window_end=},{range_length=}")
         pso_command.put('PSOWINDOW %s 1 RANGE %d,%d' % (pso_axis, window_start-5, window_end+5), wait=True, timeout=10.0)
         # Arm the PSO
         pso_command.put('PSOCONTROL %s ARM' % pso_axis, wait=True, timeout=10.0)
@@ -316,7 +315,6 @@ class TomoScanPSO(TomoScan):
             taxi_dist = math.ceil(accel_dist / self.rotation_step + 0.5) * self.rotation_step 
         else:
             taxi_dist = math.floor(accel_dist / self.rotation_step - 0.5) * self.rotation_step 
-        print(f"{taxi_dist=}")
         self.epics_pvs['PSOStartTaxi'].put(self.rotation_start - taxi_dist * user_direction)
         
         #Where will the last point actually be?
