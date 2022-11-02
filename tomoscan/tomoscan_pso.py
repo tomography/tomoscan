@@ -96,6 +96,7 @@ class TomoScanPSO(TomoScan):
 
         # Program the stage driver to provide PSO pulses
         self.compute_positions_PSO()
+        self.epics_pvs['RotationSpeed'].put(self.motor_speed)                
         if self.num_angles>0 and self.epics_pvs['ProgramPSO'].get():  
             self.cleanup_PSO()
             self.program_PSO()
@@ -137,9 +138,7 @@ class TomoScanPSO(TomoScan):
         self.set_trigger_mode('FreeRun', 1)
 
         # Set the rotation speed to maximum
-        if self.epics_pvs['ProgramPSO'].get():       
-            self.epics_pvs['RotationSpeed'].put(self.max_rotation_speed)        
-            self.cleanup_PSO()
+        self.epics_pvs['RotationSpeed'].put(self.max_rotation_speed)                
 
         # Move the sample in.  Could be out if scan was aborted while taking flat fields
         self.move_sample_in()
