@@ -673,6 +673,8 @@ class TomoScan():
         self.epics_pvs['ScanStatus'].put('Scan complete')
         self.epics_pvs['StartScan'].put(0)
         self.scan_is_running = False
+        full_file_name = self.epics_pvs['FPFullFileName'].get(as_string=True)
+        self.epics_pvs['FullFileName'].put(full_file_name)
 
     def fly_scan(self):
         """Performs the operations for a tomography fly scan, i.e. with continuous rotation.

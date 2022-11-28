@@ -263,6 +263,9 @@ File path and name control
     - bi
     - Selects whether to open a dialog box to warn the user if the file to be written
       would overwrite an existing file.  The user can then choose 'Yes' or 'No'.
+  * - $(P)$(R)FullFileName
+    - waveform
+    - The last file name used to save data.
 
 Location for data in HDF5 file
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

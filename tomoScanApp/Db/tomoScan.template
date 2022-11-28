@@ -257,6 +257,12 @@ record(bi, "$(P)$(R)OverwriteWarning")
     field(OSV,  "NO_ALARM")
 }
 
+record(waveform, "$(P)$(R)FullFileName")
+{
+   field(FTVL, "UCHAR")
+   field(NELM, "256")
+}
+
 ################################
 # Location for data in HDF5 file
 ################################
