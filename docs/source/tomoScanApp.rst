@@ -852,8 +852,8 @@ Data management information
     - stringout
     - Remote analysis location where to transfer the raw data for analysis, e.g tomo@handyn:/local/data/
   * - $(P)$(R)CopyToAnalysisDir
-    - bo
-    - Enable raw data copy mode 'Yes'. Data are copied from detector to data analysis computer.
+    - mbbo
+    - Select raw data copy mode protocol 'None', 'fdt' or 'scp' to copy from detector to data analysis computer. None disable the automatic upload.
 
 Front-end shutter status
 ^^^^^^^^^^^^^^^^^^^^^^^^
