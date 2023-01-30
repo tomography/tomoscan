@@ -72,6 +72,10 @@ class TomoScanHelical(TomoScanPSO):
 
         #Call the collect_projections() function from the TomoScan base class
         log.info('collect projections')
+        
+        if self.num_angles==0:
+            return
+
         super(TomoScanPSO, self).collect_projections()
 
         log.info('taxi before starting capture')

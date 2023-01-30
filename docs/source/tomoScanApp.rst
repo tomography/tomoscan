@@ -263,6 +263,9 @@ File path and name control
     - bi
     - Selects whether to open a dialog box to warn the user if the file to be written
       would overwrite an existing file.  The user can then choose 'Yes' or 'No'.
+  * - $(P)$(R)FullFileName
+    - waveform
+    - The last file name used to save data.
 
 Location for data in HDF5 file
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -512,6 +515,10 @@ PSO configuration
     - This record is needed on the Ensemble to keep the socket from timing out.
       It is not needed on the A3200, but does not hurt. 
       SCAN could be set to Passive on the A3200.
+  * - $(P)$(R)ProgramPSO
+    - bo
+    - Write/read
+    - Enable PSO programming 'Yes'.
 
 medm files
 ----------
@@ -758,7 +765,7 @@ Beam status information
     - stringout
     - Contains the value of the beam ready PV when beam is ready.
   * - $(P)$(R)Testing
-    - stringout
+    - bo
     - Enable testing mode 'Yes'.
 
 Sample information
@@ -845,8 +852,8 @@ Data management information
     - stringout
     - Remote analysis location where to transfer the raw data for analysis, e.g tomo@handyn:/local/data/
   * - $(P)$(R)CopyToAnalysisDir
-    - bo
-    - Enable raw data copy mode 'Yes'. Data are copied from detector to data analysis computer.
+    - mbbo
+    - Select raw data copy mode protocol 'None', 'fdt' or 'scp' to copy from detector to data analysis computer. None disable the automatic upload.
 
 Front-end shutter status
 ^^^^^^^^^^^^^^^^^^^^^^^^

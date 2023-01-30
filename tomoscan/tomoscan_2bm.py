@@ -487,13 +487,18 @@ class TomoScan2BM(TomoScanHelical):
             log.warning('The frame was not added')
         
         # Copy raw data to data analysis computer    
-        if self.epics_pvs['CopyToAnalysisDir'].get():
-            log.info('Automatic data trasfer to data analysis computer is enabled.')
-            full_file_name = self.epics_pvs['FPFullFileName'].get(as_string=True)
-            remote_analysis_dir = self.epics_pvs['RemoteAnalysisDir'].get(as_string=True)
-            # dm.scp(full_file_name, remote_analysis_dir)
+        log.info('Automatic data trasfer to data analysis computer is enabled.')
+        full_file_name = self.epics_pvs['FPFullFileName'].get(as_string=True)
+        remote_analysis_dir = self.epics_pvs['RemoteAnalysisDir'].get(as_string=True)
+        copy_to_analysis_dir = self.epics_pvs['CopyToAnalysisDir'].get()
+        if copy_to_analysis_dir == 1:
+            log.info('Using FDT')
             dm.fdt_scp(full_file_name, remote_analysis_dir, Path(self.epics_pvs['DetectorTopDir'].get()))
-            self.epics_pvs['ScanStatus'].put('File Transfer Complete')
+            self.epics_pvs['ScanStatus'].put('fdt file transfer complete')
+        elif copy_to_analysis_dir == 2:
+            log.info('Using scp')
+            dm.scp(full_file_name, remote_analysis_dir)
+            self.epics_pvs['ScanStatus'].put('scp file transfer complete')
         else:
             log.warning('Automatic data trasfer to data analysis computer is disabled.')
         

@@ -80,6 +80,7 @@ $(P)$(R)FilePath
 $(P)$(R)FileName
 $(P)$(R)OverwriteWarning
 #controlPV $(P)$(R)FilePathExists
+$(P)$(R)FullFileName
 
 ################################
 # Location for data in HDF5 file
