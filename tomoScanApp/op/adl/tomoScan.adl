@@ -1,6 +1,6 @@
 
 file {
-	name="/home/beams8/USER2BMB/epics/synApps/support/tomoscan/tomoScanApp/op/adl/tomoScan_test.adl"
+	name="/home/beams19/USERTXM/epics/synApps/support/tomoscan/tomoScanApp/op/adl/tomoScan.adl"
 	version=030111
 }
 display {
@@ -189,7 +189,7 @@ text {
 }
 rectangle {
 	object {
-		x=7
+		x=5
 		y=50
 		width=690
 		height=65
