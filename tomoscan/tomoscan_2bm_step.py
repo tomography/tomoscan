@@ -153,7 +153,7 @@ class TomoScan2BMSTEP(TomoScanSTEP):
         else: # set camera to internal triggering
             # These are just in case the scan aborted with the camera in another state 
             camera_model = self.epics_pvs['CamModel'].get(as_string=True)
-            if(camera_model=='Oryx ORX-10G-51S5M'):# 2bma            
+            if(camera_model=='Oryx ORX-10G-51S5M' or camera_model=='Oryx ORX-10G-310S9M'):
                 self.epics_pvs['CamTriggerMode'].put('Off', wait=True)   # VN: For FLIR we first switch to Off and then change overlap. any reason of that?                                                 
                 self.epics_pvs['CamTriggerSource'].put('Line2', wait=True)
             elif(camera_model=='Grasshopper3 GS3-U3-23S6M'):# 2bmb            
