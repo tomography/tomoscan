@@ -162,10 +162,14 @@ record(stringout, "$(P)$(R)RemoteAnalysisDir")
    field(VAL,  "Unknown")
 }
 
-record(bo, "$(P)$(R)CopyToAnalysisDir")
+record(mbbo, "$(P)$(R)CopyToAnalysisDir")
 {
-   field(ZNAM, "No")
-   field(ONAM, "Yes")
+   field(ZRVL, "0")
+   field(ZRST, "None")
+   field(ONVL, "1")
+   field(ONST, "fdt")
+   field(TWVL, "2")
+   field(TWST, "scp")
 }
 
 ######################
