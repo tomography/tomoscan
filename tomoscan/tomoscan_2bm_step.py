@@ -48,6 +48,14 @@ class TomoScan2BMSTEP(TomoScanSTEP):
         # Disable over writing warning
         self.epics_pvs['OverwriteWarning'].put('Yes')
 
+        # Set AD plugins            
+        self.epics_pvs['PVANDArrayPort'].put('OVER1')
+        self.epics_pvs['PVAEnableCallbacks'].put('Enable')
+        self.epics_pvs['ROIEnableCallbacks'].put('Disable')
+        self.epics_pvs['CBEnableCallbacks'].put('Disable')
+        self.epics_pvs['FPEnableCallbacks'].put('Enable')  
+
+
         log.setup_custom_logger("./tomoscan.log")
 
     def open_frontend_shutter(self):

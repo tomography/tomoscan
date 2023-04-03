@@ -74,6 +74,12 @@ class TomoScan2BM(TomoScanHelical):
         with open(access_fname, 'r') as fp:
             self.access_dic = json.load(fp)
         
+        # Set AD plugins            
+        self.epics_pvs['PVANDArrayPort'].put('OVER1')
+        self.epics_pvs['PVAEnableCallbacks'].put('Enable')
+        self.epics_pvs['ROIEnableCallbacks'].put('Disable')
+        self.epics_pvs['CBEnableCallbacks'].put('Disable')
+
         # Configure callbacks for mctoptics
         prefix = self.pv_prefixes['MctOptics']
         self.epics_pvs['CameraSelect'] = PV(prefix + 'CameraSelect')
@@ -206,6 +212,8 @@ class TomoScan2BM(TomoScanHelical):
             self.control_pvs['FPAutoSave'].put('No')
             self.control_pvs['FPFileWriteMode'].put('Stream')
             self.control_pvs['FPEnableCallbacks'].put('Enable')
+
+            self.epics_pvs['FPEnableCallbacks'].put('Enable')  
 
             self.epics_pvs = {**self.config_pvs, **self.control_pvs}
             # Wait 1 second for all PVs to connect
@@ -538,6 +546,21 @@ class TomoScan2BM(TomoScanHelical):
                         # create theta dataset in hdf5 file
                         if len(proj_ids) > 0:
                             theta_ds = f.create_dataset('/exchange/theta', (len(proj_ids),))
+                            
+                                
+                                
+                            #################TODO    
+                            if self.theta[1]-self.theta[0]<0:
+                                log.warning(f"the rotary stage at 2-bm is strange. To have the same reconstruction results for \
+                                    0..180 and 180-0 (both include 0 and 180) theta should be modified as follows theta+=0.8*rotation_step). \
+                                        This needs to be checked for other stages.")        
+                            self.theta+=0.8*self.rotation_step
+                            log.warning(f"new theta: {self.theta}")                            
+                            
+                            
+                            
+                            
+                            
                             theta_ds[:] = self.theta[proj_ids - proj_ids[0]]
 
                         # warnings that data is missing
@@ -546,7 +569,7 @@ class TomoScan2BM(TomoScanHelical):
                             missed_ids = [ele for ele in range(len(self.theta)) if ele not in proj_ids-proj_ids[0]]
                             missed_theta = self.theta[missed_ids]
                             # log.warning(f'Missed ids: {list(missed_ids)}')
-                            log.warning(f'Missed theta: {list(missed_theta)}')
+                            log.warning(f'Missed theta: {list(missed_theta)}')                        
                         if len(flat_ids) != total_flat_fields:
                             log.warning(f'There are {total_flat_fields - len(flat_ids)} missing flat field frames')
                         if (len(dark_ids) != total_dark_fields):

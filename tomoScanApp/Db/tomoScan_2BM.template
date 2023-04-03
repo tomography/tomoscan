@@ -201,3 +201,31 @@ record(bo, "$(P)$(R)FlipStitch")
    field(ZNAM, "No")
    field(ONAM, "Yes")
 }
+
+
+######################
+# Pva Plugin PV Prefix
+######################
+
+record(stringout, "$(P)$(R)PvaPluginPVPrefix")
+{
+   field(VAL,  "$(PVA_PLUGIN)")
+}
+
+######################
+# Roi Plugin PV Prefix
+######################
+
+record(stringout, "$(P)$(R)RoiPluginPVPrefix")
+{
+   field(VAL,  "$(ROI_PLUGIN)")
+}
+
+#####################
+# Cb Plugin PV Prefix
+#####################
+
+record(stringout, "$(P)$(R)CbPluginPVPrefix")
+{
+   field(VAL,  "$(CB_PLUGIN)")
+}
