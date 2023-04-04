@@ -87,11 +87,17 @@ class TomoScan2BM(TomoScanHelical):
         if camera_select == None:
             log.error('mctOptics is down. Please start mctOptics first')
         else:
-            self.epics_pvs['Camera0'] = PV(prefix + 'Camera0PVPrefix')
-            self.epics_pvs['Camera1'] = PV(prefix + 'Camera1PVPrefix')
-            self.epics_pvs['CameraSelect'].add_callback(self.pv_callback_2bm)
+            self.epics_pvs['Camera0']     = PV(prefix + 'Camera0PVPrefix')
+            self.epics_pvs['Camera1']     = PV(prefix + 'Camera1PVPrefix')
             self.epics_pvs['FilePlugin0'] = PV(prefix + 'FilePlugin0PVPrefix')
             self.epics_pvs['FilePlugin1'] = PV(prefix + 'FilePlugin1PVPrefix')
+            self.epics_pvs['PvaPlugin1']  = PV(prefix + 'PvaPlugin1PVPrefix')
+            self.epics_pvs['RoiPlugin0']  = PV(prefix + 'RoiPlugin0PVPrefix')
+            self.epics_pvs['RoiPlugin1']  = PV(prefix + 'RoiPlugin1PVPrefix')
+            self.epics_pvs['CbPlugin0']   = PV(prefix + 'CbPlugin0PVPrefix')
+            self.epics_pvs['CbPlugin1']   = PV(prefix + 'CbPlugin1PVPrefix')
+
+            self.epics_pvs['CameraSelect'].add_callback(self.pv_callback_2bm)
 
     def pv_callback_2bm(self, pvname=None, value=None, char_value=None, **kw):
         """Callback function that is called by pyEpics when certain EPICS PVs are changed
@@ -121,26 +127,40 @@ class TomoScan2BM(TomoScanHelical):
             if camera_select == None:
                 log.error('mctOptics is down. Please start mctOptics first')
             else:
-                self.epics_pvs['Camera0'] = PV(prefix + 'Camera0PVPrefix')
-                self.epics_pvs['Camera1'] = PV(prefix + 'Camera1PVPrefix')
+                self.epics_pvs['Camera0']     = PV(prefix + 'Camera0PVPrefix')
+                self.epics_pvs['Camera1']     = PV(prefix + 'Camera1PVPrefix')
                 self.epics_pvs['FilePlugin0'] = PV(prefix + 'FilePlugin0PVPrefix')
                 self.epics_pvs['FilePlugin1'] = PV(prefix + 'FilePlugin1PVPrefix')
+                self.epics_pvs['PvaPlugin0']  = PV(prefix + 'PvaPlugin0PVPrefix')
+                self.epics_pvs['PvaPlugin1']  = PV(prefix + 'PvaPlugin1PVPrefix')
+                self.epics_pvs['RoiPlugin0']  = PV(prefix + 'RoiPlugin0PVPrefix')
+                self.epics_pvs['RoiPlugin1']  = PV(prefix + 'RoiPlugin1PVPrefix')
+                self.epics_pvs['CbPlugin0']   = PV(prefix + 'CbPlugin0PVPrefix')
+                self.epics_pvs['CbPlugin1']   = PV(prefix + 'CbPlugin1PVPrefix')
 
             if camera_select == 0:
                  camera_prefix = self.epics_pvs['Camera0'].get(as_string=True)
                  hdf_prefix    = self.epics_pvs['FilePlugin0'].get(as_string=True)
+                 pva_prefix    = self.epics_pvs['PvaPlugin0'].get(as_string=True)
+                 roi_prefix    = self.epics_pvs['RoiPlugin0'].get(as_string=True)
+                 cb_prefix     = self.epics_pvs['CbPlugin0'].get(as_string=True)
             else:
                  camera_prefix = self.epics_pvs['Camera1'].get(as_string=True)
                  hdf_prefix    = self.epics_pvs['FilePlugin1'].get(as_string=True)
-
+                 pva_prefix    = self.epics_pvs['PvaPlugin1'].get(as_string=True)
+                 roi_prefix    = self.epics_pvs['RoiPlugin1'].get(as_string=True)
+                 cb_prefix     = self.epics_pvs['CbPlugin1'].get(as_string=True)
 
             self.epics_pvs['CameraPVPrefix'].put(camera_prefix)
             log.info(camera_prefix)
             self.epics_pvs['FilePluginPVPrefix'].put(hdf_prefix)
             log.info(hdf_prefix)
-
-            # self.epics_pvs['CameraPVPrefix'] = PV(prefix + 'Camera0PVPrefix')
-            # self.epics_pvs['Camera1'] = PV(prefix + 'Camera1PVPrefix')
+            self.epics_pvs['PvaPluginPVPrefix'].put(pva_prefix)
+            log.info(pva_prefix)
+            self.epics_pvs['RoiPluginPVPrefix'].put(roi_prefix)
+            log.info(roi_prefix)
+            self.epics_pvs['CbPluginPVPrefix'].put(cb_prefix)
+            log.info(cb_prefix)
 
             self.pv_prefixes['FilePlugin'] = hdf_prefix
             # need to update TomoScan PV Prefix to the new camera / hdf plugin
@@ -213,7 +233,37 @@ class TomoScan2BM(TomoScanHelical):
             self.control_pvs['FPFileWriteMode'].put('Stream')
             self.control_pvs['FPEnableCallbacks'].put('Enable')
 
-            self.epics_pvs['FPEnableCallbacks'].put('Enable')  
+            prefix = pva_prefix
+            self.control_pvs['PVANDArrayPort']     = PV(prefix + 'NDArrayPort')                
+            self.control_pvs['PVAEnableCallbacks'] = PV(prefix + 'EnableCallbacks')        
+            # Set some initial PV values
+            self.control_pvs['PVANDArrayPort'].put('OVER1')
+            self.control_pvs['PVAEnableCallbacks'].put('Enable')
+
+            prefix = roi_prefix
+            self.control_pvs['ROINDArrayPort']     = PV(prefix + 'NDArrayPort')        
+            self.control_pvs['ROIScale']           = PV(prefix + 'Scale')        
+            self.control_pvs['ROIBinX']            = PV(prefix + 'BinX')        
+            self.control_pvs['ROIBinY']            = PV(prefix + 'BinY')
+            self.control_pvs['ROIEnableCallbacks'] = PV(prefix + 'EnableCallbacks')
+            # Set some initial PV values
+            self.control_pvs['ROIEnableCallbacks'].put('Disable')
+
+            prefix = cb_prefix
+            self.control_pvs['CBPortNameRBV']      = PV(prefix + 'PortName_RBV')                    
+            self.control_pvs['CBNDArrayPort']      = PV(prefix + 'NDArrayPort')        
+            self.control_pvs['CBPreCount']         = PV(prefix + 'PreCount')
+            self.control_pvs['CBPostCount']        = PV(prefix + 'PostCount')
+            self.control_pvs['CBCapture']          = PV(prefix + 'Capture')            
+            self.control_pvs['CBCaptureRBV']       = PV(prefix + 'Capture_RBV')
+            self.control_pvs['CBTrigger']          = PV(prefix + 'Trigger')
+            self.control_pvs['CBTriggerRBV']       = PV(prefix + 'Trigger_RBV')
+            self.control_pvs['CBCurrentQtyRBV']    = PV(prefix + 'CurrentQty_RBV')            
+            self.control_pvs['CBEnableCallbacks']  = PV(prefix + 'EnableCallbacks')
+            self.control_pvs['CBStatusMessage']    = PV(prefix + 'StatusMessage')
+            # Set some initial PV values
+            self.control_pvs['CBEnableCallbacks'].put('Disable')
+
 
             self.epics_pvs = {**self.config_pvs, **self.control_pvs}
             # Wait 1 second for all PVs to connect
