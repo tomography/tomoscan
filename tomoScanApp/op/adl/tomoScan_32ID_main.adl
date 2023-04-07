@@ -1,6 +1,6 @@
 
 file {
-	name="/home/beams/USERTXM/epics/synApps/support/tomoscan/tomoScanApp/op/adl/tomoScan_32ID_main.adl"
+	name="/home/beams19/USERTXM/epics/synApps/support/tomoscan/tomoScanApp/op/adl/tomoScan_32ID_main.adl"
 	version=030111
 }
 display {
@@ -1365,9 +1365,9 @@ text {
 "text update" {
 	object {
 		x=160
-		y=500
+		y=505
 		width=530
-		height=20
+		height=15
 	}
 	monitor {
 		chan="32idcSP1:HDF1:FullFileName_RBV"

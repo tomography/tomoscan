@@ -60,6 +60,8 @@ class TomoScan32IDSTEP(TomoScanSTEP):
         self.epics_pvs['TXMMoveAllOut'] = PV(txmoptics_prefix+'MoveAllOut')
         self.epics_pvs['TXMMoveAllIn'] = PV(txmoptics_prefix+'MoveAllIn')  
 
+        self.epics_pvs['SampleXSet'] = PV(self.control_pvs['SampleX'].pvname + '.SET')
+        self.epics_pvs['SampleYSet'] = PV(self.control_pvs['SampleY'].pvname + '.SET')
         # energy scan
         self.epics_pvs['EnergySet'].put(0)
         self.epics_pvs['EnergySet'].add_callback(self.pv_callback_32id)
@@ -246,6 +248,13 @@ class TomoScan32IDSTEP(TomoScanSTEP):
         - Turns on data capture.
         """
         log.info('begin scan')
+        self.epics_pvs['SampleXSet'].put(1, wait=True)
+        self.epics_pvs['SampleYSet'].put(1, wait=True)
+        self.epics_pvs['SampleX'].put(0, wait=True)
+        self.epics_pvs['SampleY'].put(0, wait=True)
+        self.epics_pvs['SampleXSet'].put(0, wait=True)
+        self.epics_pvs['SampleYSet'].put(0, wait=True)
+        
 
         # Set data directory
         file_path = self.epics_pvs['DetectorTopDir'].get(as_string=True) + self.epics_pvs['ExperimentYearMonth'].get(as_string=True) + os.path.sep + self.epics_pvs['UserLastName'].get(as_string=True) + os.path.sep
