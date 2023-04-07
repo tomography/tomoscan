@@ -330,7 +330,3 @@ class TomoScanPSO(TomoScan):
         # Assign the fly scan angular position to theta[]
         self.theta = self.rotation_start + np.arange(self.num_angles) * self.rotation_step
         
-        # When doing backwards we need to re-label the angle location so the exposure occurs at the same location
-        # if user_direction<0:
-            # self.theta+=self.rotation_step
-        
