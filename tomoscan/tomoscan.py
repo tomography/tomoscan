@@ -936,6 +936,7 @@ class TomoScan():
         # If the time is less than the readout time then use the readout time plus 1 ms.
         if frame_time < readout:
             frame_time = readout + .001
+        self.readout_margin = readout_margin
         return frame_time
 
     def update_status(self, start_time):

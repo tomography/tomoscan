@@ -243,8 +243,8 @@ class TomoScanPSO(TomoScan):
             window_start = range_start
             window_end = window_start + range_length
         else:
-            window_end = range_start
-            window_start = window_end - range_length
+            window_end = range_start -(self.readout_margin-1)*self.epics_pvs['PSOEncoderCountsPerStep'].get()
+            window_start = window_end - range_length-(self.readout_margin-1)*self.epics_pvs['PSOEncoderCountsPerStep'].get()
         pso_command.put('PSOWINDOW %s 1 RANGE %d,%d' % (pso_axis, window_start-5, window_end+5), wait=True, timeout=10.0)
         # Arm the PSO
         pso_command.put('PSOCONTROL %s ARM' % pso_axis, wait=True, timeout=10.0)
@@ -325,7 +325,7 @@ class TomoScanPSO(TomoScan):
         # Assign the fly scan angular position to theta[]
         self.theta = self.rotation_start + np.arange(self.num_angles) * self.rotation_step
         
-        ##TO CHECK:
+        # When doing backwards we need to re-label the angle location so the exposure occurs at the same location
         if user_direction<0:
             self.theta+=self.rotation_step
         
