@@ -596,21 +596,6 @@ class TomoScan2BM(TomoScanHelical):
                         # create theta dataset in hdf5 file
                         if len(proj_ids) > 0:
                             theta_ds = f.create_dataset('/exchange/theta', (len(proj_ids),))
-                            
-                                
-                                
-                            #################TODO    
-                            if self.theta[1]-self.theta[0]<0:
-                                log.warning(f"the rotary stage at 2-bm is strange. To have the same reconstruction results for \
-                                    0..180 and 180-0 (both include 0 and 180) theta should be modified as follows theta+=0.8*rotation_step). \
-                                        This needs to be checked for other stages.")        
-                            self.theta+=0.8*self.rotation_step
-                            log.warning(f"new theta: {self.theta}")                            
-                            
-                            
-                            
-                            
-                            
                             theta_ds[:] = self.theta[proj_ids - proj_ids[0]]
 
                         # warnings that data is missing
