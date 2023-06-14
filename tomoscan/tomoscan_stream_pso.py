@@ -70,6 +70,8 @@ class TomoScanStreamPSO(TomoScan):
         self.epics_pvs['CBEnableCallbacks'].put('Enable')
         self.epics_pvs['FPEnableCallbacks'].put('Enable')  
 
+        #self.epics_pvs['CamUniqueIdMode'].put('Driver',wait=True)
+
     def begin_scan(self):
         """Performs the operations needed at the very start of a scan.
 
@@ -123,6 +125,23 @@ class TomoScanStreamPSO(TomoScan):
         # Call the base class method        
         super().end_scan()
     
+    def compute_frame_time(self):
+        """Redefine the one from Tomoscan, set no readout
+
+        Returns
+        -------
+        float
+            The frame time, which is the minimum time allowed between triggers for the value of the
+            ``ExposureTime`` PV.
+        """
+   
+        readout_margin = 1.0516
+        # We need to use the actual exposure time that the camera is using, not the requested time
+        exposure = self.epics_pvs['CamAcquireTimeRBV'].value
+        # Add some extra time to exposure time for margin.
+        frame_time = exposure * readout_margin        
+        return frame_time
+
     def collect_projections(self):
         """Collects projections in fly scan mode.
 
@@ -326,7 +345,9 @@ class TomoScanStreamPSO(TomoScan):
         self.epics_pvs['StreamRetakeDark'].put('Done', wait=True)
         self.epics_pvs['StreamRetakeFlat'].put('Done', wait=True)     
         self.epics_pvs['StreamSync'].put('Done', wait=True)   
-        # set first projection id as 0
+        # set first projection id as ArrayCounter_RBV
+        # NOTE: USE UniqueID mode 'Driver' otherwise max id is 65535
+        #self.epics_pvs['FirstProjid'].put(self.epics_pvs['CamArrayCounterRBV'].get(), wait=True)        
         self.epics_pvs['FirstProjid'].put(0, wait=True)        
         # init circular buffer
         self.change_cbsize()                
@@ -587,8 +608,8 @@ class TomoScanStreamPSO(TomoScan):
 
             # Create a thread to handle the flat and dark fields (to create a regular hdf5 file handled by tomopy-cli)
             # Note: circular buffer is not saved to the file
-            # flat_dark_thread = threading.Thread(target = self.copy_flat_dark_to_hdf, args=())
-            # flat_dark_thread.start()        
+            flat_dark_thread = threading.Thread(target = self.copy_flat_dark_to_hdf, args=())
+            flat_dark_thread.start()        
                 
             if(self.epics_pvs['StreamPreCount'].get()>0):
                 self.epics_pvs['StreamMessage'].put('Capturing circular buffer')                    
@@ -613,8 +634,8 @@ class TomoScanStreamPSO(TomoScan):
                 self.wait_pv(self.epics_pvs['FPCaptureRBV'], 0)            
                 self.epics_pvs['CBCapture'].put('Capture')   
                 self.dump_theta()
-                # flat_dark_thread = threading.Thread(target = self.copy_flat_dark_to_hdf, args=())
-                # flat_dark_thread.start()   
+                flat_dark_thread = threading.Thread(target = self.copy_flat_dark_to_hdf, args=())
+                flat_dark_thread.start()   
                 self.epics_pvs['FPNDArrayPort'].put(fp_port_name)                        
                 self.epics_pvs['FPFileName'].put(file_name, wait=True)
                 self.epics_pvs['FPFileTemplate'].put(file_template, wait=True)        
@@ -832,7 +853,7 @@ class TomoScanStreamPSO(TomoScan):
         file_name = self.epics_pvs['FPFullFileName'].get(as_string=True)
         log.info('dump theta into the hdf5 file %s',file_name)
         with util.open_hdf5(file_name,'r+') as hdf_file:               
-            unique_ids = hdf_file['/defaults/NDArrayUniqueId'][:]
+            unique_ids = hdf_file['/defaults/NDArrayUniqueId'][:]-self.epics_pvs['FirstProjid'].get()
             if '/exchange/theta' in hdf_file:
                 del hdf_file['/exchange/theta']
             dset = hdf_file.create_dataset('/exchange/theta', (len(unique_ids),), dtype='float32')
