@@ -1,7 +1,7 @@
 < envPaths
 
 epicsEnvSet("P", "2bmb:")
-epicsEnvSet("R", "TomoScan:")
+epicsEnvSet("R", "TomoScanStep:")
 
 ## Register all support components
 

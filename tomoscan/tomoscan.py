@@ -906,6 +906,7 @@ class TomoScan():
                 'Mono12Packed': 30.0,
                 'Mono16': 30.0
             }
+            readout_margin = 1.2
             readout = readout_times[pixel_format]/1000.
         if camera_model == 'Q-12A180-Fm/CXP-6':
             pixel_format = self.epics_pvs['CamPixelFormat'].get(as_string=True) 
@@ -936,6 +937,7 @@ class TomoScan():
         # If the time is less than the readout time then use the readout time plus 1 ms.
         if frame_time < readout:
             frame_time = readout + .001
+        self.readout_margin = readout_margin
         return frame_time
 
     def update_status(self, start_time):

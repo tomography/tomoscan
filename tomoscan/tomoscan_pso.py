@@ -210,7 +210,7 @@ class TomoScanPSO(TomoScan):
 
         # Place the motor at the position where the first PSO pulse should be triggered
         self.epics_pvs['RotationSpeed'].put(self.max_rotation_speed)
-        self.epics_pvs['Rotation'].put(self.rotation_start, wait=True, timeout=600)
+        self.epics_pvs['Rotation'].put(self.rotation_start_new, wait=True, timeout=600)
         self.epics_pvs['RotationSpeed'].put(self.motor_speed)
 
         # Make sure the PSO control is off
@@ -311,21 +311,22 @@ class TomoScanPSO(TomoScan):
           
         # Make taxi distance an integer number of measurement deltas >= accel distance
         # Add 1/2 of a delta to ensure that we are really up to speed.
+        if overall_sense>0:
+            self.rotation_start_new = self.rotation_start
+        else:
+            self.rotation_start_new  = self.rotation_start-(2-self.readout_margin)*self.rotation_step
+        
         if self.rotation_step > 0:
             taxi_dist = math.ceil(accel_dist / self.rotation_step + 0.5) * self.rotation_step 
         else:
             taxi_dist = math.floor(accel_dist / self.rotation_step - 0.5) * self.rotation_step 
-        self.epics_pvs['PSOStartTaxi'].put(self.rotation_start - taxi_dist * user_direction)
+        self.epics_pvs['PSOStartTaxi'].put(self.rotation_start_new - taxi_dist * user_direction)
         
         #Where will the last point actually be?
-        self.rotation_stop = (self.rotation_start 
+        self.rotation_stop = (self.rotation_start_new
                                 + (self.num_angles - 1) * self.rotation_step)
         self.epics_pvs['PSOEndTaxi'].put(self.rotation_stop + taxi_dist * user_direction)
         
         # Assign the fly scan angular position to theta[]
         self.theta = self.rotation_start + np.arange(self.num_angles) * self.rotation_step
-        
-        ##TO CHECK:
-        if user_direction<0:
-            self.theta+=self.rotation_step
         

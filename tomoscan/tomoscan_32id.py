@@ -310,40 +310,49 @@ class TomoScan32ID(TomoScanPSO):
         self.wait_pv(self.epics_pvs['FPCaptureRBV'], 0)
         # Add theta in the hdf file
         self.add_theta()
-
+                
                 
         if self.epics_pvs['CollectMicroCTdata'].get(as_string=True)=='Yes':
-            log.warning('take microCT projection')
-            self.epics_pvs['TXMMoveAllOut'].put(1,wait=True)
-            self.epics_pvs['CamAcquire'].put(1)
-            log.info(f"write to {self.epics_pvs['FPFullFileName'].get(as_string=True)}")
-            time.sleep(0.5)
-            with h5py.File(self.epics_pvs['FPFullFileName'].get(as_string=True),'r+') as fid:
-                pva_image_data = self.epics_pvs['PvaPImage'].get('') 
-                width = pva_image_data['dimension'][0]['size']
-                height = pva_image_data['dimension'][1]['size']
-                datatype_list = self.epics_pvs['PvaPDataType_RBV'].get()['value']   
-                type_dict = {
-                    'uint8': 'ubyteValue',
-                    'float32': 'floatValue',
-                    'uint16' : 'ushortValue'
-                }
-                datatype = type_dict[datatype_list['choices'][datatype_list['index']].lower()]                        
-                data = pva_image_data['value'][0][datatype]            
-                fid.create_dataset("exchange/data2", data = data.reshape([height,width]))            
-            self.epics_pvs['CamAcquire'].put(0)
+            try:
+                log.warning('take microCT projection')
+                self.epics_pvs['TXMMoveAllOut'].put(1,wait=True)
+                self.epics_pvs['CamAcquire'].put(1)
+                log.info(f"write to {self.epics_pvs['FPFullFileName'].get(as_string=True)}")
+                time.sleep(0.5)
+                with h5py.File(self.epics_pvs['FPFullFileName'].get(as_string=True),'r+') as fid:
+                    pva_image_data = self.epics_pvs['PvaPImage'].get('') 
+                    width = pva_image_data['dimension'][0]['size']
+                    height = pva_image_data['dimension'][1]['size']
+                    datatype_list = self.epics_pvs['PvaPDataType_RBV'].get()['value']   
+                    type_dict = {
+                        'uint8': 'ubyteValue',
+                        'float32': 'floatValue',
+                        'uint16' : 'ushortValue'
+                    }
+                    datatype = type_dict[datatype_list['choices'][datatype_list['index']].lower()]                        
+                    data = pva_image_data['value'][0][datatype]            
+                    fid.create_dataset("exchange/data2", data = data.reshape([height,width]))                        
+                self.epics_pvs['CamAcquire'].put(0)
+            except:
+                log.warning('microCT projection was not taken')
             #self.epics_pvs['TXMMoveAllIn'].put(1,wait=True)
             
         # Close shutter
         self.close_shutter()    
         
         # Copy raw data to data analysis computer    
-        if self.epics_pvs['CopyToAnalysisDir'].get():
-            log.info('Automatic data trasfer to data analysis computer is enabled.')
-            full_file_name = self.epics_pvs['FPFullFileName'].get(as_string=True)
-            remote_analysis_dir = self.epics_pvs['RemoteAnalysisDir'].get(as_string=True)
-            # dm.scp(full_file_name, remote_analysis_dir)
+        log.info('Automatic data trasfer to data analysis computer is enabled.')
+        full_file_name = self.epics_pvs['FPFullFileName'].get(as_string=True)
+        remote_analysis_dir = self.epics_pvs['RemoteAnalysisDir'].get(as_string=True)
+        copy_to_analysis_dir = self.epics_pvs['CopyToAnalysisDir'].get()
+        if copy_to_analysis_dir == 1:
+            log.info('Using FDT')
             dm.fdt_scp(full_file_name, remote_analysis_dir, Path(self.epics_pvs['DetectorTopDir'].get()))
+            self.epics_pvs['ScanStatus'].put('fdt file transfer complete')
+        elif copy_to_analysis_dir == 2:
+            log.info('Using scp')
+            dm.scp(full_file_name, remote_analysis_dir)
+            self.epics_pvs['ScanStatus'].put('scp file transfer complete')
         else:
             log.warning('Automatic data trasfer to data analysis computer is disabled.')
 

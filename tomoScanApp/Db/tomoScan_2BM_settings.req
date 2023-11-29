@@ -57,3 +57,22 @@ $(P)$(R)ShutterStatusPVName
 ################
 $(P)$(R)MctOpticsPVPrefix
 
+################
+# AD plugins
+################
+$(P)$(R)PvaPluginPVPrefix
+
+######################
+# Pva Plugin PV Prefix
+######################
+$(P)$(R)PvaPluginPVPrefix
+
+######################
+# Roi Plugin PV Prefix
+######################
+$(P)$(R)RoiPluginPVPrefix
+
+#####################
+# Cb Plugin PV Prefix
+#####################
+$(P)$(R)CbPluginPVPrefix
