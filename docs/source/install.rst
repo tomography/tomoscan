@@ -96,7 +96,7 @@ Python server
     $ conda create --name tomoscan python=3.9
     $ conda activate tomoscan
 
-and install all packages listed in the `requirements <https://github.com/tomography/tomoscan/blob/master/requirements.txt>`_.txt file then
+and install all packages listed in the `requirements <https://github.com/tomoscan/tomoscan/blob/master/envs/requirements.txt>`_.txt file then
 
 ::
 
