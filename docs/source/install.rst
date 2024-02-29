@@ -99,6 +99,7 @@ Python server
 and install all packages listed in the `requirements <https://github.com/tomography/tomoscan/blob/master/requirements.txt>`_.txt file then
 
 ::
+
     $ cd ~/epics-ts/synApps/support/tomoscan
     $ pip install .
     $ cd ~/epics-ts/synApps/support/tomoscan/iocBoot/iocTomoScan_13BM_PSO/
