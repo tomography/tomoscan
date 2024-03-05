@@ -9,76 +9,102 @@ Build EPICS base
 
 ::
 
-    $ mkdir ~/epics
-    $ cd epics
+    $ mkdir ~/epics-ts
+    $ cd epics-ts
     
 
 - Download EPICS base latest release, i.e. 7.0.3.1., from https://github.com/epics-base/epics-base::
 
     $ git clone https://github.com/epics-base/epics-base.git
     $ cd epics-base
+    $ git submodule init
+    $ git submodule update
+    $ make distclean (do this in case there was an OS update)
     $ make -sj
     
+.. warning:: if you get a *configure/os/CONFIG.rhel9-x86_64.Common: No such file or directory* error issue this in your csh termimal: $ **setenv EPICS_HOST_ARCH linux-x86_64**
 
 Build a minimal synApps
 -----------------------
 
 To build a minimal synApp::
 
-    $ cd ~/epics
+    $ cd ~/epics-ts
 
-- Download in ~/epics `assemble_synApps <https://github.com/EPICS-synApps/support/blob/master/assemble_synApps.sh>`_.sh
-- Edit the assemble_synApps.sh script as follows:
-    - Set FULL_CLONE=True
-    - Set EPICS_BASE to point to local version just built: ~/epics/epics-base.
-    - For tomoscan you only need ASYN, BUSY and AUTOSAVE.  You can comment out all of the other modules (ALLENBRADLEY, ALIVE, etc.)
+- Download in ~/epics-ts `assemble_synApps <https://github.com/EPICS-synApps/assemble_synApps/blob/18fff37055bb78bc40a87d3818777adda83c69f9/assemble_synApps>`_.sh
+- Edit the assemble_synApps.sh script to include only::
+    
+    $modules{'ASYN'} = 'R4-44-2';
+    $modules{'AUTOSAVE'} = 'R5-11';
+    $modules{'BUSY'} = 'R1-7-4';
+
+You can comment out all of the other modules (ALLENBRADLEY, ALIVE, etc.)
 
 - Run::
 
-    $ assemble_synApps.sh
+    $ cd ~/epics-ts
+    $ ./assemble_synApps.sh --dir=synApps --base=/home/beams/FAST/epics-ts/epics-base
 
 - This will create a synApps/support directory::
 
     $ cd synApps/support/
 
-- Edit asyn-RX-YY/configure/RELEASE to comment out the lines starting with::
-    
-    IPAC=$(SUPPORT)/
-    SNCSEQ=$(SUPPORT)/
-
-
-.. warning:: If building for RedHat8 uncomment **TIRPC=YES** in asyn-RX-YY/configure/CONFIG_SITE
-
-
 - Clone the tomoscan module into synApps/support::
     
     $ git clone https://github.com/tomography/tomoscan.git
+
+.. warning:: If you are a tomoScan developer you should clone your fork.
 
 - Edit configure/RELEASE add this line to the end::
     
     TOMOSCAN=$(SUPPORT)/tomoscan
 
-- Edit Makefile add this line to the end of the MODULE_LIST::
-    
-    MODULE_LIST += TOMOSCAN
+- Verify that synApps/support/tomoscan/configure/RELEASE::
+
+    EPICS_BASE=/home/beams/FAST/epics-ts/epics-base
+    SUPPORT=/home/beams/FAST/epics-ts/synApps/support
+
+are set to the correct EPICS_BASE and SUPPORT directories and that::
+
+    BUSY
+    AUTOSAVE
+    ASYN
+
+point to the version installed.
 
 - Run the following commands::
 
+    $ cd ~/epics-ts/synApps/support/
     $ make release
     $ make -sj
 
 Testing the installation
 ------------------------
 
-- Edit /epics/synApps/support/tomoscan/configure
-    - Set EPICS_BASE to point to the location of EPICS base:
-    - EPICS_BASE=/APSshare/epics/base-3.15.6
-
 - Start the epics ioc and associated medm screen with::
 
-    $ cd ~/epics/synApps/support/tomoscan/iocBoot/iocTomoScan_13BM_PSO
+    $ cd ~/epics-ts/synApps/support/tomoscan/iocBoot/iocTomoScan_13BM_PSO
     $ start_IOC
     $ start_medm
+
+
+Python server
+-------------
+
+- create a dedicated conda environment::
+
+    $ conda create --name tomoscan python=3.9
+    $ conda activate tomoscan
+
+and install all packages listed in the `requirements <https://github.com/tomoscan/tomoscan/blob/master/envs/requirements.txt>`_.txt file then
+
+::
+
+    $ cd ~/epics-ts/synApps/support/tomoscan
+    $ pip install .
+    $ cd ~/epics-ts/synApps/support/tomoscan/iocBoot/iocTomoScan_13BM_PSO/
+    $ python -i start_tomoscan.py
+
 
 Beamline customization
 ----------------------
@@ -88,24 +114,24 @@ tomoScan
 
 Below are the customization steps for 2-BM, you can use these as templates for your beamline.
 
-- Create in ~/epics/synApps/support/tomoscan/tomoScanApp/Db
+- Create in ~/epics-ts/synApps/support/tomoscan/tomoScanApp/Db
     - tomoScan_2BM_settings.req
     - tomoScan_2BM.template
 
-- Create in ~/epics/synApps/support/tomoscan/tomoScanApp/op/adl
+- Create in ~/epics-ts/synApps/support/tomoscan/tomoScanApp/op/adl
     - tomoScan_2BM.adl
 
 add here custom PVs required to run tomography at your beamline.
 
 ::
 
-    $ mkdir ~/epics/synApps/support/tomoscan/iocBoot/iocTomoScan_2BM
-    $ cd ~/epics/synApps/support/tomoscan/iocBoot/
+    $ mkdir ~/epics-ts/synApps/support/tomoscan/iocBoot/iocTomoScan_2BM
+    $ cd ~/epics-ts/synApps/support/tomoscan/iocBoot/
     $ cp -r iocTomoScan_13BM/* iocTomoScan_2BM/
 
 ::
 
-    $ cd ~/epics/synApps/support/tomoscan/iocBoot/
+    $ cd ~/epics-ts/synApps/support/tomoscan/iocBoot/
 
 - Edit iocBoot/iocTomoScan_2BM/auto_settings.req
     - file "tomoScan_settings.req", P=$(P), R=$(R)
@@ -152,21 +178,22 @@ add here custom PVs required to run tomography at your beamline.
 
 then::
 
-    $ cd ~/epics/synApps/support
+    $ cd ~/epics-ts/synApps/support
     $ make release
     $ make -sj
 
 Python class
 ~~~~~~~~~~~~
 
-- Create in ~/epics/synApps/support/tomoscan/tomoscan/
+- Create in ~/epics-ts/synApps/support/tomoscan/tomoscan/
     - tomoscan_2bm.py
 
-to implemented a derived classes that inherit from ~/epics/synApps/support/tomoscan/tomoscan/tomoscan.py
+to implemented a derived classes that inherit from ~/epics-ts/synApps/support/tomoscan/tomoscan/tomoscan.py
 This derived class will handle any beamline specific hardware (fast shutter, fly scan hardware etc.)
 
 To install the python class as a libray::
 
-    $ cd ~/epics/synApps/support/tomoscan/
-    $ python setup.py install
+    $ cd ~/epics-ts/synApps/support/tomoscan/
+    $ conda activate tomoscan
+    $ pip install .
 

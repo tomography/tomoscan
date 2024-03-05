@@ -102,7 +102,7 @@ class TomoScanStream2BM(TomoScanStreamPSO):
 
         Parameters
         ----------
-       camera : int, optional
+        camera : int, optional
             The camera to use. Optique Peter system support 2 cameras
         """
 
