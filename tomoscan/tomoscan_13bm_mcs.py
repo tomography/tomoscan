@@ -14,7 +14,7 @@ from tomoscan import log
 
 class TomoScan13BM_MCS(TomoScan):
     """Derived class used for tomography scanning with EPICS at APS beamline 13-BM-D
-       using the OMS-58 controller step output and the SIS233820 MCS as the trigger source
+       using the Galil controller step output and the Measurement Computing USB-CTR08 MCS as the trigger source
 
     Parameters
     ----------
@@ -31,10 +31,10 @@ class TomoScan13BM_MCS(TomoScan):
         # Set the detector running in FreeRun mode
         self.set_trigger_mode('FreeRun', 1)
         # Set the SIS output pulse width to 100 us
-        self.epics_pvs['MCSLNEOutputWidth'].put(0.0001)
+        #self.epics_pvs['MCSLNEOutputWidth'].put(0.0001)
 
     def set_trigger_mode(self, trigger_mode, num_images):
-        """Sets the trigger mode SIS3820 and the camera.
+        """Sets the trigger mode USB-CTR08 and the camera.
 
         Parameters
         ----------
@@ -214,10 +214,17 @@ class TomoScan13BM_MCS(TomoScan):
 
         super().collect_projections()
         self.epics_pvs['RotationSpeed'].put(self.max_rotation_speed)
+        # We need the rotation step to be an integer number of motor pulses.  Adjust so it is.
+        steps_per_angle = round(self.rotation_step/self.rotation_resolution, 0)
+        print('rotation_step before correction=', self.rotation_step)
+        self.rotation_step = steps_per_angle * self.rotation_resolution
+        self.epics_pvs['RotationStep'].put(self.rotation_step)
+        print('rotation_step after correction=', self.rotation_step)
+        # The rotation stop position needs to be updated to reflect actual step size
+        self.rotation_stop = self.rotation_start + self.rotation_step * self.num_angles
+        self.epics_pvs['RotationStop'].put(self.rotation_stop)
         # Start angle is decremented a half rotation step so scan is centered on rotation_start
-        # The SIS does not put out pulses until after one dwell period so need to back up an
-        # additional angle step
-        self.epics_pvs['Rotation'].put((self.rotation_start - 1.5 * self.rotation_step), wait=True)
+        self.epics_pvs['Rotation'].put((self.rotation_start - 0.5 * self.rotation_step), wait=True)
         # Compute and set the motor speed
         time_per_angle = self.compute_frame_time()
         speed = self.rotation_step / time_per_angle
@@ -229,7 +236,7 @@ class TomoScan13BM_MCS(TomoScan):
         # Set the external prescale according to the step size, use motor resolution
         # steps per degree (user unit)
         self.epics_pvs['MCSStopAll'].put(1, wait=True)
-        prescale = math.floor(abs(self.rotation_step  * steps_per_deg))
+        prescale = steps_per_angle
         self.epics_pvs['MCSPrescale'].put(prescale, wait=True)
         self.set_trigger_mode('MCSExternal', self.num_angles)
         # Uncomment this line to collect flat fields and dark fields in separate files
