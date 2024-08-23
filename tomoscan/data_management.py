@@ -20,11 +20,10 @@ with remote_analysis_dir formatted as tomo@handyn:/local/data/
 
 import os
 import subprocess
-import pathlib
-from paramiko import SSHClient
+from pathlib import Path
+import time
 
 from tomoscan import log
-
 
 
 def scp(fname_origin, remote_analysis_dir):
@@ -37,7 +36,7 @@ def scp(fname_origin, remote_analysis_dir):
     log.info('      *** remote server: %s' % remote_server)
     log.info('      *** remote top directory: %s' % remote_top_dir)
 
-    p = pathlib.Path(fname_origin)
+    p = Path(fname_origin)
     fname_destination = remote_analysis_dir + p.parts[-3] + '/' + p.parts[-2] + '/'
     remote_dir = remote_top_dir + p.parts[-3] + '/' + p.parts[-2] + '/'
 
@@ -59,6 +58,38 @@ def scp(fname_origin, remote_analysis_dir):
     else:
         log.error('  *** Quitting the copy operation')
         return -1
+
+
+def fdt_scp(local_fname, remote_analysis_dir, local_top_dir):
+
+    log.info(' ')
+    log.info('  *** Data transfer')
+
+    remote_server = remote_analysis_dir.split(':')[0]
+    remote_top_dir = Path(remote_analysis_dir.split(':')[1])
+
+    #Remote directory is same as local file directory, relative to local_top_dir
+    local_file_path = Path(local_fname)
+    remote_relative_dir = local_file_path.parent.relative_to(local_top_dir)
+    remote_dir = remote_top_dir.joinpath(remote_relative_dir)
+    log.info(f'      *** remote server: {remote_server}')
+    log.info(f'      *** remote top directory: {str(remote_top_dir)}')
+
+    log.info('      *** origin: %s' % local_fname)
+    log.info('      *** destination: %s' % remote_dir)
+
+    ret = check_remote_directory(remote_server, str(remote_dir))
+
+    if ret == 2:
+        iret = create_remote_directory(remote_server, str(remote_dir))
+        if iret != 0:
+            log.error('  *** Error making a remote directory.  Exiting')
+            return -1
+    start_remote_fdt(remote_server)
+    start_fdt_transfer(remote_server, str(remote_dir), str(local_fname))
+    log.info('  *** Data transfer: Done!')
+    return 0
+
 
 def check_remote_directory(remote_server, remote_dir):
     try:
@@ -87,3 +118,37 @@ def create_remote_directory(remote_server, remote_dir):
     except subprocess.CalledProcessError as e:
         log.error('  *** Error while creating remote directory. Error code: %d' % (e.returncode))
         return -1
+
+
+def start_remote_fdt(remote_server):
+    cmd_start_server = 'java -jar /APSshare/bin/fdt.jar -S'
+    cmd_kill_server = 'lsof -t -i:54321 | xargs -r kill -9'
+    try:
+        log.info('kill everything working with port 54321 on the server')
+        log.info(f'ssh -f {remote_server} {cmd_kill_server}')
+        subprocess.check_call(['ssh', '-f', remote_server, cmd_kill_server])        
+        time.sleep(1) 
+        log.info(f'      *** starting fdt server on {remote_server}')        
+        log.info(f'ssh -f {remote_server} {cmd_start_server}')        
+        subprocess.check_call(['ssh', '-f', remote_server, cmd_start_server])
+        log.info(f'      *** starting fdt server on {remote_server}: Done!')
+        time.sleep(5)        
+    except subprocess.CalledProcessError as e:
+        log.error('  *** Error while starting remote fdt server. Error code: %d' % (e.returncode))
+        return -1
+    
+
+def start_fdt_transfer(remote_server, remote_dir, local_fname):
+
+    remote_server = remote_server.split('@')[-1]
+    cmd = f'java -jar /APSshare/bin/fdt.jar -c {remote_server} -d {remote_dir} {local_fname} &'
+    try:
+        log.info(f'      *** starting fdt transfer to {remote_server}')
+        log.info(cmd)
+        os.system(cmd)
+        log.info(f'      *** starting fdt transfer to {remote_server}: Done!')
+        return 0
+    except:
+        log.error(f'  *** Error during fdt transfer to {remote_server}')
+    
+

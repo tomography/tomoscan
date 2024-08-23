@@ -1,3 +1,8 @@
+.. image:: img/tomoscan-logo.png
+   :width: 320px
+   :alt: TomoStream Logo
+   :align: center
+
 ========
 TomoScan
 ========

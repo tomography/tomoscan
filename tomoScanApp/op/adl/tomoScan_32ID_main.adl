@@ -1,14 +1,14 @@
 
 file {
-	name="/home/beams8/USER2BMB/epics/synApps/support/tomoscan/tomoScanApp/op/adl/tomoScanStream.adl"
+	name="/home/beams19/USERTXM/epics/synApps/support/tomoscan/tomoScanApp/op/adl/tomoScan_32ID_main.adl"
 	version=030111
 }
 display {
 	object {
-		x=3768
-		y=365
-		width=700
-		height=1042
+		x=426
+		y=968
+		width=699
+		height=820
 	}
 	clr=14
 	bclr=4
@@ -157,7 +157,7 @@ composite {
 	}
 	display[0] {
 		label="Epics PV Names"
-		name="tomoScanStreamEPICS_PVs.adl"
+		name="tomoScanEPICS_PVs.adl"
 		args="P=$(P), R=$(R)"
 	}
 	clr=14
@@ -189,7 +189,7 @@ text {
 }
 rectangle {
 	object {
-		x=5
+		x=7
 		y=50
 		width=690
 		height=65
@@ -324,64 +324,10 @@ rectangle {
 		fill="outline"
 	}
 }
-text {
-	object {
-		x=35
-		y=260
-		width=130
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="X in position"
-}
-"text entry" {
-	object {
-		x=170
-		y=260
-		width=100
-		height=20
-	}
-	control {
-		chan="$(P)$(R)SampleInX"
-		clr=14
-		bclr=51
-	}
-	limits {
-	}
-}
-"text entry" {
-	object {
-		x=170
-		y=285
-		width=100
-		height=20
-	}
-	control {
-		chan="$(P)$(R)SampleOutX"
-		clr=14
-		bclr=51
-	}
-	limits {
-	}
-}
-text {
-	object {
-		x=25
-		y=285
-		width=140
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="X out position"
-}
 menu {
 	object {
 		x=170
-		y=310
+		y=340
 		width=100
 		height=20
 	}
@@ -394,7 +340,7 @@ menu {
 text {
 	object {
 		x=15
-		y=310
+		y=340
 		width=150
 		height=20
 	}
@@ -403,65 +349,11 @@ text {
 	}
 	textix="Flat field axis"
 }
-text {
-	object {
-		x=300
-		y=285
-		width=140
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="Y out position"
-}
 "text entry" {
 	object {
-		x=445
-		y=285
-		width=100
-		height=20
-	}
-	control {
-		chan="$(P)$(R)SampleOutY"
-		clr=14
-		bclr=51
-	}
-	limits {
-	}
-}
-"text entry" {
-	object {
-		x=445
-		y=260
-		width=100
-		height=20
-	}
-	control {
-		chan="$(P)$(R)SampleInY"
-		clr=14
-		bclr=51
-	}
-	limits {
-	}
-}
-text {
-	object {
-		x=310
-		y=260
-		width=130
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="Y in position"
-}
-"text entry" {
-	object {
-		x=575
-		y=335
-		width=100
+		x=145
+		y=315
+		width=70
 		height=20
 	}
 	control {
@@ -474,8 +366,8 @@ text {
 }
 text {
 	object {
-		x=440
-		y=335
+		x=10
+		y=315
 		width=130
 		height=20
 	}
@@ -610,7 +502,7 @@ text {
 }
 text {
 	object {
-		x=226
+		x=225
 		y=410
 		width=100
 		height=20
@@ -622,7 +514,7 @@ text {
 }
 "text entry" {
 	object {
-		x=331
+		x=330
 		y=410
 		width=70
 		height=20
@@ -637,8 +529,8 @@ text {
 }
 text {
 	object {
-		x=34
-		y=734
+		x=415
+		y=317
 		width=190
 		height=20
 	}
@@ -648,10 +540,23 @@ text {
 	textix="Collect flat fields"
 	align="horiz. right"
 }
+menu {
+	object {
+		x=610
+		y=317
+		width=80
+		height=20
+	}
+	control {
+		chan="$(P)$(R)FlatFieldMode"
+		clr=14
+		bclr=51
+	}
+}
 text {
 	object {
-		x=379
-		y=735
+		x=415
+		y=410
 		width=190
 		height=20
 	}
@@ -659,6 +564,19 @@ text {
 		clr=14
 	}
 	textix="Collect dark fields"
+}
+menu {
+	object {
+		x=610
+		y=410
+		width=80
+		height=20
+	}
+	control {
+		chan="$(P)$(R)DarkFieldMode"
+		clr=14
+		bclr=51
+	}
 }
 text {
 	object {
@@ -739,30 +657,330 @@ text {
 	limits {
 	}
 }
+rectangle {
+	object {
+		x=5
+		y=554
+		width=703
+		height=70
+	}
+	"basic attribute" {
+		clr=14
+		fill="outline"
+	}
+}
+rectangle {
+	object {
+		x=250
+		y=560
+		width=200
+		height=20
+	}
+	"basic attribute" {
+		clr=2
+	}
+}
+text {
+	object {
+		x=275
+		y=560
+		width=150
+		height=20
+	}
+	"basic attribute" {
+		clr=54
+	}
+	textix="Data Collection"
+	align="horiz. centered"
+}
+rectangle {
+	object {
+		x=305
+		y=634
+		width=90
+		height=20
+	}
+	"basic attribute" {
+		clr=2
+	}
+}
+text {
+	object {
+		x=314
+		y=634
+		width=72
+		height=20
+	}
+	"basic attribute" {
+		clr=54
+	}
+	textix="Status"
+	align="horiz. centered"
+}
+"message button" {
+	object {
+		x=250
+		y=594
+		width=120
+		height=20
+	}
+	control {
+		chan="$(P)$(R)StartScan"
+		clr=14
+		bclr=15
+	}
+	label="Start Scan"
+	press_msg="1"
+}
+"message button" {
+	object {
+		x=375
+		y=594
+		width=120
+		height=20
+	}
+	control {
+		chan="$(P)$(R)AbortScan"
+		clr=14
+		bclr=20
+	}
+	label="Abort Scan"
+	press_msg="1"
+	release_msg="0"
+}
 text {
 	object {
 		x=15
-		y=500
+		y=594
+		width=130
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Exposure time"
+}
+"text entry" {
+	object {
+		x=150
+		y=594
+		width=70
+		height=20
+	}
+	control {
+		chan="$(P)$(R)ExposureTime"
+		clr=14
+		bclr=51
+	}
+	limits {
+	}
+}
+rectangle {
+	object {
+		x=5
+		y=629
+		width=690
+		height=185
+	}
+	"basic attribute" {
+		clr=14
+		fill="outline"
+	}
+}
+"text update" {
+	object {
+		x=580
+		y=594
+		width=100
+		height=20
+	}
+	monitor {
+		chan="$(P)$(R)StartScan"
+		clr=14
+		bclr=2
+	}
+	clrmod="alarm"
+	format="string"
+	limits {
+	}
+}
+text {
+	object {
+		x=515
+		y=594
+		width=60
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Status"
+}
+text {
+	object {
+		x=65
+		y=789
+		width=130
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Python server"
+}
+text {
+	object {
+		x=85
+		y=664
+		width=110
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Scan status"
+}
+"text update" {
+	object {
+		x=201
+		y=664
+		width=400
+		height=20
+	}
+	monitor {
+		chan="$(P)$(R)ScanStatus"
+		clr=14
+		bclr=51
+	}
+	format="string"
+	limits {
+	}
+}
+text {
+	object {
+		x=55
+		y=764
 		width=140
 		height=20
 	}
 	"basic attribute" {
 		clr=14
 	}
-	textix="File directory"
+	textix="Remaining time"
 }
-"text entry" {
+text {
 	object {
-		x=160
-		y=500
-		width=530
+		x=75
+		y=739
+		width=120
 		height=20
 	}
-	control {
-		chan="$(P)$(R)FilePath"
+	"basic attribute" {
+		clr=14
+	}
+	textix="Elapsed time"
+}
+"text update" {
+	object {
+		x=201
+		y=739
+		width=100
+		height=20
+	}
+	monitor {
+		chan="$(P)$(R)ElapsedTime"
 		clr=14
 		bclr=51
 	}
+	format="string"
+	limits {
+	}
+}
+"text update" {
+	object {
+		x=200
+		y=764
+		width=100
+		height=20
+	}
+	monitor {
+		chan="$(P)$(R)RemainingTime"
+		clr=14
+		bclr=51
+	}
+	format="string"
+	limits {
+	}
+}
+text {
+	object {
+		x=35
+		y=689
+		width=160
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Images collected"
+}
+"text update" {
+	object {
+		x=201
+		y=689
+		width=100
+		height=20
+	}
+	monitor {
+		chan="$(P)$(R)ImagesCollected"
+		clr=14
+		bclr=51
+	}
+	format="string"
+	limits {
+	}
+}
+text {
+	object {
+		x=75
+		y=714
+		width=120
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Images saved"
+}
+"text update" {
+	object {
+		x=201
+		y=714
+		width=100
+		height=20
+	}
+	monitor {
+		chan="$(P)$(R)ImagesSaved"
+		clr=14
+		bclr=51
+	}
+	format="string"
+	limits {
+	}
+}
+"text update" {
+	object {
+		x=199
+		y=789
+		width=100
+		height=20
+	}
+	monitor {
+		chan="$(P)$(R)ServerRunning"
+		clr=14
+		bclr=2
+	}
+	clrmod="alarm"
 	format="string"
 	limits {
 	}
@@ -881,8 +1099,8 @@ menu {
 }
 text {
 	object {
-		x=35
-		y=335
+		x=350
+		y=340
 		width=130
 		height=20
 	}
@@ -894,8 +1112,8 @@ text {
 }
 menu {
 	object {
-		x=170
-		y=335
+		x=485
+		y=340
 		width=100
 		height=20
 	}
@@ -907,8 +1125,8 @@ menu {
 }
 "text entry" {
 	object {
-		x=275
-		y=335
+		x=590
+		y=340
 		width=100
 		height=20
 	}
@@ -920,695 +1138,243 @@ menu {
 	limits {
 	}
 }
-"message button" {
-	object {
-		x=229
-		y=735
-		width=100
-		height=20
-	}
-	control {
-		chan="$(P)$(R)StreamRetakeFlat"
-		clr=14
-		bclr=15
-	}
-	label="Now"
-	press_msg="1"
-}
-"message button" {
-	object {
-		x=574
-		y=735
-		width=80
-		height=20
-	}
-	control {
-		chan="$(P)$(R)StreamRetakeDark"
-		clr=14
-		bclr=51
-	}
-	label="Now"
-	press_msg="1"
-}
-rectangle {
-	object {
-		x=5
-		y=768
-		width=690
-		height=70
-	}
-	"basic attribute" {
-		clr=14
-		fill="outline"
-	}
-}
-rectangle {
-	object {
-		x=250
-		y=774
-		width=200
-		height=20
-	}
-	"basic attribute" {
-		clr=2
-	}
-}
 text {
 	object {
-		x=275
-		y=774
-		width=150
-		height=20
-	}
-	"basic attribute" {
-		clr=54
-	}
-	textix="Data Collection"
-	align="horiz. centered"
-}
-rectangle {
-	object {
-		x=305
-		y=848
-		width=90
-		height=20
-	}
-	"basic attribute" {
-		clr=2
-	}
-}
-text {
-	object {
-		x=314
-		y=848
-		width=72
-		height=20
-	}
-	"basic attribute" {
-		clr=54
-	}
-	textix="Status"
-	align="horiz. centered"
-}
-"message button" {
-	object {
-		x=250
-		y=808
-		width=120
-		height=20
-	}
-	control {
-		chan="$(P)$(R)StartScan"
-		clr=14
-		bclr=15
-	}
-	label="Start Scan"
-	press_msg="1"
-}
-"message button" {
-	object {
-		x=375
-		y=808
-		width=120
-		height=20
-	}
-	control {
-		chan="$(P)$(R)AbortScan"
-		clr=14
-		bclr=20
-	}
-	label="Abort Scan"
-	press_msg="1"
-	release_msg="0"
-}
-text {
-	object {
-		x=15
-		y=808
+		x=10
+		y=260
 		width=130
 		height=20
 	}
 	"basic attribute" {
 		clr=14
 	}
-	textix="Exposure time"
+	textix="Top X in "
+}
+text {
+	object {
+		x=10
+		y=285
+		width=140
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Top X out"
+}
+text {
+	object {
+		x=178
+		y=285
+		width=140
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Top Z out"
+}
+text {
+	object {
+		x=178
+		y=260
+		width=130
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Top Z in"
+}
+text {
+	object {
+		x=396
+		y=284
+		width=140
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Angle"
 }
 "text entry" {
 	object {
-		x=150
-		y=808
+		x=458
+		y=284
+		width=100
+		height=20
+	}
+	control {
+		chan="$(P)$(R)SampleOutAngle"
+		clr=14
+		bclr=51
+	}
+	limits {
+	}
+}
+text {
+	object {
+		x=356
+		y=260
+		width=140
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Use angle"
+}
+menu {
+	object {
+		x=458
+		y=260
+		width=100
+		height=20
+	}
+	control {
+		chan="$(P)$(R)SampleOutAngleEnable"
+		clr=14
+		bclr=51
+	}
+}
+"text entry" {
+	object {
+		x=330
+		y=315
 		width=70
 		height=20
 	}
 	control {
-		chan="$(P)$(R)ExposureTime"
+		chan="$(P)$(R)FlatFieldValue"
 		clr=14
 		bclr=51
 	}
 	limits {
 	}
 }
-rectangle {
+text {
 	object {
-		x=5
-		y=843
-		width=690
-		height=190
-	}
-	"basic attribute" {
-		clr=14
-		fill="outline"
-	}
-}
-"text update" {
-	object {
-		x=580
-		y=808
+		x=225
+		y=315
 		width=100
 		height=20
 	}
-	monitor {
-		chan="$(P)$(R)StartScan"
-		clr=14
-		bclr=2
-	}
-	clrmod="alarm"
-	format="string"
-	limits {
-	}
-}
-text {
-	object {
-		x=515
-		y=808
-		width=60
-		height=20
-	}
 	"basic attribute" {
 		clr=14
 	}
-	textix="Status"
-}
-text {
-	object {
-		x=65
-		y=1003
-		width=130
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="Python server"
-}
-text {
-	object {
-		x=85
-		y=878
-		width=110
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="Scan status"
-}
-"text update" {
-	object {
-		x=201
-		y=878
-		width=400
-		height=20
-	}
-	monitor {
-		chan="$(P)$(R)ScanStatus"
-		clr=14
-		bclr=51
-	}
-	format="string"
-	limits {
-	}
-}
-text {
-	object {
-		x=55
-		y=978
-		width=140
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="Remaining time"
-}
-text {
-	object {
-		x=75
-		y=953
-		width=120
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="Elapsed time"
-}
-"text update" {
-	object {
-		x=201
-		y=953
-		width=100
-		height=20
-	}
-	monitor {
-		chan="$(P)$(R)ElapsedTime"
-		clr=14
-		bclr=51
-	}
-	format="string"
-	limits {
-	}
-}
-"text update" {
-	object {
-		x=200
-		y=978
-		width=100
-		height=20
-	}
-	monitor {
-		chan="$(P)$(R)RemainingTime"
-		clr=14
-		bclr=51
-	}
-	format="string"
-	limits {
-	}
-}
-text {
-	object {
-		x=35
-		y=903
-		width=160
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="Images collected"
-}
-"text update" {
-	object {
-		x=201
-		y=903
-		width=100
-		height=20
-	}
-	monitor {
-		chan="$(P)$(R)ImagesCollected"
-		clr=14
-		bclr=51
-	}
-	format="string"
-	limits {
-	}
-}
-text {
-	object {
-		x=75
-		y=928
-		width=120
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="Images saved"
-}
-"text update" {
-	object {
-		x=201
-		y=928
-		width=100
-		height=20
-	}
-	monitor {
-		chan="$(P)$(R)ImagesSaved"
-		clr=14
-		bclr=51
-	}
-	format="string"
-	limits {
-	}
-}
-"text update" {
-	object {
-		x=199
-		y=1003
-		width=100
-		height=20
-	}
-	monitor {
-		chan="$(P)$(R)ServerRunning"
-		clr=14
-		bclr=2
-	}
-	clrmod="alarm"
-	format="string"
-	limits {
-	}
-}
-text {
-	object {
-		x=-32
-		y=625
-		width=170
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="# Pre count"
-	align="horiz. right"
+	textix="Flat value"
 }
 "text entry" {
 	object {
-		x=148
-		y=625
-		width=80
+		x=101
+		y=260
+		width=73
 		height=20
 	}
 	control {
-		chan="$(P)$(R)StreamPreCount"
+		chan="$(P)$(R)SampleInX"
 		clr=14
 		bclr=51
 	}
 	limits {
 	}
-}
-"text update" {
-	object {
-		x=233
-		y=625
-		width=80
-		height=20
-	}
-	monitor {
-		chan="$(P)$(R)StreamPreCounted"
-		clr=54
-		bclr=4
-	}
-	limits {
-	}
-}
-"text update" {
-	object {
-		x=319
-		y=625
-		width=130
-		height=20
-	}
-	monitor {
-		chan="$(P)$(R)StreamCBStatusMessage"
-		clr=54
-		bclr=4
-	}
-	format="string"
-	limits {
-	}
-}
-"message button" {
-	object {
-		x=459
-		y=625
-		width=130
-		height=50
-	}
-	control {
-		chan="$(P)$(R)StreamCapture"
-		clr=14
-		bclr=15
-	}
-	label="Capture"
-	press_msg="1"
-}
-"message button" {
-	object {
-		x=596
-		y=653
-		width=80
-		height=20
-	}
-	control {
-		chan="$(P)$(R)StreamCapture"
-		clr=14
-		bclr=51
-	}
-	label="Stop"
-	press_msg="0"
-}
-text {
-	object {
-		x=54
-		y=650
-		width=90
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="# Capture"
-	align="horiz. right"
 }
 "text entry" {
 	object {
-		x=149
-		y=650
-		width=80
+		x=101
+		y=285
+		width=73
 		height=20
 	}
 	control {
-		chan="$(P)$(R)StreamNumCapture"
+		chan="$(P)$(R)SampleOutX"
 		clr=14
 		bclr=51
 	}
 	limits {
 	}
 }
-"text update" {
+"text entry" {
 	object {
-		x=239
-		y=650
-		width=80
+		x=278
+		y=285
+		width=73
 		height=20
 	}
-	monitor {
-		chan="$(P)$(R)StreamNumCaptured"
-		clr=54
-		bclr=4
+	control {
+		chan="$(P)$(R)SampleOutY"
+		clr=14
+		bclr=51
 	}
 	limits {
 	}
 }
-rectangle {
+"text entry" {
 	object {
-		x=223
-		y=560
-		width=260
+		x=278
+		y=260
+		width=73
 		height=20
 	}
-	"basic attribute" {
-		clr=2
-	}
-}
-text {
-	object {
-		x=263
-		y=560
-		width=180
-		height=20
-	}
-	"basic attribute" {
-		clr=54
-	}
-	textix="Streaming Control"
-	align="horiz. centered"
-}
-"text update" {
-	object {
-		x=148
-		y=675
-		width=275
-		height=20
-	}
-	monitor {
-		chan="$(P)$(R)StreamFileName"
-		clr=54
-		bclr=4
-	}
-	format="string"
-	limits {
-	}
-}
-text {
-	object {
-		x=-32
-		y=675
-		width=170
-		height=20
-	}
-	"basic attribute" {
+	control {
+		chan="$(P)$(R)SampleInY"
 		clr=14
-	}
-	textix="File name"
-	align="horiz. right"
-}
-text {
-	object {
-		x=465
-		y=675
-		width=80
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="# Proj"
-	align="horiz. right"
-}
-"text update" {
-	object {
-		x=555
-		y=675
-		width=80
-		height=20
-	}
-	monitor {
-		chan="$(P)$(R)StreamNumTotalCaptured"
-		clr=54
-		bclr=4
+		bclr=51
 	}
 	limits {
 	}
-}
-text {
-	object {
-		x=20
-		y=700
-		width=170
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="Broadcast binning"
-	align="horiz. right"
 }
 menu {
 	object {
-		x=200
-		y=700
+		x=611
+		y=450
 		width=80
 		height=20
 	}
 	control {
-		chan="$(P)$(R)StreamBinning"
+		chan="$(P)$(R)CollectMicroCTdata"
 		clr=14
 		bclr=51
 	}
 }
-"text update" {
-	object {
-		x=380
-		y=700
-		width=300
-		height=20
-	}
-	monitor {
-		chan="$(P)$(R)StreamMessage"
-		clr=54
-		bclr=4
-	}
-	format="string"
-	limits {
-	}
-}
-rectangle {
-	object {
-		x=5
-		y=555
-		width=690
-		height=208
-	}
-	"basic attribute" {
-		clr=14
-		fill="outline"
-	}
-}
-"message button" {
-	object {
-		x=608
-		y=587
-		width=80
-		height=20
-	}
-	control {
-		chan="$(P)$(R)StreamSync"
-		clr=14
-		bclr=30
-	}
-	label="Sync"
-	press_msg="1"
-}
 text {
 	object {
-		x=408
-		y=586
-		width=190
-		height=20
+		x=471
+		y=453
+		width=150
+		height=15
 	}
 	"basic attribute" {
 		clr=14
 	}
-	textix="Sync exposure and rotation step"
-	align="horiz. right"
+	textix="Collect MicroCT"
 }
 text {
 	object {
 		x=15
-		y=586
-		width=100
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="Scan type"
-	align="horiz. right"
-}
-menu {
-	object {
-		x=131
-		y=588
+		y=500
 		width=140
 		height=20
 	}
-	control {
-		chan="$(P)$(R)StreamScanType"
-		clr=14
-		bclr=51
-	}
-}
-text {
-	object {
-		x=380
-		y=602
-		width=190
-		height=20
-	}
 	"basic attribute" {
 		clr=14
 	}
-	textix="(only in continuous mode)"
-	align="horiz. right"
+	textix="Last file name"
+}
+"text update" {
+	object {
+		x=160
+		y=505
+		width=530
+		height=15
+	}
+	monitor {
+		chan="32idcSP1:HDF1:FullFileName_RBV"
+		clr=14
+		bclr=51
+	}
+	format="string"
+	limits {
+	}
 }

@@ -80,6 +80,7 @@ $(P)$(R)FilePath
 $(P)$(R)FileName
 $(P)$(R)OverwriteWarning
 #controlPV $(P)$(R)FilePathExists
+$(P)$(R)FullFileName
 
 ################################
 # Location for data in HDF5 file
@@ -106,3 +107,9 @@ $(P)$(R)OverwriteWarning
 #controlPV $(P)$(R)ElapsedTime
 #controlPV $(P)$(R)RemainingTime
 #controlPV $(P)$(R)Watchdog
+
+############
+# Scan Types
+############
+$(P)$(R)ScanType
+$(P)$(R)FlipStitch

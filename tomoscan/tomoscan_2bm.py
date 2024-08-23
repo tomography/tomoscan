@@ -11,14 +11,30 @@ import h5py
 import sys
 import traceback
 import numpy as np
+import cv2
+import json
+import pathlib
+
+import sys,os
+import time
+import re
+import serial
+import telnetlib
+import http.client as httplib
+import base64
+import string
+import threading
+
+from epics import PV
+from pathlib import Path
 
 from tomoscan import data_management as dm
-from tomoscan import TomoScanPSO
+from tomoscan.tomoscan_helical import TomoScanHelical
 from tomoscan import log
 
 EPSILON = .001
 
-class TomoScan2BM(TomoScanPSO):
+class TomoScan2BM(TomoScanHelical):
     """Derived class used for tomography scanning with EPICS at APS beamline 2-BM
 
     Parameters
@@ -33,6 +49,9 @@ class TomoScan2BM(TomoScanPSO):
     def __init__(self, pv_files, macros):
         super().__init__(pv_files, macros)
 
+        prefix = self.pv_prefixes['MctOptics']
+        self.epics_pvs['ImagePixelSize']        = PV(prefix + 'ImagePixelSize')
+
         # set TomoScan xml files
         self.epics_pvs['CamNDAttributesFile'].put('TomoScanDetectorAttributes.xml')
         self.epics_pvs['FPXMLFileName'].put('TomoScanLayout.xml')
@@ -42,13 +61,214 @@ class TomoScan2BM(TomoScanPSO):
         # Enable auto-increment on file writer
         self.epics_pvs['FPAutoIncrement'].put('Yes')
 
-        # Set standard file template on file writer
-        self.epics_pvs['FPFileTemplate'].put("%s%s_%3.3d.h5", wait=True)
+        # # Set standard file template on file writer
+        # self.epics_pvs['FPFileTemplate'].put("%s%s_%3.3d.h5", wait=True)
 
         # Disable over writing warning
         self.epics_pvs['OverwriteWarning'].put('Yes')
 
         log.setup_custom_logger("./tomoscan.log")
+
+        # try to read username/password for pdu and webcam
+        access_fname = os.path.join(str(pathlib.Path.home()), 'access.json')
+        with open(access_fname, 'r') as fp:
+            self.access_dic = json.load(fp)
+        
+        # Set AD plugins            
+        self.epics_pvs['PVANDArrayPort'].put('OVER1')
+        self.epics_pvs['PVAEnableCallbacks'].put('Enable')
+        self.epics_pvs['ROIEnableCallbacks'].put('Disable')
+        self.epics_pvs['CBEnableCallbacks'].put('Disable')
+
+        # Configure callbacks for mctoptics
+        prefix = self.pv_prefixes['MctOptics']
+        self.epics_pvs['CameraSelect'] = PV(prefix + 'CameraSelect')
+        camera_select = self.epics_pvs['CameraSelect'].value
+        if camera_select == None:
+            log.error('mctOptics is down. Please start mctOptics first')
+        else:
+            self.epics_pvs['Camera0']     = PV(prefix + 'Camera0PVPrefix')
+            self.epics_pvs['Camera1']     = PV(prefix + 'Camera1PVPrefix')
+            self.epics_pvs['FilePlugin0'] = PV(prefix + 'FilePlugin0PVPrefix')
+            self.epics_pvs['FilePlugin1'] = PV(prefix + 'FilePlugin1PVPrefix')
+            self.epics_pvs['PvaPlugin1']  = PV(prefix + 'PvaPlugin1PVPrefix')
+            self.epics_pvs['RoiPlugin0']  = PV(prefix + 'RoiPlugin0PVPrefix')
+            self.epics_pvs['RoiPlugin1']  = PV(prefix + 'RoiPlugin1PVPrefix')
+            self.epics_pvs['CbPlugin0']   = PV(prefix + 'CbPlugin0PVPrefix')
+            self.epics_pvs['CbPlugin1']   = PV(prefix + 'CbPlugin1PVPrefix')
+
+            self.epics_pvs['CameraSelect'].add_callback(self.pv_callback_2bm)
+
+    def pv_callback_2bm(self, pvname=None, value=None, char_value=None, **kw):
+        """Callback function that is called by pyEpics when certain EPICS PVs are changed
+        
+        """
+        log.debug('pv_callback_2bm pvName=%s, value=%s, char_value=%s', pvname, value, char_value)
+        if (pvname.find('CameraSelect') != -1):
+            thread = threading.Thread(target=self.reinit_camera, args=())
+            thread.start()
+
+    def reinit_camera(self):
+        """Init camera PVs based on the mctOptics selection.
+
+        Parameters
+        ----------
+        camera : int, optional
+            The camera to use. Optique Peter system support 2 cameras
+        """
+
+        if not self.scan_is_running:
+            ########
+            prefix = self.pv_prefixes['MctOptics']
+            self.epics_pvs['CameraSelect'] = PV(prefix + 'CameraSelect')
+            camera_select = self.epics_pvs['CameraSelect'].value
+            log.info('changing camera prefix to camera %s', camera_select)
+
+            if camera_select == None:
+                log.error('mctOptics is down. Please start mctOptics first')
+            else:
+                self.epics_pvs['Camera0']     = PV(prefix + 'Camera0PVPrefix')
+                self.epics_pvs['Camera1']     = PV(prefix + 'Camera1PVPrefix')
+                self.epics_pvs['FilePlugin0'] = PV(prefix + 'FilePlugin0PVPrefix')
+                self.epics_pvs['FilePlugin1'] = PV(prefix + 'FilePlugin1PVPrefix')
+                self.epics_pvs['PvaPlugin0']  = PV(prefix + 'PvaPlugin0PVPrefix')
+                self.epics_pvs['PvaPlugin1']  = PV(prefix + 'PvaPlugin1PVPrefix')
+                self.epics_pvs['RoiPlugin0']  = PV(prefix + 'RoiPlugin0PVPrefix')
+                self.epics_pvs['RoiPlugin1']  = PV(prefix + 'RoiPlugin1PVPrefix')
+                self.epics_pvs['CbPlugin0']   = PV(prefix + 'CbPlugin0PVPrefix')
+                self.epics_pvs['CbPlugin1']   = PV(prefix + 'CbPlugin1PVPrefix')
+
+            if camera_select == 0:
+                 camera_prefix = self.epics_pvs['Camera0'].get(as_string=True)
+                 hdf_prefix    = self.epics_pvs['FilePlugin0'].get(as_string=True)
+                 pva_prefix    = self.epics_pvs['PvaPlugin0'].get(as_string=True)
+                 roi_prefix    = self.epics_pvs['RoiPlugin0'].get(as_string=True)
+                 cb_prefix     = self.epics_pvs['CbPlugin0'].get(as_string=True)
+            else:
+                 camera_prefix = self.epics_pvs['Camera1'].get(as_string=True)
+                 hdf_prefix    = self.epics_pvs['FilePlugin1'].get(as_string=True)
+                 pva_prefix    = self.epics_pvs['PvaPlugin1'].get(as_string=True)
+                 roi_prefix    = self.epics_pvs['RoiPlugin1'].get(as_string=True)
+                 cb_prefix     = self.epics_pvs['CbPlugin1'].get(as_string=True)
+
+            self.epics_pvs['CameraPVPrefix'].put(camera_prefix)
+            log.info(camera_prefix)
+            self.epics_pvs['FilePluginPVPrefix'].put(hdf_prefix)
+            log.info(hdf_prefix)
+            self.epics_pvs['PvaPluginPVPrefix'].put(pva_prefix)
+            log.info(pva_prefix)
+            self.epics_pvs['RoiPluginPVPrefix'].put(roi_prefix)
+            log.info(roi_prefix)
+            self.epics_pvs['CbPluginPVPrefix'].put(cb_prefix)
+            log.info(cb_prefix)
+
+            self.pv_prefixes['FilePlugin'] = hdf_prefix
+            # need to update TomoScan PV Prefix to the new camera / hdf plugin
+            self.epics_pvs['CameraPVPrefix'].put(camera_prefix, wait=True) 
+            self.epics_pvs['FilePluginPVPrefix'].put(hdf_prefix, wait=True) 
+
+            # Update PVPrefix PV
+            camera_prefix = camera_prefix + 'cam1:'
+            self.control_pvs['CamManufacturer']        = PV(camera_prefix + 'Manufacturer_RBV')
+            self.control_pvs['CamModel']               = PV(camera_prefix + 'Model_RBV')
+            self.control_pvs['CamAcquire']             = PV(camera_prefix + 'Acquire')
+            self.control_pvs['CamAcquireBusy']         = PV(camera_prefix + 'AcquireBusy')
+            self.control_pvs['CamImageMode']           = PV(camera_prefix + 'ImageMode')
+            self.control_pvs['CamTriggerMode']         = PV(camera_prefix + 'TriggerMode')
+            self.control_pvs['CamNumImages']           = PV(camera_prefix + 'NumImages')
+            self.control_pvs['CamNumImagesCounter']    = PV(camera_prefix + 'NumImagesCounter_RBV')
+            self.control_pvs['CamAcquireTime']         = PV(camera_prefix + 'AcquireTime')
+            self.control_pvs['CamAcquireTimeRBV']      = PV(camera_prefix + 'AcquireTime_RBV')
+            self.control_pvs['CamBinX']                = PV(camera_prefix + 'BinX')
+            self.control_pvs['CamBinY']                = PV(camera_prefix + 'BinY')
+            self.control_pvs['CamWaitForPlugins']      = PV(camera_prefix + 'WaitForPlugins')
+            self.control_pvs['PortNameRBV']            = PV(camera_prefix + 'PortName_RBV')
+            self.control_pvs['CamNDAttributesFile']    = PV(camera_prefix + 'NDAttributesFile')
+            self.control_pvs['CamNDAttributesMacros']  = PV(camera_prefix + 'NDAttributesMacros')
+
+            # If this is a Point Grey camera then assume we are running ADSpinnaker
+            # and create some PVs specific to that driver
+            manufacturer = self.control_pvs['CamManufacturer'].get(as_string=True)
+            model = self.control_pvs['CamModel'].get(as_string=True)
+            if (manufacturer.find('Point Grey') != -1) or (manufacturer.find('FLIR') != -1):
+                self.control_pvs['CamExposureMode']     = PV(camera_prefix + 'ExposureMode')
+                self.control_pvs['CamTriggerOverlap']   = PV(camera_prefix + 'TriggerOverlap')
+                self.control_pvs['CamPixelFormat']      = PV(camera_prefix + 'PixelFormat')
+                self.control_pvs['CamArrayCallbacks']   = PV(camera_prefix + 'ArrayCallbacks')
+                self.control_pvs['CamFrameRateEnable']  = PV(camera_prefix + 'FrameRateEnable')
+                self.control_pvs['CamTriggerSource']    = PV(camera_prefix + 'TriggerSource')
+                self.control_pvs['CamTriggerSoftware']  = PV(camera_prefix + 'TriggerSoftware')
+                if model.find('Grasshopper3 GS3-U3-23S6M') != -1:
+                    self.control_pvs['CamVideoMode']    = PV(camera_prefix + 'GC_VideoMode_RBV')
+                if model.find('Blackfly S BFS-PGE-161S7M') != -1:
+                    self.control_pvs['GC_ExposureAuto'] = PV(camera_prefix + 'GC_ExposureAuto')       
+
+            prefix = hdf_prefix
+            self.control_pvs['FPNDArrayPort']     = PV(prefix + 'NDArrayPort')        
+            self.control_pvs['FPFileWriteMode']   = PV(prefix + 'FileWriteMode')
+            self.control_pvs['FPNumCapture']      = PV(prefix + 'NumCapture')
+            self.control_pvs['FPNumCaptured']     = PV(prefix + 'NumCaptured_RBV')
+            self.control_pvs['FPCapture']         = PV(prefix + 'Capture')
+            self.control_pvs['FPCaptureRBV']      = PV(prefix + 'Capture_RBV')
+            self.control_pvs['FPFilePath']        = PV(prefix + 'FilePath')
+            self.control_pvs['FPFilePathRBV']     = PV(prefix + 'FilePath_RBV')
+            self.control_pvs['FPFilePathExists']  = PV(prefix + 'FilePathExists_RBV')
+            self.control_pvs['FPFileName']        = PV(prefix + 'FileName')
+            self.control_pvs['FPFileNameRBV']     = PV(prefix + 'FileName_RBV')
+            self.control_pvs['FPFileNumber']      = PV(prefix + 'FileNumber')
+            self.control_pvs['FPAutoIncrement']   = PV(prefix + 'AutoIncrement')
+            self.control_pvs['FPFileTemplate']    = PV(prefix + 'FileTemplate')
+            self.control_pvs['FPFullFileName']    = PV(prefix + 'FullFileName_RBV')
+            self.control_pvs['FPAutoSave']        = PV(prefix + 'AutoSave')
+            self.control_pvs['FPEnableCallbacks'] = PV(prefix + 'EnableCallbacks')
+            self.control_pvs['FPXMLFileName']     = PV(prefix + 'XMLFileName')
+            self.control_pvs['FPWriteStatus']     = PV(prefix + 'WriteStatus')
+
+            # Set some initial PV values
+            file_path = self.config_pvs['FilePath'].get(as_string=True)
+            self.control_pvs['FPFilePath'].put(file_path)
+            file_name = self.config_pvs['FileName'].get(as_string=True)
+            self.control_pvs['FPFileName'].put(file_name)
+            self.control_pvs['FPAutoSave'].put('No')
+            self.control_pvs['FPFileWriteMode'].put('Stream')
+            self.control_pvs['FPEnableCallbacks'].put('Enable')
+
+            prefix = pva_prefix
+            self.control_pvs['PVANDArrayPort']     = PV(prefix + 'NDArrayPort')                
+            self.control_pvs['PVAEnableCallbacks'] = PV(prefix + 'EnableCallbacks')        
+            # Set some initial PV values
+            self.control_pvs['PVANDArrayPort'].put('OVER1')
+            self.control_pvs['PVAEnableCallbacks'].put('Enable')
+
+            prefix = roi_prefix
+            self.control_pvs['ROINDArrayPort']     = PV(prefix + 'NDArrayPort')        
+            self.control_pvs['ROIScale']           = PV(prefix + 'Scale')        
+            self.control_pvs['ROIBinX']            = PV(prefix + 'BinX')        
+            self.control_pvs['ROIBinY']            = PV(prefix + 'BinY')
+            self.control_pvs['ROIEnableCallbacks'] = PV(prefix + 'EnableCallbacks')
+            # Set some initial PV values
+            self.control_pvs['ROIEnableCallbacks'].put('Disable')
+
+            prefix = cb_prefix
+            self.control_pvs['CBPortNameRBV']      = PV(prefix + 'PortName_RBV')                    
+            self.control_pvs['CBNDArrayPort']      = PV(prefix + 'NDArrayPort')        
+            self.control_pvs['CBPreCount']         = PV(prefix + 'PreCount')
+            self.control_pvs['CBPostCount']        = PV(prefix + 'PostCount')
+            self.control_pvs['CBCapture']          = PV(prefix + 'Capture')            
+            self.control_pvs['CBCaptureRBV']       = PV(prefix + 'Capture_RBV')
+            self.control_pvs['CBTrigger']          = PV(prefix + 'Trigger')
+            self.control_pvs['CBTriggerRBV']       = PV(prefix + 'Trigger_RBV')
+            self.control_pvs['CBCurrentQtyRBV']    = PV(prefix + 'CurrentQty_RBV')            
+            self.control_pvs['CBEnableCallbacks']  = PV(prefix + 'EnableCallbacks')
+            self.control_pvs['CBStatusMessage']    = PV(prefix + 'StatusMessage')
+            # Set some initial PV values
+            self.control_pvs['CBEnableCallbacks'].put('Disable')
+
+
+            self.epics_pvs = {**self.config_pvs, **self.control_pvs}
+            # Wait 1 second for all PVs to connect
+            time.sleep(1)
+            self.check_pvs_connected()
 
     def open_frontend_shutter(self):
         """Opens the shutters to collect flat fields or projections.
@@ -142,7 +362,7 @@ class TomoScan2BM(TomoScanPSO):
             This is used to set the ``NumImages`` PV of the camera.
         """
         camera_model = self.epics_pvs['CamModel'].get(as_string=True)
-        if(camera_model=='Oryx ORX-10G-51S5M'):            
+        if(camera_model=='Oryx ORX-10G-51S5M' or camera_model=='Oryx ORX-10G-310S9M'):            
             self.set_trigger_mode_oryx(trigger_mode, num_images)
         elif(camera_model=='Grasshopper3 GS3-U3-23S6M'):        
             self.set_trigger_mode_grasshopper(trigger_mode, num_images)
@@ -179,7 +399,7 @@ class TomoScan2BM(TomoScanPSO):
             self.epics_pvs['CamNumImages'].put(self.num_angles, wait=True)
             self.epics_pvs['CamTriggerMode'].put('On', wait=True)
             self.wait_pv(self.epics_pvs['CamTriggerMode'], 1)
-
+ 
     def set_trigger_mode_grasshopper(self, trigger_mode, num_images):
         self.epics_pvs['CamAcquire'].put('Done') ###
         self.wait_pv(self.epics_pvs['CamAcquire'], 0) ###
@@ -252,10 +472,14 @@ class TomoScan2BM(TomoScanPSO):
         file_path = self.epics_pvs['DetectorTopDir'].get(as_string=True) + self.epics_pvs['ExperimentYearMonth'].get(as_string=True) + os.path.sep + self.epics_pvs['UserLastName'].get(as_string=True) + os.path.sep
         self.epics_pvs['FilePath'].put(file_path, wait=True)
 
+        # NetBooter = NetBooter_Control(mode='telnet',id=self.access_dic['pdu_username'],password=self.access_dic['pdu_password'],ip=self.access_dic['pdu_ip_address'])           
+        # NetBooter.power_off(1)
+        
         # Call the base class method
         super().begin_scan()
         # Opens the front-end shutter
         self.open_frontend_shutter()
+
         
     def end_scan(self):
         """Performs the operations needed at the very end of a scan.
@@ -290,8 +514,6 @@ class TomoScan2BM(TomoScanPSO):
             self.epics_pvs['RotationSet'].put('Set', wait=True)
             self.epics_pvs['Rotation'].put(current_angle, wait=True)
             self.epics_pvs['RotationSet'].put('Use', wait=True)
-        # Call the base class method
-        super().end_scan()
         # Close shutter
         self.close_shutter()
 
@@ -301,16 +523,47 @@ class TomoScan2BM(TomoScanPSO):
         # Add theta in the hdf file
         self.add_theta()
 
-        # Copy raw data to data analysis computer    
-        if self.epics_pvs['CopyToAnalysisDir'].get():
-            log.info('Automatic data trasfer to data analysis computer is enabled.')
+        log.info('Adding a frame from the IP camera')
+        ret, frame = cv2.VideoCapture('http://remotecam02bmb:Cam-02-bm-b@164.54.113.162/cgi-bin/mjpeg?stream=1').read()# we should hide the password
+
+        #station A        
+        # NetBooter = NetBooter_Control(mode='telnet',id=self.access_dic['pdu_username'],password=self.access_dic['pdu_password'],ip=self.access_dic['pdu_ip_address'])
+        # NetBooter.power_on(1)
+        # log.info('wait 10 sec while the web camera has focused')
+        # time.sleep(10)                       
+        # ret, frame = cv2.VideoCapture('http://remotecam02bma:Cam-02-bm-a@164.54.113.137/cgi-bin/mjpeg?stream=1').read()# we should hide the password
+        #ret, frame = cv2.VideoCapture('http://' + self.access_dic['webcam_username'] +':' + self.access_dic['webcam_password'] + '@' + self.access_dic['webcam_ip_address'] + '/cgi-bin/mjpeg?stream=1').read()
+        # NetBooter.power_off(1)                       
+        
+
+        if ret==True:
             full_file_name = self.epics_pvs['FPFullFileName'].get(as_string=True)
-            remote_analysis_dir = self.epics_pvs['RemoteAnalysisDir'].get(as_string=True)
+            with h5py.File(full_file_name,'r+') as fid:
+                fid.create_dataset('exchange/web_camera_frame', data=frame)
+            log.info('The frame was added')
+        else:
+            log.warning('The frame was not added')
+        
+        # Copy raw data to data analysis computer    
+        log.info('Automatic data trasfer to data analysis computer is enabled.')
+        full_file_name = self.epics_pvs['FPFullFileName'].get(as_string=True)
+        remote_analysis_dir = self.epics_pvs['RemoteAnalysisDir'].get(as_string=True)
+        copy_to_analysis_dir = self.epics_pvs['CopyToAnalysisDir'].get()
+        if copy_to_analysis_dir == 1:
+            log.info('Using FDT')
+            dm.fdt_scp(full_file_name, remote_analysis_dir, Path(self.epics_pvs['DetectorTopDir'].get()))
+            self.epics_pvs['ScanStatus'].put('fdt file transfer complete')
+        elif copy_to_analysis_dir == 2:
+            log.info('Using scp')
             dm.scp(full_file_name, remote_analysis_dir)
+            self.epics_pvs['ScanStatus'].put('scp file transfer complete')
         else:
             log.warning('Automatic data trasfer to data analysis computer is disabled.')
-    
-    def set_exposure_time(self, exposure_time=None):
+        
+        # Call the base class method
+        super().end_scan()
+        
+    def set_scan_exposure_time(self, exposure_time=None):
 
         camera_model = self.epics_pvs['CamModel'].get(as_string=True)        
         if(camera_model=='Q-12A180-Fm/CXP-6'):
@@ -319,7 +572,7 @@ class TomoScan2BM(TomoScanPSO):
             self.epics_pvs['CamAcquisitionFrameRate'].put(1/exposure_time, wait=True, timeout=10.0) 
             self.epics_pvs['CamAcquireTime'].put(exposure_time, wait=True, timeout = 10.0)
         else:
-            super().set_exposure_time(exposure_time)
+            super().set_scan_exposure_time(exposure_time)
 
     def add_theta(self):
         """Add theta at the end of a scan.
@@ -351,7 +604,7 @@ class TomoScan2BM(TomoScanPSO):
                             missed_ids = [ele for ele in range(len(self.theta)) if ele not in proj_ids-proj_ids[0]]
                             missed_theta = self.theta[missed_ids]
                             # log.warning(f'Missed ids: {list(missed_ids)}')
-                            log.warning(f'Missed theta: {list(missed_theta)}')
+                            log.warning(f'Missed theta: {list(missed_theta)}')                        
                         if len(flat_ids) != total_flat_fields:
                             log.warning(f'There are {total_flat_fields - len(flat_ids)} missing flat field frames')
                         if (len(dark_ids) != total_dark_fields):
@@ -426,3 +679,428 @@ class TomoScan2BM(TomoScanPSO):
             if timeout > 0:
                 if elapsed_time >= timeout:
                    exit()
+
+class NetBooter_Control:
+    '''
+    Offer NetBooter Control class:
+        Support serial/telnet/http control
+        Support outlet status checker / power on / power off / reboot
+        Power on/off return setting success or fail, but reboot no return
+
+    How to use it:
+
+    From Serial
+    NetBooter = NetBooter_Control(mode='serial',serial_port='COM1')
+    NetBooter.power_on(1)                              #Return (True,'') for set Outlet 1 ON success
+    NetBooter.power_off(5)                             #Return (True,'') for set Outlet 5 OFF success
+    NetBooter.reboot(3)                                #No return, use NetBooter internal reboot function, don't suggest to use it
+    Outlet3_Status = NetBooter.check_outlet_status(3)  #Return (True,'') for Outlet 3 is ON | (False,'') for OFF
+
+    From HTTP
+    NetBooter = NetBooter_Control(mode='http',ip='192.168.1.101')
+    NetBooter.power_on(2)                              #Return (True,'') for set Outlet 2 ON success
+    NetBooter.power_off(4)                             #Return (True,'') for set Outlet 4 OFF success
+    Outlet3_Status = NetBooter.check_outlet_status(3)  #Return (True,'') for Outlet 3 is ON | (False,'') for OFF
+
+    '''
+    def __init__(self,mode='serial',serial_port='COM1',id='admin',password='admin',ip='0.0.0.0'):
+        '''
+        Class init
+        Input: mode(serial/telnet/http)
+               id/password [for login NetBooter]
+               For serial: serial_port([Windows]COM1/COM2/COM3/[Linux]/dev/tty...)
+               For telnet/http: ip
+        '''
+        if not isinstance(mode,str):     raise Exception('['+os.path.basename(__file__)+']['+sys._getframe().f_code.co_name+'] Invalid mode '+str(mode))
+        if not isinstance(id,str):       raise Exception('['+os.path.basename(__file__)+']['+sys._getframe().f_code.co_name+'] Invalid id '+str(id))
+        if not isinstance(password,str): raise Exception('['+os.path.basename(__file__)+']['+sys._getframe().f_code.co_name+'] Invalid password '+str(password))
+        self.mode = mode.lower()
+        self.id = id
+        self.password = password
+        if self.mode == 'serial':
+            self.NetBooter_serial = serial.Serial()
+            self.NetBooter_serial.port = serial_port
+            self.NetBooter_serial.baudrate = 9600
+            self.NetBooter_serial.timeout = 3
+            self.NetBooter_serial.bytesize = serial.EIGHTBITS
+            self.NetBooter_serial.parity = serial.PARITY_NONE
+            self.NetBooter_serial.stopbits = serial.STOPBITS_ONE
+            self.NetBooter_serial.xonxoff = 0
+            try:
+                self.NetBooter_serial.open()
+            except Exception as e:
+                raise Exception(str(e))
+            if not self.NetBooter_serial.isOpen():
+                raise Exception('['+os.path.basename(__file__)+']['+sys._getframe().f_code.co_name+'] Fail to open '+str(serial_port))
+            for outlet in xrange(1,6):
+                self.power_on(outlet)
+        elif self.mode == 'telnet':
+            self.ip = ip
+            self.NetBooter_telnet = telnetlib.Telnet(self.ip)
+        elif self.mode == 'http':
+            self.ip = ip
+            self.auth = base64.b64encode(bytearray(('%s:%s' % (self.id, self.password)).replace('\n', ''), 'utf-8'))
+            self.NetBooter_httpconnection = httplib.HTTPConnection(self.ip,timeout=10)
+        self.__check_netbooter__()
+
+    def __check_netbooter__(self):
+        if self.mode == 'serial':
+            try:
+                self.NetBooter_serial.flush()
+                self.NetBooter_serial.flushInput()
+                self.NetBooter_serial.flushOutput()
+                self.NetBooter_serial.write('\nsysshow\n')
+                self.NetBooter_serial.flush()
+                self.NetBooter_serial.flushInput()
+                temp1 = self.NetBooter_serial.read(300)
+                self.NetBooter_serial.write('\nsysshow\n')
+                self.NetBooter_serial.flush()
+                self.NetBooter_serial.flushInput()
+                temp2 = self.NetBooter_serial.read(300)
+                status = temp1+temp2
+                self.NetBooter_serial.flushOutput()
+            except Exception as e:
+                raise Exception(str(e))
+            if status.find('System Name') == -1:
+                raise Exception('Invalid NetBooter')
+        elif self.mode == 'telnet':
+            pass
+        elif self.mode == 'http':
+            NetBooter_Pattern = re.compile(r'Synaccess.*?NetBooter',re.I)
+            NetBooter_rly_Pattern = re.compile(r'<a onclick="ajxCmd\(\'(.*?rly.*?)\d\'\);">')
+            NetBooter_rb_Pattern  = re.compile(r'<a onclick="ajxCmd\(\'(.*?rb.*?)\d\'\);">')
+            try:
+                self.NetBooter_httpconnection.putrequest("POST",'')
+                self.NetBooter_httpconnection.putheader("Authorization", "Basic %s" % self.auth)
+                self.NetBooter_httpconnection.endheaders()
+                response = self.NetBooter_httpconnection.getresponse()
+                res = response.read()
+            except Exception as e:
+                raise Exception('['+os.path.basename(__file__)+']['+sys._getframe().f_code.co_name+'] Init http connection to NetBooter fail: '+str(e))
+            if response.status != 200:
+                raise Exception('['+os.path.basename(__file__)+']['+sys._getframe().f_code.co_name+'] Init http connection to NetBooter fail: '+str(response.status))
+            if not NetBooter_Pattern.search(res):
+                raise Exception('['+os.path.basename(__file__)+']['+sys._getframe().f_code.co_name+'] http connection is not NetBooter: '+str(res))
+            rly_pair = NetBooter_rly_Pattern.search(res)
+            if rly_pair:
+                self.rly_url = rly_pair.group(1)
+            else:
+                raise Exception('['+os.path.basename(__file__)+']['+sys._getframe().f_code.co_name+'] Fail to find NetBooter rly url: '+str(res))
+            rb_pair = NetBooter_rb_Pattern.search(res)
+            if rb_pair:
+                self.rb_url = rb_pair.group(1)
+            else:
+                raise Exception('['+os.path.basename(__file__)+']['+sys._getframe().f_code.co_name+'] Fail to find NetBooter rb url: '+str(res))
+
+    def __del__(self):
+        if self.mode == 'serial':
+            self.NetBooter_serial.close()
+        elif self.mode == 'telnet':
+            self.NetBooter_telnet.close()
+        elif self.mode == 'http':
+            self.NetBooter_httpconnection.close()
+
+    def check_outlet_status(self,outlet):
+        '''
+        Check outlet status
+        Input: outlet(1/2/3/4/5)
+        Output: True,''(For ON)/False,''(For OFF)/Exception,Exception Reason
+        '''
+        if outlet not in (1,2,3,4,5,'1','2','3','4','5'):
+            raise Exception('['+os.path.basename(__file__)+']['+sys._getframe().f_code.co_name+'] Invalid NetBooter outlet: '+str(outlet))
+        outlet = int(outlet)
+        if self.mode == 'serial':
+            if not self.NetBooter_serial.readable() or not self.NetBooter_serial.writable():
+                raise Exception('['+os.path.basename(__file__)+']['+sys._getframe().f_code.co_name+'] NetBooter Serial not Readable/Writeable')
+            try:
+                self.NetBooter_serial.flush()
+                self.NetBooter_serial.flushInput()
+                self.NetBooter_serial.flushOutput()
+                self.NetBooter_serial.write('\nsysshow\n')
+                self.NetBooter_serial.flush()
+                self.NetBooter_serial.flushInput()
+                temp1 = self.NetBooter_serial.read(300)
+                self.NetBooter_serial.write('\nsysshow\n')
+                self.NetBooter_serial.flush()
+                self.NetBooter_serial.flushInput()
+                temp2 = self.NetBooter_serial.read(300)
+                status = temp1+temp2
+                self.NetBooter_serial.flushOutput()
+            except Exception as e:
+                raise Exception(str(e))
+            try:
+                for line in status.split('\n'):
+                    if line.find('Outlet Status(1-On, 0-Off. Outlet 1 to 5):') > -1:
+                        #Clean Unrecognizable Code
+                        line = line[43:].replace('\x00','')
+                        #Outlet list should be ['','0/1','0/1','0/1','0/1','0/1','']
+                        outlets = line.split(' ')
+                        if outlets[outlet] == '0':
+                            return False,''
+                        elif outlets[outlet] == '1':
+                            return True,''
+                        else:
+                            raise Exception('['+os.path.basename(__file__)+']['+sys._getframe().f_code.co_name+'] Invalid Status: '+str(outlets))
+            except Exception as e:
+                return 'Exception','['+os.path.basename(__file__)+']['+sys._getframe().f_code.co_name+']'+str(e)
+            return 'Exception','['+os.path.basename(__file__)+']['+sys._getframe().f_code.co_name+'] Not find outlet: '+str(status)
+        elif self.mode == 'telnet':
+            try:
+                self.NetBooter_telnet.write('\r\nsysshow\r\n'.encode('ascii'))
+                temp = self.NetBooter_telnet.read_until(b'Note - use WEB access for more settings',2)
+            except Exception as e:
+                raise Exception(str(e))
+            try:
+                for line in status.split('\n'):
+                    if line.find('Outlet Status(1-On, 0-Off. Outlet 1 to 5):') > -1:
+                        #Clean Unrecognizable Code
+                        line = line[43:].replace('\x00','')
+                        #Outlet list should be ['','0/1','0/1','0/1','0/1','0/1','']
+                        outlets = line.split(' ')
+                        if outlets[outlet] == '0':
+                            return False,''
+                        elif outlets[outlet] == '1':
+                            return True,''
+                        else:
+                            raise Exception('['+os.path.basename(__file__)+']['+sys._getframe().f_code.co_name+'] Invalid Status: '+str(outlets))
+            except Exception as e:
+                return 'Exception','['+os.path.basename(__file__)+']['+sys._getframe().f_code.co_name+']'+str(e)
+            return 'Exception','['+os.path.basename(__file__)+']['+sys._getframe().f_code.co_name+'] Not find outlet: '+str(status)
+        elif self.mode == 'http':
+            res = self.NetBooter_httppost(url="/status.xml")
+            if res[0] != True:
+                return 'Exception','['+os.path.basename(__file__)+']['+sys._getframe().f_code.co_name+'] No proper response from NetBooter: '+res[1]
+            swoutlet = outlet - 1
+            pattern = re.compile(r'<rly%s>(1|0)</rly%s>'%(swoutlet,swoutlet))
+            if not pattern.search(res[1]):
+                return 'Exception','['+os.path.basename(__file__)+']['+sys._getframe().f_code.co_name+'] Not find proper outlet status: '+res[1]
+            status = pattern.search(res[1]).group()[6:7]
+            if status == '0':
+                return False,''
+            elif status == '1':
+                return True,''
+            else:
+                raise Exception('['+os.path.basename(__file__)+']['+sys._getframe().f_code.co_name+'] Invalid Status: '+str(status))
+
+    def login(self):
+        '''
+        Login NetBooter for serial/telnet mode
+        No output
+        '''
+        if self.mode == 'serial':
+            if not self.NetBooter_serial.writable():
+                raise Exception('['+os.path.basename(__file__)+']['+sys._getframe().f_code.co_name+'] NetBooter Serial not Writeable')
+            try:
+                self.NetBooter_serial.flush()
+                self.NetBooter_serial.flushInput()
+                self.NetBooter_serial.flushOutput()
+                self.NetBooter_serial.write('\n!\nlogin\n')
+                self.NetBooter_serial.flush()
+                self.NetBooter_serial.flushInput()
+                self.NetBooter_serial.flushOutput()
+                self.NetBooter_serial.write(str(self.id)+'\n')
+                self.NetBooter_serial.flush()
+                self.NetBooter_serial.flushInput()
+                self.NetBooter_serial.flushOutput()
+                self.NetBooter_serial.write(str(self.password)+'\n')
+                self.NetBooter_serial.flush()
+                self.NetBooter_serial.flushInput()
+                self.NetBooter_serial.flushOutput()
+            except Exception as e:
+                raise Exception('['+os.path.basename(__file__)+']['+sys._getframe().f_code.co_name+']'+str(e))
+        elif self.mode == 'telnet':
+            try:
+                self.NetBooter_telnet.write('\r\nlogin\r\n'.encode('ascii'))
+                self.NetBooter_telnet.write((str(self.id)+'\r\n').encode('ascii'))
+                self.NetBooter_telnet.write((str(self.password)+'\r\n').encode('ascii'))
+            except Exception as e:
+                raise Exception('['+os.path.basename(__file__)+']['+sys._getframe().f_code.co_name+']'+str(e))
+
+    def power_on(self,outlet):
+        '''
+        Set specific outlet on
+        Input: outlet(1/2/3/4/5)
+        Output: True,''[Set success]/False,''[Set fail]/Exception,''
+        '''
+        if outlet not in (1,2,3,4,5,'1','2','3','4','5'):
+            raise Exception('['+os.path.basename(__file__)+']['+sys._getframe().f_code.co_name+'] Invalid NetBooter outlet: '+str(outlet))
+        outlet = int(outlet)
+
+        if self.mode == 'http':
+            current_status = self.check_outlet_status(outlet)
+            if current_status[0] == True:
+                return True,''
+            elif current_status[0] == False:
+                swoutlet = outlet - 1
+                url = "/%s%s"%(self.rly_url,swoutlet)
+                res = self.NetBooter_httppost(url)
+                if res[0] == True:
+                    if res[1] == 'Success! ':
+                        new_status = self.check_outlet_status(outlet)
+                        if new_status[0] == True:
+                            return True,''
+                        elif new_status[0] == False:
+                            return False,'['+os.path.basename(__file__)+']['+sys._getframe().f_code.co_name+'] Power on outlet fail2: '+new_status[1]
+                        else:
+                            return 'Exception','['+os.path.basename(__file__)+']['+sys._getframe().f_code.co_name+']'+new_status[1]
+                    else:
+                        return False,'['+os.path.basename(__file__)+']['+sys._getframe().f_code.co_name+'] Power on outlet fail1: '+res[1]
+                else:
+                    return 'Exception','['+os.path.basename(__file__)+']['+sys._getframe().f_code.co_name+']'+res[1]
+            else:
+                return 'Exception','['+os.path.basename(__file__)+']['+sys._getframe().f_code.co_name+']'+current_status[1]
+            time.sleep(2)
+
+        self.login()
+        if self.mode == 'serial':
+            if not self.NetBooter_serial.writable():
+                raise Exception('['+os.path.basename(__file__)+']['+sys._getframe().f_code.co_name+'] NetBooter Serial not Writeable')
+            try:
+                self.NetBooter_serial.flush()
+                self.NetBooter_serial.flushInput()
+                self.NetBooter_serial.flushOutput()
+                self.NetBooter_serial.write('\npset '+str(outlet)+' 1\n')
+                self.NetBooter_serial.flush()
+                self.NetBooter_serial.flushInput()
+                self.NetBooter_serial.flushOutput()
+                time.sleep(1)
+            except Exception as e:
+                raise Exception('['+os.path.basename(__file__)+']['+sys._getframe().f_code.co_name+']'+str(e))
+
+        elif self.mode == 'telnet':
+            try:
+                self.NetBooter_telnet.write(('\r\npset '+str(outlet)+' 1\r\n').encode('ascii'))
+            except Exception as e:
+                raise Exception('['+os.path.basename(__file__)+']['+sys._getframe().f_code.co_name+']'+str(e))
+
+        res_on = self.check_outlet_status(outlet)
+        if res_on[0] == True:
+            return True,''
+        elif res_on[0] == False:
+            return False,''
+        else:
+            return 'Exception','['+os.path.basename(__file__)+']['+sys._getframe().f_code.co_name+']'+res_on[1]
+
+    def power_off(self,outlet):
+        '''
+        Set specific outlet off
+        Input: outlet(1/2/3/4/5)
+        Output: True,''[Set success]/False,''[Set fail]/Exception,''
+        '''
+        if outlet not in (1,2,3,4,5,'1','2','3','4','5'):
+            raise Exception('['+os.path.basename(__file__)+']['+sys._getframe().f_code.co_name+'] Invalid NetBooter outlet: '+str(outlet))
+        outlet = int(outlet)
+
+        if self.mode == 'http':
+            current_status = self.check_outlet_status(outlet)
+            if current_status[0] == False:
+                return True,''
+            elif current_status[0] == True:
+                swoutlet = outlet - 1
+                url = "/%s%s"%(self.rly_url,swoutlet)
+                res = self.NetBooter_httppost(url)
+                if res[0] == True:
+                    if res[1] == 'Success! ':
+                        new_status = self.check_outlet_status(outlet)
+                        if new_status[0] == False:
+                            return True,''
+                        elif new_status[0] == True:
+                            return False,'['+os.path.basename(__file__)+']['+sys._getframe().f_code.co_name+'] Power off outlet fail2: '+new_status[1]
+                        else:
+                            return 'Exception','['+os.path.basename(__file__)+']['+sys._getframe().f_code.co_name+']'+new_status[1]
+                    else:
+                        return False,'['+os.path.basename(__file__)+']['+sys._getframe().f_code.co_name+'] Power off outlet fail1: '+res[1]
+                else:
+                    return 'Exception','['+os.path.basename(__file__)+']['+sys._getframe().f_code.co_name+']'+res[1]
+            else:
+                return 'Exception','['+os.path.basename(__file__)+']['+sys._getframe().f_code.co_name+']'+current_status[1]
+            time.sleep(2)
+
+        self.login()
+        if self.mode == 'serial':
+            if not self.NetBooter_serial.writable():
+                raise Exception('['+os.path.basename(__file__)+']['+sys._getframe().f_code.co_name+'] NetBooter Serial not Writeable')
+            try:
+                self.NetBooter_serial.flush()
+                self.NetBooter_serial.flushInput()
+                self.NetBooter_serial.flushOutput()
+                self.NetBooter_serial.write('\npset '+str(outlet)+' 0\n')
+                self.NetBooter_serial.flush()
+                self.NetBooter_serial.flushInput()
+                self.NetBooter_serial.flushOutput()
+                time.sleep(1)
+            except Exception as e:
+                raise Exception('['+os.path.basename(__file__)+']['+sys._getframe().f_code.co_name+']'+str(e))
+
+        elif self.mode == 'telnet':
+            try:
+                self.NetBooter_telnet.write(('\r\npset '+str(outlet)+' 0\r\n').encode('ascii'))
+            except Exception as e:
+                raise Exception('['+os.path.basename(__file__)+']['+sys._getframe().f_code.co_name+']'+str(e))
+
+        res_off = self.check_outlet_status(outlet)
+        if res_off[0] == False:
+            return True,''
+        elif res_off[0] == True:
+            return False,''
+        else:
+            return 'Exception','['+os.path.basename(__file__)+']['+sys._getframe().f_code.co_name+']'+res_off[1]
+
+    def reboot(self,outlet):
+        '''
+        Set specific outlet reboot by internal reboot function from NetBooter
+        Input: outlet(1/2/3/4/5)
+        No output
+        '''
+        if outlet not in (1,2,3,4,5,'1','2','3','4','5'):
+            raise Exception('['+os.path.basename(__file__)+']['+sys._getframe().f_code.co_name+'] Invalid NetBooter outlet: '+str(outlet))
+        outlet = int(outlet)
+
+        if self.mode == 'http':
+            current_status = self.check_outlet_status(outlet)
+            swoutlet = outlet - 1
+            url = "/%s%s"%(self.rb_url,swoutlet)
+            res = self.NetBooter_httppost(url)
+            time.sleep(3)
+            if res[0] == True:
+                if res[1] == 'Success! ':
+                    new_status = self.check_outlet_status(outlet)
+
+        self.login()
+        if self.mode == 'serial':
+            if not self.NetBooter_serial.writable():
+                raise Exception('['+os.path.basename(__file__)+']['+sys._getframe().f_code.co_name+'] NetBooter Serial not Writeable')
+
+            try:
+                self.NetBooter_serial.flush()
+                self.NetBooter_serial.flushInput()
+                self.NetBooter_serial.flushOutput()
+                self.NetBooter_serial.write('\nrb '+str(outlet)+'\n')
+                self.NetBooter_serial.flush()
+                self.NetBooter_serial.flushInput()
+                self.NetBooter_serial.flushOutput()
+                #time.sleep(1)
+            except Exception as e:
+                raise Exception('['+os.path.basename(__file__)+']['+sys._getframe().f_code.co_name+']'+str(e))
+        elif self.mode == 'telnet':
+            try:
+                self.NetBooter_telnet.write(('\r\nrb '+str(outlet)+'\r\n').encode('ascii'))
+            except Exception as e:
+                raise Exception('['+os.path.basename(__file__)+']['+sys._getframe().f_code.co_name+']'+str(e))
+
+    def NetBooter_httppost(self,url):
+        '''
+        Common NetBooter http post
+        Input: url(/status.xml[for get stauts] or /cmd.cgi?rly=#1[for set power on/off])
+        '''
+        try:
+            self.NetBooter_httpconnection.putrequest("POST", url)
+            self.NetBooter_httpconnection.putheader("Authorization", "Basic %s" % self.auth)
+            self.NetBooter_httpconnection.endheaders()
+            response = self.NetBooter_httpconnection.getresponse()
+            res = response.read()
+        except Exception as e:
+            return 'Exception','['+os.path.basename(__file__)+']['+sys._getframe().f_code.co_name+']'+str(e)
+        if response.status != 200:
+            return False,'['+os.path.basename(__file__)+']['+sys._getframe().f_code.co_name+'] Unknown http connection status: '+str(response.status)
+        return True,res

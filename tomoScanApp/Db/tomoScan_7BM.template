@@ -96,6 +96,12 @@ record(ao, "$(P)$(R)CameraTubeLength")
    field(EGU,  "mm")
 }
 
+record(ao, "$(P)$(R)CameraDistance")
+{
+   field(PREC, "0")
+   field(EGU,  "mm")
+   field(VAL, "0")
+}
 
 ####################
 # Sample information
@@ -233,4 +239,37 @@ record(stringout, "$(P)$(R)OpenFastShutterValue")
 record(stringout, "$(P)$(R)ExternalTriggerSource")
 {
     field(VAL, "$(LINE)")
+}
+
+################################
+# Location for data in HDF5 file
+################################
+
+record(stringout, "$(P)$(R)HDF5GainsLocation")
+{
+   field(VAL, "/exchange/data_gains")
+}
+
+############
+# Frame type
+############
+
+record(mbbi, "$(P)$(R)FrameType")
+{
+   field(ZRVL, "0")
+   field(ZRST, "DarkField")
+   field(ONVL, "1")
+   field(ONST, "FlatField")
+   field(TWVL, "2")
+   field(TWST, "Projection")
+   field(THVL, "3")
+   field(THST, "Gains")
+}
+
+####################
+# Gain field control
+####################
+
+record(longout, "$(P)$(R)NumGainFields")
+{
 }
