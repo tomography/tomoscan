@@ -1,14 +1,14 @@
 
 file {
-	name="/home/beams19/USERTXM/epics/synApps/support/tomoscan/tomoScanApp/op/adl/tomoScan.adl"
-	version=030111
+	name="/home/epics/support/tomoscan/tomoScanApp/op/adl/tomoScan.adl"
+	version=030117
 }
 display {
 	object {
-		x=1598
-		y=565
+		x=505
+		y=72
 		width=700
-		height=850
+		height=925
 	}
 	clr=14
 	bclr=4
@@ -401,132 +401,6 @@ text {
 	textix="Flat Field Control"
 	align="horiz. centered"
 }
-rectangle {
-	object {
-		x=5
-		y=370
-		width=690
-		height=70
-	}
-	"basic attribute" {
-		clr=14
-		fill="outline"
-	}
-}
-rectangle {
-	object {
-		x=220
-		y=375
-		width=260
-		height=20
-	}
-	"basic attribute" {
-		clr=2
-	}
-}
-text {
-	object {
-		x=260
-		y=375
-		width=180
-		height=20
-	}
-	"basic attribute" {
-		clr=54
-	}
-	textix="Dark Field Control"
-	align="horiz. centered"
-}
-rectangle {
-	object {
-		x=5
-		y=445
-		width=690
-		height=130
-	}
-	"basic attribute" {
-		clr=14
-		fill="outline"
-	}
-}
-rectangle {
-	object {
-		x=250
-		y=450
-		width=200
-		height=20
-	}
-	"basic attribute" {
-		clr=2
-	}
-}
-text {
-	object {
-		x=290
-		y=450
-		width=120
-		height=20
-	}
-	"basic attribute" {
-		clr=54
-	}
-	textix="File Control"
-	align="horiz. centered"
-}
-text {
-	object {
-		x=10
-		y=410
-		width=130
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="# Dark fields"
-}
-"text entry" {
-	object {
-		x=145
-		y=410
-		width=70
-		height=20
-	}
-	control {
-		chan="$(P)$(R)NumDarkFields"
-		clr=14
-		bclr=51
-	}
-	limits {
-	}
-}
-text {
-	object {
-		x=225
-		y=410
-		width=100
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="Dark value"
-}
-"text entry" {
-	object {
-		x=330
-		y=410
-		width=70
-		height=20
-	}
-	control {
-		chan="$(P)$(R)DarkFieldValue"
-		clr=14
-		bclr=51
-	}
-	limits {
-	}
-}
 text {
 	object {
 		x=415
@@ -549,31 +423,6 @@ menu {
 	}
 	control {
 		chan="$(P)$(R)FlatFieldMode"
-		clr=14
-		bclr=51
-	}
-}
-text {
-	object {
-		x=415
-		y=410
-		width=190
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="Collect dark fields"
-}
-menu {
-	object {
-		x=610
-		y=410
-		width=80
-		height=20
-	}
-	control {
-		chan="$(P)$(R)DarkFieldMode"
 		clr=14
 		bclr=51
 	}
@@ -655,444 +504,6 @@ text {
 		bclr=51
 	}
 	limits {
-	}
-}
-rectangle {
-	object {
-		x=5
-		y=580
-		width=690
-		height=70
-	}
-	"basic attribute" {
-		clr=14
-		fill="outline"
-	}
-}
-rectangle {
-	object {
-		x=250
-		y=586
-		width=200
-		height=20
-	}
-	"basic attribute" {
-		clr=2
-	}
-}
-text {
-	object {
-		x=275
-		y=586
-		width=150
-		height=20
-	}
-	"basic attribute" {
-		clr=54
-	}
-	textix="Data Collection"
-	align="horiz. centered"
-}
-rectangle {
-	object {
-		x=305
-		y=660
-		width=90
-		height=20
-	}
-	"basic attribute" {
-		clr=2
-	}
-}
-text {
-	object {
-		x=314
-		y=660
-		width=72
-		height=20
-	}
-	"basic attribute" {
-		clr=54
-	}
-	textix="Status"
-	align="horiz. centered"
-}
-"message button" {
-	object {
-		x=250
-		y=620
-		width=120
-		height=20
-	}
-	control {
-		chan="$(P)$(R)StartScan"
-		clr=14
-		bclr=15
-	}
-	label="Start Scan"
-	press_msg="1"
-}
-"message button" {
-	object {
-		x=375
-		y=620
-		width=120
-		height=20
-	}
-	control {
-		chan="$(P)$(R)AbortScan"
-		clr=14
-		bclr=20
-	}
-	label="Abort Scan"
-	press_msg="1"
-	release_msg="0"
-}
-text {
-	object {
-		x=15
-		y=620
-		width=130
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="Exposure time"
-}
-"text entry" {
-	object {
-		x=150
-		y=620
-		width=70
-		height=20
-	}
-	control {
-		chan="$(P)$(R)ExposureTime"
-		clr=14
-		bclr=51
-	}
-	limits {
-	}
-}
-rectangle {
-	object {
-		x=5
-		y=655
-		width=690
-		height=190
-	}
-	"basic attribute" {
-		clr=14
-		fill="outline"
-	}
-}
-"text update" {
-	object {
-		x=580
-		y=620
-		width=100
-		height=20
-	}
-	monitor {
-		chan="$(P)$(R)StartScan"
-		clr=14
-		bclr=2
-	}
-	clrmod="alarm"
-	format="string"
-	limits {
-	}
-}
-text {
-	object {
-		x=515
-		y=620
-		width=60
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="Status"
-}
-text {
-	object {
-		x=65
-		y=815
-		width=130
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="Python server"
-}
-text {
-	object {
-		x=85
-		y=690
-		width=110
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="Scan status"
-}
-"text update" {
-	object {
-		x=201
-		y=690
-		width=400
-		height=20
-	}
-	monitor {
-		chan="$(P)$(R)ScanStatus"
-		clr=14
-		bclr=51
-	}
-	format="string"
-	limits {
-	}
-}
-text {
-	object {
-		x=55
-		y=790
-		width=140
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="Remaining time"
-}
-text {
-	object {
-		x=75
-		y=765
-		width=120
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="Elapsed time"
-}
-"text update" {
-	object {
-		x=201
-		y=765
-		width=100
-		height=20
-	}
-	monitor {
-		chan="$(P)$(R)ElapsedTime"
-		clr=14
-		bclr=51
-	}
-	format="string"
-	limits {
-	}
-}
-"text update" {
-	object {
-		x=200
-		y=790
-		width=100
-		height=20
-	}
-	monitor {
-		chan="$(P)$(R)RemainingTime"
-		clr=14
-		bclr=51
-	}
-	format="string"
-	limits {
-	}
-}
-text {
-	object {
-		x=35
-		y=715
-		width=160
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="Images collected"
-}
-"text update" {
-	object {
-		x=201
-		y=715
-		width=100
-		height=20
-	}
-	monitor {
-		chan="$(P)$(R)ImagesCollected"
-		clr=14
-		bclr=51
-	}
-	format="string"
-	limits {
-	}
-}
-text {
-	object {
-		x=75
-		y=740
-		width=120
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="Images saved"
-}
-"text update" {
-	object {
-		x=201
-		y=740
-		width=100
-		height=20
-	}
-	monitor {
-		chan="$(P)$(R)ImagesSaved"
-		clr=14
-		bclr=51
-	}
-	format="string"
-	limits {
-	}
-}
-"text update" {
-	object {
-		x=199
-		y=815
-		width=100
-		height=20
-	}
-	monitor {
-		chan="$(P)$(R)ServerRunning"
-		clr=14
-		bclr=2
-	}
-	clrmod="alarm"
-	format="string"
-	limits {
-	}
-}
-text {
-	object {
-		x=15
-		y=500
-		width=140
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="File directory"
-}
-"text entry" {
-	object {
-		x=160
-		y=500
-		width=530
-		height=20
-	}
-	control {
-		chan="$(P)$(R)FilePath"
-		clr=14
-		bclr=51
-	}
-	format="string"
-	limits {
-	}
-}
-text {
-	object {
-		x=15
-		y=525
-		width=140
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="Base file name"
-}
-"text entry" {
-	object {
-		x=160
-		y=525
-		width=530
-		height=20
-	}
-	control {
-		chan="$(P)$(R)FileName"
-		clr=14
-		bclr=51
-	}
-	format="string"
-	limits {
-	}
-}
-text {
-	object {
-		x=570
-		y=475
-		width=70
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="Exists:"
-}
-"text update" {
-	object {
-		x=645
-		y=475
-		width=40
-		height=20
-	}
-	monitor {
-		chan="$(P)$(R)FilePathExists"
-		clr=14
-		bclr=2
-	}
-	clrmod="alarm"
-	format="string"
-	limits {
-	}
-}
-text {
-	object {
-		x=15
-		y=475
-		width=180
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="Overwrite warning:"
-}
-menu {
-	object {
-		x=200
-		y=475
-		width=80
-		height=20
-	}
-	control {
-		chan="$(P)$(R)OverwriteWarning"
-		clr=14
-		bclr=51
 	}
 }
 "message button" {
@@ -1353,10 +764,484 @@ text {
 	}
 	textix="Flat value"
 }
+rectangle {
+	object {
+		x=5
+		y=520
+		width=690
+		height=130
+	}
+	"basic attribute" {
+		clr=14
+		fill="outline"
+	}
+}
+rectangle {
+	object {
+		x=250
+		y=525
+		width=200
+		height=20
+	}
+	"basic attribute" {
+		clr=2
+	}
+}
+text {
+	object {
+		x=290
+		y=525
+		width=120
+		height=20
+	}
+	"basic attribute" {
+		clr=54
+	}
+	textix="File Control"
+	align="horiz. centered"
+}
+rectangle {
+	object {
+		x=5
+		y=655
+		width=690
+		height=70
+	}
+	"basic attribute" {
+		clr=14
+		fill="outline"
+	}
+}
+rectangle {
+	object {
+		x=250
+		y=661
+		width=200
+		height=20
+	}
+	"basic attribute" {
+		clr=2
+	}
+}
+text {
+	object {
+		x=275
+		y=661
+		width=150
+		height=20
+	}
+	"basic attribute" {
+		clr=54
+	}
+	textix="Data Collection"
+	align="horiz. centered"
+}
+rectangle {
+	object {
+		x=305
+		y=735
+		width=90
+		height=20
+	}
+	"basic attribute" {
+		clr=2
+	}
+}
+text {
+	object {
+		x=314
+		y=735
+		width=72
+		height=20
+	}
+	"basic attribute" {
+		clr=54
+	}
+	textix="Status"
+	align="horiz. centered"
+}
+"message button" {
+	object {
+		x=250
+		y=695
+		width=120
+		height=20
+	}
+	control {
+		chan="$(P)$(R)StartScan"
+		clr=14
+		bclr=15
+	}
+	label="Start Scan"
+	press_msg="1"
+}
+"message button" {
+	object {
+		x=375
+		y=695
+		width=120
+		height=20
+	}
+	control {
+		chan="$(P)$(R)AbortScan"
+		clr=14
+		bclr=20
+	}
+	label="Abort Scan"
+	press_msg="1"
+	release_msg="0"
+}
+text {
+	object {
+		x=15
+		y=695
+		width=130
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Exposure time"
+}
+"text entry" {
+	object {
+		x=150
+		y=695
+		width=70
+		height=20
+	}
+	control {
+		chan="$(P)$(R)ExposureTime"
+		clr=14
+		bclr=51
+	}
+	limits {
+	}
+}
+rectangle {
+	object {
+		x=5
+		y=730
+		width=690
+		height=190
+	}
+	"basic attribute" {
+		clr=14
+		fill="outline"
+	}
+}
+"text update" {
+	object {
+		x=580
+		y=695
+		width=100
+		height=20
+	}
+	monitor {
+		chan="$(P)$(R)StartScan"
+		clr=14
+		bclr=2
+	}
+	clrmod="alarm"
+	format="string"
+	limits {
+	}
+}
+text {
+	object {
+		x=515
+		y=695
+		width=60
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Status"
+}
+text {
+	object {
+		x=65
+		y=890
+		width=130
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Python server"
+}
+text {
+	object {
+		x=85
+		y=765
+		width=110
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Scan status"
+}
+"text update" {
+	object {
+		x=201
+		y=765
+		width=400
+		height=20
+	}
+	monitor {
+		chan="$(P)$(R)ScanStatus"
+		clr=14
+		bclr=51
+	}
+	format="string"
+	limits {
+	}
+}
+text {
+	object {
+		x=55
+		y=865
+		width=140
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Remaining time"
+}
+text {
+	object {
+		x=75
+		y=840
+		width=120
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Elapsed time"
+}
+"text update" {
+	object {
+		x=201
+		y=840
+		width=100
+		height=20
+	}
+	monitor {
+		chan="$(P)$(R)ElapsedTime"
+		clr=14
+		bclr=51
+	}
+	format="string"
+	limits {
+	}
+}
+"text update" {
+	object {
+		x=200
+		y=865
+		width=100
+		height=20
+	}
+	monitor {
+		chan="$(P)$(R)RemainingTime"
+		clr=14
+		bclr=51
+	}
+	format="string"
+	limits {
+	}
+}
+text {
+	object {
+		x=35
+		y=790
+		width=160
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Images collected"
+}
+"text update" {
+	object {
+		x=201
+		y=790
+		width=100
+		height=20
+	}
+	monitor {
+		chan="$(P)$(R)ImagesCollected"
+		clr=14
+		bclr=51
+	}
+	format="string"
+	limits {
+	}
+}
+text {
+	object {
+		x=75
+		y=815
+		width=120
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Images saved"
+}
+"text update" {
+	object {
+		x=201
+		y=815
+		width=100
+		height=20
+	}
+	monitor {
+		chan="$(P)$(R)ImagesSaved"
+		clr=14
+		bclr=51
+	}
+	format="string"
+	limits {
+	}
+}
+"text update" {
+	object {
+		x=199
+		y=890
+		width=100
+		height=20
+	}
+	monitor {
+		chan="$(P)$(R)ServerRunning"
+		clr=14
+		bclr=2
+	}
+	clrmod="alarm"
+	format="string"
+	limits {
+	}
+}
+text {
+	object {
+		x=15
+		y=575
+		width=140
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="File directory"
+}
+"text entry" {
+	object {
+		x=160
+		y=575
+		width=530
+		height=20
+	}
+	control {
+		chan="$(P)$(R)FilePath"
+		clr=14
+		bclr=51
+	}
+	format="string"
+	limits {
+	}
+}
+text {
+	object {
+		x=15
+		y=600
+		width=140
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Base file name"
+}
+"text entry" {
+	object {
+		x=160
+		y=600
+		width=530
+		height=20
+	}
+	control {
+		chan="$(P)$(R)FileName"
+		clr=14
+		bclr=51
+	}
+	format="string"
+	limits {
+	}
+}
+text {
+	object {
+		x=570
+		y=550
+		width=70
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Exists:"
+}
+"text update" {
+	object {
+		x=645
+		y=550
+		width=40
+		height=20
+	}
+	monitor {
+		chan="$(P)$(R)FilePathExists"
+		clr=14
+		bclr=2
+	}
+	clrmod="alarm"
+	format="string"
+	limits {
+	}
+}
 text {
 	object {
 		x=15
 		y=550
+		width=180
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Overwrite warning:"
+}
+menu {
+	object {
+		x=200
+		y=550
+		width=80
+		height=20
+	}
+	control {
+		chan="$(P)$(R)OverwriteWarning"
+		clr=14
+		bclr=51
+	}
+}
+text {
+	object {
+		x=15
+		y=625
 		width=140
 		height=20
 	}
@@ -1368,7 +1253,7 @@ text {
 "text update" {
 	object {
 		x=160
-		y=553
+		y=628
 		width=530
 		height=15
 	}
@@ -1380,4 +1265,211 @@ text {
 	format="string"
 	limits {
 	}
+}
+rectangle {
+	object {
+		x=5
+		y=370
+		width=690
+		height=70
+	}
+	"basic attribute" {
+		clr=14
+		fill="outline"
+	}
+}
+rectangle {
+	object {
+		x=220
+		y=375
+		width=260
+		height=20
+	}
+	"basic attribute" {
+		clr=2
+	}
+}
+text {
+	object {
+		x=260
+		y=375
+		width=180
+		height=20
+	}
+	"basic attribute" {
+		clr=54
+	}
+	textix="Dark Field Control"
+	align="horiz. centered"
+}
+text {
+	object {
+		x=10
+		y=410
+		width=130
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="# Dark fields"
+}
+"text entry" {
+	object {
+		x=145
+		y=410
+		width=70
+		height=20
+	}
+	control {
+		chan="$(P)$(R)NumDarkFields"
+		clr=14
+		bclr=51
+	}
+	limits {
+	}
+}
+text {
+	object {
+		x=225
+		y=410
+		width=100
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Dark value"
+}
+"text entry" {
+	object {
+		x=330
+		y=410
+		width=70
+		height=20
+	}
+	control {
+		chan="$(P)$(R)DarkFieldValue"
+		clr=14
+		bclr=51
+	}
+	limits {
+	}
+}
+text {
+	object {
+		x=415
+		y=410
+		width=190
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Collect dark fields"
+}
+menu {
+	object {
+		x=610
+		y=410
+		width=80
+		height=20
+	}
+	control {
+		chan="$(P)$(R)DarkFieldMode"
+		clr=14
+		bclr=51
+	}
+}
+rectangle {
+	object {
+		x=5
+		y=445
+		width=690
+		height=70
+	}
+	"basic attribute" {
+		clr=14
+		fill="outline"
+	}
+}
+rectangle {
+	object {
+		x=220
+		y=450
+		width=260
+		height=20
+	}
+	"basic attribute" {
+		clr=2
+	}
+}
+text {
+	object {
+		x=275
+		y=450
+		width=150
+		height=20
+	}
+	"basic attribute" {
+		clr=54
+	}
+	textix="Shutter Control"
+	align="horiz. centered"
+}
+text {
+	object {
+		x=425
+		y=485
+		width=180
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Auto close shutter"
+}
+menu {
+	object {
+		x=610
+		y=485
+		width=80
+		height=20
+	}
+	control {
+		chan="$(P)$(R)AutoCloseShutter"
+		clr=14
+		bclr=51
+	}
+}
+"message button" {
+	object {
+		x=50
+		y=485
+		width=120
+		height=20
+	}
+	control {
+		chan="$(P)$(R)OpenShutter"
+		clr=14
+		bclr=15
+	}
+	label="Open shutter"
+	press_msg="1"
+}
+"message button" {
+	object {
+		x=200
+		y=485
+		width=120
+		height=20
+	}
+	control {
+		chan="$(P)$(R)CloseShutter"
+		clr=14
+		bclr=20
+	}
+	label="Close shutter"
+	press_msg="1"
+	release_msg="0"
 }
