@@ -39,6 +39,21 @@ record(stringout, "$(P)$(R)OpenShutterValue")
    field(VAL,  "$(OPEN_VALUE)")
 }
 
+record(bo, "$(P)$(R)AutoCloseShutter")
+{
+   field(ZRST,  "No")
+   field(ONST,  "Yes")
+}
+
+record(bo, "$(P)$(R)CloseShutter")
+{
+}
+
+record(bo, "$(P)$(R)OpenShutter")
+{
+}
+
+
 #############################################
 # Rotation, sample X and Y translation motors
 #############################################
