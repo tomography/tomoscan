@@ -230,7 +230,7 @@ class TomoScan():
 
         # Configure callbacks on a few PVs
         for epics_pv in ('MoveSampleIn', 'MoveSampleOut', 'StartScan', 'AbortScan', 'ExposureTime',
-                         'FilePath', 'FPFilePathExists', 'FPWriteStatus'):
+                         'FilePath', 'FPFilePathExists', 'FPWriteStatus', 'OpenShutter', 'CloseShutter'):
             self.epics_pvs[epics_pv].add_callback(self.pv_callback)
         for epics_pv in ('MoveSampleIn', 'MoveSampleOut', 'StartScan', 'AbortScan'):
             self.epics_pvs[epics_pv].put(0)
@@ -305,6 +305,12 @@ class TomoScan():
             thread.start()
         elif pvname.find('FilePath') != -1:
             thread = threading.Thread(target=self.copy_file_path, args=())
+            thread.start()
+        elif pvname.find('OpenShutter') != -1:
+            thread = threading.Thread(target=self.open_shutter, args=())
+            thread.start()
+        elif pvname.find('CloseShutter') != -1:
+            thread = threading.Thread(target=self.close_shutter, args=())
             thread.start()
         elif (pvname.find('StartScan') != -1) and (value == 1):
             self.run_fly_scan()
@@ -667,6 +673,9 @@ class TomoScan():
             self.epics_pvs['Rotation'].put(self.rotation_start)
         elif self.return_rotation == "Home":
             self.epics_pvs['RotationHomF'].put(1)
+        auto_close = self.epics_pvs['AutoCloseShutter'].get()
+        if (auto_close):
+            self.close_shutter()
         log.info('Scan complete')
         self.epics_pvs['ScanStatus'].put('Scan complete')
         self.epics_pvs['StartScan'].put(0)
