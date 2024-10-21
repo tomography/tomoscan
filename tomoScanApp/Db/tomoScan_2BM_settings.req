@@ -3,13 +3,6 @@
 
 # This is the file for the tomoscan_2bm derived class.
 
-####################
-# Energy information
-####################
-$(P)$(R)Energy
-$(P)$(R)EnergyMode
-$(P)$(R)Filters
-
 #########################
 # Beam status information
 #########################
@@ -63,3 +56,23 @@ $(P)$(R)ShutterStatusPVName
 # mctOptics
 ################
 $(P)$(R)MctOpticsPVPrefix
+
+################
+# AD plugins
+################
+$(P)$(R)PvaPluginPVPrefix
+
+######################
+# Pva Plugin PV Prefix
+######################
+$(P)$(R)PvaPluginPVPrefix
+
+######################
+# Roi Plugin PV Prefix
+######################
+$(P)$(R)RoiPluginPVPrefix
+
+#####################
+# Cb Plugin PV Prefix
+#####################
+$(P)$(R)CbPluginPVPrefix

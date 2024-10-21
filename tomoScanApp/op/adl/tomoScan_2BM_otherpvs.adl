@@ -1,14 +1,14 @@
 
 file {
-	name="/local/user2bmb/epics_new/synApps/support/tomoscan/iocBoot/iocTomoScan_2BMA/../../tomoScanApp/op/adl/tomoScan_2BM_otherpvs.adl"
+	name="/home/beams8/USER2BMB/epics/synApps/support/tomoscan/tomoScanApp/op/adl/tomoScan_2BM_otherpvs.adl"
 	version=030111
 }
 display {
 	object {
-		x=84
-		y=691
+		x=342
+		y=927
 		width=640
-		height=240
+		height=405
 	}
 	clr=14
 	bclr=4
@@ -113,8 +113,8 @@ text {
 }
 "text entry" {
 	object {
-		x=254
-		y=40
+		x=255
+		y=70
 		width=380
 		height=20
 	}
@@ -129,8 +129,8 @@ text {
 }
 "text entry" {
 	object {
-		x=254
-		y=65
+		x=255
+		y=95
 		width=380
 		height=20
 	}
@@ -145,9 +145,9 @@ text {
 }
 text {
 	object {
-		x=89
-		y=65
-		width=160
+		x=10
+		y=95
+		width=240
 		height=20
 	}
 	"basic attribute" {
@@ -158,9 +158,9 @@ text {
 }
 text {
 	object {
-		x=119
-		y=40
-		width=130
+		x=10
+		y=70
+		width=240
 		height=20
 	}
 	"basic attribute" {
@@ -171,9 +171,9 @@ text {
 }
 text {
 	object {
-		x=89
-		y=115
-		width=160
+		x=10
+		y=145
+		width=240
 		height=20
 	}
 	"basic attribute" {
@@ -184,8 +184,8 @@ text {
 }
 "text entry" {
 	object {
-		x=254
-		y=115
+		x=255
+		y=145
 		width=380
 		height=20
 	}
@@ -200,9 +200,9 @@ text {
 }
 text {
 	object {
-		x=119
-		y=90
-		width=130
+		x=10
+		y=120
+		width=240
 		height=20
 	}
 	"basic attribute" {
@@ -213,8 +213,8 @@ text {
 }
 "text entry" {
 	object {
-		x=254
-		y=90
+		x=255
+		y=120
 		width=380
 		height=20
 	}
@@ -229,9 +229,9 @@ text {
 }
 text {
 	object {
-		x=119
-		y=140
-		width=130
+		x=10
+		y=170
+		width=240
 		height=20
 	}
 	"basic attribute" {
@@ -242,9 +242,9 @@ text {
 }
 text {
 	object {
-		x=89
-		y=165
-		width=160
+		x=10
+		y=195
+		width=240
 		height=20
 	}
 	"basic attribute" {
@@ -255,8 +255,8 @@ text {
 }
 "text entry" {
 	object {
-		x=254
-		y=165
+		x=255
+		y=195
 		width=380
 		height=20
 	}
@@ -271,8 +271,8 @@ text {
 }
 "text entry" {
 	object {
-		x=254
-		y=140
+		x=255
+		y=170
 		width=380
 		height=20
 	}
@@ -287,21 +287,21 @@ text {
 }
 text {
 	object {
-		x=119
-		y=190
-		width=130
+		x=10
+		y=45
+		width=240
 		height=20
 	}
 	"basic attribute" {
 		clr=14
 	}
-	textix="Shutter status PV"
+	textix="Shutter Status PV"
 	align="horiz. right"
 }
 "text entry" {
 	object {
-		x=254
-		y=190
+		x=255
+		y=45
 		width=380
 		height=20
 	}
@@ -316,30 +316,293 @@ text {
 }
 text {
 	object {
-		x=159
-		y=215
-		width=90
+		x=10
+		y=220
+		width=240
 		height=20
 	}
 	"basic attribute" {
 		clr=14
 	}
-	textix="PSO setup"
+	textix="mctOptics Prefix"
 	align="horiz. right"
 }
-"related display" {
+"text entry" {
 	object {
-		x=254
-		y=215
-		width=100
+		x=255
+		y=220
+		width=380
 		height=20
 	}
-	display[0] {
-		label="PSO setup"
-		name="tomoScan_pso.adl"
-		args="P=$(P), R=$(R)"
+	control {
+		chan="$(P)$(R)MctOpticsPVPrefix"
+		clr=14
+		bclr=51
 	}
-	clr=14
-	bclr=51
-	label="PSO setup"
+	format="string"
+	limits {
+	}
+}
+composite {
+	object {
+		x=10
+		y=330
+		width=630
+		height=70
+	}
+	"composite name"=""
+	children {
+		text {
+			object {
+				x=10
+				y=330
+				width=130
+				height=20
+			}
+			"basic attribute" {
+				clr=14
+			}
+			textix="Scan type"
+			align="horiz. right"
+		}
+		menu {
+			object {
+				x=145
+				y=330
+				width=80
+				height=20
+			}
+			control {
+				chan="$(P)$(R)ScanType"
+				clr=14
+				bclr=51
+			}
+		}
+		menu {
+			object {
+				x=145
+				y=355
+				width=80
+				height=20
+			}
+			control {
+				chan="$(P)$(R)FlipStitch"
+				clr=14
+				bclr=51
+			}
+		}
+		text {
+			object {
+				x=10
+				y=355
+				width=130
+				height=20
+			}
+			"basic attribute" {
+				clr=14
+			}
+			textix="Flip&Stitch"
+			align="horiz. right"
+		}
+		text {
+			object {
+				x=160
+				y=380
+				width=90
+				height=20
+			}
+			"basic attribute" {
+				clr=14
+			}
+			textix="PSO setup"
+			align="horiz. right"
+		}
+		"related display" {
+			object {
+				x=255
+				y=380
+				width=100
+				height=20
+			}
+			display[0] {
+				label="PSO setup"
+				name="tomoScan_pso.adl"
+				args="P=$(P), R=$(R)"
+			}
+			clr=14
+			bclr=51
+			label="PSO setup"
+		}
+		text {
+			object {
+				x=414
+				y=330
+				width=130
+				height=20
+			}
+			"basic attribute" {
+				clr=14
+			}
+			textix="Y Pixels Per 360 Deg"
+			align="horiz. right"
+		}
+		"text entry" {
+			object {
+				x=559
+				y=330
+				width=75
+				height=20
+			}
+			control {
+				chan="$(P)$(R)PixelsYPer360Deg"
+				clr=14
+				bclr=51
+			}
+			format="string"
+			limits {
+			}
+		}
+		text {
+			object {
+				x=413
+				y=355
+				width=130
+				height=20
+			}
+			"basic attribute" {
+				clr=14
+			}
+			textix="Helical Misalignment (mrad)"
+			align="horiz. right"
+		}
+		"text entry" {
+			object {
+				x=559
+				y=355
+				width=75
+				height=20
+			}
+			control {
+				chan="$(P)$(R)HelicalMisalignment"
+				clr=14
+				bclr=51
+			}
+			format="string"
+			limits {
+			}
+		}
+		text {
+			object {
+				x=365
+				y=380
+				width=150
+				height=20
+			}
+			"basic attribute" {
+				clr=14
+			}
+			textix="Program PSO"
+			align="horiz. right"
+		}
+		menu {
+			object {
+				x=520
+				y=380
+				width=120
+				height=20
+			}
+			control {
+				chan="$(P)$(R)ProgramPSO"
+				clr=14
+				bclr=51
+			}
+		}
+	}
+}
+text {
+	object {
+		x=10
+		y=245
+		width=240
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="PVA plugin prefix"
+	align="horiz. right"
+}
+"text entry" {
+	object {
+		x=255
+		y=245
+		width=380
+		height=20
+	}
+	control {
+		chan="$(P)$(R)PvaPluginPVPrefix"
+		clr=14
+		bclr=51
+	}
+	format="string"
+	limits {
+	}
+}
+text {
+	object {
+		x=10
+		y=270
+		width=240
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="ROI plugin prefix"
+	align="horiz. right"
+}
+"text entry" {
+	object {
+		x=255
+		y=270
+		width=380
+		height=20
+	}
+	control {
+		chan="$(P)$(R)RoiPluginPVPrefix"
+		clr=14
+		bclr=51
+	}
+	format="string"
+	limits {
+	}
+}
+text {
+	object {
+		x=10
+		y=295
+		width=240
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="CB plugin prefix"
+	align="horiz. right"
+}
+"text entry" {
+	object {
+		x=255
+		y=295
+		width=380
+		height=20
+	}
+	control {
+		chan="$(P)$(R)CbPluginPVPrefix"
+		clr=14
+		bclr=51
+	}
+	format="string"
+	limits {
+	}
 }

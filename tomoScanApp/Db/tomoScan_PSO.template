@@ -84,3 +84,8 @@ record(asyn, "$(P)$(R)PSOKeepAlive")
     field(SCAN, "10 second")
 }
 
+record(bo, "$(P)$(R)ProgramPSO")
+{
+   field(ZNAM, "No")
+   field(ONAM, "Yes")
+}

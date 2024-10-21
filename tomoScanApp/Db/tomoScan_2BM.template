@@ -4,31 +4,6 @@
 # both in the configuration files written by tomoscan, and in the
 # files written by areaDetector file plugin.
 
-####################
-# Energy information
-####################
-
-record(ao, "$(P)$(R)Energy") {
-    field(SCAN, "Passive")
-    field(DTYP, "Soft Channel")
-    field(PREC, 2)
-}
-
-record(mbbo, "$(P)$(R)EnergyMode")
-{
-   field(ZRVL, "0")
-   field(ZRST, "Mono")
-   field(ONVL, "1")
-   field(ONST, "Pink")
-   field(TWVL, "2")
-   field(TWST, "White")
-}
-
-record(stringout, "$(P)$(R)Filters")
-{
-   field(VAL,  "Unknown")
-}
-
 #########################
 # Beam status information
 #########################
@@ -148,11 +123,16 @@ record(stringout, "$(P)$(R)RemoteAnalysisDir")
    field(VAL,  "Unknown")
 }
 
-record(bo, "$(P)$(R)CopyToAnalysisDir")
+record(mbbo, "$(P)$(R)CopyToAnalysisDir")
 {
-   field(ZNAM, "No")
-   field(ONAM, "Yes")
+   field(ZRVL, "0")
+   field(ZRST, "None")
+   field(ONVL, "1")
+   field(ONST, "fdt")
+   field(TWVL, "2")
+   field(TWST, "scp")
 }
+
 
 ######################
 # Fast shutter control
@@ -194,4 +174,58 @@ record(stringout, "$(P)$(R)ShutterStatusPVName")
 record(stringout, "$(P)$(R)MctOpticsPVPrefix")
 {
    field(VAL,  "$(MCT_OPTICS)")
+}
+
+############
+# Scan Types
+############
+
+record(mbbo, "$(P)$(R)ScanType")
+{
+   field(ZRVL, "0")
+   field(ZRST, "Single")
+   field(ONVL, "1")
+   field(ONST, "Vertical")
+   field(TWVL, "2")
+   field(TWST, "Horizontal")
+   field(THVL, "3")
+   field(THST, "Mosaic")
+   field(FRVL, "4")
+   field(FRST, "File")
+   field(FVVL, "5")
+   field(FVST, "Energy")
+}
+
+record(bo, "$(P)$(R)FlipStitch")
+{
+   field(ZNAM, "No")
+   field(ONAM, "Yes")
+}
+
+
+######################
+# Pva Plugin PV Prefix
+######################
+
+record(stringout, "$(P)$(R)PvaPluginPVPrefix")
+{
+   field(VAL,  "$(PVA_PLUGIN)")
+}
+
+######################
+# Roi Plugin PV Prefix
+######################
+
+record(stringout, "$(P)$(R)RoiPluginPVPrefix")
+{
+   field(VAL,  "$(ROI_PLUGIN)")
+}
+
+#####################
+# Cb Plugin PV Prefix
+#####################
+
+record(stringout, "$(P)$(R)CbPluginPVPrefix")
+{
+   field(VAL,  "$(CB_PLUGIN)")
 }
