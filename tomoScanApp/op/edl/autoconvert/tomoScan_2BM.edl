@@ -153,39 +153,6 @@ major 4
 minor 0
 release 0
 x 10
-y 164
-w 280
-h 30
-fgColor rgb 0 0 0
-bgColor rgb 29440 57088 65280
-topShadowColor rgb 55808 55808 55808
-botShadowColor rgb 17920 17920 17920
-font "helvetica-medium-r-18.0"
-icon
-buttonLabel "Energy & Filters"
-numPvs 2
-numDsps 1
-displayFileName {
-  0 "$(BEAMLINE)_energy.edl"
-}
-menuLabel {
-  0 "Energy Information"
-}
-symbols {
-  0 "P=$(P),R=$(R)"
-}
-replaceSymbols {
-  0 1
-}
-endObjectProperties
-
-# (Related Display)
-object relatedDisplayClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 10
 y 124
 w 280
 h 30
@@ -220,39 +187,6 @@ minor 0
 release 0
 x 335
 y 44
-w 280
-h 30
-fgColor rgb 0 0 0
-bgColor rgb 29440 57088 65280
-topShadowColor rgb 55808 55808 55808
-botShadowColor rgb 17920 17920 17920
-font "helvetica-medium-r-18.0"
-icon
-buttonLabel "Optics"
-numPvs 2
-numDsps 1
-displayFileName {
-  0 "$(BEAMLINE)_optics.edl"
-}
-menuLabel {
-  0 "Optics Information"
-}
-symbols {
-  0 "P=$(P),R=$(R)"
-}
-replaceSymbols {
-  0 1
-}
-endObjectProperties
-
-# (Related Display)
-object relatedDisplayClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 335
-y 84
 w 280
 h 30
 fgColor rgb 0 0 0

@@ -3,10 +3,10 @@ beginScreenProperties
 major 4
 minor 0
 release 1
-x 84
-y 691
+x 342
+y 927
 w 640
-h 240
+h 405
 font "helvetica-medium-r-18.0"
 ctlFont "helvetica-bold-r-10.0"
 btnFont "helvetica-medium-r-18.0"
@@ -66,8 +66,8 @@ beginObjectProperties
 major 4
 minor 7
 release 0
-x 254
-y 40
+x 255
+y 70
 w 380
 h 20
 controlPv "$(P)$(R)BeamReadyPVName"
@@ -92,8 +92,8 @@ beginObjectProperties
 major 4
 minor 7
 release 0
-x 254
-y 65
+x 255
+y 95
 w 380
 h 20
 controlPv "$(P)$(R)BeamReadyValue"
@@ -118,9 +118,9 @@ beginObjectProperties
 major 4
 minor 1
 release 1
-x 89
-y 65
-w 160
+x 10
+y 95
+w 240
 h 20
 font "helvetica-medium-r-14.0"
 fontAlign "right"
@@ -138,9 +138,9 @@ beginObjectProperties
 major 4
 minor 1
 release 1
-x 119
-y 40
-w 130
+x 10
+y 70
+w 240
 h 20
 font "helvetica-medium-r-14.0"
 fontAlign "right"
@@ -158,9 +158,9 @@ beginObjectProperties
 major 4
 minor 1
 release 1
-x 85
-y 115
-w 164
+x 10
+y 145
+w 240
 h 20
 font "helvetica-medium-r-14.0"
 fontAlign "right"
@@ -178,8 +178,8 @@ beginObjectProperties
 major 4
 minor 7
 release 0
-x 254
-y 115
+x 255
+y 145
 w 380
 h 20
 controlPv "$(P)$(R)OpenFastShutterValue"
@@ -204,9 +204,9 @@ beginObjectProperties
 major 4
 minor 1
 release 1
-x 100
-y 90
-w 149
+x 10
+y 120
+w 240
 h 20
 font "helvetica-medium-r-14.0"
 fontAlign "right"
@@ -224,8 +224,8 @@ beginObjectProperties
 major 4
 minor 7
 release 0
-x 254
-y 90
+x 255
+y 120
 w 380
 h 20
 controlPv "$(P)$(R)OpenFastShutterPVName"
@@ -250,9 +250,9 @@ beginObjectProperties
 major 4
 minor 1
 release 1
-x 98
-y 140
-w 151
+x 10
+y 170
+w 240
 h 20
 font "helvetica-medium-r-14.0"
 fontAlign "right"
@@ -270,9 +270,9 @@ beginObjectProperties
 major 4
 minor 1
 release 1
-x 83
-y 165
-w 166
+x 10
+y 195
+w 240
 h 20
 font "helvetica-medium-r-14.0"
 fontAlign "right"
@@ -290,8 +290,8 @@ beginObjectProperties
 major 4
 minor 7
 release 0
-x 254
-y 165
+x 255
+y 195
 w 380
 h 20
 controlPv "$(P)$(R)CloseFastShutterValue"
@@ -316,8 +316,8 @@ beginObjectProperties
 major 4
 minor 7
 release 0
-x 254
-y 140
+x 255
+y 170
 w 380
 h 20
 controlPv "$(P)$(R)CloseFastShutterPVName"
@@ -342,9 +342,9 @@ beginObjectProperties
 major 4
 minor 1
 release 1
-x 119
-y 190
-w 130
+x 10
+y 45
+w 240
 h 20
 font "helvetica-medium-r-14.0"
 fontAlign "right"
@@ -352,7 +352,7 @@ fgColor rgb 0 0 0
 bgColor index 3
 useDisplayBg
 value {
-  "Shutter status PV"
+  "Shutter Status PV"
 }
 endObjectProperties
 
@@ -362,8 +362,8 @@ beginObjectProperties
 major 4
 minor 7
 release 0
-x 254
-y 190
+x 255
+y 45
 w 380
 h 20
 controlPv "$(P)$(R)ShutterStatusPVName"
@@ -388,8 +388,107 @@ beginObjectProperties
 major 4
 minor 1
 release 1
-x 159
-y 215
+x 10
+y 220
+w 240
+h 20
+font "helvetica-medium-r-14.0"
+fontAlign "right"
+fgColor rgb 0 0 0
+bgColor index 3
+useDisplayBg
+value {
+  "mctOptics Prefix"
+}
+endObjectProperties
+
+# (Text Control)
+object activeXTextDspClass
+beginObjectProperties
+major 4
+minor 7
+release 0
+x 255
+y 220
+w 380
+h 20
+controlPv "$(P)$(R)MctOpticsPVPrefix"
+format "string"
+font "helvetica-medium-r-12.0"
+fontAlign "left"
+fgColor rgb 0 0 0
+bgColor rgb 29440 57088 65280
+editable
+motifWidget
+limitsFromDb
+nullColor rgb 60928 46592 11008
+smartRefresh
+fastUpdate
+newPos
+objType "controls"
+endObjectProperties
+
+# (Group)
+object activeGroupClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 10
+y 330
+w 630
+h 70
+
+beginGroup
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 10
+y 330
+w 130
+h 20
+font "helvetica-medium-r-14.0"
+fontAlign "right"
+fgColor rgb 0 0 0
+bgColor index 3
+useDisplayBg
+value {
+  "Scan type"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 10
+y 355
+w 130
+h 20
+font "helvetica-medium-r-14.0"
+fontAlign "right"
+fgColor rgb 0 0 0
+bgColor index 3
+useDisplayBg
+value {
+  "Flip&Stitch"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 160
+y 380
 w 90
 h 20
 font "helvetica-medium-r-14.0"
@@ -402,14 +501,321 @@ value {
 }
 endObjectProperties
 
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 395
+y 330
+w 149
+h 20
+font "helvetica-medium-r-14.0"
+fontAlign "right"
+fgColor rgb 0 0 0
+bgColor index 3
+useDisplayBg
+value {
+  "Y Pixels Per 360 Deg"
+}
+endObjectProperties
+
+# (Text Control)
+object activeXTextDspClass
+beginObjectProperties
+major 4
+minor 7
+release 0
+x 559
+y 330
+w 75
+h 20
+controlPv "$(P)$(R)PixelsYPer360Deg"
+format "string"
+font "helvetica-medium-r-12.0"
+fontAlign "left"
+fgColor rgb 0 0 0
+bgColor rgb 29440 57088 65280
+editable
+motifWidget
+limitsFromDb
+nullColor rgb 60928 46592 11008
+smartRefresh
+fastUpdate
+newPos
+objType "controls"
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 351
+y 355
+w 192
+h 20
+font "helvetica-medium-r-14.0"
+fontAlign "right"
+fgColor rgb 0 0 0
+bgColor index 3
+useDisplayBg
+value {
+  "Helical Misalignment (mrad)"
+}
+endObjectProperties
+
+# (Text Control)
+object activeXTextDspClass
+beginObjectProperties
+major 4
+minor 7
+release 0
+x 559
+y 355
+w 75
+h 20
+controlPv "$(P)$(R)HelicalMisalignment"
+format "string"
+font "helvetica-medium-r-12.0"
+fontAlign "left"
+fgColor rgb 0 0 0
+bgColor rgb 29440 57088 65280
+editable
+motifWidget
+limitsFromDb
+nullColor rgb 60928 46592 11008
+smartRefresh
+fastUpdate
+newPos
+objType "controls"
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 365
+y 380
+w 150
+h 20
+font "helvetica-medium-r-14.0"
+fontAlign "right"
+fgColor rgb 0 0 0
+bgColor index 3
+useDisplayBg
+value {
+  "Program PSO"
+}
+endObjectProperties
+
+endGroup
+
+endObjectProperties
+
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 10
+y 245
+w 240
+h 20
+font "helvetica-medium-r-14.0"
+fontAlign "right"
+fgColor rgb 0 0 0
+bgColor index 3
+useDisplayBg
+value {
+  "PVA plugin prefix"
+}
+endObjectProperties
+
+# (Text Control)
+object activeXTextDspClass
+beginObjectProperties
+major 4
+minor 7
+release 0
+x 255
+y 245
+w 380
+h 20
+controlPv "$(P)$(R)PvaPluginPVPrefix"
+format "string"
+font "helvetica-medium-r-12.0"
+fontAlign "left"
+fgColor rgb 0 0 0
+bgColor rgb 29440 57088 65280
+editable
+motifWidget
+limitsFromDb
+nullColor rgb 60928 46592 11008
+smartRefresh
+fastUpdate
+newPos
+objType "controls"
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 10
+y 270
+w 240
+h 20
+font "helvetica-medium-r-14.0"
+fontAlign "right"
+fgColor rgb 0 0 0
+bgColor index 3
+useDisplayBg
+value {
+  "ROI plugin prefix"
+}
+endObjectProperties
+
+# (Text Control)
+object activeXTextDspClass
+beginObjectProperties
+major 4
+minor 7
+release 0
+x 255
+y 270
+w 380
+h 20
+controlPv "$(P)$(R)RoiPluginPVPrefix"
+format "string"
+font "helvetica-medium-r-12.0"
+fontAlign "left"
+fgColor rgb 0 0 0
+bgColor rgb 29440 57088 65280
+editable
+motifWidget
+limitsFromDb
+nullColor rgb 60928 46592 11008
+smartRefresh
+fastUpdate
+newPos
+objType "controls"
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 10
+y 295
+w 240
+h 20
+font "helvetica-medium-r-14.0"
+fontAlign "right"
+fgColor rgb 0 0 0
+bgColor index 3
+useDisplayBg
+value {
+  "CB plugin prefix"
+}
+endObjectProperties
+
+# (Text Control)
+object activeXTextDspClass
+beginObjectProperties
+major 4
+minor 7
+release 0
+x 255
+y 295
+w 380
+h 20
+controlPv "$(P)$(R)CbPluginPVPrefix"
+format "string"
+font "helvetica-medium-r-12.0"
+fontAlign "left"
+fgColor rgb 0 0 0
+bgColor rgb 29440 57088 65280
+editable
+motifWidget
+limitsFromDb
+nullColor rgb 60928 46592 11008
+smartRefresh
+fastUpdate
+newPos
+objType "controls"
+endObjectProperties
+# (Group)
+object activeGroupClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 10
+y 330
+w 630
+h 70
+
+beginGroup
+
+# (Menu Button)
+object activeMenuButtonClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 145
+y 330
+w 80
+h 20
+fgColor rgb 0 0 0
+bgColor rgb 29440 57088 65280
+inconsistentColor rgb 17920 17920 17920
+topShadowColor rgb 55808 55808 55808
+botShadowColor rgb 17920 17920 17920
+controlPv "$(P)$(R)ScanType"
+indicatorPv "$(P)$(R)ScanType"
+font "helvetica-medium-r-12.0"
+endObjectProperties
+
+# (Menu Button)
+object activeMenuButtonClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 145
+y 355
+w 80
+h 20
+fgColor rgb 0 0 0
+bgColor rgb 29440 57088 65280
+inconsistentColor rgb 17920 17920 17920
+topShadowColor rgb 55808 55808 55808
+botShadowColor rgb 17920 17920 17920
+controlPv "$(P)$(R)FlipStitch"
+indicatorPv "$(P)$(R)FlipStitch"
+font "helvetica-medium-r-12.0"
+endObjectProperties
+
 # (Related Display)
 object relatedDisplayClass
 beginObjectProperties
 major 4
 minor 0
 release 0
-x 254
-y 215
+x 255
+y 380
 w 100
 h 20
 fgColor rgb 0 0 0
@@ -434,4 +840,29 @@ replaceSymbols {
   0 1
 }
 endObjectProperties
+
+# (Menu Button)
+object activeMenuButtonClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 520
+y 380
+w 120
+h 20
+fgColor rgb 0 0 0
+bgColor rgb 29440 57088 65280
+inconsistentColor rgb 17920 17920 17920
+topShadowColor rgb 55808 55808 55808
+botShadowColor rgb 17920 17920 17920
+controlPv "$(P)$(R)ProgramPSO"
+indicatorPv "$(P)$(R)ProgramPSO"
+font "helvetica-medium-r-12.0"
+endObjectProperties
+
+endGroup
+
+endObjectProperties
+
 

@@ -4,10 +4,10 @@
 <widget class="QMainWindow" name="MainWindow">
     <property name="geometry">
         <rect>
-            <x>74</x>
-            <y>683</y>
+            <x>429</x>
+            <y>810</y>
             <width>640</width>
-            <height>290</height>
+            <height>340</height>
         </rect>
     </property>
     <property name="styleSheet">
@@ -84,6 +84,16 @@ caChoice &gt; QPushButton {
       text-align: left;
       padding: 1px;
 }
+
+/* when font specified, no font sizing is done any more,  font: 10pt; is not bad. You could Enable this when you converted from .adl files
+caRelatedDisplay  &gt; QPushButton {
+font: 10pt;
+}
+
+caShellCommand  &gt; QPushButton {
+font: 10pt;
+}
+*/
 
 caSlider::groove:horizontal {
 border: 1px solid #bbb;
@@ -178,7 +188,7 @@ border-radius: 2px;
         <widget class="caTextEntry" name="caTextEntry_0">
             <property name="geometry">
                 <rect>
-                    <x>254</x>
+                    <x>255</x>
                     <y>40</y>
                     <width>380</width>
                     <height>20</height>
@@ -229,7 +239,7 @@ border-radius: 2px;
         <widget class="caTextEntry" name="caTextEntry_1">
             <property name="geometry">
                 <rect>
-                    <x>254</x>
+                    <x>255</x>
                     <y>65</y>
                     <width>380</width>
                     <height>20</height>
@@ -306,9 +316,9 @@ border-radius: 2px;
             </property>
             <property name="geometry">
                 <rect>
-                    <x>89</x>
+                    <x>10</x>
                     <y>65</y>
-                    <width>160</width>
+                    <width>240</width>
                     <height>20</height>
                 </rect>
             </property>
@@ -342,9 +352,9 @@ border-radius: 2px;
             </property>
             <property name="geometry">
                 <rect>
-                    <x>119</x>
+                    <x>10</x>
                     <y>40</y>
-                    <width>130</width>
+                    <width>240</width>
                     <height>20</height>
                 </rect>
             </property>
@@ -378,9 +388,9 @@ border-radius: 2px;
             </property>
             <property name="geometry">
                 <rect>
-                    <x>89</x>
+                    <x>10</x>
                     <y>115</y>
-                    <width>160</width>
+                    <width>240</width>
                     <height>20</height>
                 </rect>
             </property>
@@ -388,7 +398,7 @@ border-radius: 2px;
         <widget class="caTextEntry" name="caTextEntry_2">
             <property name="geometry">
                 <rect>
-                    <x>254</x>
+                    <x>255</x>
                     <y>115</y>
                     <width>380</width>
                     <height>20</height>
@@ -465,9 +475,9 @@ border-radius: 2px;
             </property>
             <property name="geometry">
                 <rect>
-                    <x>119</x>
+                    <x>10</x>
                     <y>90</y>
-                    <width>130</width>
+                    <width>240</width>
                     <height>20</height>
                 </rect>
             </property>
@@ -475,7 +485,7 @@ border-radius: 2px;
         <widget class="caTextEntry" name="caTextEntry_3">
             <property name="geometry">
                 <rect>
-                    <x>254</x>
+                    <x>255</x>
                     <y>90</y>
                     <width>380</width>
                     <height>20</height>
@@ -552,9 +562,9 @@ border-radius: 2px;
             </property>
             <property name="geometry">
                 <rect>
-                    <x>119</x>
+                    <x>10</x>
                     <y>140</y>
-                    <width>130</width>
+                    <width>240</width>
                     <height>20</height>
                 </rect>
             </property>
@@ -588,9 +598,9 @@ border-radius: 2px;
             </property>
             <property name="geometry">
                 <rect>
-                    <x>89</x>
+                    <x>10</x>
                     <y>165</y>
-                    <width>160</width>
+                    <width>240</width>
                     <height>20</height>
                 </rect>
             </property>
@@ -598,7 +608,7 @@ border-radius: 2px;
         <widget class="caTextEntry" name="caTextEntry_4">
             <property name="geometry">
                 <rect>
-                    <x>254</x>
+                    <x>255</x>
                     <y>165</y>
                     <width>380</width>
                     <height>20</height>
@@ -649,7 +659,7 @@ border-radius: 2px;
         <widget class="caTextEntry" name="caTextEntry_5">
             <property name="geometry">
                 <rect>
-                    <x>254</x>
+                    <x>255</x>
                     <y>140</y>
                     <width>380</width>
                     <height>20</height>
@@ -726,9 +736,9 @@ border-radius: 2px;
             </property>
             <property name="geometry">
                 <rect>
-                    <x>119</x>
+                    <x>10</x>
                     <y>190</y>
-                    <width>130</width>
+                    <width>240</width>
                     <height>20</height>
                 </rect>
             </property>
@@ -736,7 +746,7 @@ border-radius: 2px;
         <widget class="caTextEntry" name="caTextEntry_6">
             <property name="geometry">
                 <rect>
-                    <x>254</x>
+                    <x>255</x>
                     <y>190</y>
                     <width>380</width>
                     <height>20</height>
@@ -814,7 +824,7 @@ border-radius: 2px;
             <property name="geometry">
                 <rect>
                     <x>159</x>
-                    <y>268</y>
+                    <y>315</y>
                     <width>90</width>
                     <height>20</height>
                 </rect>
@@ -824,7 +834,7 @@ border-radius: 2px;
             <property name="geometry">
                 <rect>
                     <x>254</x>
-                    <y>268</y>
+                    <y>315</y>
                     <width>100</width>
                     <height>20</height>
                 </rect>
@@ -853,7 +863,7 @@ border-radius: 2px;
                 <string>PSO setup</string>
             </property>
             <property name="files">
-                <string>tomoScan_pso.adl</string>
+                <string>tomoScan_pso.ui </string>
             </property>
             <property name="args">
                 <string>P=$(P), R=$(R)</string>
@@ -881,7 +891,7 @@ border-radius: 2px;
                 </color>
             </property>
             <property name="text">
-                <string>Sample Top X PV</string>
+                <string>Scan type</string>
             </property>
             <property name="fontScaleMode">
                 <enum>ESimpleLabel::WidthAndHeight</enum>
@@ -891,9 +901,9 @@ border-radius: 2px;
             </property>
             <property name="geometry">
                 <rect>
-                    <x>87</x>
-                    <y>216</y>
-                    <width>160</width>
+                    <x>119</x>
+                    <y>265</y>
+                    <width>130</width>
                     <height>20</height>
                 </rect>
             </property>
@@ -917,7 +927,7 @@ border-radius: 2px;
                 </color>
             </property>
             <property name="text">
-                <string>Sample Top Z PV</string>
+                <string>Flip&amp;Stitch</string>
             </property>
             <property name="fontScaleMode">
                 <enum>ESimpleLabel::WidthAndHeight</enum>
@@ -927,18 +937,78 @@ border-radius: 2px;
             </property>
             <property name="geometry">
                 <rect>
-                    <x>87</x>
-                    <y>241</y>
-                    <width>160</width>
+                    <x>119</x>
+                    <y>290</y>
+                    <width>130</width>
                     <height>20</height>
                 </rect>
+            </property>
+        </widget>
+        <widget class="caMenu" name="caMenu_0">
+            <property name="geometry">
+                <rect>
+                    <x>254</x>
+                    <y>265</y>
+                    <width>80</width>
+                    <height>20</height>
+                </rect>
+            </property>
+            <property name="channel">
+                <string>$(P)$(R)ScanType</string>
+            </property>
+            <property name="foreground">
+                <color alpha="255">
+                    <red>0</red>
+                    <green>0</green>
+                    <blue>0</blue>
+                </color>
+            </property>
+            <property name="background">
+                <color alpha="255">
+                    <red>115</red>
+                    <green>223</green>
+                    <blue>255</blue>
+                </color>
+            </property>
+            <property name="colorMode">
+                <enum>caMenu::Static</enum>
+            </property>
+        </widget>
+        <widget class="caMenu" name="caMenu_1">
+            <property name="geometry">
+                <rect>
+                    <x>254</x>
+                    <y>290</y>
+                    <width>80</width>
+                    <height>20</height>
+                </rect>
+            </property>
+            <property name="channel">
+                <string>$(P)$(R)FlipStitch</string>
+            </property>
+            <property name="foreground">
+                <color alpha="255">
+                    <red>0</red>
+                    <green>0</green>
+                    <blue>0</blue>
+                </color>
+            </property>
+            <property name="background">
+                <color alpha="255">
+                    <red>115</red>
+                    <green>223</green>
+                    <blue>255</blue>
+                </color>
+            </property>
+            <property name="colorMode">
+                <enum>caMenu::Static</enum>
             </property>
         </widget>
         <widget class="caTextEntry" name="caTextEntry_7">
             <property name="geometry">
                 <rect>
-                    <x>253</x>
-                    <y>241</y>
+                    <x>255</x>
+                    <y>215</y>
                     <width>380</width>
                     <height>20</height>
                 </rect>
@@ -947,7 +1017,7 @@ border-radius: 2px;
                 <enum>caLineEdit::WidthAndHeight</enum>
             </property>
             <property name="channel">
-                <string>$(P)$(R)SampleTopZPVName</string>
+                <string>$(P)$(R)TxmOpticsPVPrefix</string>
             </property>
             <property name="foreground">
                 <color alpha="255">
@@ -985,11 +1055,47 @@ border-radius: 2px;
                 <enum>string</enum>
             </property>
         </widget>
+        <widget class="caLabel" name="caLabel_11">
+            <property name="frameShape">
+                <enum>QFrame::NoFrame</enum>
+            </property>
+            <property name="foreground">
+                <color alpha="255">
+                    <red>0</red>
+                    <green>0</green>
+                    <blue>0</blue>
+                </color>
+            </property>
+            <property name="background">
+                <color alpha="0">
+                    <red>0</red>
+                    <green>0</green>
+                    <blue>0</blue>
+                </color>
+            </property>
+            <property name="text">
+                <string>txmOptics Prefix</string>
+            </property>
+            <property name="fontScaleMode">
+                <enum>ESimpleLabel::WidthAndHeight</enum>
+            </property>
+            <property name="alignment">
+                <set>Qt::AlignAbsolute|Qt::AlignRight|Qt::AlignVCenter</set>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>10</x>
+                    <y>215</y>
+                    <width>240</width>
+                    <height>20</height>
+                </rect>
+            </property>
+        </widget>
         <widget class="caTextEntry" name="caTextEntry_8">
             <property name="geometry">
                 <rect>
-                    <x>253</x>
-                    <y>216</y>
+                    <x>255</x>
+                    <y>240</y>
                     <width>380</width>
                     <height>20</height>
                 </rect>
@@ -998,7 +1104,7 @@ border-radius: 2px;
                 <enum>caLineEdit::WidthAndHeight</enum>
             </property>
             <property name="channel">
-                <string>$(P)$(R)SampleTopXPVName</string>
+                <string>$(P)$(R)ImagePVPrefix</string>
             </property>
             <property name="foreground">
                 <color alpha="255">
@@ -1034,6 +1140,42 @@ border-radius: 2px;
             </property>
             <property name="formatType">
                 <enum>string</enum>
+            </property>
+        </widget>
+        <widget class="caLabel" name="caLabel_12">
+            <property name="frameShape">
+                <enum>QFrame::NoFrame</enum>
+            </property>
+            <property name="foreground">
+                <color alpha="255">
+                    <red>0</red>
+                    <green>0</green>
+                    <blue>0</blue>
+                </color>
+            </property>
+            <property name="background">
+                <color alpha="0">
+                    <red>0</red>
+                    <green>0</green>
+                    <blue>0</blue>
+                </color>
+            </property>
+            <property name="text">
+                <string>Image Prefix</string>
+            </property>
+            <property name="fontScaleMode">
+                <enum>ESimpleLabel::WidthAndHeight</enum>
+            </property>
+            <property name="alignment">
+                <set>Qt::AlignAbsolute|Qt::AlignRight|Qt::AlignVCenter</set>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>10</x>
+                    <y>240</y>
+                    <width>240</width>
+                    <height>20</height>
+                </rect>
             </property>
         </widget>
         <zorder>caRectangle_0</zorder>
@@ -1048,6 +1190,8 @@ border-radius: 2px;
         <zorder>caLabel_8</zorder>
         <zorder>caLabel_9</zorder>
         <zorder>caLabel_10</zorder>
+        <zorder>caLabel_11</zorder>
+        <zorder>caLabel_12</zorder>
         <zorder>caTextEntry_0</zorder>
         <zorder>caTextEntry_1</zorder>
         <zorder>caTextEntry_2</zorder>
@@ -1056,6 +1200,8 @@ border-radius: 2px;
         <zorder>caTextEntry_5</zorder>
         <zorder>caTextEntry_6</zorder>
         <zorder>caRelatedDisplay_0</zorder>
+        <zorder>caMenu_0</zorder>
+        <zorder>caMenu_1</zorder>
         <zorder>caTextEntry_7</zorder>
         <zorder>caTextEntry_8</zorder>
     </widget>

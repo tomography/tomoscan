@@ -3,10 +3,10 @@ beginScreenProperties
 major 4
 minor 0
 release 1
-x 74
-y 683
+x 429
+y 810
 w 640
-h 290
+h 340
 font "helvetica-medium-r-18.0"
 ctlFont "helvetica-bold-r-10.0"
 btnFont "helvetica-medium-r-18.0"
@@ -66,7 +66,7 @@ beginObjectProperties
 major 4
 minor 7
 release 0
-x 254
+x 255
 y 40
 w 380
 h 20
@@ -92,7 +92,7 @@ beginObjectProperties
 major 4
 minor 7
 release 0
-x 254
+x 255
 y 65
 w 380
 h 20
@@ -118,9 +118,9 @@ beginObjectProperties
 major 4
 minor 1
 release 1
-x 89
+x 10
 y 65
-w 160
+w 240
 h 20
 font "helvetica-medium-r-14.0"
 fontAlign "right"
@@ -138,9 +138,9 @@ beginObjectProperties
 major 4
 minor 1
 release 1
-x 119
+x 10
 y 40
-w 130
+w 240
 h 20
 font "helvetica-medium-r-14.0"
 fontAlign "right"
@@ -158,9 +158,9 @@ beginObjectProperties
 major 4
 minor 1
 release 1
-x 85
+x 10
 y 115
-w 164
+w 240
 h 20
 font "helvetica-medium-r-14.0"
 fontAlign "right"
@@ -178,7 +178,7 @@ beginObjectProperties
 major 4
 minor 7
 release 0
-x 254
+x 255
 y 115
 w 380
 h 20
@@ -204,9 +204,9 @@ beginObjectProperties
 major 4
 minor 1
 release 1
-x 100
+x 10
 y 90
-w 149
+w 240
 h 20
 font "helvetica-medium-r-14.0"
 fontAlign "right"
@@ -224,7 +224,7 @@ beginObjectProperties
 major 4
 minor 7
 release 0
-x 254
+x 255
 y 90
 w 380
 h 20
@@ -250,9 +250,9 @@ beginObjectProperties
 major 4
 minor 1
 release 1
-x 98
+x 10
 y 140
-w 151
+w 240
 h 20
 font "helvetica-medium-r-14.0"
 fontAlign "right"
@@ -270,9 +270,9 @@ beginObjectProperties
 major 4
 minor 1
 release 1
-x 83
+x 10
 y 165
-w 166
+w 240
 h 20
 font "helvetica-medium-r-14.0"
 fontAlign "right"
@@ -290,7 +290,7 @@ beginObjectProperties
 major 4
 minor 7
 release 0
-x 254
+x 255
 y 165
 w 380
 h 20
@@ -316,7 +316,7 @@ beginObjectProperties
 major 4
 minor 7
 release 0
-x 254
+x 255
 y 140
 w 380
 h 20
@@ -342,9 +342,9 @@ beginObjectProperties
 major 4
 minor 1
 release 1
-x 119
+x 10
 y 190
-w 130
+w 240
 h 20
 font "helvetica-medium-r-14.0"
 fontAlign "right"
@@ -362,7 +362,7 @@ beginObjectProperties
 major 4
 minor 7
 release 0
-x 254
+x 255
 y 190
 w 380
 h 20
@@ -389,7 +389,7 @@ major 4
 minor 1
 release 1
 x 159
-y 268
+y 315
 w 90
 h 20
 font "helvetica-medium-r-14.0"
@@ -408,9 +408,9 @@ beginObjectProperties
 major 4
 minor 1
 release 1
-x 87
-y 216
-w 160
+x 119
+y 265
+w 130
 h 20
 font "helvetica-medium-r-14.0"
 fontAlign "right"
@@ -418,7 +418,7 @@ fgColor rgb 0 0 0
 bgColor index 3
 useDisplayBg
 value {
-  "Sample Top X PV"
+  "Scan type"
 }
 endObjectProperties
 
@@ -428,9 +428,9 @@ beginObjectProperties
 major 4
 minor 1
 release 1
-x 87
-y 241
-w 160
+x 119
+y 290
+w 130
 h 20
 font "helvetica-medium-r-14.0"
 fontAlign "right"
@@ -438,7 +438,7 @@ fgColor rgb 0 0 0
 bgColor index 3
 useDisplayBg
 value {
-  "Sample Top Z PV"
+  "Flip&Stitch"
 }
 endObjectProperties
 
@@ -448,11 +448,11 @@ beginObjectProperties
 major 4
 minor 7
 release 0
-x 253
-y 241
+x 255
+y 215
 w 380
 h 20
-controlPv "$(P)$(R)SampleTopZPVName"
+controlPv "$(P)$(R)TxmOpticsPVPrefix"
 format "string"
 font "helvetica-medium-r-12.0"
 fontAlign "left"
@@ -468,17 +468,37 @@ newPos
 objType "controls"
 endObjectProperties
 
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 10
+y 215
+w 240
+h 20
+font "helvetica-medium-r-14.0"
+fontAlign "right"
+fgColor rgb 0 0 0
+bgColor index 3
+useDisplayBg
+value {
+  "txmOptics Prefix"
+}
+endObjectProperties
+
 # (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
 minor 7
 release 0
-x 253
-y 216
+x 255
+y 240
 w 380
 h 20
-controlPv "$(P)$(R)SampleTopXPVName"
+controlPv "$(P)$(R)ImagePVPrefix"
 format "string"
 font "helvetica-medium-r-12.0"
 fontAlign "left"
@@ -492,6 +512,26 @@ smartRefresh
 fastUpdate
 newPos
 objType "controls"
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 10
+y 240
+w 240
+h 20
+font "helvetica-medium-r-14.0"
+fontAlign "right"
+fgColor rgb 0 0 0
+bgColor index 3
+useDisplayBg
+value {
+  "Image Prefix"
+}
 endObjectProperties
 
 # (Related Display)
@@ -501,7 +541,7 @@ major 4
 minor 0
 release 0
 x 254
-y 268
+y 315
 w 100
 h 20
 fgColor rgb 0 0 0
@@ -525,5 +565,45 @@ symbols {
 replaceSymbols {
   0 1
 }
+endObjectProperties
+
+# (Menu Button)
+object activeMenuButtonClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 254
+y 265
+w 80
+h 20
+fgColor rgb 0 0 0
+bgColor rgb 29440 57088 65280
+inconsistentColor rgb 17920 17920 17920
+topShadowColor rgb 55808 55808 55808
+botShadowColor rgb 17920 17920 17920
+controlPv "$(P)$(R)ScanType"
+indicatorPv "$(P)$(R)ScanType"
+font "helvetica-medium-r-12.0"
+endObjectProperties
+
+# (Menu Button)
+object activeMenuButtonClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 254
+y 290
+w 80
+h 20
+fgColor rgb 0 0 0
+bgColor rgb 29440 57088 65280
+inconsistentColor rgb 17920 17920 17920
+topShadowColor rgb 55808 55808 55808
+botShadowColor rgb 17920 17920 17920
+controlPv "$(P)$(R)FlipStitch"
+indicatorPv "$(P)$(R)FlipStitch"
+font "helvetica-medium-r-12.0"
 endObjectProperties
 
