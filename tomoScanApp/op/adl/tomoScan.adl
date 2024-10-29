@@ -1450,12 +1450,13 @@ menu {
 		height=20
 	}
 	control {
-		chan="$(P)$(R)OpenShutter"
+		chan="$(P)$(R)OpenShutterCmd"
 		clr=14
 		bclr=15
 	}
 	label="Open shutter"
 	press_msg="1"
+	release_msg="0"
 }
 "message button" {
 	object {
@@ -1465,7 +1466,7 @@ menu {
 		height=20
 	}
 	control {
-		chan="$(P)$(R)CloseShutter"
+		chan="$(P)$(R)CloseShutterCmd"
 		clr=14
 		bclr=20
 	}
