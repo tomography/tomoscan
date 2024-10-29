@@ -41,15 +41,15 @@ record(stringout, "$(P)$(R)OpenShutterValue")
 
 record(bo, "$(P)$(R)AutoCloseShutter")
 {
-   field(ZRST,  "No")
-   field(ONST,  "Yes")
+   field(ZNAM,  "No")
+   field(ONAM,  "Yes")
 }
 
-record(bo, "$(P)$(R)CloseShutter")
+record(bo, "$(P)$(R)CloseShutterCmd")
 {
 }
 
-record(bo, "$(P)$(R)OpenShutter")
+record(bo, "$(P)$(R)OpenShutterCmd")
 {
 }
 
