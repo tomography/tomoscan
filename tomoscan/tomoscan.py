@@ -230,7 +230,7 @@ class TomoScan():
 
         # Configure callbacks on a few PVs
         for epics_pv in ('MoveSampleIn', 'MoveSampleOut', 'StartScan', 'AbortScan', 'ExposureTime',
-                         'FilePath', 'FPFilePathExists', 'FPWriteStatus', 'OpenShutter', 'CloseShutter'):
+                         'FilePath', 'FPFilePathExists', 'FPWriteStatus', 'OpenShutterCmd', 'CloseShutterCmd'):
             self.epics_pvs[epics_pv].add_callback(self.pv_callback)
         for epics_pv in ('MoveSampleIn', 'MoveSampleOut', 'StartScan', 'AbortScan'):
             self.epics_pvs[epics_pv].put(0)
@@ -306,10 +306,10 @@ class TomoScan():
         elif pvname.find('FilePath') != -1:
             thread = threading.Thread(target=self.copy_file_path, args=())
             thread.start()
-        elif pvname.find('OpenShutter') != -1:
+        elif (pvname.find('OpenShutterCmd') != -1) and (value == 1):
             thread = threading.Thread(target=self.open_shutter, args=())
             thread.start()
-        elif pvname.find('CloseShutter') != -1:
+        elif (pvname.find('CloseShutterCmd') != -1) and (value == 1):
             thread = threading.Thread(target=self.close_shutter, args=())
             thread.start()
         elif (pvname.find('StartScan') != -1) and (value == 1):
