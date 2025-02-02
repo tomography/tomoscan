@@ -237,7 +237,7 @@ class TomoScanPSO(TomoScan):
         # referenced from the stage location where we arm the PSO.  We are at that point now.
         # We want pulses to start at start - delta/2, end at end + delta/2.  
         range_start = -round(np.abs(self.epics_pvs['PSOEncoderCountsPerStep'].get())/ 2) * overall_sense
-        range_length = np.abs(self.epics_pvs['PSOEncoderCountsPerStep'].get()) * self.num_angles
+        range_length = np.abs(self.epics_pvs['PSOEncoderCountsPerStep'].get()) * (self.num_angles+1)
         # The start of the PSO window must be < end.  Handle this.
         if overall_sense > 0:
             window_start = range_start
