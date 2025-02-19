@@ -141,8 +141,8 @@ if not on_rtd:  # only import and set the theme if we're building docs locally
 
 html_context = {
     "display_github": True, # Integrate GitHub
-    "github_user": "xray-imaging", # Username
-    "github_repo": "mctoptics", # Repo name
+    "github_user": "tomography", # Username
+    "github_repo": "tomoscan", # Repo name
     "github_version": "main", # Version
     "conf_py_path": "/docs/source/", # Path in the checkout to the docs root
 }
