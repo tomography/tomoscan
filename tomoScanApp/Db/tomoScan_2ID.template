@@ -1,0 +1,390 @@
+# Database for EPICS PVS for tomography data collection software
+# This database contains all of the PVs used by the tomoscan base class.
+
+####################################
+# Camera and File Plugin PV Prefixes
+####################################
+
+record(stringout, "$(P)$(R)CameraPVPrefix")
+{
+   field(VAL,  "$(CAMERA)")
+}
+
+record(stringout, "$(P)$(R)FilePluginPVPrefix")
+{
+   field(VAL,  "$(FILE_PLUGIN)")
+}
+
+#################
+# Shutter control
+#################
+
+record(stringout, "$(P)$(R)CloseShutterPVName")
+{
+   field(VAL,  "$(CLOSE_SHUTTER)")
+}
+
+record(stringout, "$(P)$(R)CloseShutterValue")
+{
+   field(VAL,  "$(CLOSE_VALUE)")
+}
+
+record(stringout, "$(P)$(R)OpenShutterPVName")
+{
+   field(VAL,  "$(OPEN_SHUTTER)")
+}
+
+record(stringout, "$(P)$(R)OpenShutterValue")
+{
+   field(VAL,  "$(OPEN_VALUE)")
+}
+
+#############################################
+# Rotation, sample X and Y translation motors
+#############################################
+
+record(stringout, "$(P)$(R)RotationPVName")
+{
+   field(VAL,  "$(ROTATION)")
+}
+
+record(stringout, "$(P)$(R)SampleXPVName")
+{
+   field(VAL,  "$(SAMPLE_X)")
+}
+
+record(stringout, "$(P)$(R)SampleYPVName")
+{
+   field(VAL,  "$(SAMPLE_Y)")
+}
+
+
+#########################
+# Data collection control
+#########################
+
+###############
+# Rotation axis
+###############
+
+record(ao, "$(P)$(R)RotationStart")
+{
+   field(PREC,  "3")
+}
+
+record(ao, "$(P)$(R)RotationStep")
+{
+   field(PREC,  "3")
+}
+
+record(calc, "$(P)$(R)RotationStop")
+{
+   field(INPA, "$(P)$(R)RotationStart CP")
+   field(INPB, "$(P)$(R)RotationStep CP")
+   field(INPC, "$(P)$(R)NumAngles CP")
+   field(CALC, "A+B*(C-1)")
+   field(PREC,  "3")
+}
+
+record(longout, "$(P)$(R)NumAngles")
+{
+}
+
+record(mbbo, "$(P)$(R)ReturnRotation")
+{
+   field(ZRVL, "0")
+   field(ZRST, "No")
+   field(ONVL, "1")
+   field(ONST, "Yes")
+   field(TWVL, "2")
+   field(TWST, "Home")
+}
+
+####################
+# Dark field control
+####################
+
+record(longout, "$(P)$(R)NumDarkFields")
+{
+}
+
+record(mbbo, "$(P)$(R)DarkFieldMode")
+{
+   field(ZRVL, "0")
+   field(ZRST, "Start")
+   field(ONVL, "1")
+   field(ONST, "End")
+   field(TWVL, "2")
+   field(TWST, "Both")
+   field(THVL, "3")
+   field(THST, "None")
+}
+
+record(ao, "$(P)$(R)DarkFieldValue")
+{
+   field(PREC,  "0")
+}
+
+####################
+# Flat field control
+####################
+
+record(longout, "$(P)$(R)NumFlatFields")
+{
+}
+
+record(mbbo, "$(P)$(R)FlatFieldMode")
+{
+   field(ZRVL, "0")
+   field(ZRST, "Start")
+   field(ONVL, "1")
+   field(ONST, "End")
+   field(TWVL, "2")
+   field(TWST, "Both")
+   field(THVL, "3")
+   field(THST, "None")
+}
+
+record(mbbo, "$(P)$(R)FlatFieldAxis")
+{
+   field(ZRVL, "1")
+   field(ZRST, "X")
+   field(ONVL, "2")
+   field(ONST, "Y")
+   field(TWVL, "3")
+   field(TWST, "Both")
+}
+
+record(ao, "$(P)$(R)FlatFieldValue")
+{
+   field(PREC,  "0")
+}
+
+record(ao, "$(P)$(R)SampleInX")
+{
+   field(PREC,  "3")
+}
+
+record(ao, "$(P)$(R)SampleOutX")
+{
+   field(PREC,  "3")
+}
+
+record(ao, "$(P)$(R)SampleInY")
+{
+   field(PREC,  "3")
+}
+
+record(ao, "$(P)$(R)SampleOutY")
+{
+   field(PREC,  "3")
+}
+
+record(ao, "$(P)$(R)SampleOutAngle")
+{
+   field(PREC,  "3")
+}
+
+record(bo, "$(P)$(R)SampleOutAngleEnable")
+{
+   field(ZNAM, "No")
+   field(ONAM, "Yes")
+}
+
+############
+# Frame type
+############
+
+record(mbbi, "$(P)$(R)FrameType")
+{
+   field(ZRVL, "0")
+   field(ZRST, "DarkField")
+   field(ONVL, "1")
+   field(ONST, "FlatField")
+   field(TWVL, "2")
+   field(TWST, "Projection")
+}
+
+#################
+# Exposure time
+#################
+
+record(ao, "$(P)$(R)ExposureTime")
+{
+   field(PREC,  "3")
+}
+
+record(ao, "$(P)$(R)FlatExposureTime")
+{
+   field(PREC,  "3")
+}
+
+record(bo, "$(P)$(R)DifferentFlatExposure")
+{
+   field(ZNAM, "Same")
+   field(ONAM, "Different")
+}
+
+############################
+# File path and name control
+############################
+
+record(waveform, "$(P)$(R)FilePath")
+{
+   field(FTVL, "UCHAR")
+   field(NELM, "256")
+}
+
+record(waveform, "$(P)$(R)FileName")
+{
+   field(FTVL, "UCHAR")
+   field(NELM, "256")
+}
+
+record(bi, "$(P)$(R)FilePathExists")
+{
+    field(ZNAM, "No")
+    field(ZSV,  "MAJOR")
+    field(ONAM, "Yes")
+    field(OSV,  "NO_ALARM")
+}
+
+record(bi, "$(P)$(R)OverwriteWarning")
+{
+    field(ZNAM, "No")
+    field(ZSV,  "MAJOR")
+    field(ONAM, "Yes")
+    field(OSV,  "NO_ALARM")
+}
+
+record(waveform, "$(P)$(R)FullFileName")
+{
+   field(FTVL, "UCHAR")
+   field(NELM, "256")
+}
+
+################################
+# Location for data in HDF5 file
+################################
+
+record(stringout, "$(P)$(R)HDF5ProjectionLocation")
+{
+   field(VAL, "/exchange/data")
+}
+record(stringout, "$(P)$(R)HDF5DarkLocation")
+{
+   field(VAL, "/exchange/data_dark")
+}
+record(stringout, "$(P)$(R)HDF5FlatLocation")
+{
+   field(VAL, "/exchange/data_white")
+}
+record(stringout, "$(P)$(R)HDF5Location")
+{
+}
+
+#################################
+# Scan control via Channel Access
+#################################
+
+record(busy, "$(P)$(R)MoveSampleIn")
+{
+   field(ZNAM, "Done")
+   field(ONAM, "Move")
+}
+
+record(busy, "$(P)$(R)MoveSampleOut")
+{
+   field(ZNAM, "Done")
+   field(ONAM, "Move")
+}
+
+record(busy,"$(P)$(R)StartScan")
+{
+   field(ZNAM,"Done")
+   field(ZSV, "NO_ALARM")
+   field(ONAM,"Acquire")
+   field(OSV, "MINOR")
+   field(VAL, "0")
+}
+
+record(bo,"$(P)$(R)AbortScan")
+{
+   field(ZNAM,"No")
+   field(ONAM,"Yes")
+}
+
+################################
+# Scan status via Channel Access
+################################
+
+record(waveform,"$(P)$(R)ScanStatus") 
+{
+   field(FTVL, "UCHAR")
+   field(NELM, "256")
+}
+
+record(stringout,"$(P)$(R)ImagesCollected")
+{
+}
+
+record(stringout,"$(P)$(R)ImagesSaved")
+{
+}
+
+record(stringout, "$(P)$(R)ElapsedTime")
+{
+}
+
+record(stringout, "$(P)$(R)RemainingTime")
+{
+}
+
+record(calcout, "$(P)$(R)Watchdog")
+{
+   field(SCAN, "1 second")
+   field(INPA, "$(P)$(R)Watchdog.VAL NPP")
+   field(CALC, "A-1")
+   field(OCAL, "A>0?1:0")
+   field(OOPT, "On Change")
+   field(DOPT, "Use OCAL")
+   field(OUT,  "$(P)$(R)ServerRunning PP")
+}
+
+record(bi, "$(P)$(R)ServerRunning")
+{
+   field(ZNAM, "Stopped")
+   field(ZSV,  "MAJOR")
+   field(ONAM, "Running")
+   field(OSV,  "NO_ALARM")
+}
+
+############
+# Scan Types
+############
+
+record(mbbo, "$(P)$(R)ScanType")
+{
+   field(ZRVL, "0")
+   field(ZRST, "Single")
+   field(ONVL, "1")
+   field(ONST, "Vertical")
+   field(TWVL, "2")
+   field(TWST, "Horizontal")
+   field(THVL, "3")
+   field(THST, "Mosaic")
+   field(FRVL, "4")
+   field(FRST, "Scan File")
+   field(FVVL, "5")
+   field(FVST, "Energy")
+   field(SXVL, "6")
+   field(SXST, "Energy File")
+   field(SVVL, "7")
+   field(SVST, "Helical")
+}
+
+record(bo, "$(P)$(R)FlipStitch")
+{
+   field(ZNAM, "No")
+   field(ONAM, "Yes")
+}
