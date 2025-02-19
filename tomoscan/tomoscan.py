@@ -542,11 +542,9 @@ class TomoScan():
         exposure_time : float, optional
             The exposure time to use. If None then the value of the ``ExposureTime`` PV is used.
         """
-        if not self.scan_is_running:
-            if exposure_time is None:
-                exposure_time = self.epics_pvs['ExposureTime'].value
-            self.epics_pvs['CamAcquireTime'].put(exposure_time, wait=True, timeout = 10.0)
-            
+        if exposure_time is None:
+            exposure_time = self.epics_pvs['ExposureTime'].value
+        self.epics_pvs['CamAcquireTime'].put(exposure_time, wait=True, timeout = 10.0)
 
     def set_scan_exposure_time(self, exposure_time=None):
         """Sets the camera exposure time during the scan.
