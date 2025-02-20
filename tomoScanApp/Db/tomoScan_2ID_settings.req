@@ -1,0 +1,72 @@
+# This file is used by autosave to determine what PVs to save
+# It is also used by tomoScan to determine what PVs to create
+
+# This is the file for the tomoscan_2bm derived class.
+
+#########################
+# Beam status information
+#########################
+$(P)$(R)BeamReadyPVName
+$(P)$(R)BeamReadyValue
+$(P)$(R)Testing
+
+####################
+# Sample information
+####################
+$(P)$(R)SampleName
+$(P)$(R)SampleDescription1
+$(P)$(R)SampleDescription2
+$(P)$(R)SampleDescription3
+
+##################
+# User information
+##################
+$(P)$(R)UserName
+$(P)$(R)UserInstitution
+$(P)$(R)UserBadge
+$(P)$(R)UserEmail
+$(P)$(R)ProposalNumber
+$(P)$(R)ProposalTitle
+$(P)$(R)ESAFNumber
+$(P)$(R)UserInfoUpdate
+
+#################
+# Data management
+#################
+$(P)$(R)DetectorTopDir
+$(P)$(R)UserLastName
+$(P)$(R)ExperimentYearMonth
+$(P)$(R)RemoteAnalysisDir
+$(P)$(R)CopyToAnalysisDir
+
+################
+# Shutter status
+################
+$(P)$(R)ShutterStatusPVName
+
+################
+# AD plugins
+################
+$(P)$(R)PvaPluginPVPrefix
+
+######################
+# Pva Plugin PV Prefix
+######################
+$(P)$(R)PvaPluginPVPrefix
+
+######################
+# Roi Plugin PV Prefix
+######################
+$(P)$(R)RoiPluginPVPrefix
+
+#####################
+# Cb Plugin PV Prefix
+#####################
+$(P)$(R)CbPluginPVPrefix
+
+####################
+# Energy information
+####################
+$(P)$(R)Energy
+$(P)$(R)EnergyMode
+$(P)$(R)Filters

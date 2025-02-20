@@ -1,0 +1,3 @@
+file "tomoScan_settings.req", P=$(P), R=$(R)
+file "tomoScan_step_settings.req", P=$(P), R=$(R)
+file "tomoScan_2ID_settings.req", P=$(P), R=$(R)

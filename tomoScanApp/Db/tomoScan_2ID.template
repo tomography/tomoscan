@@ -1,363 +1,148 @@
-# Database for EPICS PVS for tomography data collection software
-# This database contains all of the PVs used by the tomoscan base class.
-
-####################################
-# Camera and File Plugin PV Prefixes
-####################################
-
-record(stringout, "$(P)$(R)CameraPVPrefix")
-{
-   field(VAL,  "$(CAMERA)")
-}
-
-record(stringout, "$(P)$(R)FilePluginPVPrefix")
-{
-   field(VAL,  "$(FILE_PLUGIN)")
-}
-
-#################
-# Shutter control
-#################
-
-record(stringout, "$(P)$(R)CloseShutterPVName")
-{
-   field(VAL,  "$(CLOSE_SHUTTER)")
-}
-
-record(stringout, "$(P)$(R)CloseShutterValue")
-{
-   field(VAL,  "$(CLOSE_VALUE)")
-}
-
-record(stringout, "$(P)$(R)OpenShutterPVName")
-{
-   field(VAL,  "$(OPEN_SHUTTER)")
-}
-
-record(stringout, "$(P)$(R)OpenShutterValue")
-{
-   field(VAL,  "$(OPEN_VALUE)")
-}
-
-#############################################
-# Rotation, sample X and Y translation motors
-#############################################
-
-record(stringout, "$(P)$(R)RotationPVName")
-{
-   field(VAL,  "$(ROTATION)")
-}
-
-record(stringout, "$(P)$(R)SampleXPVName")
-{
-   field(VAL,  "$(SAMPLE_X)")
-}
-
-record(stringout, "$(P)$(R)SampleYPVName")
-{
-   field(VAL,  "$(SAMPLE_Y)")
-}
-
+# Database for EPICS PVS for tomography data collection software at APS 2-BM
+# It contains the PVs that are required by the tomoscan_13bm derived class,
+# as well as additional PVs used for metadata about the scan that are stored
+# both in the configuration files written by tomoscan, and in the
+# files written by areaDetector file plugin.
 
 #########################
-# Data collection control
+# Beam status information
 #########################
 
-###############
-# Rotation axis
-###############
-
-record(ao, "$(P)$(R)RotationStart")
+record(stringout, "$(P)$(R)BeamReadyPVName")
 {
-   field(PREC,  "3")
+   field(VAL,  "$(BEAM_READY)")
 }
 
-record(ao, "$(P)$(R)RotationStep")
+record(stringout, "$(P)$(R)BeamReadyValue")
 {
-   field(PREC,  "3")
+   field(VAL,  "$(READY_VALUE)")
 }
 
-record(calc, "$(P)$(R)RotationStop")
-{
-   field(INPA, "$(P)$(R)RotationStart CP")
-   field(INPB, "$(P)$(R)RotationStep CP")
-   field(INPC, "$(P)$(R)NumAngles CP")
-   field(CALC, "A+B*(C-1)")
-   field(PREC,  "3")
-}
-
-record(longout, "$(P)$(R)NumAngles")
-{
-}
-
-record(mbbo, "$(P)$(R)ReturnRotation")
-{
-   field(ZRVL, "0")
-   field(ZRST, "No")
-   field(ONVL, "1")
-   field(ONST, "Yes")
-   field(TWVL, "2")
-   field(TWST, "Home")
-}
-
-####################
-# Dark field control
-####################
-
-record(longout, "$(P)$(R)NumDarkFields")
-{
-}
-
-record(mbbo, "$(P)$(R)DarkFieldMode")
-{
-   field(ZRVL, "0")
-   field(ZRST, "Start")
-   field(ONVL, "1")
-   field(ONST, "End")
-   field(TWVL, "2")
-   field(TWST, "Both")
-   field(THVL, "3")
-   field(THST, "None")
-}
-
-record(ao, "$(P)$(R)DarkFieldValue")
-{
-   field(PREC,  "0")
-}
-
-####################
-# Flat field control
-####################
-
-record(longout, "$(P)$(R)NumFlatFields")
-{
-}
-
-record(mbbo, "$(P)$(R)FlatFieldMode")
-{
-   field(ZRVL, "0")
-   field(ZRST, "Start")
-   field(ONVL, "1")
-   field(ONST, "End")
-   field(TWVL, "2")
-   field(TWST, "Both")
-   field(THVL, "3")
-   field(THST, "None")
-}
-
-record(mbbo, "$(P)$(R)FlatFieldAxis")
-{
-   field(ZRVL, "1")
-   field(ZRST, "X")
-   field(ONVL, "2")
-   field(ONST, "Y")
-   field(TWVL, "3")
-   field(TWST, "Both")
-}
-
-record(ao, "$(P)$(R)FlatFieldValue")
-{
-   field(PREC,  "0")
-}
-
-record(ao, "$(P)$(R)SampleInX")
-{
-   field(PREC,  "3")
-}
-
-record(ao, "$(P)$(R)SampleOutX")
-{
-   field(PREC,  "3")
-}
-
-record(ao, "$(P)$(R)SampleInY")
-{
-   field(PREC,  "3")
-}
-
-record(ao, "$(P)$(R)SampleOutY")
-{
-   field(PREC,  "3")
-}
-
-record(ao, "$(P)$(R)SampleOutAngle")
-{
-   field(PREC,  "3")
-}
-
-record(bo, "$(P)$(R)SampleOutAngleEnable")
+record(bo, "$(P)$(R)Testing")
 {
    field(ZNAM, "No")
    field(ONAM, "Yes")
 }
 
-############
-# Frame type
-############
+####################
+# Sample information
+####################
 
-record(mbbi, "$(P)$(R)FrameType")
+record(stringout, "$(P)$(R)SampleName")
+{
+   field(VAL,  "Unknown")
+}
+
+record(stringout, "$(P)$(R)SampleDescription1")
+{
+   field(VAL,  "Unknown")
+}
+
+record(stringout, "$(P)$(R)SampleDescription2")
+{
+   field(VAL,  "Unknown")
+}
+
+record(stringout, "$(P)$(R)SampleDescription3")
+{
+   field(VAL,  "Unknown")
+}
+
+##################
+# User information
+##################
+
+record(stringout, "$(P)$(R)UserName")
+{
+   field(VAL,  "Unknown")
+}
+
+record(waveform, "$(P)$(R)UserInstitution") 
+{
+    field(SCAN, "Passive")
+    field(DTYP, "Soft Channel")
+    field(NELM, "256")
+    field(FTVL, "CHAR")
+}
+
+record(stringout, "$(P)$(R)UserBadge")
+{
+   field(VAL,  "Unknown")
+}
+
+record(stringout, "$(P)$(R)UserEmail")
+{
+   field(VAL,  "Unknown")
+}
+
+record(stringout, "$(P)$(R)ProposalNumber")
+{
+   field(VAL,  "Unknown")
+}
+
+record(waveform, "$(P)$(R)ProposalTitle") 
+{
+    field(SCAN, "Passive")
+    field(DTYP, "Soft Channel")
+    field(NELM, "256")
+    field(FTVL, "CHAR")
+}
+
+record(stringout, "$(P)$(R)ESAFNumber")
+{
+   field(VAL,  "Unknown")
+}
+
+record(stringout, "$(P)$(R)UserInfoUpdate")
+{
+   field(VAL,  "Unknown")
+}
+
+
+#############################
+# Data management information
+#############################
+
+record(stringout, "$(P)$(R)DetectorTopDir") 
+{
+   field(VAL,  "Unknown")
+}
+
+record(stringout, "$(P)$(R)UserLastName")
+{
+   field(VAL,  "Unknown")
+}
+
+record(stringout, "$(P)$(R)ExperimentYearMonth")
+{
+   field(VAL,  "Unknown")
+}
+
+record(stringout, "$(P)$(R)RemoteAnalysisDir") 
+{
+   field(VAL,  "Unknown")
+}
+
+record(mbbo, "$(P)$(R)CopyToAnalysisDir")
 {
    field(ZRVL, "0")
-   field(ZRST, "DarkField")
+   field(ZRST, "None")
    field(ONVL, "1")
-   field(ONST, "FlatField")
+   field(ONST, "fdt")
    field(TWVL, "2")
-   field(TWST, "Projection")
+   field(TWST, "scp")
 }
 
-#################
-# Exposure time
-#################
 
-record(ao, "$(P)$(R)ExposureTime")
+################
+# Shutter status
+################
+
+record(stringout, "$(P)$(R)ShutterStatusPVName")
 {
-   field(PREC,  "3")
+   field(VAL,  "$(SHUTTER_STATUS)")
 }
 
-record(ao, "$(P)$(R)FlatExposureTime")
-{
-   field(PREC,  "3")
-}
-
-record(bo, "$(P)$(R)DifferentFlatExposure")
-{
-   field(ZNAM, "Same")
-   field(ONAM, "Different")
-}
-
-############################
-# File path and name control
-############################
-
-record(waveform, "$(P)$(R)FilePath")
-{
-   field(FTVL, "UCHAR")
-   field(NELM, "256")
-}
-
-record(waveform, "$(P)$(R)FileName")
-{
-   field(FTVL, "UCHAR")
-   field(NELM, "256")
-}
-
-record(bi, "$(P)$(R)FilePathExists")
-{
-    field(ZNAM, "No")
-    field(ZSV,  "MAJOR")
-    field(ONAM, "Yes")
-    field(OSV,  "NO_ALARM")
-}
-
-record(bi, "$(P)$(R)OverwriteWarning")
-{
-    field(ZNAM, "No")
-    field(ZSV,  "MAJOR")
-    field(ONAM, "Yes")
-    field(OSV,  "NO_ALARM")
-}
-
-record(waveform, "$(P)$(R)FullFileName")
-{
-   field(FTVL, "UCHAR")
-   field(NELM, "256")
-}
-
-################################
-# Location for data in HDF5 file
-################################
-
-record(stringout, "$(P)$(R)HDF5ProjectionLocation")
-{
-   field(VAL, "/exchange/data")
-}
-record(stringout, "$(P)$(R)HDF5DarkLocation")
-{
-   field(VAL, "/exchange/data_dark")
-}
-record(stringout, "$(P)$(R)HDF5FlatLocation")
-{
-   field(VAL, "/exchange/data_white")
-}
-record(stringout, "$(P)$(R)HDF5Location")
-{
-}
-
-#################################
-# Scan control via Channel Access
-#################################
-
-record(busy, "$(P)$(R)MoveSampleIn")
-{
-   field(ZNAM, "Done")
-   field(ONAM, "Move")
-}
-
-record(busy, "$(P)$(R)MoveSampleOut")
-{
-   field(ZNAM, "Done")
-   field(ONAM, "Move")
-}
-
-record(busy,"$(P)$(R)StartScan")
-{
-   field(ZNAM,"Done")
-   field(ZSV, "NO_ALARM")
-   field(ONAM,"Acquire")
-   field(OSV, "MINOR")
-   field(VAL, "0")
-}
-
-record(bo,"$(P)$(R)AbortScan")
-{
-   field(ZNAM,"No")
-   field(ONAM,"Yes")
-}
-
-################################
-# Scan status via Channel Access
-################################
-
-record(waveform,"$(P)$(R)ScanStatus") 
-{
-   field(FTVL, "UCHAR")
-   field(NELM, "256")
-}
-
-record(stringout,"$(P)$(R)ImagesCollected")
-{
-}
-
-record(stringout,"$(P)$(R)ImagesSaved")
-{
-}
-
-record(stringout, "$(P)$(R)ElapsedTime")
-{
-}
-
-record(stringout, "$(P)$(R)RemainingTime")
-{
-}
-
-record(calcout, "$(P)$(R)Watchdog")
-{
-   field(SCAN, "1 second")
-   field(INPA, "$(P)$(R)Watchdog.VAL NPP")
-   field(CALC, "A-1")
-   field(OCAL, "A>0?1:0")
-   field(OOPT, "On Change")
-   field(DOPT, "Use OCAL")
-   field(OUT,  "$(P)$(R)ServerRunning PP")
-}
-
-record(bi, "$(P)$(R)ServerRunning")
-{
-   field(ZNAM, "Stopped")
-   field(ZSV,  "MAJOR")
-   field(ONAM, "Running")
-   field(OSV,  "NO_ALARM")
-}
 
 ############
 # Scan Types
@@ -374,17 +159,66 @@ record(mbbo, "$(P)$(R)ScanType")
    field(THVL, "3")
    field(THST, "Mosaic")
    field(FRVL, "4")
-   field(FRST, "Scan File")
+   field(FRST, "File")
    field(FVVL, "5")
    field(FVST, "Energy")
-   field(SXVL, "6")
-   field(SXST, "Energy File")
-   field(SVVL, "7")
-   field(SVST, "Helical")
 }
 
 record(bo, "$(P)$(R)FlipStitch")
 {
    field(ZNAM, "No")
    field(ONAM, "Yes")
+}
+
+
+######################
+# Pva Plugin PV Prefix
+######################
+
+record(stringout, "$(P)$(R)PvaPluginPVPrefix")
+{
+   field(VAL,  "$(PVA_PLUGIN)")
+}
+
+######################
+# Roi Plugin PV Prefix
+######################
+
+record(stringout, "$(P)$(R)RoiPluginPVPrefix")
+{
+   field(VAL,  "$(ROI_PLUGIN)")
+}
+
+#####################
+# Cb Plugin PV Prefix
+#####################
+
+record(stringout, "$(P)$(R)CbPluginPVPrefix")
+{
+   field(VAL,  "$(CB_PLUGIN)")
+}
+
+####################
+# Energy information
+####################
+
+record(ao, "$(P)$(R)Energy") {
+    field(SCAN, "Passive")
+    field(DTYP, "Soft Channel")
+    field(PREC, 2)
+}
+
+record(mbbo, "$(P)$(R)EnergyMode")
+{
+   field(ZRVL, "0")
+   field(ZRST, "Mono")
+   field(ONVL, "1")
+   field(ONST, "Pink")
+   field(TWVL, "2")
+   field(TWST, "White")
+}
+
+record(stringout, "$(P)$(R)Filters")
+{
+   field(VAL,  "Unknown")
 }
