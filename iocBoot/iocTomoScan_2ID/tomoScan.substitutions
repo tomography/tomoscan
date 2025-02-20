@@ -2,12 +2,12 @@ file "$(TOP)/db/tomoScan.template"
 {
 pattern
 {  P,        R,        CAMERA,       FILE_PLUGIN,     ROTATION,  SAMPLE_X,  SAMPLE_Y,      CLOSE_SHUTTER,          CLOSE_VALUE,        OPEN_SHUTTER,         OPEN_VALUE}
-{2ida:, TomoScanStep:, 2idAravis:,  2idAravis:HDF1:,  2xfm:m60,  2xfm:m57,  2xfm:m57,  2ida1:shutter_close_bo.VAL,      1,        2ida1:shutter_open_bo.VAL,        1}
+{2id:, TomoScanStep:, 2idAravis:,  2idAravis:HDF1:,  2xfm:m60,  2xfm:m57,  2xfm:m57,  2ida1:shutter_close_bo.VAL,      1,        2ida1:shutter_open_bo.VAL,        1}
 }
 
 file "$(TOP)/db/tomoScan_2BM.template"
 {
 pattern
 {  P,        R,           BEAM_READY,      READY_VALUE,           SHUTTER_STATUS,        PVA_PLUGIN,     ROI_PLUGIN,     CB_PLUGIN}
-{2ida:, TomoScanStep:, ACIS:ShutterPermit,       1,         2idbleps:BLEPS:SES_CLOSED, 2idAravis:Pva1:,  2idAravis:ROI1:,  2idAravis:CB1:}
+{2id:, TomoScanStep:, ACIS:ShutterPermit,       1,         2idbleps:BLEPS:SES_CLOSED, 2idAravis:Pva1:,  2idAravis:ROI1:,  2idAravis:CB1:}
 }
