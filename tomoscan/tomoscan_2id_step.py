@@ -33,9 +33,9 @@ class TomoScan2IDSTEP(TomoScanSTEP):
     def __init__(self, pv_files, macros):
         super().__init__(pv_files, macros)
 
-        # set TomoScan xml files
-        self.epics_pvs['CamNDAttributesFile'].put('TomoScanDetectorAttributes.xml')
-        self.epics_pvs['FPXMLFileName'].put('TomoScanLayout.xml')
+        # set TomoScan xml 
+        self.epics_pvs['CamNDAttributesFile'].put('/home/beams8/USER2IDE/TomoScanDetectorAttributes.xml')
+        self.epics_pvs['FPXMLFileName'].put('/home/beams8/USER2IDE/TomoScanLayout.xml')
         macro = 'DET=' + self.pv_prefixes['Camera'] + ',' + 'TS=' + self.epics_pvs['Testing'].__dict__['pvname'].replace('Testing', '', 1)
         self.control_pvs['CamNDAttributesMacros'].put(macro)
 
@@ -49,7 +49,7 @@ class TomoScan2IDSTEP(TomoScanSTEP):
         self.epics_pvs['OverwriteWarning'].put('Yes')
 
         # Set AD plugins            
-        self.epics_pvs['PVANDArrayPort'].put('OVER1')
+        #self.epics_pvs['PVANDArrayPort'].put('OVER1')
         self.epics_pvs['PVAEnableCallbacks'].put('Enable')
         self.epics_pvs['ROIEnableCallbacks'].put('Disable')
         self.epics_pvs['CBEnableCallbacks'].put('Disable')
@@ -58,7 +58,7 @@ class TomoScan2IDSTEP(TomoScanSTEP):
 
         log.setup_custom_logger("./tomoscan.log")
 
-    def open_frontend_shutter(self):
+    def open_shutter(self):
         """Opens the shutters to collect flat fields or projections.
 
         This does the following:
@@ -77,27 +77,18 @@ class TomoScan2IDSTEP(TomoScanSTEP):
                 log.info('shutter status: %s', status)
                 log.info('open shutter: %s, value: %s', pv, value)
                 self.epics_pvs['OpenShutter'].put(value, wait=True)
-                self.wait_frontend_shutter_open()
+                #self.wait_frontend_shutter_open()
+                print(self.epics_pvs['OpenShutter'].get())
+                log.info('waiting 3 s to open the shutter')
+                time.sleep(3)
+                print(self.epics_pvs['OpenShutter'].get())
+
                 # self.wait_pv(self.epics_pvs['ShutterStatus'], 1)
                 status = self.epics_pvs['ShutterStatus'].get(as_string=True)
                 log.info('shutter status: %s', status)
 
-    def open_shutter(self):
-        """Opens the shutters to collect flat fields or projections.
 
-        This does the following:
-
-        - Opens the 2-BM-A fast shutter.
-        """
-
-        # Open 2-BM-A fast shutter
-        if not self.epics_pvs['OpenFastShutter'] is None:
-            pv = self.epics_pvs['OpenFastShutter']
-            value = self.epics_pvs['OpenFastShutterValue'].get(as_string=True)
-            log.info('open fast shutter: %s, value: %s', pv, value)
-            self.epics_pvs['OpenFastShutter'].put(value, wait=True)
-
-    def close_frontend_shutter(self):
+    def close_shutter(self):
         """Closes the shutters to collect dark fields.
         This does the following:
 
@@ -115,24 +106,14 @@ class TomoScan2IDSTEP(TomoScanSTEP):
                 log.info('shutter status: %s', status)
                 log.info('close shutter: %s, value: %s', pv, value)
                 self.epics_pvs['CloseShutter'].put(value, wait=True)
-                self.wait_pv(self.epics_pvs['ShutterStatus'], 0)
+                log.info('waiting 3 s to close the shutter')
+                time.sleep(3)
+                #self.wait_pv(self.epics_pvs['ShutterStatus'], 0)
                 status = self.epics_pvs['ShutterStatus'].get(as_string=True)
                 log.info('shutter status: %s', status)
-
-    def close_shutter(self):
-        """Closes the shutters to collect dark fields.
-        This does the following:
-
-        - Closes the 2-BM-A fast shutter.
-        """
-
-        # Close 2-BM-A fast shutter
-        if not self.epics_pvs['CloseFastShutter'] is None:
-            pv = self.epics_pvs['CloseFastShutter']
-            value = self.epics_pvs['CloseFastShutterValue'].get(as_string=True)
-            log.info('close fast shutter: %s, value: %s', pv, value)
-            self.epics_pvs['CloseFastShutter'].put(value, wait=True)
-
+        
+    
+        
     def set_trigger_mode(self, trigger_mode, num_images):
         """Sets the trigger mode SIS3820 and the camera.
 
@@ -156,6 +137,12 @@ class TomoScan2IDSTEP(TomoScanSTEP):
         elif trigger_mode == 'Internal':
             self.epics_pvs['CamTriggerMode'].put('Off', wait=True)
             self.wait_pv(self.epics_pvs['CamTriggerMode'], 0)
+            self.epics_pvs['CamImageMode'].put('Multiple')            
+            self.epics_pvs['CamNumImages'].put(num_images, wait=True)
+        elif trigger_mode == 'Software':
+            self.epics_pvs['CamTriggerMode'].put('On', wait=True)
+            self.wait_pv(self.epics_pvs['CamTriggerMode'], 1)
+            self.epics_pvs['CamTriggerSource'].put('Software', wait=True)
             self.epics_pvs['CamImageMode'].put('Multiple')            
             self.epics_pvs['CamNumImages'].put(num_images, wait=True)
         else: # set camera to internal triggering
@@ -198,7 +185,7 @@ class TomoScan2IDSTEP(TomoScanSTEP):
         # Call the base class method
         super().begin_scan()
         # Opens the front-end shutter
-        self.open_frontend_shutter()
+        # self.open_frontend_shutter()
         
     def end_scan(self):
         """Performs the operations needed at the very end of a scan.
@@ -255,34 +242,36 @@ class TomoScan2IDSTEP(TomoScanSTEP):
                 f = h5py.File(full_file_name, "a")
                 with f:
                     try:
-                        if self.theta is not None:
-                            # theta_ds = f.create_dataset('/exchange/theta', (len(self.theta),))
-                            # theta_ds[:] = self.theta[:]
+                        theta_ds = f.create_dataset('/exchange/theta', (len(self.theta),))
+                        theta_ds[:] = self.theta
+                        # if self.theta is not None:
+                        #     # theta_ds = f.create_dataset('/exchange/theta', (len(self.theta),))
+                        #     # theta_ds[:] = self.theta[:]
 
-                            unique_ids = f['/defaults/NDArrayUniqueId']
-                            shift_start = int(self.num_dark_fields > 0 and (self.dark_field_mode in ('Start', 'Both')))+ \
-                                          int(self.num_flat_fields > 0 and (self.flat_field_mode in ('Start', 'Both')))                            
+                        #     unique_ids = f['/defaults/NDArrayUniqueId']
+                        #     shift_start = int(self.num_dark_fields > 0 and (self.dark_field_mode in ('Start', 'Both')))+ \
+                        #                   int(self.num_flat_fields > 0 and (self.flat_field_mode in ('Start', 'Both')))                            
 
-                            # find beginnings of sorted subarrays
-                            # for [1,2,1,3,1,2,3,4,1,2] returns 0,2,4,8
-                            ids_list = [0,*np.where(unique_ids[1:]-unique_ids[:-1]<0)[0]+1]                            
-                            # extract projection ids
-                            if(len(ids_list[shift_start:])==1):
-                                proj_ids = unique_ids[ids_list[shift_start]:]
-                            else:
-                                proj_ids = unique_ids[ids_list[shift_start]:ids_list[shift_start+1]]
-                            # subtract first id
-                            proj_ids -= proj_ids[0]
-                            # create theta dataset in hdf5 file
-                            theta_ds = f.create_dataset('/exchange/theta', (len(proj_ids),))
-                            theta_ds[:] = self.theta[proj_ids]
+                        #     # find beginnings of sorted subarrays
+                        #     # for [1,2,1,3,1,2,3,4,1,2] returns 0,2,4,8
+                        #     ids_list = [0,*np.where(unique_ids[1:]-unique_ids[:-1]<0)[0]+1]                            
+                        #     # extract projection ids
+                        #     if(len(ids_list[shift_start:])==1):
+                        #         proj_ids = unique_ids[ids_list[shift_start]:]
+                        #     else:
+                        #         proj_ids = unique_ids[ids_list[shift_start]:ids_list[shift_start+1]]
+                        #     # subtract first id
+                        #     proj_ids -= proj_ids[0]
+                        #     # create theta dataset in hdf5 file
+                        #     theta_ds = f.create_dataset('/exchange/theta', (len(proj_ids),))
+                        #     theta_ds[:] = self.theta[proj_ids]
                             
-                            if(len(proj_ids) != len(self.theta)):
-                                log.warning('There are %d missing frames',len(self.theta)-len(proj_ids))
-                                missed_ids = [ele for ele in range(len(self.theta)) if ele not in proj_ids]
-                                missed_theta = self.theta[missed_ids]
-                                log.warning(f'Missed ids: {list(missed_ids)}')
-                                log.warning(f'Missed theta: {list(missed_theta)}')
+                        #     if(len(proj_ids) != len(self.theta)):
+                        #         log.warning('There are %d missing frames',len(self.theta)-len(proj_ids))
+                        #         missed_ids = [ele for ele in range(len(self.theta)) if ele not in proj_ids]
+                        #         missed_theta = self.theta[missed_ids]
+                        #         log.warning(f'Missed ids: {list(missed_ids)}')
+                        #         log.warning(f'Missed theta: {list(missed_theta)}')
                                 
                     except:
                         log.error('Add theta: Failed accessing: %s', full_file_name)
