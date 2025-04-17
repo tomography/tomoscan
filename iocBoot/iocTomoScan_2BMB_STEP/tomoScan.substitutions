@@ -8,6 +8,6 @@ pattern
 file "$(TOP)/db/tomoScan_2BM.template"
 {
 pattern
-{  P,        R,           BEAM_READY,      READY_VALUE,    CLOSE_FAST_SHUTTER,   CLOSE_FAST_VALUE,    OPEN_FAST_SHUTTER,   OPEN_FAST_VALUE,         SHUTTER_STATUS,        PVA_PLUGIN,     ROI_PLUGIN,     CB_PLUGIN}
-{2bmb:, TomoScanStep:, ACIS:ShutterPermit,       1,             2bmb:m77,               41,                2bmb:m77,             41,            PA:02BM:STA_A_FES_OPEN_PL, 2bmbSP2:Pva1:,  2bmbSP2:ROI1:,  2bmbSP2:CB1:}
+{  P,        R,           BEAM_READY,      READY_VALUE,    CLOSE_FAST_SHUTTER,   CLOSE_FAST_VALUE,    OPEN_FAST_SHUTTER,   OPEN_FAST_VALUE,         SHUTTER_STATUS,        PVA_PLUGIN,     ROI_PLUGIN,     CB_PLUGIN,      MCT_OPTICS}
+{2bmb:, TomoScanStep:, ACIS:ShutterPermit,       1,             2bmb:m77,               41,                2bmb:m77,             41,            PA:02BM:STA_A_FES_OPEN_PL, 2bmbSP2:Pva1:,  2bmbSP2:ROI1:,  2bmbSP2:CB1:,   2bm:MCTOptics: }
 }
