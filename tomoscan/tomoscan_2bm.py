@@ -33,6 +33,8 @@ from tomoscan.tomoscan_helical import TomoScanHelical
 from tomoscan import log
 
 EPSILON = .001
+CREDENTIALS_FILE_NAME = os.path.join(str(pathlib.Path.home()), '.webcam_credentials')
+
 
 class TomoScan2BM(TomoScanHelical):
     """Derived class used for tomography scanning with EPICS at APS beamline 2-BM
@@ -524,8 +526,13 @@ class TomoScan2BM(TomoScanHelical):
         self.add_theta()
 
         log.info('Adding a frame from the IP camera')
-        ret, frame = cv2.VideoCapture('http://remotecam02bmb:Cam-02-bm-b@164.54.113.162/cgi-bin/mjpeg?stream=1').read()# we should hide the password
 
+        with open(CREDENTIALS_FILE_NAME, 'r') as file:
+            for line in file:
+                username, password = line.strip().split('|')  
+
+
+        ret, frame = cv2.VideoCapture('http://' + username +':' + password + '@10.54.113.162/cgi-bin/mjpeg?stream=1').read()
         #station A        
         # NetBooter = NetBooter_Control(mode='telnet',id=self.access_dic['pdu_username'],password=self.access_dic['pdu_password'],ip=self.access_dic['pdu_ip_address'])
         # NetBooter.power_on(1)
