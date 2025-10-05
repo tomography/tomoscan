@@ -1,33 +1,6 @@
 # Database for EPICS PVS for tomography stream data collection software
 # This database contains all of the PVs used by the tomoscan base class.
 
-######################
-# Pva Plugin PV Prefix
-######################
-
-record(stringout, "$(P)$(R)PvaPluginPVPrefix")
-{
-   field(VAL,  "$(PVA_PLUGIN)")
-}
-
-######################
-# Roi Plugin PV Prefix
-######################
-
-record(stringout, "$(P)$(R)RoiPluginPVPrefix")
-{
-   field(VAL,  "$(ROI_PLUGIN)")
-}
-
-#####################
-# Cb Plugin PV Prefix
-#####################
-
-record(stringout, "$(P)$(R)CbPluginPVPrefix")
-{
-   field(VAL,  "$(CB_PLUGIN)")
-}
-
 ################
 # Stream control
 ################
