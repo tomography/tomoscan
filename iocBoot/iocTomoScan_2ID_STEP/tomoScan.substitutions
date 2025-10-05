@@ -1,0 +1,20 @@
+file "$(TOP)/db/tomoScan.template"
+{
+pattern
+{  P,        R,        CAMERA,       FILE_PLUGIN,     ROTATION,  SAMPLE_X,  SAMPLE_Y,      CLOSE_SHUTTER,          CLOSE_VALUE,        OPEN_SHUTTER,         OPEN_VALUE}
+{2id:, TomoScanStep:, 2idAravis2:,  2idAravis2:HDF1:,  2xfm:m60,  2xfm:m57,  2xfm:m57,  2ida1:shutter_close_ide_bo.VAL,      1,        2ida1:shutter_open_ide_bo.VAL,        1}
+}
+
+file "$(TOP)/db/tomoScan_2ID.template"
+{
+pattern
+{  P,        R,           BEAM_READY,      READY_VALUE,           SHUTTER_STATUS,        PVA_PLUGIN,     ROI_PLUGIN,     CB_PLUGIN}
+{2id:, TomoScanStep:, ACIS:ShutterPermit,       1,         2idbleps:BLEPS:SES_CLOSED, 2idAravis2:Pva1:,  2idAravis2:ROI1:,  2idAravis2:CB1:}
+}
+
+file "$(TOP)/db/tomoScan_step.template"
+{
+pattern
+{  P,      R}
+{2id:, TomoScanStep:}
+}

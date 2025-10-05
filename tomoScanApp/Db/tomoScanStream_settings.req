@@ -7,13 +7,6 @@
 # but they are used by tomoscan.  
 # These PVs are not saved in the tomoscan configuration file.
 
-####################################
-# Pva, Roi and Cb Plugin PV Prefixes
-####################################
-$(P)$(R)PvaPluginPVPrefix
-$(P)$(R)RoiPluginPVPrefix
-$(P)$(R)CbPluginPVPrefix
-
 #################
 # Stream control
 #################

@@ -1,6 +1,8 @@
 numpy
-pymsgbox
 pyepics
 h5py
 pvapy
-paramiko
+opencv-python
+serial
+pymsgbox
+
