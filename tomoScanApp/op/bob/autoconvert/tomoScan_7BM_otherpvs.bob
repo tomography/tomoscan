@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--Saved on 2024-10-21 17:55:33 by epics-->
 <display version="2.0.0">
   <name>tomoScan_7BM_otherpvs</name>
-  <x>1238</x>
-  <y>514</y>
+  <x>1943</x>
+  <y>236</y>
   <width>640</width>
-  <height>260</height>
+  <height>350</height>
   <background_color>
     <color red="187" green="187" blue="187">
     </color>
@@ -268,6 +269,176 @@
     <pv_name>$(P)$(R)ShutterStatusPVName</pv_name>
     <x>254</x>
     <y>45</y>
+    <width>380</width>
+    <font>
+      <font family="Liberation Sans" style="REGULAR" size="16.0">
+      </font>
+    </font>
+    <background_color>
+      <color red="115" green="223" blue="255">
+      </color>
+    </background_color>
+    <format>6</format>
+    <show_units>false</show_units>
+    <border_alarm_sensitive>false</border_alarm_sensitive>
+  </widget>
+  <widget type="label" version="2.0.0">
+    <name>text #68</name>
+    <text>Scan type</text>
+    <x>10</x>
+    <y>276</y>
+    <width>130</width>
+    <font>
+      <font family="Liberation Sans" style="REGULAR" size="16.0">
+      </font>
+    </font>
+    <horizontal_alignment>2</horizontal_alignment>
+  </widget>
+  <widget type="combo" version="2.0.0">
+    <name>menu #71</name>
+    <pv_name>$(P)$(R)ScanType</pv_name>
+    <x>145</x>
+    <y>276</y>
+    <width>80</width>
+    <height>20</height>
+    <background_color>
+      <color red="115" green="223" blue="255">
+      </color>
+    </background_color>
+    <border_alarm_sensitive>false</border_alarm_sensitive>
+  </widget>
+  <widget type="combo" version="2.0.0">
+    <name>menu #74</name>
+    <pv_name>$(P)$(R)FlipStitch</pv_name>
+    <x>145</x>
+    <y>301</y>
+    <width>80</width>
+    <height>20</height>
+    <background_color>
+      <color red="115" green="223" blue="255">
+      </color>
+    </background_color>
+    <border_alarm_sensitive>false</border_alarm_sensitive>
+  </widget>
+  <widget type="label" version="2.0.0">
+    <name>text #77</name>
+    <text>Flip&amp;Stitch</text>
+    <x>10</x>
+    <y>301</y>
+    <width>130</width>
+    <font>
+      <font family="Liberation Sans" style="REGULAR" size="16.0">
+      </font>
+    </font>
+    <horizontal_alignment>2</horizontal_alignment>
+  </widget>
+  <widget type="label" version="2.0.0">
+    <name>text #80</name>
+    <text>PSO setup</text>
+    <x>159</x>
+    <y>324</y>
+    <width>90</width>
+    <font>
+      <font family="Liberation Sans" style="REGULAR" size="16.0">
+      </font>
+    </font>
+    <horizontal_alignment>2</horizontal_alignment>
+  </widget>
+  <widget type="action_button" version="3.0.0">
+    <name>related display #83</name>
+    <actions>
+      <action type="open_display">
+        <file>tomoScan_pso.opi</file>
+        <target>tab</target>
+        <description>PSO setup</description>
+      </action>
+    </actions>
+    <text>PSO setup</text>
+    <x>254</x>
+    <y>324</y>
+    <height>20</height>
+    <background_color>
+      <color red="115" green="223" blue="255">
+      </color>
+    </background_color>
+  </widget>
+  <widget type="label" version="2.0.0">
+    <name>text #86</name>
+    <text>Y Pixels Per 360 Deg</text>
+    <x>414</x>
+    <y>276</y>
+    <width>130</width>
+    <font>
+      <font family="Liberation Sans" style="REGULAR" size="16.0">
+      </font>
+    </font>
+    <horizontal_alignment>2</horizontal_alignment>
+  </widget>
+  <widget type="textentry" version="3.0.0">
+    <name>text entry #89</name>
+    <pv_name>$(P)$(R)PixelsYPer360Deg</pv_name>
+    <x>559</x>
+    <y>276</y>
+    <width>75</width>
+    <font>
+      <font family="Liberation Sans" style="REGULAR" size="16.0">
+      </font>
+    </font>
+    <background_color>
+      <color red="115" green="223" blue="255">
+      </color>
+    </background_color>
+    <format>6</format>
+    <show_units>false</show_units>
+    <border_alarm_sensitive>false</border_alarm_sensitive>
+  </widget>
+  <widget type="label" version="2.0.0">
+    <name>text #93</name>
+    <text>Helical Misalignment (mrad)</text>
+    <x>413</x>
+    <y>301</y>
+    <width>130</width>
+    <font>
+      <font family="Liberation Sans" style="REGULAR" size="16.0">
+      </font>
+    </font>
+    <horizontal_alignment>2</horizontal_alignment>
+  </widget>
+  <widget type="textentry" version="3.0.0">
+    <name>text entry #96</name>
+    <pv_name>$(P)$(R)HelicalMisalignment</pv_name>
+    <x>559</x>
+    <y>301</y>
+    <width>75</width>
+    <font>
+      <font family="Liberation Sans" style="REGULAR" size="16.0">
+      </font>
+    </font>
+    <background_color>
+      <color red="115" green="223" blue="255">
+      </color>
+    </background_color>
+    <format>6</format>
+    <show_units>false</show_units>
+    <border_alarm_sensitive>false</border_alarm_sensitive>
+  </widget>
+  <widget type="label" version="2.0.0">
+    <name>text #100</name>
+    <text>Number of Gain Images</text>
+    <x>19</x>
+    <y>245</y>
+    <width>230</width>
+    <font>
+      <font family="Liberation Sans" style="REGULAR" size="16.0">
+      </font>
+    </font>
+    <horizontal_alignment>2</horizontal_alignment>
+  </widget>
+  <widget type="textentry" version="3.0.0">
+    <name>text entry #103</name>
+    <pv_name>$(P)$(R)NumGainFields</pv_name>
+    <x>254</x>
+    <y>245</y>
     <width>380</width>
     <font>
       <font family="Liberation Sans" style="REGULAR" size="16.0">

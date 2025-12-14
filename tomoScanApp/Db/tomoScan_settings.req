@@ -20,6 +20,9 @@ $(P)$(R)CloseShutterPVName
 $(P)$(R)CloseShutterValue
 $(P)$(R)OpenShutterPVName
 $(P)$(R)OpenShutterValue
+$(P)$(R)AutoCloseShutter
+#controlPV $(P)$(R)OpenShutterCmd
+#controlPV $(P)$(R)CloseShutterCmd
 
 #############################################
 # Rotation, sample X and Y translation motors

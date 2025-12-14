@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--Saved on 2024-10-21 17:55:31 by epics-->
 <display version="2.0.0">
   <name>tomoScan_2BM_otherpvs</name>
-  <x>84</x>
-  <y>691</y>
+  <x>342</x>
+  <y>927</y>
   <width>640</width>
-  <height>240</height>
+  <height>405</height>
   <background_color>
     <color red="187" green="187" blue="187">
     </color>
@@ -44,8 +45,8 @@
   <widget type="textentry" version="3.0.0">
     <name>text entry #12</name>
     <pv_name>$(P)$(R)BeamReadyPVName</pv_name>
-    <x>254</x>
-    <y>40</y>
+    <x>255</x>
+    <y>70</y>
     <width>380</width>
     <font>
       <font family="Liberation Sans" style="REGULAR" size="16.0">
@@ -62,8 +63,8 @@
   <widget type="textentry" version="3.0.0">
     <name>text entry #16</name>
     <pv_name>$(P)$(R)BeamReadyValue</pv_name>
-    <x>254</x>
-    <y>65</y>
+    <x>255</x>
+    <y>95</y>
     <width>380</width>
     <font>
       <font family="Liberation Sans" style="REGULAR" size="16.0">
@@ -80,9 +81,9 @@
   <widget type="label" version="2.0.0">
     <name>text #20</name>
     <text>Beam ready value</text>
-    <x>89</x>
-    <y>65</y>
-    <width>160</width>
+    <x>10</x>
+    <y>95</y>
+    <width>240</width>
     <font>
       <font family="Liberation Sans" style="REGULAR" size="16.0">
       </font>
@@ -92,9 +93,9 @@
   <widget type="label" version="2.0.0">
     <name>text #23</name>
     <text>Beam ready PV</text>
-    <x>119</x>
-    <y>40</y>
-    <width>130</width>
+    <x>10</x>
+    <y>70</y>
+    <width>240</width>
     <font>
       <font family="Liberation Sans" style="REGULAR" size="16.0">
       </font>
@@ -104,9 +105,9 @@
   <widget type="label" version="2.0.0">
     <name>text #26</name>
     <text>Open fast shutter value</text>
-    <x>89</x>
-    <y>115</y>
-    <width>160</width>
+    <x>10</x>
+    <y>145</y>
+    <width>240</width>
     <font>
       <font family="Liberation Sans" style="REGULAR" size="16.0">
       </font>
@@ -116,8 +117,8 @@
   <widget type="textentry" version="3.0.0">
     <name>text entry #29</name>
     <pv_name>$(P)$(R)OpenFastShutterValue</pv_name>
-    <x>254</x>
-    <y>115</y>
+    <x>255</x>
+    <y>145</y>
     <width>380</width>
     <font>
       <font family="Liberation Sans" style="REGULAR" size="16.0">
@@ -134,9 +135,9 @@
   <widget type="label" version="2.0.0">
     <name>text #33</name>
     <text>Open fast shutter PV</text>
-    <x>119</x>
-    <y>90</y>
-    <width>130</width>
+    <x>10</x>
+    <y>120</y>
+    <width>240</width>
     <font>
       <font family="Liberation Sans" style="REGULAR" size="16.0">
       </font>
@@ -146,8 +147,8 @@
   <widget type="textentry" version="3.0.0">
     <name>text entry #36</name>
     <pv_name>$(P)$(R)OpenFastShutterPVName</pv_name>
-    <x>254</x>
-    <y>90</y>
+    <x>255</x>
+    <y>120</y>
     <width>380</width>
     <font>
       <font family="Liberation Sans" style="REGULAR" size="16.0">
@@ -164,9 +165,9 @@
   <widget type="label" version="2.0.0">
     <name>text #40</name>
     <text>Close fast shutter PV</text>
-    <x>119</x>
-    <y>140</y>
-    <width>130</width>
+    <x>10</x>
+    <y>170</y>
+    <width>240</width>
     <font>
       <font family="Liberation Sans" style="REGULAR" size="16.0">
       </font>
@@ -176,9 +177,9 @@
   <widget type="label" version="2.0.0">
     <name>text #43</name>
     <text>Close fast shutter value</text>
-    <x>89</x>
-    <y>165</y>
-    <width>160</width>
+    <x>10</x>
+    <y>195</y>
+    <width>240</width>
     <font>
       <font family="Liberation Sans" style="REGULAR" size="16.0">
       </font>
@@ -188,8 +189,8 @@
   <widget type="textentry" version="3.0.0">
     <name>text entry #46</name>
     <pv_name>$(P)$(R)CloseFastShutterValue</pv_name>
-    <x>254</x>
-    <y>165</y>
+    <x>255</x>
+    <y>195</y>
     <width>380</width>
     <font>
       <font family="Liberation Sans" style="REGULAR" size="16.0">
@@ -206,8 +207,8 @@
   <widget type="textentry" version="3.0.0">
     <name>text entry #50</name>
     <pv_name>$(P)$(R)CloseFastShutterPVName</pv_name>
-    <x>254</x>
-    <y>140</y>
+    <x>255</x>
+    <y>170</y>
     <width>380</width>
     <font>
       <font family="Liberation Sans" style="REGULAR" size="16.0">
@@ -223,10 +224,10 @@
   </widget>
   <widget type="label" version="2.0.0">
     <name>text #54</name>
-    <text>Shutter status PV</text>
-    <x>119</x>
-    <y>190</y>
-    <width>130</width>
+    <text>Shutter Status PV</text>
+    <x>10</x>
+    <y>45</y>
+    <width>240</width>
     <font>
       <font family="Liberation Sans" style="REGULAR" size="16.0">
       </font>
@@ -236,8 +237,8 @@
   <widget type="textentry" version="3.0.0">
     <name>text entry #57</name>
     <pv_name>$(P)$(R)ShutterStatusPVName</pv_name>
-    <x>254</x>
-    <y>190</y>
+    <x>255</x>
+    <y>45</y>
     <width>380</width>
     <font>
       <font family="Liberation Sans" style="REGULAR" size="16.0">
@@ -253,32 +254,290 @@
   </widget>
   <widget type="label" version="2.0.0">
     <name>text #61</name>
-    <text>PSO setup</text>
-    <x>159</x>
-    <y>215</y>
-    <width>90</width>
+    <text>mctOptics Prefix</text>
+    <x>10</x>
+    <y>220</y>
+    <width>240</width>
     <font>
       <font family="Liberation Sans" style="REGULAR" size="16.0">
       </font>
     </font>
     <horizontal_alignment>2</horizontal_alignment>
   </widget>
-  <widget type="action_button" version="3.0.0">
-    <name>related display #64</name>
-    <actions>
-      <action type="open_display">
-        <file>tomoScan_pso.opi</file>
-        <target>tab</target>
-        <description>PSO setup</description>
-      </action>
-    </actions>
-    <text>PSO setup</text>
-    <x>254</x>
-    <y>215</y>
-    <height>20</height>
+  <widget type="textentry" version="3.0.0">
+    <name>text entry #64</name>
+    <pv_name>$(P)$(R)MctOpticsPVPrefix</pv_name>
+    <x>255</x>
+    <y>220</y>
+    <width>380</width>
+    <font>
+      <font family="Liberation Sans" style="REGULAR" size="16.0">
+      </font>
+    </font>
     <background_color>
       <color red="115" green="223" blue="255">
       </color>
     </background_color>
+    <format>6</format>
+    <show_units>false</show_units>
+    <border_alarm_sensitive>false</border_alarm_sensitive>
+  </widget>
+  <widget type="group" version="2.0.0">
+    <name>composite #68</name>
+    <x>10</x>
+    <y>330</y>
+    <width>630</width>
+    <height>70</height>
+    <style>3</style>
+    <transparent>true</transparent>
+    <widget type="label" version="2.0.0">
+      <name>text #71</name>
+      <text>Scan type</text>
+      <width>130</width>
+      <font>
+        <font family="Liberation Sans" style="REGULAR" size="16.0">
+        </font>
+      </font>
+      <horizontal_alignment>2</horizontal_alignment>
+    </widget>
+    <widget type="combo" version="2.0.0">
+      <name>menu #74</name>
+      <pv_name>$(P)$(R)ScanType</pv_name>
+      <x>135</x>
+      <width>80</width>
+      <height>20</height>
+      <background_color>
+        <color red="115" green="223" blue="255">
+        </color>
+      </background_color>
+      <border_alarm_sensitive>false</border_alarm_sensitive>
+    </widget>
+    <widget type="combo" version="2.0.0">
+      <name>menu #77</name>
+      <pv_name>$(P)$(R)FlipStitch</pv_name>
+      <x>135</x>
+      <y>25</y>
+      <width>80</width>
+      <height>20</height>
+      <background_color>
+        <color red="115" green="223" blue="255">
+        </color>
+      </background_color>
+      <border_alarm_sensitive>false</border_alarm_sensitive>
+    </widget>
+    <widget type="label" version="2.0.0">
+      <name>text #80</name>
+      <text>Flip&amp;Stitch</text>
+      <y>25</y>
+      <width>130</width>
+      <font>
+        <font family="Liberation Sans" style="REGULAR" size="16.0">
+        </font>
+      </font>
+      <horizontal_alignment>2</horizontal_alignment>
+    </widget>
+    <widget type="label" version="2.0.0">
+      <name>text #83</name>
+      <text>PSO setup</text>
+      <x>150</x>
+      <y>50</y>
+      <width>90</width>
+      <font>
+        <font family="Liberation Sans" style="REGULAR" size="16.0">
+        </font>
+      </font>
+      <horizontal_alignment>2</horizontal_alignment>
+    </widget>
+    <widget type="action_button" version="3.0.0">
+      <name>related display #86</name>
+      <actions>
+        <action type="open_display">
+          <file>tomoScan_pso.opi</file>
+          <target>tab</target>
+          <description>PSO setup</description>
+        </action>
+      </actions>
+      <text>PSO setup</text>
+      <x>245</x>
+      <y>50</y>
+      <height>20</height>
+      <background_color>
+        <color red="115" green="223" blue="255">
+        </color>
+      </background_color>
+    </widget>
+    <widget type="label" version="2.0.0">
+      <name>text #89</name>
+      <text>Y Pixels Per 360 Deg</text>
+      <x>404</x>
+      <width>130</width>
+      <font>
+        <font family="Liberation Sans" style="REGULAR" size="16.0">
+        </font>
+      </font>
+      <horizontal_alignment>2</horizontal_alignment>
+    </widget>
+    <widget type="textentry" version="3.0.0">
+      <name>text entry #92</name>
+      <pv_name>$(P)$(R)PixelsYPer360Deg</pv_name>
+      <x>549</x>
+      <width>75</width>
+      <font>
+        <font family="Liberation Sans" style="REGULAR" size="16.0">
+        </font>
+      </font>
+      <background_color>
+        <color red="115" green="223" blue="255">
+        </color>
+      </background_color>
+      <format>6</format>
+      <show_units>false</show_units>
+      <border_alarm_sensitive>false</border_alarm_sensitive>
+    </widget>
+    <widget type="label" version="2.0.0">
+      <name>text #96</name>
+      <text>Helical Misalignment (mrad)</text>
+      <x>403</x>
+      <y>25</y>
+      <width>130</width>
+      <font>
+        <font family="Liberation Sans" style="REGULAR" size="16.0">
+        </font>
+      </font>
+      <horizontal_alignment>2</horizontal_alignment>
+    </widget>
+    <widget type="textentry" version="3.0.0">
+      <name>text entry #99</name>
+      <pv_name>$(P)$(R)HelicalMisalignment</pv_name>
+      <x>549</x>
+      <y>25</y>
+      <width>75</width>
+      <font>
+        <font family="Liberation Sans" style="REGULAR" size="16.0">
+        </font>
+      </font>
+      <background_color>
+        <color red="115" green="223" blue="255">
+        </color>
+      </background_color>
+      <format>6</format>
+      <show_units>false</show_units>
+      <border_alarm_sensitive>false</border_alarm_sensitive>
+    </widget>
+    <widget type="label" version="2.0.0">
+      <name>text #103</name>
+      <text>Program PSO</text>
+      <x>355</x>
+      <y>50</y>
+      <width>150</width>
+      <font>
+        <font family="Liberation Sans" style="REGULAR" size="16.0">
+        </font>
+      </font>
+      <horizontal_alignment>2</horizontal_alignment>
+    </widget>
+    <widget type="combo" version="2.0.0">
+      <name>menu #106</name>
+      <pv_name>$(P)$(R)ProgramPSO</pv_name>
+      <x>510</x>
+      <y>50</y>
+      <width>120</width>
+      <height>20</height>
+      <background_color>
+        <color red="115" green="223" blue="255">
+        </color>
+      </background_color>
+      <border_alarm_sensitive>false</border_alarm_sensitive>
+    </widget>
+  </widget>
+  <widget type="label" version="2.0.0">
+    <name>text #109</name>
+    <text>PVA plugin prefix</text>
+    <x>10</x>
+    <y>245</y>
+    <width>240</width>
+    <font>
+      <font family="Liberation Sans" style="REGULAR" size="16.0">
+      </font>
+    </font>
+    <horizontal_alignment>2</horizontal_alignment>
+  </widget>
+  <widget type="textentry" version="3.0.0">
+    <name>text entry #112</name>
+    <pv_name>$(P)$(R)PvaPluginPVPrefix</pv_name>
+    <x>255</x>
+    <y>245</y>
+    <width>380</width>
+    <font>
+      <font family="Liberation Sans" style="REGULAR" size="16.0">
+      </font>
+    </font>
+    <background_color>
+      <color red="115" green="223" blue="255">
+      </color>
+    </background_color>
+    <format>6</format>
+    <show_units>false</show_units>
+    <border_alarm_sensitive>false</border_alarm_sensitive>
+  </widget>
+  <widget type="label" version="2.0.0">
+    <name>text #116</name>
+    <text>ROI plugin prefix</text>
+    <x>10</x>
+    <y>270</y>
+    <width>240</width>
+    <font>
+      <font family="Liberation Sans" style="REGULAR" size="16.0">
+      </font>
+    </font>
+    <horizontal_alignment>2</horizontal_alignment>
+  </widget>
+  <widget type="textentry" version="3.0.0">
+    <name>text entry #119</name>
+    <pv_name>$(P)$(R)RoiPluginPVPrefix</pv_name>
+    <x>255</x>
+    <y>270</y>
+    <width>380</width>
+    <font>
+      <font family="Liberation Sans" style="REGULAR" size="16.0">
+      </font>
+    </font>
+    <background_color>
+      <color red="115" green="223" blue="255">
+      </color>
+    </background_color>
+    <format>6</format>
+    <show_units>false</show_units>
+    <border_alarm_sensitive>false</border_alarm_sensitive>
+  </widget>
+  <widget type="label" version="2.0.0">
+    <name>text #123</name>
+    <text>CB plugin prefix</text>
+    <x>10</x>
+    <y>295</y>
+    <width>240</width>
+    <font>
+      <font family="Liberation Sans" style="REGULAR" size="16.0">
+      </font>
+    </font>
+    <horizontal_alignment>2</horizontal_alignment>
+  </widget>
+  <widget type="textentry" version="3.0.0">
+    <name>text entry #126</name>
+    <pv_name>$(P)$(R)CbPluginPVPrefix</pv_name>
+    <x>255</x>
+    <y>295</y>
+    <width>380</width>
+    <font>
+      <font family="Liberation Sans" style="REGULAR" size="16.0">
+      </font>
+    </font>
+    <background_color>
+      <color red="115" green="223" blue="255">
+      </color>
+    </background_color>
+    <format>6</format>
+    <show_units>false</show_units>
+    <border_alarm_sensitive>false</border_alarm_sensitive>
   </widget>
 </display>

@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--Saved on 2024-10-21 17:55:32 by epics-->
 <display version="2.0.0">
   <name>tomoScan_32ID_otherpvs</name>
-  <x>74</x>
-  <y>683</y>
+  <x>429</x>
+  <y>810</y>
   <width>640</width>
-  <height>290</height>
+  <height>340</height>
   <background_color>
     <color red="187" green="187" blue="187">
     </color>
@@ -44,7 +45,7 @@
   <widget type="textentry" version="3.0.0">
     <name>text entry #12</name>
     <pv_name>$(P)$(R)BeamReadyPVName</pv_name>
-    <x>254</x>
+    <x>255</x>
     <y>40</y>
     <width>380</width>
     <font>
@@ -62,7 +63,7 @@
   <widget type="textentry" version="3.0.0">
     <name>text entry #16</name>
     <pv_name>$(P)$(R)BeamReadyValue</pv_name>
-    <x>254</x>
+    <x>255</x>
     <y>65</y>
     <width>380</width>
     <font>
@@ -80,9 +81,9 @@
   <widget type="label" version="2.0.0">
     <name>text #20</name>
     <text>Beam ready value</text>
-    <x>89</x>
+    <x>10</x>
     <y>65</y>
-    <width>160</width>
+    <width>240</width>
     <font>
       <font family="Liberation Sans" style="REGULAR" size="16.0">
       </font>
@@ -92,9 +93,9 @@
   <widget type="label" version="2.0.0">
     <name>text #23</name>
     <text>Beam ready PV</text>
-    <x>119</x>
+    <x>10</x>
     <y>40</y>
-    <width>130</width>
+    <width>240</width>
     <font>
       <font family="Liberation Sans" style="REGULAR" size="16.0">
       </font>
@@ -104,9 +105,9 @@
   <widget type="label" version="2.0.0">
     <name>text #26</name>
     <text>Open fast shutter value</text>
-    <x>89</x>
+    <x>10</x>
     <y>115</y>
-    <width>160</width>
+    <width>240</width>
     <font>
       <font family="Liberation Sans" style="REGULAR" size="16.0">
       </font>
@@ -116,7 +117,7 @@
   <widget type="textentry" version="3.0.0">
     <name>text entry #29</name>
     <pv_name>$(P)$(R)OpenFastShutterValue</pv_name>
-    <x>254</x>
+    <x>255</x>
     <y>115</y>
     <width>380</width>
     <font>
@@ -134,9 +135,9 @@
   <widget type="label" version="2.0.0">
     <name>text #33</name>
     <text>Open fast shutter PV</text>
-    <x>119</x>
+    <x>10</x>
     <y>90</y>
-    <width>130</width>
+    <width>240</width>
     <font>
       <font family="Liberation Sans" style="REGULAR" size="16.0">
       </font>
@@ -146,7 +147,7 @@
   <widget type="textentry" version="3.0.0">
     <name>text entry #36</name>
     <pv_name>$(P)$(R)OpenFastShutterPVName</pv_name>
-    <x>254</x>
+    <x>255</x>
     <y>90</y>
     <width>380</width>
     <font>
@@ -164,9 +165,9 @@
   <widget type="label" version="2.0.0">
     <name>text #40</name>
     <text>Close fast shutter PV</text>
-    <x>119</x>
+    <x>10</x>
     <y>140</y>
-    <width>130</width>
+    <width>240</width>
     <font>
       <font family="Liberation Sans" style="REGULAR" size="16.0">
       </font>
@@ -176,9 +177,9 @@
   <widget type="label" version="2.0.0">
     <name>text #43</name>
     <text>Close fast shutter value</text>
-    <x>89</x>
+    <x>10</x>
     <y>165</y>
-    <width>160</width>
+    <width>240</width>
     <font>
       <font family="Liberation Sans" style="REGULAR" size="16.0">
       </font>
@@ -188,7 +189,7 @@
   <widget type="textentry" version="3.0.0">
     <name>text entry #46</name>
     <pv_name>$(P)$(R)CloseFastShutterValue</pv_name>
-    <x>254</x>
+    <x>255</x>
     <y>165</y>
     <width>380</width>
     <font>
@@ -206,7 +207,7 @@
   <widget type="textentry" version="3.0.0">
     <name>text entry #50</name>
     <pv_name>$(P)$(R)CloseFastShutterPVName</pv_name>
-    <x>254</x>
+    <x>255</x>
     <y>140</y>
     <width>380</width>
     <font>
@@ -224,9 +225,9 @@
   <widget type="label" version="2.0.0">
     <name>text #54</name>
     <text>Shutter status PV</text>
-    <x>119</x>
+    <x>10</x>
     <y>190</y>
-    <width>130</width>
+    <width>240</width>
     <font>
       <font family="Liberation Sans" style="REGULAR" size="16.0">
       </font>
@@ -236,7 +237,7 @@
   <widget type="textentry" version="3.0.0">
     <name>text entry #57</name>
     <pv_name>$(P)$(R)ShutterStatusPVName</pv_name>
-    <x>254</x>
+    <x>255</x>
     <y>190</y>
     <width>380</width>
     <font>
@@ -255,7 +256,7 @@
     <name>text #61</name>
     <text>PSO setup</text>
     <x>159</x>
-    <y>268</y>
+    <y>315</y>
     <width>90</width>
     <font>
       <font family="Liberation Sans" style="REGULAR" size="16.0">
@@ -274,7 +275,7 @@
     </actions>
     <text>PSO setup</text>
     <x>254</x>
-    <y>268</y>
+    <y>315</y>
     <height>20</height>
     <background_color>
       <color red="115" green="223" blue="255">
@@ -283,10 +284,10 @@
   </widget>
   <widget type="label" version="2.0.0">
     <name>text #67</name>
-    <text>Sample Top X PV</text>
-    <x>87</x>
-    <y>216</y>
-    <width>160</width>
+    <text>Scan type</text>
+    <x>119</x>
+    <y>265</y>
+    <width>130</width>
     <font>
       <font family="Liberation Sans" style="REGULAR" size="16.0">
       </font>
@@ -295,10 +296,66 @@
   </widget>
   <widget type="label" version="2.0.0">
     <name>text #70</name>
-    <text>Sample Top Z PV</text>
-    <x>87</x>
-    <y>241</y>
-    <width>160</width>
+    <text>Flip&amp;Stitch</text>
+    <x>119</x>
+    <y>290</y>
+    <width>130</width>
+    <font>
+      <font family="Liberation Sans" style="REGULAR" size="16.0">
+      </font>
+    </font>
+    <horizontal_alignment>2</horizontal_alignment>
+  </widget>
+  <widget type="combo" version="2.0.0">
+    <name>menu #73</name>
+    <pv_name>$(P)$(R)ScanType</pv_name>
+    <x>254</x>
+    <y>265</y>
+    <width>80</width>
+    <height>20</height>
+    <background_color>
+      <color red="115" green="223" blue="255">
+      </color>
+    </background_color>
+    <border_alarm_sensitive>false</border_alarm_sensitive>
+  </widget>
+  <widget type="combo" version="2.0.0">
+    <name>menu #76</name>
+    <pv_name>$(P)$(R)FlipStitch</pv_name>
+    <x>254</x>
+    <y>290</y>
+    <width>80</width>
+    <height>20</height>
+    <background_color>
+      <color red="115" green="223" blue="255">
+      </color>
+    </background_color>
+    <border_alarm_sensitive>false</border_alarm_sensitive>
+  </widget>
+  <widget type="textentry" version="3.0.0">
+    <name>text entry #79</name>
+    <pv_name>$(P)$(R)TxmOpticsPVPrefix</pv_name>
+    <x>255</x>
+    <y>215</y>
+    <width>380</width>
+    <font>
+      <font family="Liberation Sans" style="REGULAR" size="16.0">
+      </font>
+    </font>
+    <background_color>
+      <color red="115" green="223" blue="255">
+      </color>
+    </background_color>
+    <format>6</format>
+    <show_units>false</show_units>
+    <border_alarm_sensitive>false</border_alarm_sensitive>
+  </widget>
+  <widget type="label" version="2.0.0">
+    <name>text #83</name>
+    <text>txmOptics Prefix</text>
+    <x>10</x>
+    <y>215</y>
+    <width>240</width>
     <font>
       <font family="Liberation Sans" style="REGULAR" size="16.0">
       </font>
@@ -306,10 +363,10 @@
     <horizontal_alignment>2</horizontal_alignment>
   </widget>
   <widget type="textentry" version="3.0.0">
-    <name>text entry #73</name>
-    <pv_name>$(P)$(R)SampleTopZPVName</pv_name>
-    <x>253</x>
-    <y>241</y>
+    <name>text entry #86</name>
+    <pv_name>$(P)$(R)ImagePVPrefix</pv_name>
+    <x>255</x>
+    <y>240</y>
     <width>380</width>
     <font>
       <font family="Liberation Sans" style="REGULAR" size="16.0">
@@ -323,22 +380,16 @@
     <show_units>false</show_units>
     <border_alarm_sensitive>false</border_alarm_sensitive>
   </widget>
-  <widget type="textentry" version="3.0.0">
-    <name>text entry #77</name>
-    <pv_name>$(P)$(R)SampleTopXPVName</pv_name>
-    <x>253</x>
-    <y>216</y>
-    <width>380</width>
+  <widget type="label" version="2.0.0">
+    <name>text #90</name>
+    <text>Image Prefix</text>
+    <x>10</x>
+    <y>240</y>
+    <width>240</width>
     <font>
       <font family="Liberation Sans" style="REGULAR" size="16.0">
       </font>
     </font>
-    <background_color>
-      <color red="115" green="223" blue="255">
-      </color>
-    </background_color>
-    <format>6</format>
-    <show_units>false</show_units>
-    <border_alarm_sensitive>false</border_alarm_sensitive>
+    <horizontal_alignment>2</horizontal_alignment>
   </widget>
 </display>

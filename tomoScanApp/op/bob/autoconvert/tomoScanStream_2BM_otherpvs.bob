@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--Saved on 2024-10-21 17:55:34 by epics-->
 <display version="2.0.0">
   <name>tomoScanStream_2BM_otherpvs</name>
-  <x>84</x>
-  <y>691</y>
+  <x>61</x>
+  <y>879</y>
   <width>640</width>
-  <height>240</height>
+  <height>290</height>
   <background_color>
     <color red="187" green="187" blue="187">
     </color>
@@ -255,7 +256,7 @@
     <name>text #61</name>
     <text>PSO setup</text>
     <x>159</x>
-    <y>215</y>
+    <y>265</y>
     <width>90</width>
     <font>
       <font family="Liberation Sans" style="REGULAR" size="16.0">
@@ -274,11 +275,61 @@
     </actions>
     <text>PSO setup</text>
     <x>254</x>
-    <y>215</y>
+    <y>265</y>
     <height>20</height>
     <background_color>
       <color red="115" green="223" blue="255">
       </color>
     </background_color>
+  </widget>
+  <widget type="label" version="2.0.0">
+    <name>text #67</name>
+    <text>Scan type</text>
+    <x>119</x>
+    <y>215</y>
+    <width>130</width>
+    <font>
+      <font family="Liberation Sans" style="REGULAR" size="16.0">
+      </font>
+    </font>
+    <horizontal_alignment>2</horizontal_alignment>
+  </widget>
+  <widget type="label" version="2.0.0">
+    <name>text #70</name>
+    <text>Flip&amp;Stitch</text>
+    <x>119</x>
+    <y>240</y>
+    <width>130</width>
+    <font>
+      <font family="Liberation Sans" style="REGULAR" size="16.0">
+      </font>
+    </font>
+    <horizontal_alignment>2</horizontal_alignment>
+  </widget>
+  <widget type="combo" version="2.0.0">
+    <name>menu #73</name>
+    <pv_name>$(P)$(R)ScanType</pv_name>
+    <x>254</x>
+    <y>215</y>
+    <width>80</width>
+    <height>20</height>
+    <background_color>
+      <color red="115" green="223" blue="255">
+      </color>
+    </background_color>
+    <border_alarm_sensitive>false</border_alarm_sensitive>
+  </widget>
+  <widget type="combo" version="2.0.0">
+    <name>menu #76</name>
+    <pv_name>$(P)$(R)FlipStitch</pv_name>
+    <x>254</x>
+    <y>240</y>
+    <width>80</width>
+    <height>20</height>
+    <background_color>
+      <color red="115" green="223" blue="255">
+      </color>
+    </background_color>
+    <border_alarm_sensitive>false</border_alarm_sensitive>
   </widget>
 </display>

@@ -222,12 +222,11 @@ class TomoScan13BM_MCS(TomoScan):
         print('rotation_step after correction=', self.rotation_step)
         # The rotation stop position needs to be updated to reflect actual step size
         self.rotation_stop = self.rotation_start + self.rotation_step * self.num_angles
-        self.epics_pvs['RotationStop'].put(self.rotation_stop)
         # Start angle is decremented a half rotation step so scan is centered on rotation_start
         self.epics_pvs['Rotation'].put((self.rotation_start - 0.5 * self.rotation_step), wait=True)
         # Compute and set the motor speed
         time_per_angle = self.compute_frame_time()
-        speed = self.rotation_step / time_per_angle
+        speed = abs(self.rotation_step / time_per_angle)
         steps_per_deg = abs(round(1./self.rotation_resolution, 0))
         motor_speed = math.floor((speed * steps_per_deg)) / steps_per_deg
         self.epics_pvs['RotationSpeed'].put(motor_speed)
@@ -236,7 +235,7 @@ class TomoScan13BM_MCS(TomoScan):
         # Set the external prescale according to the step size, use motor resolution
         # steps per degree (user unit)
         self.epics_pvs['MCSStopAll'].put(1, wait=True)
-        prescale = steps_per_angle
+        prescale = abs(steps_per_angle)
         self.epics_pvs['MCSPrescale'].put(prescale, wait=True)
         self.set_trigger_mode('MCSExternal', self.num_angles)
         # Uncomment this line to collect flat fields and dark fields in separate files

@@ -3,10 +3,10 @@ beginScreenProperties
 major 4
 minor 0
 release 1
-x 13
+x 3
 y 64
 w 600
-h 200
+h 225
 font "helvetica-medium-r-18.0"
 ctlFont "helvetica-bold-r-10.0"
 btnFont "helvetica-medium-r-18.0"
@@ -59,32 +59,6 @@ value {
   "$(P)$(R)   Optics"
 }
 endObjectProperties
-
-# (Group)
-object activeGroupClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 30
-y 46
-w 525
-h 145
-
-beginGroup
-
-# (Group)
-object activeGroupClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 30
-y 46
-w 290
-h 145
-
-beginGroup
 
 # (Static Text)
 object activeXTextClass
@@ -205,24 +179,6 @@ value {
   "Camera objective"
 }
 endObjectProperties
-
-endGroup
-
-endObjectProperties
-
-
-# (Group)
-object activeGroupClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 325
-y 46
-w 230
-h 145
-
-beginGroup
 
 # (Text Control)
 object activeXTextDspClass
@@ -380,64 +336,49 @@ newPos
 objType "controls"
 endObjectProperties
 
-endGroup
-
-endObjectProperties
-
-
-endGroup
-
-endObjectProperties
-
-# (Group)
-object activeGroupClass
+# (Text Control)
+object activeXTextDspClass
 beginObjectProperties
 major 4
-minor 0
-release 0
-x 30
-y 46
-w 525
-h 145
-
-beginGroup
-# (Group)
-object activeGroupClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 30
-y 46
-w 290
-h 145
-
-beginGroup
-
-endGroup
-
-endObjectProperties
-
-# (Group)
-object activeGroupClass
-beginObjectProperties
-major 4
-minor 0
+minor 7
 release 0
 x 325
-y 46
+y 196
 w 230
-h 145
-
-beginGroup
-
-endGroup
-
+h 20
+controlPv "$(P)$(R)CameraDistance"
+format "string"
+font "helvetica-medium-r-12.0"
+fontAlign "left"
+fgColor rgb 0 0 0
+bgColor rgb 29440 57088 65280
+editable
+motifWidget
+limitsFromDb
+nullColor rgb 60928 46592 11008
+smartRefresh
+fastUpdate
+newPos
+objType "controls"
 endObjectProperties
 
-
-endGroup
-
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 120
+y 196
+w 200
+h 20
+font "helvetica-medium-r-14.0"
+fontAlign "right"
+fgColor rgb 0 0 0
+bgColor index 3
+useDisplayBg
+value {
+  "Camera Distance (mm)"
+}
 endObjectProperties
-
 

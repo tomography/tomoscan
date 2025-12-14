@@ -149,7 +149,11 @@ class TomoScan():
             self.control_pvs['CamAcquisitionFrameRate']    = PV(camera_prefix + 'AcquisitionFrameRate')
             self.control_pvs['CamAcquisitionFramePeriod']  = PV(camera_prefix + 'AcquisitionFramePeriod')
             self.control_pvs['CamExposureTime+R']          = PV(camera_prefix + 'ExposureTime+R')
-                         
+
+        if (manufacturer.find('Mikrotron GmbH') != -1):
+            self.control_pvs['CamPixelFormat']      = PV(camera_prefix + 'PixelFormat')
+            self.control_pvs['CamTriggerSource']    = PV(camera_prefix + 'TriggerSource')
+                                                  
         # Set some initial PV values
         self.control_pvs['CamWaitForPlugins'].put('Yes')
         self.control_pvs['StartScan'].put(0)
@@ -230,7 +234,7 @@ class TomoScan():
 
         # Configure callbacks on a few PVs
         for epics_pv in ('MoveSampleIn', 'MoveSampleOut', 'StartScan', 'AbortScan', 'ExposureTime',
-                         'FilePath', 'FPFilePathExists', 'FPWriteStatus'):
+                         'FilePath', 'FPFilePathExists', 'FPWriteStatus', 'OpenShutterCmd', 'CloseShutterCmd'):
             self.epics_pvs[epics_pv].add_callback(self.pv_callback)
         for epics_pv in ('MoveSampleIn', 'MoveSampleOut', 'StartScan', 'AbortScan'):
             self.epics_pvs[epics_pv].put(0)
@@ -305,6 +309,12 @@ class TomoScan():
             thread.start()
         elif pvname.find('FilePath') != -1:
             thread = threading.Thread(target=self.copy_file_path, args=())
+            thread.start()
+        elif (pvname.find('OpenShutterCmd') != -1) and (value == 1):
+            thread = threading.Thread(target=self.open_shutter, args=())
+            thread.start()
+        elif (pvname.find('CloseShutterCmd') != -1) and (value == 1):
+            thread = threading.Thread(target=self.close_shutter, args=())
             thread.start()
         elif (pvname.find('StartScan') != -1) and (value == 1):
             self.run_fly_scan()
@@ -667,12 +677,17 @@ class TomoScan():
             self.epics_pvs['Rotation'].put(self.rotation_start)
         elif self.return_rotation == "Home":
             self.epics_pvs['RotationHomF'].put(1)
+        auto_close = self.epics_pvs['AutoCloseShutter'].get()
+        if (auto_close):
+            self.close_shutter()
         log.info('Scan complete')
         self.epics_pvs['ScanStatus'].put('Scan complete')
         self.epics_pvs['StartScan'].put(0)
         self.scan_is_running = False
         full_file_name = self.epics_pvs['FPFullFileName'].get(as_string=True)
         self.epics_pvs['FullFileName'].put(full_file_name)
+        self.epics_pvs['HDF5Location'].put(self.epics_pvs['HDF5ProjectionLocation'].value)
+        self.epics_pvs['FrameType'].put('Projection')
 
     def fly_scan(self):
         """Performs the operations for a tomography fly scan, i.e. with continuous rotation.
@@ -920,6 +935,20 @@ class TomoScan():
                 'Mono16': 142.86
             }
             readout_margin = 1.035
+            readout = readout_times[pixel_format]/1000.
+
+        if camera_model == 'C16240-20UP':
+            pixel_format = 'UInt16' 
+            readout_margin = 1.01
+            readout = .008
+
+        if camera_model == 'MC2066':
+            pixel_format = self.epics_pvs['CamPixelFormat'].get(as_string=True) 
+            readout_times = {
+                'Mono8': 0.445,  # 2247 FPS
+                'Mono10': 0.588  # 1700 FPS
+            }
+            readout_margin = 1.01
             readout = readout_times[pixel_format]/1000.
 
         if readout is None:
