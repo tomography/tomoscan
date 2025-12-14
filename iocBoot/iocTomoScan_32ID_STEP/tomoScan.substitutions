@@ -2,7 +2,8 @@ file "$(TOP)/db/tomoScan.template"
 {
 pattern
 {  P,      R,      CAMERA,  FILE_PLUGIN,      ROTATION,              SAMPLE_X,      SAMPLE_Y,              CLOSE_SHUTTER,        CLOSE_VALUE,        OPEN_SHUTTER,         OPEN_VALUE}
-{32id:, TomoScanStep:, 32idcSP1:, 32idcSP1:HDF1:,  32idcTXM:ens:c1:m1,  32idcTXM:nf:c0:m1,  32idcTXM:mxv:c1:m1,  32idb:rshtrB:Close,          1,            32idb:rshtrB:Open,      1}
+{32id:, TomoScanStep:, 32idbSP1:, 32idbSP1:HDF1:,  32idbTXM:ens:c1:m1,
+32idbTXM:mcs:c2:m7,  32idbTXM:mcs:c2:m8,  32idb:rshtrB:Close,          1,            32idb:rshtrB:Open,      1}
 }
 
 # For the Ensemble PSO_ENC_PER_ROTATION is a signed number containing the number of encoder pulses per rotation in positive dial coordinates
@@ -10,13 +11,14 @@ file "$(TOP)/db/tomoScan_PSO.template"
 {
 pattern
 {  P,       R,     PSO_MODEL, PSO_PORT, PSO_AXIS_NAME, PSO_ENC_INPUT, PSO_ENC_PER_ROTATION}
-{32id:, TomoScanStep:,    0,      PSO_PORT,      X,             3,            94400.}
+{32id:, TomoScanStep:,    0,      PSO_PORT,      X,             3,            755200.}
 }
 
 
 file "$(TOP)/db/tomoScan_32ID.template"
 {
 pattern
-{  P,      R,          BEAM_READY,    READY_VALUE, CLOSE_FAST_SHUTTER,        CLOSE_FAST_VALUE,   OPEN_FAST_SHUTTER,        OPEN_FAST_VALUE,      SHUTTER_STATUS,         SAMPLE_TOP_X,     SAMPLE_TOP_Z, KOHZUMODE, USENERGY, USBUSY, BRAGG    }
-{32id:, TomoScanStep:, ACIS:ShutterPermit,    1,     32idcTXM:uniblitz:control,          0,          32idcTXM:uniblitz:control,         1,        PA:32ID:STA_B_SBS_OPEN_PL, 32idcTXM:mcs:c3:m7, 32idcTXM:mcs:c3:m7, 32ida:KohzuModeBO, 32id:ID32us_energy, ID32us:Busy, 32ida:BraggEAO  }
+{  P,      R,          BEAM_READY,    READY_VALUE, CLOSE_FAST_SHUTTER,        CLOSE_FAST_VALUE,   OPEN_FAST_SHUTTER,        OPEN_FAST_VALUE,      SHUTTER_STATUS,         SAMPLE_TOP_X,       SAMPLE_TOP_Z,        KOHZUMODE,           USENERGY,        USBUSY,         BRAGG,       TXM_OPTICS,      IMAGE    }
+{32id:, TomoScanStep:, ACIS:ShutterPermit,    1,     32idbTXM:uniblitz:control,          0,          32idbTXM:uniblitz:control,         1,        PA:32ID:STA_B_SBS_OPEN_PL, 32idbTXM:mcs:c2:m7, 32idbTXM:mcs:c2:m8,
+32ida:KohzuModeBO, 32id:ID32us_energy, ID32us:Busy, 32ida:BraggEAO, 32id:TXMOptics:, 32idbSP1:Pva1:  }
 }
