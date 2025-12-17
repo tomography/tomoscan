@@ -1378,3 +1378,17 @@ text {
 	limits {
 	}
 }
+"choice button" {
+	object {
+		x=460
+		y=475
+		width=105
+		height=20
+	}
+	control {
+		chan="$(P)$(R)Pause"
+		clr=14
+		bclr=32
+	}
+	stacking="column"
+}

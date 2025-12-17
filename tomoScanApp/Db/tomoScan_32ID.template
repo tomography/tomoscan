@@ -271,3 +271,13 @@ record(stringout, "$(P)$(R)ImagePVPrefix")
 {
    field(VAL,  "$(IMAGE)")
 }
+
+
+#################
+# Pause
+#################
+record(bo, "$(P)$(R)Pause")
+{
+   field(ZNAM, "GO")
+   field(ONAM, "PAUSE")
+}

@@ -268,6 +268,27 @@ class TomoScan32ID(TomoScanPSO):
 
         - Turns on data capture.
         """
+        # ************
+
+        pause = self.epics_pvs['Pause'].get(as_string=True)
+        if pause == 'PAUSE':
+            log.warning('scan is paused')
+            self.epics_pvs['CamImageMode'].put('Continuous', wait=True)
+            self.epics_pvs['CamTriggerMode'].put('Off', wait=True)
+            self.epics_pvs['CamAcquire'].put('Acquire')
+            self.epics_pvs['HDF5Location'].put('/exchange/Pause')
+            self.epics_pvs['ScanStatus'].put('Pause')
+            log.warning('open fast shutter')
+            self.open_shutter()
+            # Wait until Pause PV changes to "GO"
+            while True:
+                pause = self.epics_pvs['Pause'].get(as_string=True)
+                if pause == 'GO':
+                    break
+                    log.warning('close fast shutter')
+                    self.close_shutter()
+                time.sleep(0.2)  
+
         log.info('begin scan')
         self.epics_pvs['SampleXSet'].put(1, wait=True)
         self.epics_pvs['SampleYSet'].put(1, wait=True)
