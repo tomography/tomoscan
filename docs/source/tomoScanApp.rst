@@ -1225,6 +1225,28 @@ Interlaced scan
     - ao
     - Settling time after the rotary stage motion is completed (used only in step scans).
 
+Pause
+~~~~~
+
+.. cssclass:: table-bordered table-striped table-hover
+.. list-table::
+  :header-rows: 1
+  :widths: 5 5 90
+
+  * - Record name
+    - Record type
+    - Description
+  * - $(P)$(R)Pause
+    - bo
+    - Flag allowing the scan to be paused. Choices are "GO" and "PAUSE". When set to "PAUSE", the scan will pause at begin_scan(), set the camera to continuous mode, open the shutter, and start the camera. This is used when running a long series of scans (XANES, for example), allowing for tuning and maximization of the flat-field intensity.
+
+
+ record(bo, "$(P)$(R)Pause")
+  280  {
+  281     field(ZNAM, "GO")
+  282:    field(ONAM, "PAUSE")
+  283  }
+
 tomoScan_32ID_settings.req
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
