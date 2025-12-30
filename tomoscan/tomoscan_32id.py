@@ -182,13 +182,43 @@ class TomoScan32ID(TomoScanPSO):
             This is used to set the ``NumImages`` PV of the camera.
         """
         camera_model = self.epics_pvs['CamModel'].get(as_string=True)
-        if(camera_model=='Grasshopper3 GS3-U3-51S5M'):        
+        if(camera_model=='Oryx ORX-10G-51S5M' or camera_model=='Oryx ORX-10G-310S9M'):            
+            self.set_trigger_mode_oryx(trigger_mode, num_images)
+        elif(camera_model=='Grasshopper3 GS3-U3-51S5M'):        
             self.set_trigger_mode_grasshopper(trigger_mode, num_images)
         elif(camera_model=='Blackfly S BFS-PGE-161S7M'):        
             self.set_trigger_mode_grasshopper(trigger_mode, num_images)
         else:
             log.error('Camera is not supported')
             exit(1)
+    
+    def set_trigger_mode_oryx(self, trigger_mode, num_images):
+        self.epics_pvs['CamAcquire'].put('Done') ###
+        self.wait_pv(self.epics_pvs['CamAcquire'], 0) ###
+        log.info('set trigger mode: %s', trigger_mode)
+        if trigger_mode == 'FreeRun':
+            self.epics_pvs['CamImageMode'].put('Continuous', wait=True)
+            self.epics_pvs['CamTriggerMode'].put('Off', wait=True)
+            self.wait_pv(self.epics_pvs['CamTriggerMode'], 0)
+            # self.epics_pvs['CamAcquire'].put('Acquire')
+        elif trigger_mode == 'Internal':
+            self.epics_pvs['CamTriggerMode'].put('Off', wait=True)
+            self.wait_pv(self.epics_pvs['CamTriggerMode'], 0)
+            self.epics_pvs['CamImageMode'].put('Multiple')            
+            self.epics_pvs['CamNumImages'].put(num_images, wait=True)
+        else: # set camera to external triggering
+            # These are just in case the scan aborted with the camera in another state 
+            self.epics_pvs['CamTriggerMode'].put('Off', wait=True)   # VN: For FLIR we first switch to Off and then change overlap. any reason of that?                                                 
+            self.epics_pvs['CamTriggerSource'].put('Line2', wait=True)
+            self.epics_pvs['CamTriggerOverlap'].put('ReadOut', wait=True)
+            self.epics_pvs['CamExposureMode'].put('Timed', wait=True)
+            self.epics_pvs['CamImageMode'].put('Multiple')            
+            self.epics_pvs['CamArrayCallbacks'].put('Enable')
+            self.epics_pvs['CamFrameRateEnable'].put(0)
+
+            self.epics_pvs['CamNumImages'].put(self.num_angles, wait=True)
+            self.epics_pvs['CamTriggerMode'].put('On', wait=True)
+            self.wait_pv(self.epics_pvs['CamTriggerMode'], 1)
 
     def set_trigger_mode_grasshopper(self, trigger_mode, num_images):
         self.epics_pvs['CamAcquire'].put('Done') ###
@@ -238,6 +268,27 @@ class TomoScan32ID(TomoScanPSO):
 
         - Turns on data capture.
         """
+        # ************
+
+        pause = self.epics_pvs['Pause'].get(as_string=True)
+        if pause == 'PAUSE':
+            log.warning('scan is paused')
+            self.epics_pvs['CamImageMode'].put('Continuous', wait=True)
+            self.epics_pvs['CamTriggerMode'].put('Off', wait=True)
+            self.epics_pvs['CamAcquire'].put('Acquire')
+            self.epics_pvs['HDF5Location'].put('/exchange/Pause')
+            self.epics_pvs['ScanStatus'].put('Pause')
+            log.warning('open fast shutter')
+            self.open_shutter()
+            # Wait until Pause PV changes to "GO"
+            while True:
+                pause = self.epics_pvs['Pause'].get(as_string=True)
+                if pause == 'GO':
+                    break
+                    log.warning('close fast shutter')
+                    self.close_shutter()
+                time.sleep(0.2)  
+
         log.info('begin scan')
         self.epics_pvs['SampleXSet'].put(1, wait=True)
         self.epics_pvs['SampleYSet'].put(1, wait=True)
@@ -302,8 +353,6 @@ class TomoScan32ID(TomoScanPSO):
             self.epics_pvs['RotationSet'].put('Set', wait=True)
             self.epics_pvs['Rotation'].put(current_angle, wait=True)
             self.epics_pvs['RotationSet'].put('Use', wait=True)
-        # Call the base class method
-        super().end_scan()
         
         # Stop the file plugin
         self.epics_pvs['FPCapture'].put('Done')
@@ -355,6 +404,9 @@ class TomoScan32ID(TomoScanPSO):
             self.epics_pvs['ScanStatus'].put('scp file transfer complete')
         else:
             log.warning('Automatic data trasfer to data analysis computer is disabled.')
+        
+        # Call the base class method
+        super().end_scan()
 
     def add_theta(self):
         """Add theta at the end of a scan.

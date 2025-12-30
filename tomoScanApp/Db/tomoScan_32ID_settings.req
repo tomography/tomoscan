@@ -92,3 +92,8 @@ $(P)$(R)TxmOpticsPVPrefix
 # Image PV Prefix
 #################
 $(P)$(R)ImagePVPrefix
+
+#################
+# Pause
+#################
+$(P)$(R)Pause

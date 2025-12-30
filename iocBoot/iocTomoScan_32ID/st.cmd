@@ -10,7 +10,7 @@ dbLoadDatabase "../../dbd/tomoScanApp.dbd"
 tomoScanApp_registerRecordDeviceDriver pdbbase
 
 # Connect to the Aerotech controller
-drvAsynIPPortConfigure("PSO_PORT", "164.54.102.46:8001", 0, 0, 0)
+drvAsynIPPortConfigure("PSO_PORT", "10.54.102.62:8001", 0, 0, 0)
 asynOctetSetInputEos(PSO_PORT, 0, "\n")
 asynOctetSetOutputEos(PSO_PORT, 0, "\n")
 asynSetTraceIOMask(PSO_PORT, 0, ESCAPE)

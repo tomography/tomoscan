@@ -1370,11 +1370,25 @@ text {
 		height=15
 	}
 	monitor {
-		chan="32idcSP1:HDF1:FullFileName_RBV"
+		chan="32idbSP1:HDF1:FullFileName_RBV"
 		clr=14
 		bclr=51
 	}
 	format="string"
 	limits {
 	}
+}
+"choice button" {
+	object {
+		x=460
+		y=475
+		width=105
+		height=20
+	}
+	control {
+		chan="$(P)$(R)Pause"
+		clr=14
+		bclr=32
+	}
+	stacking="column"
 }
