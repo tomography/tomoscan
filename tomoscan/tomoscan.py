@@ -480,13 +480,14 @@ class TomoScan():
 
         axis = self.epics_pvs['FlatFieldAxis'].get(as_string=True)        
         log.info('move_sample_out axis: %s', axis)
+        if axis in ('Y', 'Both'):
+            position = self.epics_pvs['SampleOutY'].value
+            self.epics_pvs['SampleY'].put(position, wait=True, timeout=600)
+
         if axis in ('X', 'Both'):
             position = self.epics_pvs['SampleOutX'].value
             self.epics_pvs['SampleX'].put(position, wait=True, timeout=600)
 
-        if axis in ('Y', 'Both'):
-            position = self.epics_pvs['SampleOutY'].value
-            self.epics_pvs['SampleY'].put(position, wait=True, timeout=600)
 
         self.epics_pvs['MoveSampleOut'].put('Done')
 
