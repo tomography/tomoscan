@@ -1,0 +1,24 @@
+# This file is used by autosave to determine what PVs to save
+# It is also used by tomoScanFPGA to determine what PVs to create
+
+# This is the file for the TomoScanFPGA derived class.
+
+#############
+# FPGA Prefix
+#############
+$(P)$(R)FPGAPVPrefix
+
+####################
+# Interlaced Control
+####################
+$(P)$(R)TriggerSource
+$(P)$(R)InterlacedRotationStart
+$(P)$(R)InterlacedNumberOfRotation
+$(P)$(R)InterlacedNumAngles
+$(P)$(R)InterlacedMinStep
+$(P)$(R)InterlacedPSOWindowStep
+$(P)$(R)InterlacedScanTime
+$(P)$(R)InterlacedRotationStop
+$(P)$(R)InterlacedMode
+$(P)$(R)InterlacedEfficiencyRequested
+$(P)$(R)InterlacedEfficiencyCalculated

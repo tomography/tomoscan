@@ -1,0 +1,1 @@
+medm -x -macro "P=2bmb:,R=TomoScanFPGA:,BEAMLINE=tomoScanFPGA_2BM" ../../tomoScanApp/op/adl/tomoScanFPGA.adl &

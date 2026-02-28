@@ -1,0 +1,31 @@
+file "$(TOP)/db/tomoScan.template"
+{
+pattern
+{  P,        R,          CAMERA,   FILE_PLUGIN,    ROTATION,   SAMPLE_X,  SAMPLE_Y,      CLOSE_SHUTTER,       CLOSE_VALUE,        OPEN_SHUTTER,         OPEN_VALUE}
+{2bmb:, TomoScanFPGA:,    2bmSP1:, 2bmSP1:HDF1:,  2bmb:m102,  2bmb:m63,  2bmb:m25,  2bma:A_shutter:close.VAL,    1,         2bma:A_shutter:open.VAL,        1}
+}
+
+# For the Ensemble PSO_ENC_PER_ROTATION is a signed number containing the number of encoder pulses per rotation in positive dial coordinates
+file "$(TOP)/db/tomoScan_PSO.template"
+{
+pattern
+{  P,          R,       PSO_MODEL,  PSO_PORT, PSO_AXIS_NAME, PSO_ENC_INPUT, PSO_ENC_PER_ROTATION}
+{2bmb:, TomoScanFPGA:,      0,      PSO_PORT,      X,             3,            11840158.}
+}
+
+
+file "$(TOP)/db/tomoScan_2BM.template"
+{
+pattern
+{  P,          R,              BEAM_READY,              READY_VALUE,       CLOSE_FAST_SHUTTER,        CLOSE_FAST_VALUE,   OPEN_FAST_SHUTTER,          OPEN_FAST_VALUE,         SHUTTER_STATUS,         PVA_PLUGIN,     ROI_PLUGIN,     CB_PLUGIN,         MCT_OPTICS}
+{2bmb:, TomoScanFPGA:,   PA:02BM:STA_A_BEAMREADY_PL,       1,          2bma:B_shutter:close.VAL,            1,          2bma:B_shutter:open.VAL,           1,           PA:02BM:STA_A_FES_OPEN_PL,   2bmSP2:Pva1:,   2bmSP2:ROI1:,   2bmSP2:CB1:,       2bm:MCTOptics:}
+}
+
+file "$(TOP)/db/tomoScan_FPGA.template"
+{
+pattern
+{P,          R,  FPGA }
+{2bmb:, TomoScanFPGA:,2bmbMZ1:SG:}
+}
+
+ 
