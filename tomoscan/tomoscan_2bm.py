@@ -471,8 +471,11 @@ class TomoScan2BM(TomoScanHelical):
         log.info('begin scan')
 
         # Set data directory
-        file_path = self.epics_pvs['DetectorTopDir'].get(as_string=True) + self.epics_pvs['ExperimentYearMonth'].get(as_string=True) + os.path.sep + self.epics_pvs['UserLastName'].get(as_string=True) + os.path.sep
-        self.epics_pvs['FilePath'].put(file_path, wait=True)
+        file_path = Path(self.epics_pvs['DetectorTopDir'].get(as_string=True))
+        file_path = file_path.joinpath(self.epics_pvs['ExperimentYearMonth'].get(as_string=True) + '-'
+                                       + self.epics_pvs['UserLastName'].get(as_string=True) + '-'
+                                       + self.epics_pvs['ProposalNumber'].get(as_string=True))
+        self.epics_pvs['FilePath'].put(str(file_path), wait=True)
 
         # NetBooter = NetBooter_Control(mode='telnet',id=self.access_dic['pdu_username'],password=self.access_dic['pdu_password'],ip=self.access_dic['pdu_ip_address'])           
         # NetBooter.power_off(1)
