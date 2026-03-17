@@ -245,7 +245,7 @@ class TomoScan():
             self.control_pvs['FPGANSignal']          = PV(prefix + "memPulseSeq_N")            # BRAM numPulses (reg)
             self.control_pvs['FPGAMUX2']             = PV(prefix + "MUX2-1_SEL_Signal")        # MUX2 0 = PSO; 1 = trigILF
             self.control_pvs['BUFFER-1_IN_Signal']   = PV(prefix + "BUFFER-1_IN_Signal")
-            self.control_pvs['BUFFER-2_IN_Signal']   = PV(prefix + "BUFFER-1_IN_Signal")
+            self.control_pvs['BUFFER-2_IN_Signal']   = PV(prefix + "BUFFER-2_IN_Signal")
         self.epics_pvs = {**self.config_pvs, **self.control_pvs}
         # Wait 1 second for all PVs to connect
         time.sleep(1)
