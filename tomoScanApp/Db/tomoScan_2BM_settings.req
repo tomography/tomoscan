@@ -28,6 +28,7 @@ $(P)$(R)UserEmail
 $(P)$(R)ProposalNumber
 $(P)$(R)ProposalTitle
 $(P)$(R)ESAFNumber
+$(P)$(R)ESAFDOINumber
 $(P)$(R)UserInfoUpdate
 
 #################
