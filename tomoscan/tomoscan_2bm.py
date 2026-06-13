@@ -331,7 +331,7 @@ class TomoScan2BM(TomoScanHelical):
                 log.info('shutter status: %s', status)
                 log.info('close shutter: %s, value: %s', pv, value)
                 self.epics_pvs['CloseShutter'].put(value, wait=True)
-                self.wait_pv(self.epics_pvs['ShutterStatus'], 0)
+                self.wait_pv(self.epics_pvs['ShutterStatus'], 1)  # ON = blocking = beam off
                 status = self.epics_pvs['ShutterStatus'].get(as_string=True)
                 log.info('shutter status: %s', status)
 
@@ -680,7 +680,7 @@ class TomoScan2BM(TomoScanHelical):
         log.info('open shutter: %s, value: %s', pv, value)
         elapsed_time = 0
         while True:
-            if self.epics_pvs['ShutterStatus'].get() == int(value):
+            if self.epics_pvs['ShutterStatus'].get() == 0:  # OFF = not blocking = beam on
                 log.warning("Shutter is open in %f s", elapsed_time)
                 return
             if not self.scan_is_running:
