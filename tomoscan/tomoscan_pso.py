@@ -226,7 +226,8 @@ class TomoScanPSO(TomoScan):
             pso_command.put('PSOOUTPUT %s CONTROL 0 1' % pso_axis, wait=True, timeout=10.0)
         if (pso_model == 'EPICS PCO'):
              self.epics_pvs['PCOStartPosition'].put(self.rotation_start)
-             self.epics_pvs['PCOEndPosition'].put(self.rotation_stop)
+             pulse_end = self.rotation_start + (self.num_angles * self.rotation_step)
+             self.epics_pvs['PCOEndPosition'].put(pulse_end)
              self.epics_pvs['PCOIncrement'].put(self.rotation_step)
              self.epics_pvs['PCOEnable'].put(1)
         else:
