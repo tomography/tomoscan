@@ -202,7 +202,6 @@ class TomoScan():
 
         if 'PCO' in self.pv_prefixes:
             prefix = self.pv_prefixes['PCO']
-            print('PCO prefix=', prefix)
             self.control_pvs['PCOStartPosition']   = PV(prefix + 'PCOStartPosition')
             self.control_pvs['PCOEndPosition']     = PV(prefix + 'PCOEndPosition')
             self.control_pvs['PCOIncrement']       = PV(prefix + 'PCOIncrement')
@@ -414,7 +413,6 @@ class TomoScan():
             for key in macros:
                 dictentry = dictentry.replace(key, '')
             epics_pv = PV(pvname)
-            print('pvname=', pvname)
             if is_config_pv:
                 self.config_pvs[dictentry] = epics_pv
             else:
@@ -425,9 +423,7 @@ class TomoScan():
                 self.control_pvs[key] = PV(pvname)
             if dictentry.find('PVPrefix') != -1:
                 pvprefix = epics_pv.value
-                print('pvprefix=', pvprefix)
                 key = dictentry.replace('PVPrefix', '')
-                print('key=', key)
                 self.pv_prefixes[key] = pvprefix
 
     def move_sample_in(self):
