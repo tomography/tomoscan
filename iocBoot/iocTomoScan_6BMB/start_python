@@ -1,0 +1,4 @@
+#!/bin/tcsh
+conda activate base
+python -i start_tomoscan.py
+

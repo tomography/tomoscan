@@ -1,0 +1,28 @@
+file "$(TOMOSCAN)/db/tomoScan.template"
+{
+pattern
+{  P,        R,    CAMERA,     FILE_PLUGIN,         ROTATION,          SAMPLE_X,            SAMPLE_Y,            CLOSE_SHUTTER,        CLOSE_VALUE,        OPEN_SHUTTER,         OPEN_VALUE}
+{6BMBTOMO:,  TS:, 6BMB_LVPPS1:, 6BMB_LVPPS1:HDF1:, 6BMB_AEROTECH:m1, 6BMB_LVP:LVP:t1.EX, 6BMB_LVP:LVP:t1.EY, S06BM-PSS:SBS:CloseEPICSC,    1,        S06BM-PSS:SBS:OpenEPICSC,      1}
+}
+
+# For the Automation1 controller we use EPICS PCO, so most of the PSO macros are not used
+file "$(TOMOSCAN)/db/tomoScan_PSO.template"
+{
+pattern
+{  P,       R,   PSO_MODEL, PSO_PORT, PSO_AXIS_NAME, PSO_ENC_INPUT, PSO_ENC_PER_ROTATION}
+{6BMBTOMO:, TS:,    2,      PSO_PORT,      THETA,         2,             0}
+}
+
+file "$(TOMOSCAN)/db/tomoScan_PCO.template"
+{
+pattern
+{  P,        R,        PCO}
+{6BMBTOMO:, TS:, 6BMB_AEROTECH:m1}
+}
+
+file "$(TOMOSCAN)/db/tomoScan_6BMB.template"
+{
+pattern
+{  P,      R}
+{6BMBTOMO:, TS:}
+}
