@@ -225,6 +225,9 @@ class TomoScanPSO(TomoScan):
         elif (pso_model == 'A3200'):
             pso_command.put('PSOOUTPUT %s CONTROL 0 1' % pso_axis, wait=True, timeout=10.0)
         if (pso_model == 'EPICS PCO'):
+             self.epics_pvs['PCOStartPosition'].put(self.rotation_start)
+             self.epics_pvs['PCOEndPosition'].put(self.rotation_stop)
+             self.epics_pvs['PCOIncrement'].put(self.rotation_step)
              self.epics_pvs['PCOEnable'].put(1)
         else:
             # Set the pulse width.  The total width and active width are the same, since this is a single pulse.
