@@ -12,6 +12,7 @@ import threading
 import signal
 import sys
 import os
+import traceback
 from datetime import timedelta
 import pymsgbox
 from epics import PV
@@ -744,7 +745,41 @@ class TomoScan():
             log.error('File overwrite aborted')
         #Make sure we do cleanup tasks from the end of the scan
         finally:
-            self.end_scan()
+            try:
+                self.end_scan()
+            except:
+                log.error('end_scan() raised an exception; running last-resort teardown instead')
+                traceback.print_exc(file=sys.stdout)
+                self._end_scan_after_failure()
+
+    def _end_scan_after_failure(self):
+        """Releases the scan thread's PVs after ``end_scan()`` itself raised.
+
+        ``end_scan()`` is the only place that normally sets ``ScanStatus``,
+        puts ``StartScan`` to 0, and clears ``scan_is_running``. If an
+        exception inside ``end_scan()`` (for example a disk-full error while
+        writing a dataset) reaches ``fly_scan()``'s ``finally`` block
+        unhandled, the scan thread exits without ever doing that, and
+        ``StartScan`` is left at 1 indefinitely. A client that started the
+        scan with ``ca_put_callback`` and is waiting for ``StartScan`` to
+        return to 0 then waits forever, and ``abort_scan()`` cannot help
+        because it works by raising into the scan thread, which is already
+        dead by that point.
+
+        Each PV write below is wrapped separately so that a failing ``put``
+        cannot stop the others from running.
+        """
+        try:
+            self.epics_pvs['ScanStatus'].put('Scan cleanup failed')
+        except:
+            log.error('Failed to put ScanStatus during last-resort teardown')
+            traceback.print_exc(file=sys.stdout)
+        try:
+            self.epics_pvs['StartScan'].put(0)
+        except:
+            log.error('Failed to put StartScan during last-resort teardown')
+            traceback.print_exc(file=sys.stdout)
+        self.scan_is_running = False
 
     def run_fly_scan(self):
         """Runs ``fly_scan()`` in a new thread."""
