@@ -188,7 +188,7 @@ class TomoScan():
         self.control_pvs['FPFileWriteMode'].put('Stream')
         self.control_pvs['FPEnableCallbacks'].put('Enable')
 
-        #Define PVs from the MCS or PSO that live on another IOC
+        #Define PVs from the MCS or PCO that live on another IOC
         if 'MCS' in self.pv_prefixes:
             prefix = self.pv_prefixes['MCS']
             self.control_pvs['MCSEraseStart']      = PV(prefix + 'EraseStart')
@@ -199,6 +199,13 @@ class TomoScan():
             self.control_pvs['MCSChannelAdvance']  = PV(prefix + 'ChannelAdvance')
             self.control_pvs['MCSMaxChannels']     = PV(prefix + 'MaxChannels')
             self.control_pvs['MCSNuseAll']         = PV(prefix + 'NuseAll')
+
+        if 'PCO' in self.pv_prefixes:
+            prefix = self.pv_prefixes['PCO']
+            self.control_pvs['PCOStartPosition']   = PV(prefix + 'PCOStartPosition')
+            self.control_pvs['PCOEndPosition']     = PV(prefix + 'PCOEndPosition')
+            self.control_pvs['PCOIncrement']       = PV(prefix + 'PCOIncrement')
+            self.control_pvs['PCOEnable']          = PV(prefix + 'PCOEnable')
 
         if 'PvaPlugin' in self.pv_prefixes:
             prefix = self.pv_prefixes['PvaPlugin']

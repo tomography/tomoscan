@@ -1,0 +1,9 @@
+# Database for EPICS PVS for tomoScan using the EPICS motor record position compare output (PCO) support
+
+################
+# PCO Prefix
+################
+record(stringout, "$(P)$(R)PCOPVPrefix")
+{
+   field(VAL,  "$(PCO)")
+}

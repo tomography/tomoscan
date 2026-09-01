@@ -1,0 +1,3 @@
+# Use this line to run the locally built tomoScanApp
+cd /home/sam85/tomoscan/iocBoot/iocTomoScan_6BMB
+/corvette/home/epics/support/tomoscan/bin/linux-x86_64/tomoScanApp st.cmd

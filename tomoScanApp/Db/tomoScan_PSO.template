@@ -12,6 +12,8 @@ record(mbbi, "$(P)$(R)PSOControllerModel")
     field(ZRST, "Ensemble")
     field(ONVL, "1")
     field(ONST, "A3200")
+    field(TWVL, "2")
+    field(TWST, "EPICS PCO")
     field(VAL,  "$(PSO_MODEL)")
 }
 
