@@ -525,48 +525,56 @@ class TomoScan2BM(TomoScanHelical):
         # Add theta in the hdf file
         self.add_theta()
 
-        log.info('Adding a frame from the IP camera')
+        try:
+            log.info('Adding a frame from the IP camera')
 
-        with open(CREDENTIALS_FILE_NAME, 'r') as file:
-            for line in file:
-                username, password = line.strip().split('|')  
+            with open(CREDENTIALS_FILE_NAME, 'r') as file:
+                for line in file:
+                    username, password = line.strip().split('|')
 
 
-        ret, frame = cv2.VideoCapture('http://' + username +':' + password + '@10.54.113.162/cgi-bin/mjpeg?stream=1').read()
-        #station A        
-        # NetBooter = NetBooter_Control(mode='telnet',id=self.access_dic['pdu_username'],password=self.access_dic['pdu_password'],ip=self.access_dic['pdu_ip_address'])
-        # NetBooter.power_on(1)
-        # log.info('wait 10 sec while the web camera has focused')
-        # time.sleep(10)                       
-        # ret, frame = cv2.VideoCapture('http://remotecam02bma:Cam-02-bm-a@164.54.113.137/cgi-bin/mjpeg?stream=1').read()# we should hide the password
-        #ret, frame = cv2.VideoCapture('http://' + self.access_dic['webcam_username'] +':' + self.access_dic['webcam_password'] + '@' + self.access_dic['webcam_ip_address'] + '/cgi-bin/mjpeg?stream=1').read()
-        # NetBooter.power_off(1)                       
-        
+            ret, frame = cv2.VideoCapture('http://' + username +':' + password + '@10.54.113.162/cgi-bin/mjpeg?stream=1').read()
+            #station A
+            # NetBooter = NetBooter_Control(mode='telnet',id=self.access_dic['pdu_username'],password=self.access_dic['pdu_password'],ip=self.access_dic['pdu_ip_address'])
+            # NetBooter.power_on(1)
+            # log.info('wait 10 sec while the web camera has focused')
+            # time.sleep(10)
+            # ret, frame = cv2.VideoCapture('http://remotecam02bma:Cam-02-bm-a@164.54.113.137/cgi-bin/mjpeg?stream=1').read()# we should hide the password
+            #ret, frame = cv2.VideoCapture('http://' + self.access_dic['webcam_username'] +':' + self.access_dic['webcam_password'] + '@' + self.access_dic['webcam_ip_address'] + '/cgi-bin/mjpeg?stream=1').read()
+            # NetBooter.power_off(1)
 
-        if ret==True:
+
+            if ret==True:
+                full_file_name = self.epics_pvs['FPFullFileName'].get(as_string=True)
+                with h5py.File(full_file_name,'r+') as fid:
+                    fid.create_dataset('exchange/web_camera_frame', data=frame)
+                log.info('The frame was added')
+            else:
+                log.warning('The frame was not added')
+        except:
+            log.error('Failed to add the web camera frame to the scan file')
+            traceback.print_exc(file=sys.stdout)
+
+        try:
+            # Copy raw data to data analysis computer
+            log.info('Automatic data trasfer to data analysis computer is enabled.')
             full_file_name = self.epics_pvs['FPFullFileName'].get(as_string=True)
-            with h5py.File(full_file_name,'r+') as fid:
-                fid.create_dataset('exchange/web_camera_frame', data=frame)
-            log.info('The frame was added')
-        else:
-            log.warning('The frame was not added')
-        
-        # Copy raw data to data analysis computer    
-        log.info('Automatic data trasfer to data analysis computer is enabled.')
-        full_file_name = self.epics_pvs['FPFullFileName'].get(as_string=True)
-        remote_analysis_dir = self.epics_pvs['RemoteAnalysisDir'].get(as_string=True)
-        copy_to_analysis_dir = self.epics_pvs['CopyToAnalysisDir'].get()
-        if copy_to_analysis_dir == 1:
-            log.info('Using FDT')
-            dm.fdt_scp(full_file_name, remote_analysis_dir, Path(self.epics_pvs['DetectorTopDir'].get()))
-            self.epics_pvs['ScanStatus'].put('fdt file transfer complete')
-        elif copy_to_analysis_dir == 2:
-            log.info('Using scp')
-            dm.scp(full_file_name, remote_analysis_dir)
-            self.epics_pvs['ScanStatus'].put('scp file transfer complete')
-        else:
-            log.warning('Automatic data trasfer to data analysis computer is disabled.')
-        
+            remote_analysis_dir = self.epics_pvs['RemoteAnalysisDir'].get(as_string=True)
+            copy_to_analysis_dir = self.epics_pvs['CopyToAnalysisDir'].get()
+            if copy_to_analysis_dir == 1:
+                log.info('Using FDT')
+                dm.fdt_scp(full_file_name, remote_analysis_dir, Path(self.epics_pvs['DetectorTopDir'].get()))
+                self.epics_pvs['ScanStatus'].put('fdt file transfer complete')
+            elif copy_to_analysis_dir == 2:
+                log.info('Using scp')
+                dm.scp(full_file_name, remote_analysis_dir)
+                self.epics_pvs['ScanStatus'].put('scp file transfer complete')
+            else:
+                log.warning('Automatic data trasfer to data analysis computer is disabled.')
+        except:
+            log.error('Failed to transfer the scan file to the data analysis computer')
+            traceback.print_exc(file=sys.stdout)
+
         # Call the base class method
         super().end_scan()
         
