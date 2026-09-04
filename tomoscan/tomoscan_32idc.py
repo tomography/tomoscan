@@ -412,12 +412,124 @@ class TomoScan32IDC(TomoScanPSO):
         # Open the front-end shutter
         self.open_frontend_shutter()
 
+    def flush_file_plugin(self, stall_timeout=60.0, idle_stall_timeout=10.0,
+                          poll_interval=0.5, report_interval=5.0):
+        """Waits for the HDF5 file plugin to write out everything it has queued.
+
+        The camera can deliver frames faster than the disk absorbs them.  ADCore
+        takes up the difference in the file plugin's input queue, so when a scan
+        ends the plugin can still be thousands of frames behind.  Writing
+        ``Capture = Done`` at that moment reaches ``NDPluginFile::doCapture(0)``,
+        which closes the file straight away; the queued frames are then popped with
+        capture off, dropped, and never written.  They are not counted in
+        ``DroppedArrays`` either, so the loss leaves no trace beyond a short file.
+
+        This method waits for the backlog to drain first.  It waits on *progress*
+        rather than on the target count: as long as ``NumCaptured_RBV`` keeps
+        advancing it keeps waiting, and it gives up only once the count has not
+        moved for ``stall_timeout`` seconds.  Waiting for
+        ``NumCaptured == NumCapture`` instead would hang forever whenever a frame
+        was genuinely lost upstream -- a missed trigger, a dropped array -- since
+        the target would never be reached.
+
+        How long it waits without progress depends on the camera.  While
+        ``CamAcquireBusy`` is still set the full ``stall_timeout`` applies, since a
+        busy disk can legitimately pause for a long time and frames may still be
+        arriving.  Once the camera has stopped, no further frames can reach the
+        queue, so ``idle_stall_timeout`` is enough to confirm the backlog is
+        drained.  That is the common case whenever a trigger is missed at the end
+        of a scan, and it removes most of the dead time.
+
+        The plugin closes the file itself once it has written ``NumCapture``
+        frames, so in the normal case this returns as soon as that happens and the
+        ``Capture = Done`` that follows is a no-op.
+
+        On an aborted scan ``abort_scan()`` has already stopped the plugin, so this
+        returns immediately and an abort still discards the backlog as before.
+
+        Parameters
+        ----------
+        stall_timeout : float
+            Seconds without progress before giving up and closing the file anyway,
+            used while the camera is still acquiring.
+        idle_stall_timeout : float
+            Shorter no-progress timeout used once the camera has stopped, when no
+            further frames can arrive.
+        poll_interval : float
+            Seconds between polls of ``NumCaptured_RBV``.
+        report_interval : float
+            Seconds between progress messages while draining.
+        """
+        num_capture = self.epics_pvs['FPNumCapture'].get()
+        num_captured = self.epics_pvs['FPNumCaptured'].get()
+        if num_captured is None:
+            log.error('flush_file_plugin: NumCaptured_RBV is not readable, not waiting')
+            return
+
+        if self.epics_pvs['FPCaptureRBV'].get() == 0:
+            log.info('file plugin already finished, %s frames written', num_captured)
+            return
+
+        self.epics_pvs['ScanStatus'].put('Flushing file plugin')
+        start_time = time.time()
+        last_count = num_captured
+        last_progress_time = start_time
+        last_report_time = start_time
+
+        while True:
+            # The plugin closes the file on its own once NumCapture is reached
+            if self.epics_pvs['FPCaptureRBV'].get() == 0:
+                break
+
+            num_captured = self.epics_pvs['FPNumCaptured'].get()
+            if num_captured is None:
+                num_captured = last_count
+            now = time.time()
+
+            if num_captured > last_count:
+                last_count = num_captured
+                last_progress_time = now
+            else:
+                # Nothing more can arrive once the camera has stopped, so a short
+                # quiet period is enough to call the queue drained.  If the
+                # readback is unavailable, assume it is still running and keep the
+                # conservative timeout.
+                if self.epics_pvs['CamAcquireBusy'].get() == 0:
+                    timeout, camera_state = idle_stall_timeout, 'stopped'
+                else:
+                    timeout, camera_state = stall_timeout, 'acquiring'
+                if now - last_progress_time >= timeout:
+                    log.error('file plugin stalled at %s/%s frames for %.0f s '
+                              'with the camera %s, closing the file anyway',
+                              num_captured, num_capture, timeout, camera_state)
+                    break
+
+            if now - last_report_time >= report_interval:
+                log.info('flushing file plugin: %s/%s', num_captured, num_capture)
+                self.epics_pvs['ImagesSaved'].put(str(num_captured) + '/' + str(num_capture))
+                last_report_time = now
+
+            time.sleep(poll_interval)
+
+        elapsed = time.time() - start_time
+        num_captured = self.epics_pvs['FPNumCaptured'].get()
+        if num_captured is None:
+            num_captured = last_count
+        self.epics_pvs['ImagesSaved'].put(str(num_captured) + '/' + str(num_capture))
+        log.info('file plugin flushed %s/%s frames in %.1f s',
+                 num_captured, num_capture, elapsed)
+        if num_capture is not None and num_captured < num_capture:
+            log.warning('file plugin wrote %s of %s frames, %s frames were not saved',
+                        num_captured, num_capture, num_capture - num_captured)
+
     def end_scan(self):
         """Performs the operations needed at the very end of a scan.
 
         This does the following:
 
         - Resets the rotation position by mod 360.
+
+        - Waits for the file plugin to write out its queued frames.
 
         - Stops the file plugin.
 
@@ -439,6 +551,9 @@ class TomoScan32IDC(TomoScanPSO):
             self.epics_pvs['RotationSet'].put('Set', wait=True)
             self.epics_pvs['Rotation'].put(current_angle, wait=True)
             self.epics_pvs['RotationSet'].put('Use', wait=True)
+
+        # Let the file plugin write out its backlog before stopping it
+        self.flush_file_plugin()
 
         # Stop the file plugin
         self.epics_pvs['FPCapture'].put('Done')
@@ -582,9 +697,85 @@ class TomoScan32IDC(TomoScanPSO):
                     if len(dark_ids) != total_dark_fields:
                         log.warning('There are %d missing dark field frames',
                                     total_dark_fields - len(dark_ids))
+
+                    if len(proj_ids) > 0:
+                        try:
+                            self.check_ignored_triggers(f, proj_ids)
+                        except Exception:
+                            log.warning('The ignored trigger check did not run')
+                            traceback.print_exc(file=sys.stdout)
         except Exception:
             log.error('Add theta: Failed accessing: %s', full_file_name)
             traceback.print_exc(file=sys.stdout)
+
+    def check_ignored_triggers(self, f, proj_ids):
+        """Warn if the camera ignored PSO triggers during the projection scan.
+
+        An ignored trigger starts no exposure, so nothing counts it: the file
+        plugin reports no dropped array and, with ``UniqueIdMode`` = *Camera*,
+        the camera's own frame numbers stay contiguous across the loss.  The
+        angles in :meth:`add_theta` are assigned positionally, so every
+        projection after an ignored trigger carries an angle one rotation step
+        too small, and the error accumulates with each further loss.  Nothing
+        else in the file records this, which is why it is worth a check.
+
+        The only local signature is the arrival time: k ignored triggers between
+        two frames stretch that interval to (k+1) frame periods.  Test interval
+        by interval rather than against a fitted period -- the period estimate
+        is off by enough that the residual drifts a whole frame over a few
+        thousand projections and invents losses that never happened.
+
+        A stretched interval whose unique ids are *not* contiguous is a
+        different and harmless defect: the frame was exposed but overwritten in
+        the PVCAM circular buffer before the driver read it.  That leaves a gap
+        in the ids, which the positional indexing closes correctly, so it is
+        reported but not counted against the angles.
+        """
+        location = f['/defaults/HDF5FrameLocation'][:]
+        is_projection = location == b'/exchange/data'
+        if '/defaults/NDArrayEpicsTSSec' not in f:
+            log.warning('No frame timestamps in the file, '
+                        'cannot check for ignored triggers')
+            return
+        sec = f['/defaults/NDArrayEpicsTSSec'][:][is_projection].astype('f8')
+        nsec = f['/defaults/NDArrayEpicsTSnSec'][:][is_projection].astype('f8')
+        arrival = sec + nsec * 1e-9
+        if len(arrival) < 3:
+            return
+
+        interval = np.diff(arrival)
+        period = np.median(interval)
+        stretched = np.where(interval > 1.5 * period)[0]
+        if len(stretched) == 0:
+            return
+
+        step = abs(self.theta[1] - self.theta[0]) if len(self.theta) > 1 else 0.0
+        ignored = 0
+        first_ignored = None
+        for i in stretched:
+            missing = int(round(interval[i] / period)) - 1
+            if int(proj_ids[i + 1]) - int(proj_ids[i]) > 1:
+                log.warning('Projection %d was lost after exposure '
+                            '(unique id %d -> %d); its angle is absent but the '
+                            'remaining angles are correct',
+                            i + 2, proj_ids[i], proj_ids[i + 1])
+                continue
+            if first_ignored is None:
+                first_ignored = i
+            ignored += missing
+            log.error('The camera ignored %d trigger(s) after projection %d '
+                      '(unique id %d, %.2f s into the scan, theta %.4f)',
+                      missing, i + 1, proj_ids[i], arrival[i] - arrival[0],
+                      self.theta[i])
+
+        if ignored == 0:
+            return
+
+        log.error('*** %d PSO trigger(s) ignored: projections %d to %d are '
+                  'labelled with an angle up to %.4f degrees too small ***',
+                  ignored, first_ignored + 2, len(proj_ids), ignored * step)
+        log.error('*** any "Missed theta" list above is positional and does '
+                  'NOT show where the frames were lost ***')
 
     def wait_pv(self, epics_pv, wait_val, timeout=-1):
         """Wait on a pv to be a value until max_timeout (default forever)"""
