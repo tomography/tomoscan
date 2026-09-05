@@ -416,6 +416,54 @@ class TomoScan32IDC(TomoScanPSO):
         # Open the front-end shutter
         self.open_frontend_shutter()
 
+    def queue_pv(self, name):
+        """Returns the file plugin queue PV ``name``, creating it if necessary.
+
+        ``FPQueueFree`` and ``FPQueueSize`` are registered in ``reinit_camera()``,
+        which only runs when mctOptics changes ``CameraSelect``.  A server started
+        and left on one camera therefore never runs it, and ``epics_pvs`` is then
+        the base class's -- which defines ``FPNumCaptured`` and ``FPCaptureRBV``
+        but neither queue PV.  Indexing the dictionary directly for them raised
+        ``KeyError`` inside ``end_scan()``, killing the ``fly_scan`` thread before
+        ``add_theta()`` ran and leaving a complete 60000-projection dataset with
+        no ``exchange/theta``.  Worse, the dead thread left the server unable to
+        start another scan at all.
+
+        So resolve them here instead of trusting registration.  The prefix comes
+        off an FP PV the base class always provides, which keeps this correct if
+        the file plugin has been repointed at another camera.  A failure to
+        resolve returns ``None`` and the caller treats that exactly like an
+        unreadable readback -- the flush falls back to the progress/stall path,
+        which is slower but always safe.
+        """
+        pv = self.epics_pvs.get(name)
+        if pv is not None:
+            return pv
+        # Remember a failure as well as a success.  This is called once per PV on
+        # every poll of a loop that can run for a minute, so an un-cached failure
+        # would repeat its warning several hundred times per scan.
+        if getattr(self, 'queue_pv_unresolved', False):
+            return None
+        suffix = 'NumCaptured_RBV'
+        try:
+            anchor = self.epics_pvs['FPNumCaptured'].pvname
+        except (KeyError, AttributeError):
+            self.queue_pv_unresolved = True
+            return None
+        # Only trust the anchor if it really is the PV we think it is.  Slicing a
+        # fixed length off a name that does not end that way yields a plausible
+        # looking prefix pointing at nothing, and a PV that never connects reads
+        # as None forever -- a silent permanent fallback rather than a clean one.
+        if not isinstance(anchor, str) or not anchor.endswith(suffix):
+            log.warning('cannot derive the file plugin prefix from %r, '
+                        'flushing without the queue readbacks', anchor)
+            self.queue_pv_unresolved = True
+            return None
+        pv = PV(anchor[:-len(suffix)] + name[len('FP'):])
+        self.epics_pvs[name] = pv
+        self.control_pvs[name] = pv
+        return pv
+
     def flush_file_plugin(self, stall_timeout=60.0, idle_stall_timeout=10.0,
                           poll_interval=0.5, report_interval=5.0,
                           settle_time=1.0):
@@ -543,8 +591,10 @@ class TomoScan32IDC(TomoScanPSO):
             # lose the last frame, the very failure this method exists to
             # prevent.  A stopped camera makes that certain, so settle_time is
             # enough; a camera still reporting busy earns the longer wait.
-            queue_free = self.epics_pvs['FPQueueFree'].get()
-            queue_size = self.epics_pvs['FPQueueSize'].get()
+            free_pv = self.queue_pv('FPQueueFree')
+            size_pv = self.queue_pv('FPQueueSize')
+            queue_free = free_pv.get() if free_pv is not None else None
+            queue_size = size_pv.get() if size_pv is not None else None
             if (queue_free is not None and queue_size is not None
                     and queue_free >= queue_size):
                 settle = (settle_time
@@ -636,8 +686,20 @@ class TomoScan32IDC(TomoScanPSO):
             self.epics_pvs['Rotation'].put(current_angle, wait=True)
             self.epics_pvs['RotationSet'].put('Use', wait=True)
 
-        # Let the file plugin write out its backlog before stopping it
-        self.flush_file_plugin()
+        # Let the file plugin write out its backlog before stopping it.
+        #
+        # Never let this abort end_scan().  A KeyError in here once killed the
+        # fly_scan thread outright, so add_theta() never ran and a finished
+        # 60000-projection dataset was written without exchange/theta -- and the
+        # half-finished scan left the server unable to start the next one.  The
+        # flush is an optimisation: everything after it is not.  Closing the file
+        # without the flush risks the tail frames; skipping add_theta() and
+        # super().end_scan() loses the angles and leaves the stage where it
+        # stopped.  Pay the smaller price.
+        try:
+            self.flush_file_plugin()
+        except Exception:
+            log.exception('flush_file_plugin failed -- closing the file anyway')
 
         # Stop the file plugin
         self.epics_pvs['FPCapture'].put('Done')
