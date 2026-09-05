@@ -197,6 +197,10 @@ class TomoScan32IDC(TomoScanPSO):
             self.control_pvs['FPNumCaptured']     = PV(prefix + 'NumCaptured_RBV')
             self.control_pvs['FPCapture']         = PV(prefix + 'Capture')
             self.control_pvs['FPCaptureRBV']      = PV(prefix + 'Capture_RBV')
+            # Used by flush_file_plugin() to tell "the backlog is drained" from
+            # "the plugin is still behind", which a frame count cannot do.
+            self.control_pvs['FPQueueFree']       = PV(prefix + 'QueueFree')
+            self.control_pvs['FPQueueSize']       = PV(prefix + 'QueueSize')
             self.control_pvs['FPFilePath']        = PV(prefix + 'FilePath')
             self.control_pvs['FPFilePathRBV']     = PV(prefix + 'FilePath_RBV')
             self.control_pvs['FPFilePathExists']  = PV(prefix + 'FilePathExists_RBV')
@@ -413,7 +417,8 @@ class TomoScan32IDC(TomoScanPSO):
         self.open_frontend_shutter()
 
     def flush_file_plugin(self, stall_timeout=60.0, idle_stall_timeout=10.0,
-                          poll_interval=0.5, report_interval=5.0):
+                          poll_interval=0.5, report_interval=5.0,
+                          settle_time=1.0):
         """Waits for the HDF5 file plugin to write out everything it has queued.
 
         The camera can deliver frames faster than the disk absorbs them.  ADCore
@@ -424,13 +429,28 @@ class TomoScan32IDC(TomoScanPSO):
         capture off, dropped, and never written.  They are not counted in
         ``DroppedArrays`` either, so the loss leaves no trace beyond a short file.
 
-        This method waits for the backlog to drain first.  It waits on *progress*
-        rather than on the target count: as long as ``NumCaptured_RBV`` keeps
-        advancing it keeps waiting, and it gives up only once the count has not
-        moved for ``stall_timeout`` seconds.  Waiting for
-        ``NumCaptured == NumCapture`` instead would hang forever whenever a frame
-        was genuinely lost upstream -- a missed trigger, a dropped array -- since
-        the target would never be reached.
+        This method waits for the backlog to drain first.  The condition it waits
+        for is that the queue is *empty* while the camera is stopped
+        (``QueueFree == QueueSize`` and ``CamAcquireBusy == 0``): nothing is
+        pending and nothing more can arrive, so the flush is genuinely finished.
+        That is the only signal that is true regardless of how many frames the
+        scan actually produced.
+
+        Waiting for ``NumCaptured == NumCapture`` instead cannot work here.  The
+        Kinetix ignores a few PSO triggers in every long acquisition, and an
+        ignored trigger means the frame was never exposed -- so the target is
+        short by exactly that many and is never reached, no matter how long the
+        wait.  Before the queue test this method could only ever exit through the
+        stall timeout, burning ``stall_timeout`` seconds of dead waiting at the
+        end of every single scan and then reporting frames as "not saved" when in
+        fact nothing had been dropped.  That false alarm is the expensive part:
+        this warning exists to catch genuine truncation, and one that fires on
+        every scan is one nobody reads.
+
+        Progress is still tracked as the fallback, for the case where the queue
+        readbacks are unavailable or the plugin wedges with frames still in hand:
+        as long as ``NumCaptured_RBV`` keeps advancing it keeps waiting, and it
+        gives up once the count has not moved for ``stall_timeout`` seconds.
 
         How long it waits without progress depends on the camera.  While
         ``CamAcquireBusy`` is still set the full ``stall_timeout`` applies, since a
@@ -459,6 +479,9 @@ class TomoScan32IDC(TomoScanPSO):
             Seconds between polls of ``NumCaptured_RBV``.
         report_interval : float
             Seconds between progress messages while draining.
+        settle_time : float
+            Seconds the queue must stay empty, with the written count unchanged,
+            before the flush is called finished.
         """
         num_capture = self.epics_pvs['FPNumCapture'].get()
         num_captured = self.epics_pvs['FPNumCaptured'].get()
@@ -476,6 +499,9 @@ class TomoScan32IDC(TomoScanPSO):
         last_progress_time = start_time
         last_report_time = start_time
 
+        drained = False
+        empty_since = None
+        empty_count = None
         while True:
             # The plugin closes the file on its own once NumCapture is reached
             if self.epics_pvs['FPCaptureRBV'].get() == 0:
@@ -485,6 +511,27 @@ class TomoScan32IDC(TomoScanPSO):
             if num_captured is None:
                 num_captured = last_count
             now = time.time()
+
+            # An empty queue with the camera stopped means everything that was
+            # ever going to arrive has been written.  This is the normal exit.
+            # The queue reads empty the moment the plugin pops the last array,
+            # which is before that frame is written, so require the condition to
+            # hold with the count unchanged for settle_time first -- otherwise the
+            # Capture = Done that follows could close the file mid-write and lose
+            # the very last frame, which is the failure this method exists to
+            # prevent.
+            queue_free = self.epics_pvs['FPQueueFree'].get()
+            queue_size = self.epics_pvs['FPQueueSize'].get()
+            if (queue_free is not None and queue_size is not None
+                    and queue_free >= queue_size
+                    and self.epics_pvs['CamAcquireBusy'].get() == 0):
+                if empty_since is None or num_captured != empty_count:
+                    empty_since, empty_count = now, num_captured
+                elif now - empty_since >= settle_time:
+                    drained = True
+                    break
+            else:
+                empty_since = None
 
             if num_captured > last_count:
                 last_count = num_captured
@@ -519,8 +566,20 @@ class TomoScan32IDC(TomoScanPSO):
         log.info('file plugin flushed %s/%s frames in %.1f s',
                  num_captured, num_capture, elapsed)
         if num_capture is not None and num_captured < num_capture:
-            log.warning('file plugin wrote %s of %s frames, %s frames were not saved',
-                        num_captured, num_capture, num_capture - num_captured)
+            short = num_capture - num_captured
+            if drained:
+                # The queue emptied with the camera stopped, so every frame that
+                # existed was written.  A short count here means the camera never
+                # produced those frames -- ignored PSO triggers, which
+                # check_ignored_triggers() locates precisely -- not that the file
+                # plugin lost them.  Saying "not saved" would be wrong.
+                log.info('file plugin wrote %s of the %s frames requested; the '
+                         'queue drained completely, so the missing %s were never '
+                         'produced by the camera rather than lost on the way to '
+                         'disk', num_captured, num_capture, short)
+            else:
+                log.warning('file plugin wrote %s of %s frames, %s frames were '
+                            'not saved', num_captured, num_capture, short)
 
     def end_scan(self):
         """Performs the operations needed at the very end of a scan.
@@ -723,7 +782,10 @@ class TomoScan32IDC(TomoScanPSO):
         two frames stretch that interval to (k+1) frame periods.  Test interval
         by interval rather than against a fitted period -- the period estimate
         is off by enough that the residual drifts a whole frame over a few
-        thousand projections and invents losses that never happened.
+        thousand projections and invents losses that never happened.  Require
+        the stretch to be close to a whole number of periods as well: a frame
+        that merely arrives late stretches an interval by up to 1.8x with
+        nothing lost, and a long scan has many of those.
 
         A stretched interval whose unique ids are *not* contiguous is a
         different and harmless defect: the frame was exposed but overwritten in
@@ -745,7 +807,22 @@ class TomoScan32IDC(TomoScanPSO):
 
         interval = np.diff(arrival)
         period = np.median(interval)
-        stretched = np.where(interval > 1.5 * period)[0]
+        ratio = interval / period
+
+        # An ignored trigger leaves a whole empty frame period behind, so a real
+        # loss lands within a few percent of an integer multiple.  A frame that
+        # merely arrives late does not.  Across seven 12000 to 60000 projection
+        # runs the two populations separate cleanly with nothing in between:
+        # 127 late arrivals spread over 1.20 to 1.76 periods, against 15 losses
+        # between 1.94 and 2.01.  Thresholding at 1.5, as the first version did,
+        # counts the tail of the late arrivals as losses -- harmless on a 12000
+        # projection scan, which is too short to produce any that large, but it
+        # over-reported a 60000 projection run two to one.
+        stretched = np.where(ratio > 1.8)[0]
+        late = int(((ratio > 1.2) & (ratio <= 1.8)).sum())
+        if late:
+            log.info('%d projection(s) arrived up to 1.8 frame periods late; '
+                     'no trigger was lost', late)
         if len(stretched) == 0:
             return
 
@@ -753,7 +830,14 @@ class TomoScan32IDC(TomoScanPSO):
         ignored = 0
         first_ignored = None
         for i in stretched:
-            missing = int(round(interval[i] / period)) - 1
+            multiple = int(round(ratio[i]))
+            if abs(ratio[i] - multiple) > 0.25:
+                log.warning('The interval after projection %d is %.2f frame '
+                            'periods, which is not a whole number of frames; '
+                            'not counting it as a lost trigger',
+                            i + 1, ratio[i])
+                continue
+            missing = multiple - 1
             if int(proj_ids[i + 1]) - int(proj_ids[i]) > 1:
                 log.warning('Projection %d was lost after exposure '
                             '(unique id %d -> %d); its angle is absent but the '
