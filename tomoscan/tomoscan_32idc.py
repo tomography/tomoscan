@@ -738,18 +738,44 @@ class TomoScan32IDC(TomoScanPSO):
                     dark_ids = unique_ids[hdf_location[:] == b'/exchange/data_dark']
 
                     # create theta dataset in hdf5 file
+                    corrected = False
+                    trigger_ids = proj_ids - proj_ids[0]
                     if len(proj_ids) > 0:
+                        # Positional indexing credits projection i to trigger i,
+                        # which an ignored trigger makes wrong for every frame
+                        # after it.  Work out which trigger actually produced
+                        # each frame so the angles on disk are right and nobody
+                        # has to repair them after the scan.  A failure here must
+                        # not cost the theta dataset, so fall back rather than
+                        # raise.
+                        try:
+                            fixed = self.corrected_trigger_index(f, proj_ids)
+                            if fixed is not None:
+                                corrected = True
+                                trigger_ids = fixed
+                        except Exception:
+                            log.warning('Could not correct the angles for '
+                                        'ignored triggers; writing them '
+                                        'positionally instead')
+                            traceback.print_exc(file=sys.stdout)
                         theta_ds = f.create_dataset('/exchange/theta', (len(proj_ids),))
-                        theta_ds[:] = self.theta[proj_ids - proj_ids[0]]
+                        theta_ds[:] = (self.theta_at(trigger_ids) if corrected
+                                       else self.theta[trigger_ids])
 
                     # warnings that data is missing
                     if len(proj_ids) != len(self.theta):
                         log.warning('There are %d missing data frames',
                                     len(self.theta) - len(proj_ids))
-                        missed_ids = [ele for ele in range(len(self.theta))
-                                      if ele not in proj_ids - proj_ids[0]]
+                        # With corrected indices this names the angles that are
+                        # genuinely absent.  Positionally it can only name the
+                        # last few, wherever the frames were really lost.
+                        present = set(int(i) for i in trigger_ids)
+                        missed_ids = [i for i in range(len(self.theta))
+                                      if i not in present]
                         missed_theta = self.theta[missed_ids]
-                        log.warning('Missed theta: %s', list(missed_theta))
+                        log.warning('Missed theta%s: %s',
+                                    '' if corrected else ' (positional, NOT where '
+                                    'the frames were lost)', list(missed_theta))
                     if len(flat_ids) != total_flat_fields:
                         log.warning('There are %d missing flat field frames',
                                     total_flat_fields - len(flat_ids))
@@ -759,7 +785,7 @@ class TomoScan32IDC(TomoScanPSO):
 
                     if len(proj_ids) > 0:
                         try:
-                            self.check_ignored_triggers(f, proj_ids)
+                            self.check_ignored_triggers(f, proj_ids, corrected)
                         except Exception:
                             log.warning('The ignored trigger check did not run')
                             traceback.print_exc(file=sys.stdout)
@@ -767,7 +793,126 @@ class TomoScan32IDC(TomoScanPSO):
             log.error('Add theta: Failed accessing: %s', full_file_name)
             traceback.print_exc(file=sys.stdout)
 
-    def check_ignored_triggers(self, f, proj_ids):
+    def ignored_trigger_events(self, f, proj_ids):
+        """Locate the PSO triggers the camera ignored during the projection scan.
+
+        This is the single detector behind both the angle correction in
+        :meth:`add_theta` and the warnings in :meth:`check_ignored_triggers`, so
+        that what is written to the file and what is written to the log cannot
+        disagree.
+
+        Returns ``None`` if the question cannot be answered -- no frame
+        timestamps, too few projections, or a degenerate frame period -- which
+        the callers treat as "assume nothing was lost".  Otherwise a dict:
+
+        ``ignored``
+            ``(i, missing)`` pairs: ``missing`` triggers were ignored between
+            projection *i* and projection *i+1* (0-based).  These are the ones
+            that corrupt the angles.
+        ``post_exposure``
+            indices where the unique ids jumped, so the frame was exposed and
+            then lost in the PVCAM buffer.  Harmless for the angles: the id
+            still counted, so index arithmetic based on it stays correct.
+        ``ragged``
+            stretched intervals that are not close to a whole number of frame
+            periods, and so are not a lost trigger at all.
+        ``late``
+            count of intervals stretched between 1.2 and 1.8 periods -- frames
+            that merely arrived late, with nothing lost.
+        """
+        location = f['/defaults/HDF5FrameLocation'][:]
+        is_projection = location == b'/exchange/data'
+        if '/defaults/NDArrayEpicsTSSec' not in f:
+            log.warning('No frame timestamps in the file, '
+                        'cannot check for ignored triggers')
+            return None
+        sec = f['/defaults/NDArrayEpicsTSSec'][:][is_projection].astype('f8')
+        nsec = f['/defaults/NDArrayEpicsTSnSec'][:][is_projection].astype('f8')
+        arrival = sec + nsec * 1e-9
+        if len(arrival) < 3 or len(arrival) != len(proj_ids):
+            return None
+
+        interval = np.diff(arrival)
+        period = np.median(interval)
+        if not period > 0:
+            return None
+        ratio = interval / period
+
+        # An ignored trigger leaves a whole empty frame period behind, so a real
+        # loss lands within a few percent of an integer multiple.  A frame that
+        # merely arrives late does not.  Across seven 12000 to 60000 projection
+        # runs the two populations separate cleanly with nothing in between:
+        # 127 late arrivals spread over 1.20 to 1.76 periods, against 15 losses
+        # between 1.94 and 2.01.  Thresholding at 1.5, as the first version did,
+        # counts the tail of the late arrivals as losses -- harmless on a 12000
+        # projection scan, which is too short to produce any that large, but it
+        # over-reported a 60000 projection run two to one.
+        ignored, post_exposure, ragged = [], [], []
+        for i in np.where(ratio > 1.8)[0]:
+            multiple = int(round(ratio[i]))
+            if abs(ratio[i] - multiple) > 0.25:
+                ragged.append(int(i))
+            elif int(proj_ids[i + 1]) - int(proj_ids[i]) > 1:
+                post_exposure.append(int(i))
+            else:
+                ignored.append((int(i), multiple - 1))
+
+        return {'arrival': arrival, 'ratio': ratio, 'ignored': ignored,
+                'post_exposure': post_exposure, 'ragged': ragged,
+                'late': int(((ratio > 1.2) & (ratio <= 1.8)).sum())}
+
+    def corrected_trigger_index(self, f, proj_ids):
+        """Return the PSO trigger that produced each saved projection.
+
+        :meth:`add_theta` would otherwise assign angles positionally, assuming
+        projection *i* came from trigger *i*.  An ignored trigger breaks that
+        assumption permanently: no exposure starts, so the camera's unique id
+        does not advance either, and every later projection is credited to a
+        trigger one earlier than the one that actually produced it.
+
+        A frame lost *after* exposure is the opposite case and needs no
+        correction -- the id did advance, so id arithmetic already points at the
+        right trigger.  That is why the two are separated before the shift is
+        applied.
+
+        Returns ``None`` when the losses cannot be located, so the caller can
+        fall back to the positional behaviour rather than guess.
+        """
+        events = self.ignored_trigger_events(f, proj_ids)
+        if events is None:
+            return None
+        index = np.asarray(proj_ids, dtype=np.int64) - int(proj_ids[0])
+        for i, missing in events['ignored']:
+            index[i + 1:] += missing
+        return index
+
+    def theta_at(self, trigger_ids):
+        """Angles for the given PSO trigger indices.
+
+        The PSO is programmed with ``counts_per_step * (num_angles + 1)``, so it
+        fires one pulse more than there are requested angles and the last
+        projection of a clean scan comes from a trigger with no angle behind it.
+        Positional indexing never noticed, because it could not produce an index
+        that large; a corrected index can.  Extrapolate those at the scan's own
+        rotation step rather than clipping them onto the final angle, which
+        would silently duplicate it.
+        """
+        theta = np.asarray(self.theta, dtype='f8')
+        trigger_ids = np.asarray(trigger_ids, dtype=np.int64)
+        out = np.empty(len(trigger_ids), dtype='f8')
+        inside = trigger_ids < len(theta)
+        out[inside] = theta[trigger_ids[inside]]
+        if not inside.all():
+            step = ((theta[-1] - theta[0]) / (len(theta) - 1)
+                    if len(theta) > 1 else 0.0)
+            out[~inside] = theta[0] + trigger_ids[~inside] * step
+            log.info('%d projection(s) came from PSO pulses beyond the %d '
+                     'requested angles; their angles were extrapolated at '
+                     '%.6f degrees per step', int((~inside).sum()), len(theta),
+                     step)
+        return out
+
+    def check_ignored_triggers(self, f, proj_ids, corrected=False):
         """Warn if the camera ignored PSO triggers during the projection scan.
 
         An ignored trigger starts no exposure, so nothing counts it: the file
@@ -792,74 +937,59 @@ class TomoScan32IDC(TomoScanPSO):
         the PVCAM circular buffer before the driver read it.  That leaves a gap
         in the ids, which the positional indexing closes correctly, so it is
         reported but not counted against the angles.
+
+        Parameters
+        ----------
+        corrected : bool
+            Whether :meth:`add_theta` managed to correct the angles for these
+            losses.  Only the wording changes: the losses are worth reporting
+            either way, since they are still missing projections, but calling
+            corrected angles wrong would send someone chasing a fault that is
+            no longer in the file.
         """
-        location = f['/defaults/HDF5FrameLocation'][:]
-        is_projection = location == b'/exchange/data'
-        if '/defaults/NDArrayEpicsTSSec' not in f:
-            log.warning('No frame timestamps in the file, '
-                        'cannot check for ignored triggers')
+        events = self.ignored_trigger_events(f, proj_ids)
+        if events is None:
             return
-        sec = f['/defaults/NDArrayEpicsTSSec'][:][is_projection].astype('f8')
-        nsec = f['/defaults/NDArrayEpicsTSnSec'][:][is_projection].astype('f8')
-        arrival = sec + nsec * 1e-9
-        if len(arrival) < 3:
-            return
+        arrival, ratio = events['arrival'], events['ratio']
 
-        interval = np.diff(arrival)
-        period = np.median(interval)
-        ratio = interval / period
-
-        # An ignored trigger leaves a whole empty frame period behind, so a real
-        # loss lands within a few percent of an integer multiple.  A frame that
-        # merely arrives late does not.  Across seven 12000 to 60000 projection
-        # runs the two populations separate cleanly with nothing in between:
-        # 127 late arrivals spread over 1.20 to 1.76 periods, against 15 losses
-        # between 1.94 and 2.01.  Thresholding at 1.5, as the first version did,
-        # counts the tail of the late arrivals as losses -- harmless on a 12000
-        # projection scan, which is too short to produce any that large, but it
-        # over-reported a 60000 projection run two to one.
-        stretched = np.where(ratio > 1.8)[0]
-        late = int(((ratio > 1.2) & (ratio <= 1.8)).sum())
-        if late:
+        if events['late']:
             log.info('%d projection(s) arrived up to 1.8 frame periods late; '
-                     'no trigger was lost', late)
-        if len(stretched) == 0:
+                     'no trigger was lost', events['late'])
+        for i in events['ragged']:
+            log.warning('The interval after projection %d is %.2f frame '
+                        'periods, which is not a whole number of frames; '
+                        'not counting it as a lost trigger', i + 1, ratio[i])
+        for i in events['post_exposure']:
+            log.warning('Projection %d was lost after exposure '
+                        '(unique id %d -> %d); its angle is absent but the '
+                        'remaining angles are correct',
+                        i + 2, proj_ids[i], proj_ids[i + 1])
+
+        if not events['ignored']:
             return
 
         step = abs(self.theta[1] - self.theta[0]) if len(self.theta) > 1 else 0.0
         ignored = 0
-        first_ignored = None
-        for i in stretched:
-            multiple = int(round(ratio[i]))
-            if abs(ratio[i] - multiple) > 0.25:
-                log.warning('The interval after projection %d is %.2f frame '
-                            'periods, which is not a whole number of frames; '
-                            'not counting it as a lost trigger',
-                            i + 1, ratio[i])
-                continue
-            missing = multiple - 1
-            if int(proj_ids[i + 1]) - int(proj_ids[i]) > 1:
-                log.warning('Projection %d was lost after exposure '
-                            '(unique id %d -> %d); its angle is absent but the '
-                            'remaining angles are correct',
-                            i + 2, proj_ids[i], proj_ids[i + 1])
-                continue
-            if first_ignored is None:
-                first_ignored = i
+        for i, missing in events['ignored']:
             ignored += missing
             log.error('The camera ignored %d trigger(s) after projection %d '
                       '(unique id %d, %.2f s into the scan, theta %.4f)',
                       missing, i + 1, proj_ids[i], arrival[i] - arrival[0],
                       self.theta[i])
 
-        if ignored == 0:
-            return
-
-        log.error('*** %d PSO trigger(s) ignored: projections %d to %d are '
-                  'labelled with an angle up to %.4f degrees too small ***',
-                  ignored, first_ignored + 2, len(proj_ids), ignored * step)
-        log.error('*** any "Missed theta" list above is positional and does '
-                  'NOT show where the frames were lost ***')
+        first = events['ignored'][0][0]
+        if corrected:
+            log.error('*** %d PSO trigger(s) ignored: %d projection(s) are '
+                      'missing from the scan, but the angles written to '
+                      'exchange/theta account for them and are correct ***',
+                      ignored, ignored)
+        else:
+            log.error('*** %d PSO trigger(s) ignored AND NOT CORRECTED: '
+                      'projections %d to %d are labelled with an angle up to '
+                      '%.4f degrees too small ***',
+                      ignored, first + 2, len(proj_ids), ignored * step)
+            log.error('*** any "Missed theta" list above is positional and '
+                      'does NOT show where the frames were lost ***')
 
     def wait_pv(self, epics_pv, wait_val, timeout=-1):
         """Wait on a pv to be a value until max_timeout (default forever)"""
