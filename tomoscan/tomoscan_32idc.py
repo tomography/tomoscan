@@ -430,11 +430,20 @@ class TomoScan32IDC(TomoScanPSO):
         ``DroppedArrays`` either, so the loss leaves no trace beyond a short file.
 
         This method waits for the backlog to drain first.  The condition it waits
-        for is that the queue is *empty* while the camera is stopped
-        (``QueueFree == QueueSize`` and ``CamAcquireBusy == 0``): nothing is
-        pending and nothing more can arrive, so the flush is genuinely finished.
+        for is that the queue is *empty* and the written count has stopped moving
+        (``QueueFree == QueueSize``, ``NumCaptured_RBV`` unchanged): nothing is
+        pending and nothing more is arriving, so the flush is genuinely finished.
         That is the only signal that is true regardless of how many frames the
         scan actually produced.
+
+        Note that ``CamAcquireBusy == 0`` cannot be part of that test, tempting
+        though it is.  This runs before anything stops the camera, and the camera
+        is normally still armed at this point: it is told to expect ``num_angles``
+        frames, the ignored triggers below mean it never receives them, so it
+        never self-stops and ``wait_camera_done()`` returns through its timeout
+        with ``CamAcquireBusy`` still 1.  Requiring it to be clear would make the
+        queue test unsatisfiable in exactly the case it was written for.  It is
+        used only to choose how long the queue must stay empty.
 
         Waiting for ``NumCaptured == NumCapture`` instead cannot work here.  The
         Kinetix ignores a few PSO triggers in every long acquisition, and an
@@ -457,8 +466,10 @@ class TomoScan32IDC(TomoScanPSO):
         busy disk can legitimately pause for a long time and frames may still be
         arriving.  Once the camera has stopped, no further frames can reach the
         queue, so ``idle_stall_timeout`` is enough to confirm the backlog is
-        drained.  That is the common case whenever a trigger is missed at the end
-        of a scan, and it removes most of the dead time.
+        drained.  The same distinction sets how long an empty queue must stay
+        empty before the flush is called finished: ``settle_time`` with the camera
+        stopped, ``idle_stall_timeout`` while it still reports busy, since then
+        the queue being empty is the only evidence there is.
 
         The plugin closes the file itself once it has written ``NumCapture``
         frames, so in the normal case this returns as soon as that happens and the
@@ -474,14 +485,15 @@ class TomoScan32IDC(TomoScanPSO):
             used while the camera is still acquiring.
         idle_stall_timeout : float
             Shorter no-progress timeout used once the camera has stopped, when no
-            further frames can arrive.
+            further frames can arrive.  Also how long the queue must stay empty
+            while the camera still reports busy.
         poll_interval : float
             Seconds between polls of ``NumCaptured_RBV``.
         report_interval : float
             Seconds between progress messages while draining.
         settle_time : float
             Seconds the queue must stay empty, with the written count unchanged,
-            before the flush is called finished.
+            before the flush is called finished, once the camera has stopped.
         """
         num_capture = self.epics_pvs['FPNumCapture'].get()
         num_captured = self.epics_pvs['FPNumCaptured'].get()
@@ -512,22 +524,35 @@ class TomoScan32IDC(TomoScanPSO):
                 num_captured = last_count
             now = time.time()
 
-            # An empty queue with the camera stopped means everything that was
-            # ever going to arrive has been written.  This is the normal exit.
-            # The queue reads empty the moment the plugin pops the last array,
-            # which is before that frame is written, so require the condition to
-            # hold with the count unchanged for settle_time first -- otherwise the
-            # Capture = Done that follows could close the file mid-write and lose
-            # the very last frame, which is the failure this method exists to
-            # prevent.
+            # An empty queue whose written count has stopped moving means
+            # everything that was ever going to arrive has been written.  This is
+            # the normal exit.
+            #
+            # Do NOT also require CamAcquireBusy == 0 here.  This runs before
+            # anything stops the camera, and on this station the camera is still
+            # armed at that point: it is told to expect num_angles frames, the
+            # ignored PSO triggers mean it never receives them, so it never
+            # self-stops and wait_camera_done() returns through its timeout with
+            # the camera still busy.  Gating on it would make this test
+            # unsatisfiable in exactly the case it was written for.
+            #
+            # The queue also reads empty the moment the plugin pops the last
+            # array, which is before that frame is written, so the condition must
+            # hold with the count unchanged for a settling period -- otherwise
+            # the Capture = Done that follows could close the file mid-write and
+            # lose the last frame, the very failure this method exists to
+            # prevent.  A stopped camera makes that certain, so settle_time is
+            # enough; a camera still reporting busy earns the longer wait.
             queue_free = self.epics_pvs['FPQueueFree'].get()
             queue_size = self.epics_pvs['FPQueueSize'].get()
             if (queue_free is not None and queue_size is not None
-                    and queue_free >= queue_size
-                    and self.epics_pvs['CamAcquireBusy'].get() == 0):
+                    and queue_free >= queue_size):
+                settle = (settle_time
+                          if self.epics_pvs['CamAcquireBusy'].get() == 0
+                          else idle_stall_timeout)
                 if empty_since is None or num_captured != empty_count:
                     empty_since, empty_count = now, num_captured
-                elif now - empty_since >= settle_time:
+                elif now - empty_since >= settle:
                     drained = True
                     break
             else:
