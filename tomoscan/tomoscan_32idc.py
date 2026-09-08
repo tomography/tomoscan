@@ -20,10 +20,33 @@ from epics import PV
 from pathlib import Path
 
 from tomoscan import data_management as dm
+from tomoscan.tomoscan import ScanAbortError, CameraTimeoutError
 from tomoscan.tomoscan_pso import TomoScanPSO
 from tomoscan import log
 
 EPSILON = .001
+
+# Seconds of grace to give the IOC watchdog across a blocking HDF5 section.
+#
+# $(P)$(R)Watchdog is a calcout that decrements itself once a second and drives
+# ServerRunning from whether it is still positive, while
+# TomoScan.reset_watchdog() resets it to 5 every 3 seconds.  That leaves about
+# six seconds between the last reset and the screen declaring the server dead
+# -- and ServerRunning carries ZSV = MAJOR, so it does not merely read
+# "Stopped", it goes into major alarm.
+#
+# h5py holds the GIL for the duration of every HDF5 library call, so opening a
+# 1.2 TB file over NFS, creating a dataset in it and flushing its metadata on
+# close stops *every* Python thread in the server, the watchdog thread
+# included.  It is not that the thread runs late; it is not scheduled at all.
+# Moving the HDF5 work to a worker thread would not help either, because the
+# GIL is process-wide.
+#
+# So the only thing that can be done from here is to tell the IOC in advance
+# that a long silence is expected.  120 s is far more than add_theta() has ever
+# taken and still short enough that a server which really dies inside the
+# section is reported within a couple of minutes.
+WATCHDOG_HOLD_S = 120
 
 CREDENTIALS_FILE_NAME = os.path.join(str(pathlib.Path.home()), '.webcam_credentials')
 
@@ -74,6 +97,19 @@ class TomoScan32IDC(TomoScanPSO):
 
         prefix = self.pv_prefixes['MctOptics']
         self.epics_pvs['ImagePixelSize'] = PV(prefix + 'ImagePixelSize')
+
+        # Rotation motor fields the base class does not define.  Needed by
+        # check_rotation_ready(); see the comments there.
+        rotation_pv_name = self.control_pvs['Rotation'].pvname
+        self.epics_pvs['RotationDHLM'] = PV(rotation_pv_name + '.DHLM')
+        self.epics_pvs['RotationDLLM'] = PV(rotation_pv_name + '.DLLM')
+        self.epics_pvs['RotationHLM']  = PV(rotation_pv_name + '.HLM')
+        self.epics_pvs['RotationLLM']  = PV(rotation_pv_name + '.LLM')
+        self.epics_pvs['RotationLVIO'] = PV(rotation_pv_name + '.LVIO')
+
+        # Set by wait_camera_done() when it works out that the camera is armed
+        # for frames it can never receive, and read by flush_file_plugin().
+        self.triggers_exhausted = False
 
         # Set TomoScan xml files.  These are the mct* files used by the 32-ID
         # Kinetix IOC, not the TomoScan* files used at 2-BM.
@@ -403,6 +439,8 @@ class TomoScan32IDC(TomoScanPSO):
         """
         log.info('begin scan')
 
+        self.triggers_exhausted = False
+
         # Set data directory
         file_path = Path(self.epics_pvs['DetectorTopDir'].get(as_string=True))
         file_path = file_path.joinpath(self.epics_pvs['ExperimentYearMonth'].get(as_string=True) + '-'
@@ -413,8 +451,117 @@ class TomoScan32IDC(TomoScanPSO):
         # Call the base class method
         super().begin_scan()
 
+        # Refuse to start a scan the rotation stage cannot actually perform
+        self.check_rotation_ready()
+
         # Open the front-end shutter
         self.open_frontend_shutter()
+
+    def check_rotation_ready(self):
+        """Verifies that the rotation stage can perform the scan about to start.
+
+        Called from ``begin_scan()`` once ``super().begin_scan()`` has returned,
+        which is the first moment at which both things this checks are known:
+        ``program_PSO()`` has moved the stage to ``rotation_start_new``, and
+        ``compute_positions_PSO()`` has published the taxi positions the fly move
+        will run between.
+
+        Two independent failures are caught:
+
+        1. **The pre-positioning move did not arrive.**  ``program_PSO()`` puts to
+           ``Rotation`` with ``wait=True``, but a completion callback says only
+           that the record finished processing, not that the stage got there.  A
+           refused move, a disabled amplifier or a dead controller link all
+           satisfy the wait and leave the stage where it was.  Comparing the
+           readback against the demand is agnostic to which of those happened.
+
+        2. **The fly move will be refused for violating a soft limit.**  This is
+           the one that cost 24 consecutive empty datasets and 9.5 h of unattended
+           running on 2026-09-06.  ``end_scan()`` returns the stage to zero by
+           redefining the current angle modulo 360 rather than unwinding it, so
+           with finite *dial* limits the dial marches a full turn per scan until
+           the fly move no longer fits.  The motor record then refuses it
+           silently: nothing turns, the PSO never fires, and the only symptom is
+           ``ERROR: Camera timeout`` twenty minutes later with dark and flat
+           fields already written.  Checking the taxi endpoints before the scan
+           turns that into an immediate, named abort.
+
+        Note that check 1 alone would *not* have caught the 2026-09-06 failure --
+        the short pre-positioning move fitted inside the remaining travel and
+        completed normally; it was the 360 deg fly move that did not fit.  The two
+        checks cover different things and both are cheap.
+
+        Raises
+        ------
+        ScanAbortError
+            If the stage is not where it was sent, or if either taxi endpoint
+            lies outside an enforced soft limit.
+        """
+        # program_PSO() is skipped for these, so there is no move to verify and
+        # no taxi position to check.
+        if self.num_angles <= 0 or not self.epics_pvs['ProgramPSO'].get():
+            return
+
+        # 1. Did the pre-positioning move actually arrive?
+        #
+        # The tolerance is deliberately loose: this is looking for a move that
+        # did not happen, which misses by the whole move distance, not for a
+        # settling error.  One rotation step, floored at 0.01 deg (100 encoder
+        # counts at the 0.0001 deg/count resolution of this axis), is tight
+        # enough for that and cannot false-fire on a stage still creeping into
+        # its deadband.
+        rbv = self.epics_pvs['RotationRBV'].get()
+        tolerance = max(0.01, abs(self.rotation_step))
+        if rbv is None or abs(rbv - self.rotation_start_new) > tolerance:
+            lvio = self.epics_pvs['RotationLVIO'].get()
+            log.error('Rotation stage did not reach the scan start position: '
+                      'demanded %s, readback %s (.LVIO = %s)',
+                      self.rotation_start_new, rbv, lvio)
+            if lvio:
+                log.error('.LVIO is set, so the motor record refused the move. '
+                          'Check the soft limits on %s',
+                          self.control_pvs['Rotation'].pvname)
+            raise ScanAbortError
+
+        # 2. Will the fly move be refused for violating a soft limit?
+        #
+        # Replicate the motor record's own rule (motorRecord.cc): an all-zero
+        # *dial* limit pair means limit checking is off, and the .HLM / .LLM
+        # fields then still report stale values that no longer constrain
+        # anything.  32-ID-C runs that way on purpose -- .DHLM = .DLLM = 0 with
+        # .HLM = .LLM = 175 -- so a naive "target within [.LLM, .HLM]" test
+        # would reject every scan on a correctly configured stage.
+        dhlm = self.epics_pvs['RotationDHLM'].get()
+        dllm = self.epics_pvs['RotationDLLM'].get()
+        if dhlm is None or dllm is None or (dhlm == 0 and dllm == 0):
+            return
+
+        hlm = self.epics_pvs['RotationHLM'].get()
+        llm = self.epics_pvs['RotationLLM'].get()
+        if hlm is None or llm is None:
+            return
+
+        start_taxi = self.epics_pvs['PSOStartTaxi'].get()
+        end_taxi   = self.epics_pvs['PSOEndTaxi'].get()
+        span = (abs(end_taxi - start_taxi)
+                if start_taxi is not None and end_taxi is not None else None)
+        for name, target in (('start', start_taxi), ('end', end_taxi)):
+            if target is None:
+                continue
+            if target > hlm or target < llm:
+                log.error('Rotation %s taxi position %.4f is outside the soft '
+                          'limits [%.4f, %.4f]; the motor record would refuse '
+                          'the move and the scan would fail as a camera '
+                          'timeout.', name, target, llm, hlm)
+                log.error('Travel remaining from the current position %.4f deg '
+                          'is [%.4f, %+.4f] and this scan needs %s deg. Set '
+                          '.DHLM = .DLLM = 0 on %s to disable soft-limit '
+                          'checking on this continuously rotating axis.',
+                          rbv, llm - rbv, hlm - rbv,
+                          'an unknown number of' if span is None
+                          else '%.4f' % span,
+                          self.control_pvs['Rotation'].pvname)
+                raise ScanAbortError
 
     def queue_pv(self, name):
         """Returns the file plugin queue PV ``name``, creating it if necessary.
@@ -464,6 +611,133 @@ class TomoScan32IDC(TomoScanPSO):
         self.control_pvs[name] = pv
         return pv
 
+    def wait_camera_done(self, timeout, stall_time=3.0):
+        """Waits for the camera acquisition to complete, or for ``abort_scan()``
+        to be called.
+
+        Identical to the base class version except that it also returns once the
+        camera can no longer be sent a trigger, instead of always waiting out the
+        full timeout.
+
+        The base class exits on ``CamAcquireBusy == 0``.  The Kinetix clears that
+        only after it has delivered all ``NumImages`` frames it was armed for, and
+        on this station it does not always get there: it ignores a PSO trigger
+        every few tens of thousands of frames (``check_ignored_triggers()`` finds
+        them afterwards), so it can finish the fly scan short and then stay armed
+        indefinitely, waiting for frames that were never exposed.
+
+        It takes **two** ignored triggers to reach that state, not one.  The PSO
+        over-provisions by a pulse -- ``num_angles`` angles fire ``num_angles + 1``
+        triggers -- so the first loss is absorbed by the spare and the camera still
+        receives its full count.  Measured 2026-09-06 across five 60000-projection
+        scans: the three that lost one trigger ran 1351.1 s, indistinguishable from
+        clean, while ``val60k_169``, which lost two, ran 1445.1 s.  Of that, 89.7 s
+        of the 90 s margin ``collect_projections()`` allows was spent polling a
+        camera that had already finished, ending in a ``Camera timeout`` reported
+        against an acquisition that ran exactly on schedule.
+
+        Three conditions must hold together, and each one rules out a case the
+        others admit.  The camera must be externally triggered; the rotation stage
+        must have stopped; and no new frame may have arrived for ``stall_time``
+        seconds.  The PSO fires off the rotary encoder, so a stationary stage
+        cannot generate another pulse: from that moment the wait is provably
+        pointless.  A quiet frame counter on its own is not enough, because the
+        counter can pause for other reasons.  A stopped stage on its own is not
+        enough either -- that is also the state in the moments after
+        ``collect_projections()`` issues the fly move and before the stage actually
+        starts, which is why the test also requires that at least one frame has
+        already been collected.  And the counter must still be short of
+        ``NumImages``: a camera holding every frame it was armed for is simply
+        finishing normally, and short-circuiting that is a race, not a diagnosis.
+
+        Restricting it to external triggering leaves the internally triggered dark
+        and flat field collections on the base class behaviour, where the stage is
+        stopped throughout and the test would mean nothing.
+
+        On this exit ``triggers_exhausted`` is set so ``flush_file_plugin()`` knows
+        that nothing more can arrive even though the camera still reports busy, and
+        can use its short settling time instead of the long one it must otherwise
+        assume.  The camera is deliberately left armed: ``set_trigger_mode()``
+        stops it at the end of the scan, and stopping it here as well would make
+        that a redundant stop, which ADKinetix logs as an error.
+
+        Parameters
+        ----------
+        timeout : float
+            The maximum number of seconds to wait before raising a
+            CameraTimeoutError exception.
+        stall_time : float
+            Seconds without a new frame, with the stage stopped, before concluding
+            the acquisition is over.  It only has to outlast the gap between
+            consecutive frames, which is the 22 ms frame period at full speed.
+
+        Raises
+        ------
+        ScanAbortError
+            If ``abort_scan()`` is called
+        CameraTimeoutError
+            If acquisition has not completed within timeout value.
+        """
+        external = (self.epics_pvs['CamTriggerMode'].get(as_string=True)
+                    != 'Internal')
+
+        # The stage stops before the last frame has finished reading out, so the
+        # quiet period has to be longer than one frame or a slow scan would
+        # abandon its final projection.  At 22 ms this changes nothing; it matters
+        # only if someone runs long exposures.  Never let this kill the scan.
+        try:
+            stall_time = max(stall_time, 3.0 * self.compute_frame_time())
+        except Exception:
+            log.exception('could not compute the frame time, using %.1f s',
+                          stall_time)
+
+        start_time = time.time()
+        last_collected = None
+        last_change_time = start_time
+        while True:
+            if self.epics_pvs['CamAcquireBusy'].value == 0:
+                return
+            if not self.scan_is_running:
+                raise ScanAbortError
+            time.sleep(0.2)
+            elapsed_time = self.update_status(start_time)
+
+            if external:
+                collected = self.epics_pvs['CamNumImagesCounter'].value
+                num_images = self.epics_pvs['CamNumImages'].value
+                now = time.time()
+                if collected != last_collected:
+                    last_collected = collected
+                    last_change_time = now
+                # ``collected < num_images`` is what makes this a diagnosis rather
+                # than a race.  Without it the test also fires at the end of a
+                # perfectly normal scan: the counter necessarily stops changing once
+                # the last frame lands, and the camera takes a moment longer to drop
+                # CamAcquireBusy, so the stall looks identical to a lost trigger.
+                # Measured 2026-09-06 -- seven consecutive clean scans all took this
+                # branch reporting "0 frames still owed", saving nothing, silencing
+                # the flush's long settle, and turning the warning into noise on
+                # exactly the runs it has nothing to say about.  When the camera
+                # already holds every frame it was armed for there is nothing to
+                # short-circuit; let it finish on its own.
+                elif (collected and num_images and collected < num_images
+                        and now - last_change_time >= stall_time
+                        and self.epics_pvs['RotationDmov'].get() == 1):
+                    self.triggers_exhausted = True
+                    log.warning('camera has received no trigger for %.1f s and '
+                                'the rotation stage is stopped, so the %s frames '
+                                'still owed on the %s it was armed for can never '
+                                'arrive; treating the acquisition as complete '
+                                'rather than waiting out the remaining %.0f s',
+                                now - last_change_time,
+                                num_images - collected, num_images,
+                                max(0.0, timeout - elapsed_time))
+                    return
+
+            if timeout > 0:
+                if elapsed_time >= timeout:
+                    raise CameraTimeoutError()
+
     def flush_file_plugin(self, stall_timeout=60.0, idle_stall_timeout=10.0,
                           poll_interval=0.5, report_interval=5.0,
                           settle_time=1.0):
@@ -488,10 +762,15 @@ class TomoScan32IDC(TomoScanPSO):
         though it is.  This runs before anything stops the camera, and the camera
         is normally still armed at this point: it is told to expect ``num_angles``
         frames, the ignored triggers below mean it never receives them, so it
-        never self-stops and ``wait_camera_done()`` returns through its timeout
-        with ``CamAcquireBusy`` still 1.  Requiring it to be clear would make the
-        queue test unsatisfiable in exactly the case it was written for.  It is
-        used only to choose how long the queue must stay empty.
+        never self-stops and ``wait_camera_done()`` returns with
+        ``CamAcquireBusy`` still 1.  Requiring it to be clear would make the queue
+        test unsatisfiable in exactly the case it was written for.  It is used
+        only to choose how long the queue must stay empty -- and even for that it
+        is not the whole story, because in that same case the camera reports busy
+        while being quite unable to produce another frame.  ``wait_camera_done()``
+        sets ``triggers_exhausted`` when it establishes that, and it counts here
+        as equivalent to a stopped camera; without it the short settle would never
+        be used on precisely the scans that need the flush least.
 
         Waiting for ``NumCaptured == NumCapture`` instead cannot work here.  The
         Kinetix ignores a few PSO triggers in every long acquisition, and an
@@ -595,11 +874,15 @@ class TomoScan32IDC(TomoScanPSO):
             size_pv = self.queue_pv('FPQueueSize')
             queue_free = free_pv.get() if free_pv is not None else None
             queue_size = size_pv.get() if size_pv is not None else None
+            # Either the camera has stopped, or wait_camera_done() proved it can
+            # no longer be triggered.  Both mean no further frame can reach the
+            # queue, which is all this distinction is really asking.
+            quiet = (self.epics_pvs['CamAcquireBusy'].get() == 0
+                     or self.triggers_exhausted)
+
             if (queue_free is not None and queue_size is not None
                     and queue_free >= queue_size):
-                settle = (settle_time
-                          if self.epics_pvs['CamAcquireBusy'].get() == 0
-                          else idle_stall_timeout)
+                settle = settle_time if quiet else idle_stall_timeout
                 if empty_since is None or num_captured != empty_count:
                     empty_since, empty_count = now, num_captured
                 elif now - empty_since >= settle:
@@ -616,8 +899,8 @@ class TomoScan32IDC(TomoScanPSO):
                 # quiet period is enough to call the queue drained.  If the
                 # readback is unavailable, assume it is still running and keep the
                 # conservative timeout.
-                if self.epics_pvs['CamAcquireBusy'].get() == 0:
-                    timeout, camera_state = idle_stall_timeout, 'stopped'
+                if quiet:
+                    timeout, camera_state = idle_stall_timeout, 'no longer sending frames'
                 else:
                     timeout, camera_state = stall_timeout, 'acquiring'
                 if now - last_progress_time >= timeout:
@@ -781,6 +1064,39 @@ class TomoScan32IDC(TomoScanPSO):
             payload = response.read()
         return np.asarray(Image.open(io.BytesIO(payload)).convert('RGB'))
 
+    def hold_watchdog(self, seconds=WATCHDOG_HOLD_S):
+        """Buy the IOC watchdog extra time before a blocking HDF5 section.
+
+        See ``WATCHDOG_HOLD_S`` for why this is needed.  Must be paired with
+        :meth:`release_watchdog` in a ``finally``, so that a failure inside the
+        section does not leave the watchdog disarmed for the rest of the hold.
+
+        There is a small residual race that cannot be closed from here: if
+        TomoScan.reset_watchdog() has already woken and is waiting for the GIL
+        at the moment this runs, its ``put(5)`` lands immediately afterwards
+        and overwrites the hold.  The window is the handful of milliseconds
+        between this put and h5py taking the GIL, against that thread's three
+        second cycle, so it turns a fault seen on every scan into one seen
+        rarely.  Closing it completely means changing reset_watchdog() or the
+        countdown in tomoScan.template, both of which are shared with the other
+        beamlines.
+
+        A failure to reach the PV must not cost the caller its real work, so
+        nothing here is allowed to raise.
+        """
+        try:
+            self.epics_pvs['Watchdog'].put(seconds)
+        except Exception:
+            log.warning('Could not hold the watchdog; the server may briefly '
+                        'report itself as stopped')
+
+    def release_watchdog(self):
+        """Restore the watchdog to the value reset_watchdog() uses."""
+        try:
+            self.epics_pvs['Watchdog'].put(5)
+        except Exception:
+            pass
+
     def add_web_camera_frame(self):
         """Adds a frame from the web camera to the raw data file.
 
@@ -793,12 +1109,15 @@ class TomoScan32IDC(TomoScanPSO):
                 log.warning('The web camera frame was not added')
                 return
             full_file_name = self.epics_pvs['FPFullFileName'].get(as_string=True)
+            self.hold_watchdog()
             with h5py.File(full_file_name, 'r+') as fid:
                 fid.create_dataset('exchange/web_camera_frame', data=frame)
             log.info('The web camera frame was added')
         except Exception:
             log.warning('The web camera frame was not added')
             traceback.print_exc(file=sys.stdout)
+        finally:
+            self.release_watchdog()
 
     def add_theta(self):
         """Add theta at the end of a scan."""
@@ -808,6 +1127,7 @@ class TomoScan32IDC(TomoScanPSO):
         if not os.path.exists(full_file_name):
             log.error('Failed adding theta. %s file does not exist', full_file_name)
             return
+        self.hold_watchdog()
         try:
             with h5py.File(full_file_name, "a") as f:
                 if self.theta is not None:
@@ -826,8 +1146,15 @@ class TomoScan32IDC(TomoScanPSO):
 
                     # create theta dataset in hdf5 file
                     corrected = False
-                    trigger_ids = proj_ids - proj_ids[0]
+                    # Empty when the scan collected nothing, which leaves the
+                    # "missing data frames" report below able to name every
+                    # angle as missed.  The rebasing subtraction has to stay
+                    # inside the guard: proj_ids[0] on an empty array is an
+                    # IndexError, and it used to abort add_theta() for exactly
+                    # the datasets whose failure most needed explaining.
+                    trigger_ids = proj_ids
                     if len(proj_ids) > 0:
+                        trigger_ids = proj_ids - proj_ids[0]
                         # Positional indexing credits projection i to trigger i,
                         # which an ignored trigger makes wrong for every frame
                         # after it.  Work out which trigger actually produced
@@ -879,6 +1206,8 @@ class TomoScan32IDC(TomoScanPSO):
         except Exception:
             log.error('Add theta: Failed accessing: %s', full_file_name)
             traceback.print_exc(file=sys.stdout)
+        finally:
+            self.release_watchdog()
 
     def ignored_trigger_events(self, f, proj_ids):
         """Locate the PSO triggers the camera ignored during the projection scan.
