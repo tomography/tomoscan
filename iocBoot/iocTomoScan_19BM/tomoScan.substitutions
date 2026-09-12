@@ -1,0 +1,74 @@
+# SAMPLE_X and SAMPLE_Y are the hexapod's X and Y axes.  The hexapod is
+# installed at 7-BM today as 7bmbHXP: and is being moved here as-is; only the
+# prefix and the controller IP change.  Its axes, from that IOC's
+# motor.substitutions.automation1, are:
+#
+#     m1 Hexapod Z  mm   +/-27.5      m4 Hexapod A  deg  +/-7.5
+#     m2 Hexapod X  mm   +/-30        m5 Hexapod B  deg  +/-7.5
+#     m3 Hexapod Y  mm   0..500       m6 Hexapod C  deg  +/-15
+#
+# so replacing TODO_HEXAPOD with the new prefix is all that is needed.  Note
+# Hexapod Y has a 0..500 mm range -- it is a lift rather than a fine
+# translation, which is fine for moving a sample clear of the beam.
+#
+# This is a deliberate departure from 7-BM, whose tomoscan does NOT use the
+# hexapod: it uses 7bmb1:aero:m2 and :m1, two dedicated single-axis Ensembles
+# described as "Sample_X" and "Sample_Y".  Those controllers were commented out
+# of 7bmb1's motor.aero.cmd in March 2026 ("not connected and slow down boot"),
+# so the records load but have no driver behind them.  They are not being
+# transplanted here; the hexapod is.
+#
+# The hexapod runs on an Aerotech Automation1 (10.54.107.77 today), a different
+# controller from the Ensemble that drives the rotation, so 19-BM will end up
+# with two Aerotech controllers.
+#
+# CAMERA is the bare areaDetector IOC prefix; tomoscan.py appends "cam1:" itself.
+# The 19-BM camera is a Vieworks VP-61MX (9568x6380, UInt16) on a Euresys
+# Coaxlink grabber, driven by ADEuresys via ADGenICam.  Its IOC lives in
+# /net/s19dserv/xorApps/epics/synApps_6_3/ioc/19bmVieworks and loads the
+# standard commonPlugins.cmd set, so HDF1:, Pva1:, ROI1: and CB1: all exist.
+file "$(TOP)/db/tomoScan.template"
+{
+pattern
+{  P,       R,           CAMERA,          FILE_PLUGIN,          ROTATION,        SAMPLE_X,        SAMPLE_Y,           CLOSE_SHUTTER,        CLOSE_VALUE,          OPEN_SHUTTER,         OPEN_VALUE}
+{19bm:, TomoScan:, 19bmVieworks:, 19bmVieworks:HDF1:, TODO_ROTATION_MOTOR, TODO_HEXAPOD:m2, TODO_HEXAPOD:m3, S19BM-PSS:FES:CloseEPICSC,       1,       S19BM-PSS:FES:OpenEPICSC,       1}
+}
+
+# For the Ensemble PSO_ENC_PER_ROTATION is a signed number containing the number of encoder pulses per rotation in positive dial coordinates
+#
+# These four values are NOT placeholders.  19-BM inherits the rotary stage and
+# its Aerotech Ensemble controller from 7-BM intact, and all four are
+# properties of that hardware rather than of where it is plugged in, so they
+# carry over unchanged from iocTomoScan_7BM/tomoScan.substitutions.
+#
+# The one thing to re-verify after the stage is remounted is the SIGN of
+# PSO_ENC_PER_ROTATION.  It is negative here because at 7-BM the encoder counts
+# decrease as the dial position increases.  Remounting can reverse that.  Check
+# it the way 32-ID-C documents: compare the signs of the rotation motor's .RVAL
+# and .DRBV, which must agree for a positive value.
+file "$(TOP)/db/tomoScan_PSO.template"
+{
+pattern
+{  P,       R,      PSO_MODEL, PSO_PORT, PSO_AXIS_NAME, PSO_ENC_INPUT, PSO_ENC_PER_ROTATION}
+{19bm:, TomoScan:,      0,     PSO_PORT,       A,             3,             -4096000.}
+}
+
+# Beamline-specific template.  Modeled on 7-BM rather than 32-ID-C: 32-ID-C has
+# no fast shutter and its template carries an mctOptics prefix that 19-BM has
+# no server for.  19-BM also has no optics server, so the optics metadata
+# records live in tomoScan_19BM.template itself.
+#
+# LINE is the GenICam TriggerSource the PSO output is wired to.  The Vieworks
+# VP-61MX offers Software, UserOutput0, LinkTrigger0, Timer0Active and Line0.
+# SHUTTER_STATUS reports whether the beam is BLOCKED: 1 = closed, 0 = open.
+# That is the inverse of the PA:...:STA_?_SBS_OPEN_PL records used at 32-ID,
+# and matches what 2-BM-B does with S02BM-PSS:SBS:BeamBlockingM.  The .VAL
+# suffix follows 2-BM-B.
+#
+# BEAM_READY mirrors 2-BM-B, which uses S02BM-PSS:FES:FEEPSPermitM.
+file "$(TOP)/db/tomoScan_19BM.template"
+{
+pattern
+{  P,       R,             BEAM_READY,        READY_VALUE, CLOSE_FAST_SHUTTER, CLOSE_FAST_VALUE, OPEN_FAST_SHUTTER, OPEN_FAST_VALUE,          SHUTTER_STATUS,           LINE}
+{19bm:, TomoScan:, S19BM-PSS:FES:FEEPSPermitM,      1,      TODO_FAST_SHUTTER,         0,         TODO_FAST_SHUTTER,        1,        S19BM-PSS:FES:BeamBlockingM.VAL, Line0}
+}
