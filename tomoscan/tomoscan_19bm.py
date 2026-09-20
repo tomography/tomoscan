@@ -128,12 +128,25 @@ class TomoScan19BM(TomoScanPSO):
         # Disable over writing warning
         self.epics_pvs['OverwriteWarning'].put('Yes')
 
-        # NOTE: no NDAttributes or HDF5 layout files are set here.  32-ID-C
-        # points CamNDAttributesFile and FPXMLFileName at mctDetectorAttributes
-        # .xml / mctLayout.xml, which read six PVs from the mctoptics server.
-        # 19-BM has no such server and no equivalent pair of files yet, and
-        # naming a file that does not exist only sets NDAttributesStatus to
-        # "File not found".  When the 19-BM files are written, set them here.
+        # HDF5 metadata.  Both names are relative and resolve against the
+        # camera IOC's working directory, where they are symlinks into
+        # dxfile-decarlof/doc/demo/areadetector/19-BM/ so that the files
+        # themselves stay under revision control with every other beamline's.
+        #
+        # The macro is what makes the files portable: areaDetector substitutes
+        # DET and TC when it parses them.  TC (not TS) follows 7-BM, which is
+        # what these files are modelled on -- it resolves to the tomoscan
+        # prefix, and at 19-BM that is where the optics metadata lives, there
+        # being no optics server to read it from.
+        #
+        # Without the attributes file there is no HDF5FrameLocation, and
+        # without that the layout cannot route frames into data / data_dark /
+        # data_white -- everything lands in one dataset.
+        self.epics_pvs['CamNDAttributesFile'].put('TomoScanDetectorAttributes.xml')
+        self.epics_pvs['FPXMLFileName'].put('TomoScanLayout.xml')
+        macro = ('DET=' + self.pv_prefixes['Camera'] + ',' + 'TC='
+                 + self.epics_pvs['Testing'].__dict__['pvname'].replace('Testing', '', 1))
+        self.control_pvs['CamNDAttributesMacros'].put(macro)
 
         log.setup_custom_logger("./tomoscan.log")
 
