@@ -9,7 +9,6 @@
 ####################
 $(P)$(R)Energy
 $(P)$(R)EnergyMode
-$(P)$(R)Filters
 
 #########################
 # Beam status information
@@ -62,14 +61,6 @@ $(P)$(R)UserLastName
 $(P)$(R)ExperimentYearMonth
 $(P)$(R)RemoteAnalysisDir
 $(P)$(R)CopyToAnalysisDir
-
-######################
-# Fast shutter control
-######################
-$(P)$(R)CloseFastShutterPVName
-$(P)$(R)CloseFastShutterValue
-$(P)$(R)OpenFastShutterPVName
-$(P)$(R)OpenFastShutterValue
 
 #########################
 # Camera External Trigger

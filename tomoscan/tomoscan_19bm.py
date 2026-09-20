@@ -56,12 +56,13 @@ class TomoScan19BM(TomoScanPSO):
     from the PSO output of an Aerotech Ensemble rotation stage -- the same stage
     and controller previously used at 7-BM.
 
-    It is derived from tomoscan_32idc, which is the closest working station, but
-    differs from it in four ways:
+    Like 32-ID-C, 19-BM has no fast shutter: the front-end shutter is the only
+    one, so open_shutter() and close_shutter() drive that alone and no fast
+    shutter records exist in the database.
 
-    - There is a fast shutter.  32-ID-C has none, so its open_shutter() and
-      close_shutter() are no-ops; here they follow tomoscan_7bm and drive both
-      the front-end shutter and the fast shutter.
+    It is derived from tomoscan_32idc, which is the closest working station, but
+    differs from it in three ways:
+
     - There is no mctoptics server.  32-ID-C indexes pv_prefixes['MctOptics']
       unconditionally in __init__, which would be a KeyError here, and uses it
       to switch between two cameras.  All of that is removed, along with
@@ -137,16 +138,15 @@ class TomoScan19BM(TomoScanPSO):
         log.setup_custom_logger("./tomoscan.log")
 
     def open_shutter(self):
-        """Opens the shutters to collect flat fields or projections.
+        """Opens the front-end shutter to collect flat fields or projections.
 
-        Follows tomoscan_7bm: the front-end shutter is opened first and waited
-        on, then the fast shutter.  Both are skipped in testing mode.
+        19-BM has no fast shutter, so this is the only shutter there is.
+        Skipped in testing mode.
         """
         if self.epics_pvs['Testing'].get():
             log.warning('In testing mode, so not opening shutters.')
             return
 
-        # Front-end shutter
         if not self.epics_pvs['OpenShutter'] is None:
             pv = self.epics_pvs['OpenShutter']
             value = self.epics_pvs['OpenShutterValue'].get(as_string=True)
@@ -158,31 +158,16 @@ class TomoScan19BM(TomoScanPSO):
             status = self.epics_pvs['ShutterStatus'].get(as_string=True)
             log.info('shutter status: %s', status)
 
-        # Fast shutter
-        if not self.epics_pvs['OpenFastShutter'] is None:
-            pv = self.epics_pvs['OpenFastShutter']
-            value = self.epics_pvs['OpenFastShutterValue'].get(as_string=True)
-            log.info('open fast shutter: %s, value: %s', pv, value)
-            self.epics_pvs['OpenFastShutter'].put(value, wait=True)
-
     def close_shutter(self):
-        """Closes the shutters to collect dark fields and at the end of a scan.
+        """Closes the front-end shutter for dark fields and at end of scan.
 
-        The fast shutter is closed first and not waited on -- it is the fast one,
-        and the front-end close that follows takes far longer than it does.
+        Waits for the status to read SHUTTER_BLOCKED rather than comparing it
+        against the command value; see the note on BeamBlockingM above.
         """
         if self.epics_pvs['Testing'].get():
             log.warning('In testing mode, so not closing shutters.')
             return
 
-        # Fast shutter
-        if not self.epics_pvs['CloseFastShutter'] is None:
-            pv = self.epics_pvs['CloseFastShutter']
-            value = self.epics_pvs['CloseFastShutterValue'].get(as_string=True)
-            log.info('close fast shutter: %s, value: %s', pv, value)
-            self.epics_pvs['CloseFastShutter'].put(value, wait=False)
-
-        # Front-end shutter
         if not self.epics_pvs['CloseShutter'] is None:
             pv = self.epics_pvs['CloseShutter']
             value = self.epics_pvs['CloseShutterValue'].get(as_string=True)

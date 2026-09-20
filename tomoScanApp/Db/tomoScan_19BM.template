@@ -4,16 +4,35 @@
 # both in the configuration files written by tomoscan, and in the
 # files written by areaDetector file plugin.
 #
-# This is modelled on tomoScan_7BM.template rather than tomoScan_32IDC.template.
-# 32-ID-C has no fast shutter and gets its optics metadata from an mctoptics
-# server; 19-BM has a fast shutter and no optics server, so the optics records
-# are defined locally here.  The 7-BM gain-field records (HDF5GainsLocation,
-# FrameType, NumGainFields) are not carried over -- 19-BM does not collect
-# gain fields.
+# This is modelled on tomoScan_7BM.template rather than tomoScan_32IDC.template,
+# because 19-BM has no mctoptics server: the optics metadata records
+# (ScintillatorType, ImagePixelSize and the rest) are defined locally here
+# rather than read from an optics server.  The 7-BM gain-field records
+# (HDF5GainsLocation, NumGainFields) are not carried over -- 19-BM does not
+# collect gain fields.  Note that FrameType is NOT one of those: 7-BM
+# redefines it to add gain-field states, but the record itself comes from the
+# base tomoScan.template and is present here.  It is live and in use -- the
+# detector_status.adl screen reads $(P)$(R)FrameType.
+#
+# The four fast-shutter records are not carried over either.  19-BM has only the
+# front-end shutter, which is handled by OPEN_SHUTTER / CLOSE_SHUTTER in
+# tomoScan.template.  This is the same edit that produced
+# tomoScan_32IDC.template from tomoScan_2BM.template.
+#
+# Do not add them back pointing at some other PV.  The "if not ... is None"
+# guards in the base class are dead code -- read_pv_file() always constructs a
+# PV object -- so a macro bound to a dead PV is not skipped; it writes into a
+# disconnected channel on every dark-field sequence.
 
 ####################
 # Energy information
 ####################
+#
+# No Filters record.  At 2-BM that is a free-text string in which the operator
+# records filters added by hand; 19-BM adds no filters by hand -- the F3-30
+# unit's two banks are motorised (19bmSoft:m5, m6) and their positions are
+# readable from the motor records -- so there is nothing for an operator to
+# type and the record would only ever hold a stale value.
 
 record(ao, "$(P)$(R)Energy")
 {
@@ -30,11 +49,6 @@ record(mbbo, "$(P)$(R)EnergyMode")
    field(ONST, "Pink")
    field(TWVL, "2")
    field(TWST, "White")
-}
-
-record(stringout, "$(P)$(R)Filters")
-{
-   field(VAL,  "Unknown")
 }
 
 #########################
@@ -212,30 +226,6 @@ record(bo, "$(P)$(R)CopyToAnalysisDir")
 {
    field(ZNAM, "No")
    field(ONAM, "Yes")
-}
-
-######################
-# Fast shutter control
-######################
-
-record(stringout, "$(P)$(R)CloseFastShutterPVName")
-{
-   field(VAL,  "$(CLOSE_FAST_SHUTTER)")
-}
-
-record(stringout, "$(P)$(R)CloseFastShutterValue")
-{
-   field(VAL,  "$(CLOSE_FAST_VALUE)")
-}
-
-record(stringout, "$(P)$(R)OpenFastShutterPVName")
-{
-   field(VAL,  "$(OPEN_FAST_SHUTTER)")
-}
-
-record(stringout, "$(P)$(R)OpenFastShutterValue")
-{
-   field(VAL,  "$(OPEN_FAST_VALUE)")
 }
 
 #########################
