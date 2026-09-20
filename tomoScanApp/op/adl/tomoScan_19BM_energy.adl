@@ -166,32 +166,3 @@ menu {
 		bclr=51
 	}
 }
-text {
-	object {
-		x=29
-		y=95
-		width=140
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="Filters"
-	align="horiz. right"
-}
-"text entry" {
-	object {
-		x=174
-		y=95
-		width=380
-		height=20
-	}
-	control {
-		chan="$(P)$(R)Filters"
-		clr=14
-		bclr=51
-	}
-	format="string"
-	limits {
-	}
-}

@@ -11,16 +11,33 @@
 # Hexapod Y has a 0..500 mm range -- it is a lift rather than a fine
 # translation, which is fine for moving a sample clear of the beam.
 #
-# This is a deliberate departure from 7-BM, whose tomoscan does NOT use the
-# hexapod: it uses 7bmb1:aero:m2 and :m1, two dedicated single-axis Ensembles
-# described as "Sample_X" and "Sample_Y".  Those controllers were commented out
-# of 7bmb1's motor.aero.cmd in March 2026 ("not connected and slow down boot"),
-# so the records load but have no driver behind them.  They are not being
-# transplanted here; the hexapod is.
+# SAMPLE_X / SAMPLE_Y are the translations UNDER the rotary, which tomoscan
+# uses to move the sample clear of the beam for flat fields.  They are NOT the
+# SampleTop X/Z pair on top of the rotary -- two Kohzu CYAT-070 stages, the
+# centering stage, mounted here but not yet wired -- which co-rotates with
+# theta and centres the sample on the rotation axis.  That pair is set by hand
+# and has no tomoscan binding; do not rebind these macros to it once it is
+# wired.
+#
+# 7-BM is not a useful reference for these: it binds them to 7bmb1:aero:m2 and
+# :m1, two dedicated single-axis Ensembles that were commented out of
+# 7bmb1's motor.aero.cmd in March 2026 ("not connected and slow down boot")
+# while their records were left loaded, so 7-BM has been pointing at inert
+# records ever since.
 #
 # The hexapod runs on an Aerotech Automation1 (10.54.107.77 today), a different
 # controller from the Ensemble that drives the rotation, so 19-BM will end up
 # with two Aerotech controllers.
+#
+# ROTATION is 19bmSoft:aero:m1, confirmed by the beamline 2026-09-19.  It is the
+# Aerotech Ensemble air-bearing rotary stage, served by the 19bmSoft IOC on
+# hounsfield.
+#
+# THE STAGE CANNOT BE MOVED YET.  The airflow interlock that makes rotating an
+# air bearing safe is not wired up, so nothing should command this axis until
+# the beamline says otherwise.  Binding the macro is safe -- tomoscan only
+# reads the record until a scan is started -- but do not run a scan to "see
+# what happens".
 #
 # CAMERA is the bare areaDetector IOC prefix; tomoscan.py appends "cam1:" itself.
 # The 19-BM camera is a Vieworks VP-61MX (9568x6380, UInt16) on a Euresys
@@ -31,7 +48,7 @@ file "$(TOP)/db/tomoScan.template"
 {
 pattern
 {  P,       R,           CAMERA,          FILE_PLUGIN,          ROTATION,        SAMPLE_X,        SAMPLE_Y,           CLOSE_SHUTTER,        CLOSE_VALUE,          OPEN_SHUTTER,         OPEN_VALUE}
-{19bm:, TomoScan:, 19bmVieworks:, 19bmVieworks:HDF1:, TODO_ROTATION_MOTOR, TODO_HEXAPOD:m2, TODO_HEXAPOD:m3, S19BM-PSS:FES:CloseEPICSC,       1,       S19BM-PSS:FES:OpenEPICSC,       1}
+{19bm:, TomoScan:, 19bmVieworks:, 19bmVieworks:HDF1:, 19bmSoft:aero:m1, TODO_HEXAPOD:m2, TODO_HEXAPOD:m3, S19BM-PSS:FES:CloseEPICSC,       1,       S19BM-PSS:FES:OpenEPICSC,       1}
 }
 
 # For the Ensemble PSO_ENC_PER_ROTATION is a signed number containing the number of encoder pulses per rotation in positive dial coordinates
@@ -53,13 +70,16 @@ pattern
 {19bm:, TomoScan:,      0,     PSO_PORT,       A,             3,             -4096000.}
 }
 
-# Beamline-specific template.  Modeled on 7-BM rather than 32-ID-C: 32-ID-C has
-# no fast shutter and its template carries an mctOptics prefix that 19-BM has
-# no server for.  19-BM also has no optics server, so the optics metadata
-# records live in tomoScan_19BM.template itself.
+# Beamline-specific template.  Modeled on 7-BM rather than 32-ID-C because
+# 32-ID-C's template carries an mctOptics prefix that 19-BM has no server for;
+# the optics metadata records live in tomoScan_19BM.template itself.
 #
 # LINE is the GenICam TriggerSource the PSO output is wired to.  The Vieworks
 # VP-61MX offers Software, UserOutput0, LinkTrigger0, Timer0Active and Line0.
+# 19-BM has only the front-end shutter, bound through OPEN_SHUTTER /
+# CLOSE_SHUTTER above; there are no fast-shutter macros because
+# tomoScan_19BM.template defines no fast-shutter records.
+#
 # SHUTTER_STATUS reports whether the beam is BLOCKED: 1 = closed, 0 = open.
 # That is the inverse of the PA:...:STA_?_SBS_OPEN_PL records used at 32-ID,
 # and matches what 2-BM-B does with S02BM-PSS:SBS:BeamBlockingM.  The .VAL
@@ -69,6 +89,6 @@ pattern
 file "$(TOP)/db/tomoScan_19BM.template"
 {
 pattern
-{  P,       R,             BEAM_READY,        READY_VALUE, CLOSE_FAST_SHUTTER, CLOSE_FAST_VALUE, OPEN_FAST_SHUTTER, OPEN_FAST_VALUE,          SHUTTER_STATUS,           LINE}
-{19bm:, TomoScan:, S19BM-PSS:FES:FEEPSPermitM,      1,      TODO_FAST_SHUTTER,         0,         TODO_FAST_SHUTTER,        1,        S19BM-PSS:FES:BeamBlockingM.VAL, Line0}
+{  P,       R,             BEAM_READY,        READY_VALUE,          SHUTTER_STATUS,           LINE}
+{19bm:, TomoScan:, S19BM-PSS:FES:FEEPSPermitM,      1,      S19BM-PSS:FES:BeamBlockingM.VAL, Line0}
 }
