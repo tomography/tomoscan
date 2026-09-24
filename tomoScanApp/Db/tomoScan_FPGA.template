@@ -1,0 +1,94 @@
+# Database for EPICS PVS for tomography data collection software using the softGlueZynq EPICS-based
+# FPGA I/O module from the rotation stage as a detector trigger.
+
+#############
+# FPGA Prefix
+#############
+
+record(stringout, "$(P)$(R)FPGAPVPrefix")
+{
+   field(VAL,  "$(FPGA)")
+}
+
+####################
+# Interlaced Control
+####################
+
+record(mbbo, "$(P)$(R)InterlacedMode")
+{
+   field(DESC, "Interlaced mode")
+   field(ZRVL, "0")
+   field(ZRST, "Uniform")
+   field(ONVL, "1")
+   field(ONST, "Timbir")
+   field(TWVL, "2")
+   field(TWST, "Golden")
+   field(THVL, "3")
+   field(THST, "Van der Corput")
+}
+
+record(ao, "$(P)$(R)InterlacedRotationStart")
+{
+   field(PREC,  "3")
+}
+
+record(ao, "$(P)$(R)InterlacedNumberOfRotation")
+{
+    field(PREC, "0")
+    field(DRVL, "1")
+    field(DRVH, "1024")
+}
+
+
+record(longout, "$(P)$(R)InterlacedNumAngles")
+{
+}
+
+record(ao, "$(P)$(R)InterlacedMinStep")
+{
+   field(PREC,  "3")
+}
+
+record(ao, "$(P)$(R)InterlacedPSOWindowStep")
+{
+   field(PREC,  "3")
+}
+
+record(ao, "$(P)$(R)InterlacedScanTime")
+{
+}
+
+record(ao, "$(P)$(R)InterlacedEfficiencyRequested")
+{
+   field(PREC,  "3")
+}
+
+record(calc, "$(P)$(R)InterlacedRotationStop")
+{
+   field(INPA, "$(P)$(R)InterlacedRotationStart CP")
+   field(INPB, "$(P)$(R)InterlacedNumberOfRotation CP")
+   field(CALC, "A+B*360")
+   field(PREC,  "3")
+}
+record(mbbo, "$(P)$(R)TriggerSource") {
+  field(DTYP, "Raw Soft Channel")
+  field(NOBT, "3")
+  field(ZRVL, "0x0")
+  field(ONVL, "0x1")
+  field(ZRST, "PSO")
+  field(ONST, "FPGA")
+}
+
+record(ao, "$(P)$(R)InterlacedEfficiencyRequested")
+{
+    field(PREC, "0")
+
+    field(DRVL, "0")   # drive low limit
+    field(DRVH, "100")  # drive high limit
+    field(LINR, "1")    # enable limit checking (1 = LIMIT)
+}
+
+record(ao, "$(P)$(R)InterlacedEfficiencyCalculated")
+{
+   field(PREC,  "0")
+}

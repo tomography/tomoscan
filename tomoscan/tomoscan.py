@@ -234,7 +234,18 @@ class TomoScan():
             self.control_pvs['CBCurrentQtyRBV']    = PV(prefix + 'CurrentQty_RBV')            
             self.control_pvs['CBEnableCallbacks']  = PV(prefix + 'EnableCallbacks')
             self.control_pvs['CBStatusMessage']    = PV(prefix + 'StatusMessage')
-
+ 
+        if 'FPGA' in self.pv_prefixes:
+            prefix = self.pv_prefixes['FPGA']
+            self.control_pvs['FPGAAddr']             = PV(prefix + "memPulseSeq_ADDR")         # BRAM addra (reg)
+            self.control_pvs['FPGADin']              = PV(prefix + "memPulseSeq_DIN")          # BRAM dina  (reg)
+            self.control_pvs['FPGAClk']              = PV(prefix + "memPulseSeq_CLK_Signal")   # BRAM clka
+            self.control_pvs['FPGAWrt']              = PV(prefix + "memPulseSeq_WRT_Signal")   # BRAM wea
+            self.control_pvs['FPGAEnSignal']         = PV(prefix + "memPulseSeq_EN_Signal")    # enable on memPulseSeq
+            self.control_pvs['FPGANSignal']          = PV(prefix + "memPulseSeq_N")            # BRAM numPulses (reg)
+            self.control_pvs['FPGAMUX2']             = PV(prefix + "MUX2-1_SEL_Signal")        # MUX2 0 = PSO; 1 = trigILF
+            self.control_pvs['BUFFER-1_IN_Signal']   = PV(prefix + "BUFFER-1_IN_Signal")
+            self.control_pvs['BUFFER-2_IN_Signal']   = PV(prefix + "BUFFER-2_IN_Signal")
         self.epics_pvs = {**self.config_pvs, **self.control_pvs}
         # Wait 1 second for all PVs to connect
         time.sleep(1)
