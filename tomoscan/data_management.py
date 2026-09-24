@@ -20,25 +20,40 @@ with remote_analysis_dir formatted as tomo@handyn:/local/data/
 
 import os
 import subprocess
-from pathlib import Path
+import threading
 import time
+from pathlib import Path
 
 from tomoscan import log
 
 
-def scp(fname_origin, remote_analysis_dir):
+def _ssh_env():
+    """Return os.environ without LD_LIBRARY_PATH so conda's OpenSSL does not
+    shadow the system libcrypto that the system ssh binary was built against."""
+    env = os.environ.copy()
+    env.pop('LD_LIBRARY_PATH', None)
+    return env
+
+
+def scp(fname_origin, remote_analysis_dir, local_top_dir=None):
 
     log.info(' ')
     log.info('  *** Data transfer')
 
     remote_server = remote_analysis_dir.split(':')[0]
-    remote_top_dir = remote_analysis_dir.split(':')[1]
+    remote_top_dir = Path(remote_analysis_dir.split(':')[1])
     log.info('      *** remote server: %s' % remote_server)
     log.info('      *** remote top directory: %s' % remote_top_dir)
 
     p = Path(fname_origin)
-    fname_destination = remote_analysis_dir + p.parts[-3] + '/' + p.parts[-2] + '/'
-    remote_dir = remote_top_dir + p.parts[-3] + '/' + p.parts[-2] + '/'
+    if local_top_dir is not None:
+        remote_relative_dir = p.parent.relative_to(local_top_dir)
+        remote_dir_path = remote_top_dir / remote_relative_dir
+        remote_dir = str(remote_dir_path) + '/'
+        fname_destination = remote_server + ':' + remote_dir
+    else:
+        remote_dir = str(remote_top_dir) + '/' + p.parts[-3] + '/' + p.parts[-2] + '/'
+        fname_destination = remote_analysis_dir + p.parts[-3] + '/' + p.parts[-2] + '/'
 
     log.info('      *** origin: %s' % fname_origin)
     log.info('      *** destination: %s' % fname_destination)
@@ -85,33 +100,37 @@ def fdt_scp(local_fname, remote_analysis_dir, local_top_dir):
         if iret != 0:
             log.error('  *** Error making a remote directory.  Exiting')
             return -1
-    start_remote_fdt(remote_server)
+    elif ret != 0:
+        log.error('  *** Cannot verify remote directory (SSH error). Exiting')
+        return -1
+    iret = start_remote_fdt(remote_server)
+    if iret != 0:
+        log.error('  *** Error starting remote FDT server. Exiting')
+        return -1
     start_fdt_transfer(remote_server, str(remote_dir), str(local_fname))
     log.info('  *** Data transfer: Done!')
     return 0
 
 
 def check_remote_directory(remote_server, remote_dir):
-    try:
-        rcmd = 'ls ' + remote_dir
-        # rcmd is the command used to check if the remote directory exists
-        subprocess.check_call(['ssh', '-t', remote_server, rcmd], stderr=open(os.devnull, 'wb'), stdout=open(os.devnull, 'wb'))
+    rcmd = 'ls ' + remote_dir
+    result = subprocess.run(['ssh', remote_server, rcmd], stdin=subprocess.DEVNULL, stderr=subprocess.PIPE, stdout=subprocess.DEVNULL, env=_ssh_env())
+    if result.returncode == 0:
         log.warning('      *** remote directory %s exists' % (remote_dir))
         return 0
-
-    except subprocess.CalledProcessError as e: 
+    elif result.returncode == 2:
         log.warning('      *** remote directory %s does not exist' % (remote_dir))
-        if e.returncode == 2:
-            return e.returncode
-        else:
-            log.error('  *** Unknown error code returned: %d' % (e.returncode))
-            return -1
+        return 2
+    else:
+        ssh_err = result.stderr.decode(errors='replace').strip()
+        log.error('  *** SSH error checking remote directory (code %d): %s' % (result.returncode, ssh_err))
+        return -1
 
 def create_remote_directory(remote_server, remote_dir):
     cmd = 'mkdir -p ' + remote_dir
     try:
         log.info('      *** creating remote directory %s' % (remote_dir))
-        subprocess.check_call(['ssh', '-t', remote_server, cmd])
+        subprocess.check_call(['ssh', remote_server, cmd], stdin=subprocess.DEVNULL, env=_ssh_env())
         log.info('      *** creating remote directory %s: Done!' % (remote_dir))
         return 0
 
@@ -121,18 +140,19 @@ def create_remote_directory(remote_server, remote_dir):
 
 
 def start_remote_fdt(remote_server):
-    cmd_start_server = 'java -jar /APSshare/bin/fdt.jar -S'
+    cmd_start_server = "bash -c 'java -jar /APSshare/bin/fdt.jar -S >/dev/null 2>&1'"
     cmd_kill_server = 'lsof -t -i:54321 | xargs -r kill -9'
     try:
         log.info('kill everything working with port 54321 on the server')
         log.info(f'ssh -f {remote_server} {cmd_kill_server}')
-        subprocess.check_call(['ssh', '-f', remote_server, cmd_kill_server])        
-        time.sleep(1) 
-        log.info(f'      *** starting fdt server on {remote_server}')        
-        log.info(f'ssh -f {remote_server} {cmd_start_server}')        
-        subprocess.check_call(['ssh', '-f', remote_server, cmd_start_server])
+        subprocess.check_call(['ssh', '-f', remote_server, cmd_kill_server], stdin=subprocess.DEVNULL, env=_ssh_env())
+        time.sleep(1)
+        log.info(f'      *** starting fdt server on {remote_server}')
+        log.info(f'ssh -f {remote_server} {cmd_start_server}')
+        subprocess.check_call(['ssh', '-f', remote_server, cmd_start_server], stdin=subprocess.DEVNULL, env=_ssh_env())
         log.info(f'      *** starting fdt server on {remote_server}: Done!')
-        time.sleep(5)        
+        time.sleep(5)
+        return 0
     except subprocess.CalledProcessError as e:
         log.error('  *** Error while starting remote fdt server. Error code: %d' % (e.returncode))
         return -1
@@ -141,14 +161,37 @@ def start_remote_fdt(remote_server):
 def start_fdt_transfer(remote_server, remote_dir, local_fname):
 
     remote_server = remote_server.split('@')[-1]
-    cmd = f'java -jar /APSshare/bin/fdt.jar -c {remote_server} -d {remote_dir} {local_fname} &'
-    try:
-        log.info(f'      *** starting fdt transfer to {remote_server}')
-        log.info(cmd)
-        os.system(cmd)
-        log.info(f'      *** starting fdt transfer to {remote_server}: Done!')
-        return 0
-    except:
-        log.error(f'  *** Error during fdt transfer to {remote_server}')
+    log_file = f'/tmp/fdt_{int(time.time())}.log'
+    cmd = f'java -jar /APSshare/bin/fdt.jar -c {remote_server} -d {remote_dir} {local_fname}'
+    log.info(f'      *** starting fdt transfer to {remote_server} (log: {log_file})')
+
+    def _run():
+        _REPORT = ('Net Out:', 'Net In:', 'TotalBytes:', 'Transfer period:',
+                   'Exit Status:', 'SEVERE', 'WARNING', 'finished with error')
+        try:
+            with open(log_file, 'w') as lf, open(log_file, 'r') as lr:
+                proc = subprocess.Popen(cmd, shell=True, stdout=lf, stderr=subprocess.STDOUT)
+                while proc.poll() is None:
+                    line = lr.readline()
+                    if line:
+                        if any(k in line for k in _REPORT):
+                            log.info('FDT: ' + line.rstrip())
+                    else:
+                        time.sleep(0.2)
+                # drain remaining output
+                for line in lr:
+                    if any(k in line for k in _REPORT):
+                        log.info('FDT: ' + line.rstrip())
+            rc = proc.returncode
+            if rc == 0:
+                log.info(f'      *** fdt transfer to {remote_server}: Done!')
+            else:
+                log.error(f'      *** fdt transfer to {remote_server}: FAILED (rc={rc})')
+        except Exception as e:
+            log.error(f'      *** fdt transfer thread error: {e}')
+
+    t = threading.Thread(target=_run, daemon=True)
+    t.start()
+    return 0
     
 
