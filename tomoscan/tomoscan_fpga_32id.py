@@ -359,7 +359,8 @@ class TomoScanFPGA32ID(TomoScanFPGAPSO):
             self.epics_pvs['ScanStatus'].put('fdt file transfer complete')
         elif copy_to_analysis_dir == 2:
             log.info('Using scp')
-            dm.scp(full_file_name, remote_analysis_dir)
+            dm.scp(full_file_name, remote_analysis_dir,
+                   Path(self.epics_pvs['DetectorTopDir'].get()))
             self.epics_pvs['ScanStatus'].put('scp file transfer complete')
         else:
             log.warning('Automatic data transfer to data analysis computer is disabled.')
@@ -412,10 +413,11 @@ class TomoScanFPGA32ID(TomoScanFPGAPSO):
                             log.warning('There are %d missing data frames (expected %d, recorded %d)',
                                         len(self.theta) - len(proj_ids),
                                         len(self.theta), len(proj_ids))
-                            missed_ids   = [i for i in range(len(self.theta))
-                                            if i not in proj_ids - proj_ids[0]]
-                            missed_theta = self.theta[missed_ids]
-                            log.warning('Missed theta (first 50): %s', list(missed_theta[:50]))
+                            if len(proj_ids) > 0:
+                                missed_ids   = [i for i in range(len(self.theta))
+                                                if i not in proj_ids - proj_ids[0]]
+                                missed_theta = self.theta[missed_ids]
+                                log.warning('Missed theta (first 50): %s', list(missed_theta[:50]))
                         if len(flat_ids) != total_flat_fields:
                             log.warning('There are %d missing flat field frames',
                                         total_flat_fields - len(flat_ids))
