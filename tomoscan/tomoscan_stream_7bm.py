@@ -267,7 +267,8 @@ class TomoScanStream7BM(TomoScanStreamPSO):
             log.info('Automatic data trasfer to data analysis computer is enabled.')
             full_file_name = self.epics_pvs['FPFullFileName'].get(as_string=True)
             remote_analysis_dir = self.epics_pvs['RemoteAnalysisDir'].get(as_string=True)
-            dm.scp(full_file_name, remote_analysis_dir)
+            dm.scp(full_file_name, remote_analysis_dir,
+                   Path(self.epics_pvs['DetectorTopDir'].get()))
         else:
             log.warning('Automatic data trasfer to data analysis computer is disabled.')
            
