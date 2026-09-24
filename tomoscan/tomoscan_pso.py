@@ -140,7 +140,11 @@ class TomoScanPSO(TomoScan):
         # Set the rotation speed to maximum
         self.epics_pvs['RotationSpeed'].put(self.max_rotation_speed)                
 
-        # Move the sample in.  Could be out if scan was aborted while taking flat fields
+        # Move the sample in (X/Y stage only).  Could be out if scan was aborted while
+        # taking flat fields.  Clear self.rotation_save first so that move_sample_in()
+        # does not restore the rotation to the end-of-scan angle — ReturnRotation in
+        # the base end_scan() handles the final rotation position.
+        self.rotation_save = None
         self.move_sample_in()
 
         # Call the base class method
