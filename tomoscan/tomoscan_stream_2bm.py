@@ -29,6 +29,7 @@ Classes
 """
 import os
 import time
+from pathlib import Path
 import h5py 
 import numpy as np
 
@@ -404,8 +405,11 @@ class TomoScanStream2BM(TomoScanStreamPSO):
         log.info('begin scan')
 
         # Set data directory
-        file_path = self.epics_pvs['DetectorTopDir'].get(as_string=True) + self.epics_pvs['ExperimentYearMonth'].get(as_string=True) + os.path.sep + self.epics_pvs['UserLastName'].get(as_string=True) + os.path.sep
-        self.epics_pvs['FilePath'].put(file_path, wait=True)
+        file_path = Path(self.epics_pvs['DetectorTopDir'].get(as_string=True))
+        file_path = file_path.joinpath(self.epics_pvs['ExperimentYearMonth'].get(as_string=True) + '-'
+                                       + self.epics_pvs['UserLastName'].get(as_string=True) + '-'
+                                       + self.epics_pvs['ProposalNumber'].get(as_string=True))
+        self.epics_pvs['FilePath'].put(str(file_path), wait=True)
 
         
         if self.epics_pvs['ReturnRotation'].get(as_string=True) == 'Yes':
