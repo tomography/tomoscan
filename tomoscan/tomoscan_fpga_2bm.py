@@ -471,8 +471,11 @@ class TomoScan2BM(TomoScanFPGAPSO):
         log.info('begin scan')
 
         # Set data directory
-        file_path = self.epics_pvs['DetectorTopDir'].get(as_string=True) + self.epics_pvs['ExperimentYearMonth'].get(as_string=True) + os.path.sep + self.epics_pvs['UserLastName'].get(as_string=True) + os.path.sep
-        self.epics_pvs['FilePath'].put(file_path, wait=True)
+        file_path = Path(self.epics_pvs['DetectorTopDir'].get(as_string=True))
+        file_path = file_path.joinpath(self.epics_pvs['ExperimentYearMonth'].get(as_string=True) + '-'
+                                       + self.epics_pvs['UserLastName'].get(as_string=True) + '-'
+                                       + self.epics_pvs['ProposalNumber'].get(as_string=True))
+        self.epics_pvs['FilePath'].put(str(file_path), wait=True)
 
         # NetBooter = NetBooter_Control(mode='telnet',id=self.access_dic['pdu_username'],password=self.access_dic['pdu_password'],ip=self.access_dic['pdu_ip_address'])           
         # NetBooter.power_off(1)
@@ -545,9 +548,12 @@ class TomoScan2BM(TomoScanFPGAPSO):
 
         if ret==True:
             full_file_name = self.epics_pvs['FPFullFileName'].get(as_string=True)
-            with h5py.File(full_file_name,'r+') as fid:
-                fid.create_dataset('exchange/web_camera_frame', data=frame)
-            log.info('The frame was added')
+            try:
+                with h5py.File(full_file_name,'r+') as fid:
+                    fid.create_dataset('exchange/web_camera_frame', data=frame)
+                log.info('The frame was added')
+            except Exception as e:
+                log.warning('The web camera frame was not added to %s: %s', full_file_name, e)
         else:
             log.warning('The frame was not added')
         
@@ -562,7 +568,8 @@ class TomoScan2BM(TomoScanFPGAPSO):
             self.epics_pvs['ScanStatus'].put('fdt file transfer complete')
         elif copy_to_analysis_dir == 2:
             log.info('Using scp')
-            dm.scp(full_file_name, remote_analysis_dir)
+            dm.scp(full_file_name, remote_analysis_dir,
+                   Path(self.epics_pvs['DetectorTopDir'].get()))
             self.epics_pvs['ScanStatus'].put('scp file transfer complete')
         else:
             log.warning('Automatic data trasfer to data analysis computer is disabled.')
@@ -590,8 +597,21 @@ class TomoScan2BM(TomoScanFPGAPSO):
         log.info("add theta")
 
         full_file_name = self.epics_pvs["FPFullFileName"].get(as_string=True)
-        if not os.path.exists(full_file_name):
-            log.error("Failed adding theta. %s file does not exist", full_file_name)
+        log.info("add_theta: FPFullFileName repr=%r", full_file_name)
+        # Wait up to 5 s for the HDF plugin to finalize the file after FPCaptureRBV=0
+        for _retry in range(5):
+            if os.path.exists(full_file_name):
+                break
+            log.warning("add_theta: file not yet visible (attempt %d/5), waiting 1 s ...", _retry + 1)
+            time.sleep(1)
+        else:
+            log.error(
+                "Failed adding theta: file not accessible at path %r. "
+                "Is the tomoscan Python server running on the detector computer "
+                "(the machine where %s is locally mounted)? "
+                "theta will NOT be written to the HDF5 file.",
+                full_file_name, os.path.dirname(full_file_name)
+            )
             return
 
         try:
