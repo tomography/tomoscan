@@ -11,17 +11,20 @@
 record(stringout, "$(P)$(R)BeamReadyPVName")
 {
    field(VAL,  "$(BEAM_READY)")
+   field(PINI, "YES")
 }
 
 record(stringout, "$(P)$(R)BeamReadyValue")
 {
    field(VAL,  "$(READY_VALUE)")
+   field(PINI, "YES")
 }
 
 record(bo, "$(P)$(R)Testing")
 {
    field(ZNAM, "No")
    field(ONAM, "Yes")
+   field(PINI, "YES")
 }
 
 ####################
@@ -31,21 +34,25 @@ record(bo, "$(P)$(R)Testing")
 record(stringout, "$(P)$(R)SampleName")
 {
    field(VAL,  "Unknown")
+   field(PINI, "YES")
 }
 
 record(stringout, "$(P)$(R)SampleDescription1")
 {
    field(VAL,  "Unknown")
+   field(PINI, "YES")
 }
 
 record(stringout, "$(P)$(R)SampleDescription2")
 {
    field(VAL,  "Unknown")
+   field(PINI, "YES")
 }
 
 record(stringout, "$(P)$(R)SampleDescription3")
 {
    field(VAL,  "Unknown")
+   field(PINI, "YES")
 }
 
 ##################
@@ -55,6 +62,7 @@ record(stringout, "$(P)$(R)SampleDescription3")
 record(stringout, "$(P)$(R)UserName")
 {
    field(VAL,  "Unknown")
+   field(PINI, "YES")
 }
 
 record(waveform, "$(P)$(R)UserInstitution") 
@@ -63,21 +71,25 @@ record(waveform, "$(P)$(R)UserInstitution")
     field(DTYP, "Soft Channel")
     field(NELM, "256")
     field(FTVL, "CHAR")
+   field(PINI, "YES")
 }
 
 record(stringout, "$(P)$(R)UserBadge")
 {
    field(VAL,  "Unknown")
+   field(PINI, "YES")
 }
 
 record(stringout, "$(P)$(R)UserEmail")
 {
    field(VAL,  "Unknown")
+   field(PINI, "YES")
 }
 
 record(stringout, "$(P)$(R)ProposalNumber")
 {
    field(VAL,  "Unknown")
+   field(PINI, "YES")
 }
 
 record(waveform, "$(P)$(R)ProposalTitle") 
@@ -86,16 +98,19 @@ record(waveform, "$(P)$(R)ProposalTitle")
     field(DTYP, "Soft Channel")
     field(NELM, "256")
     field(FTVL, "CHAR")
+   field(PINI, "YES")
 }
 
 record(stringout, "$(P)$(R)ESAFNumber")
 {
    field(VAL,  "Unknown")
+   field(PINI, "YES")
 }
 
 record(stringout, "$(P)$(R)UserInfoUpdate")
 {
    field(VAL,  "Unknown")
+   field(PINI, "YES")
 }
 
 
@@ -106,21 +121,25 @@ record(stringout, "$(P)$(R)UserInfoUpdate")
 record(stringout, "$(P)$(R)DetectorTopDir") 
 {
    field(VAL,  "Unknown")
+   field(PINI, "YES")
 }
 
 record(stringout, "$(P)$(R)UserLastName")
 {
    field(VAL,  "Unknown")
+   field(PINI, "YES")
 }
 
 record(stringout, "$(P)$(R)ExperimentYearMonth")
 {
    field(VAL,  "Unknown")
+   field(PINI, "YES")
 }
 
 record(stringout, "$(P)$(R)RemoteAnalysisDir") 
 {
    field(VAL,  "Unknown")
+   field(PINI, "YES")
 }
 
 record(mbbo, "$(P)$(R)CopyToAnalysisDir")
@@ -131,6 +150,7 @@ record(mbbo, "$(P)$(R)CopyToAnalysisDir")
    field(ONST, "fdt")
    field(TWVL, "2")
    field(TWST, "scp")
+   field(PINI, "YES")
 }
 
 
@@ -141,21 +161,25 @@ record(mbbo, "$(P)$(R)CopyToAnalysisDir")
 record(stringout, "$(P)$(R)CloseFastShutterPVName")
 {
    field(VAL,  "$(CLOSE_FAST_SHUTTER)")
+   field(PINI, "YES")
 }
 
 record(stringout, "$(P)$(R)CloseFastShutterValue")
 {
    field(VAL,  "$(CLOSE_FAST_VALUE)")
+   field(PINI, "YES")
 }
 
 record(stringout, "$(P)$(R)OpenFastShutterPVName")
 {
    field(VAL,  "$(OPEN_FAST_SHUTTER)")
+   field(PINI, "YES")
 }
 
 record(stringout, "$(P)$(R)OpenFastShutterValue")
 {
    field(VAL,  "$(OPEN_FAST_VALUE)")
+   field(PINI, "YES")
 }
 
 ################
@@ -165,6 +189,7 @@ record(stringout, "$(P)$(R)OpenFastShutterValue")
 record(stringout, "$(P)$(R)ShutterStatusPVName")
 {
    field(VAL,  "$(SHUTTER_STATUS)")
+   field(PINI, "YES")
 }
 
 ###########
@@ -174,6 +199,7 @@ record(stringout, "$(P)$(R)ShutterStatusPVName")
 record(stringout, "$(P)$(R)MctOpticsPVPrefix")
 {
    field(VAL,  "$(MCT_OPTICS)")
+   field(PINI, "YES")
 }
 
 ############
@@ -194,12 +220,14 @@ record(mbbo, "$(P)$(R)ScanType")
    field(FRST, "File")
    field(FVVL, "5")
    field(FVST, "Energy")
+   field(PINI, "YES")
 }
 
 record(bo, "$(P)$(R)FlipStitch")
 {
    field(ZNAM, "No")
    field(ONAM, "Yes")
+   field(PINI, "YES")
 }
 
 
@@ -210,6 +238,7 @@ record(bo, "$(P)$(R)FlipStitch")
 record(stringout, "$(P)$(R)PvaPluginPVPrefix")
 {
    field(VAL,  "$(PVA_PLUGIN)")
+   field(PINI, "YES")
 }
 
 ######################
@@ -219,6 +248,7 @@ record(stringout, "$(P)$(R)PvaPluginPVPrefix")
 record(stringout, "$(P)$(R)RoiPluginPVPrefix")
 {
    field(VAL,  "$(ROI_PLUGIN)")
+   field(PINI, "YES")
 }
 
 #####################
@@ -228,4 +258,5 @@ record(stringout, "$(P)$(R)RoiPluginPVPrefix")
 record(stringout, "$(P)$(R)CbPluginPVPrefix")
 {
    field(VAL,  "$(CB_PLUGIN)")
+   field(PINI, "YES")
 }

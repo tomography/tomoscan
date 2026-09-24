@@ -8,11 +8,13 @@
 record(stringout, "$(P)$(R)CameraPVPrefix")
 {
    field(VAL,  "$(CAMERA)")
+   field(PINI, "YES")
 }
 
 record(stringout, "$(P)$(R)FilePluginPVPrefix")
 {
    field(VAL,  "$(FILE_PLUGIN)")
+   field(PINI, "YES")
 }
 
 #################
@@ -22,27 +24,32 @@ record(stringout, "$(P)$(R)FilePluginPVPrefix")
 record(stringout, "$(P)$(R)CloseShutterPVName")
 {
    field(VAL,  "$(CLOSE_SHUTTER)")
+   field(PINI, "YES")
 }
 
 record(stringout, "$(P)$(R)CloseShutterValue")
 {
    field(VAL,  "$(CLOSE_VALUE)")
+   field(PINI, "YES")
 }
 
 record(stringout, "$(P)$(R)OpenShutterPVName")
 {
    field(VAL,  "$(OPEN_SHUTTER)")
+   field(PINI, "YES")
 }
 
 record(stringout, "$(P)$(R)OpenShutterValue")
 {
    field(VAL,  "$(OPEN_VALUE)")
+   field(PINI, "YES")
 }
 
 record(bo, "$(P)$(R)AutoCloseShutter")
 {
    field(ZNAM,  "No")
    field(ONAM,  "Yes")
+   field(PINI, "YES")
 }
 
 record(bo, "$(P)$(R)CloseShutterCmd")
@@ -61,16 +68,19 @@ record(bo, "$(P)$(R)OpenShutterCmd")
 record(stringout, "$(P)$(R)RotationPVName")
 {
    field(VAL,  "$(ROTATION)")
+   field(PINI, "YES")
 }
 
 record(stringout, "$(P)$(R)SampleXPVName")
 {
    field(VAL,  "$(SAMPLE_X)")
+   field(PINI, "YES")
 }
 
 record(stringout, "$(P)$(R)SampleYPVName")
 {
    field(VAL,  "$(SAMPLE_Y)")
+   field(PINI, "YES")
 }
 
 
@@ -85,11 +95,13 @@ record(stringout, "$(P)$(R)SampleYPVName")
 record(ao, "$(P)$(R)RotationStart")
 {
    field(PREC,  "3")
+   field(PINI, "YES")
 }
 
 record(ao, "$(P)$(R)RotationStep")
 {
    field(PREC,  "3")
+   field(PINI, "YES")
 }
 
 record(calc, "$(P)$(R)RotationStop")
@@ -103,6 +115,7 @@ record(calc, "$(P)$(R)RotationStop")
 
 record(longout, "$(P)$(R)NumAngles")
 {
+   field(PINI, "YES")
 }
 
 record(mbbo, "$(P)$(R)ReturnRotation")
@@ -113,6 +126,7 @@ record(mbbo, "$(P)$(R)ReturnRotation")
    field(ONST, "Yes")
    field(TWVL, "2")
    field(TWST, "Home")
+   field(PINI, "YES")
 }
 
 ####################
@@ -121,6 +135,7 @@ record(mbbo, "$(P)$(R)ReturnRotation")
 
 record(longout, "$(P)$(R)NumDarkFields")
 {
+   field(PINI, "YES")
 }
 
 record(mbbo, "$(P)$(R)DarkFieldMode")
@@ -133,11 +148,13 @@ record(mbbo, "$(P)$(R)DarkFieldMode")
    field(TWST, "Both")
    field(THVL, "3")
    field(THST, "None")
+   field(PINI, "YES")
 }
 
 record(ao, "$(P)$(R)DarkFieldValue")
 {
    field(PREC,  "0")
+   field(PINI, "YES")
 }
 
 ####################
@@ -146,6 +163,7 @@ record(ao, "$(P)$(R)DarkFieldValue")
 
 record(longout, "$(P)$(R)NumFlatFields")
 {
+   field(PINI, "YES")
 }
 
 record(mbbo, "$(P)$(R)FlatFieldMode")
@@ -158,6 +176,7 @@ record(mbbo, "$(P)$(R)FlatFieldMode")
    field(TWST, "Both")
    field(THVL, "3")
    field(THST, "None")
+   field(PINI, "YES")
 }
 
 record(mbbo, "$(P)$(R)FlatFieldAxis")
@@ -168,42 +187,50 @@ record(mbbo, "$(P)$(R)FlatFieldAxis")
    field(ONST, "Y")
    field(TWVL, "3")
    field(TWST, "Both")
+   field(PINI, "YES")
 }
 
 record(ao, "$(P)$(R)FlatFieldValue")
 {
    field(PREC,  "0")
+   field(PINI, "YES")
 }
 
 record(ao, "$(P)$(R)SampleInX")
 {
    field(PREC,  "3")
+   field(PINI, "YES")
 }
 
 record(ao, "$(P)$(R)SampleOutX")
 {
    field(PREC,  "3")
+   field(PINI, "YES")
 }
 
 record(ao, "$(P)$(R)SampleInY")
 {
    field(PREC,  "3")
+   field(PINI, "YES")
 }
 
 record(ao, "$(P)$(R)SampleOutY")
 {
    field(PREC,  "3")
+   field(PINI, "YES")
 }
 
 record(ao, "$(P)$(R)SampleOutAngle")
 {
    field(PREC,  "3")
+   field(PINI, "YES")
 }
 
 record(bo, "$(P)$(R)SampleOutAngleEnable")
 {
    field(ZNAM, "No")
    field(ONAM, "Yes")
+   field(PINI, "YES")
 }
 
 ############
@@ -227,17 +254,20 @@ record(mbbi, "$(P)$(R)FrameType")
 record(ao, "$(P)$(R)ExposureTime")
 {
    field(PREC,  "3")
+   field(PINI, "YES")
 }
 
 record(ao, "$(P)$(R)FlatExposureTime")
 {
    field(PREC,  "3")
+   field(PINI, "YES")
 }
 
 record(bo, "$(P)$(R)DifferentFlatExposure")
 {
    field(ZNAM, "Same")
    field(ONAM, "Different")
+   field(PINI, "YES")
 }
 
 ############################
@@ -248,12 +278,14 @@ record(waveform, "$(P)$(R)FilePath")
 {
    field(FTVL, "UCHAR")
    field(NELM, "256")
+   field(PINI, "YES")
 }
 
 record(waveform, "$(P)$(R)FileName")
 {
    field(FTVL, "UCHAR")
    field(NELM, "256")
+   field(PINI, "YES")
 }
 
 record(bi, "$(P)$(R)FilePathExists")
@@ -270,12 +302,14 @@ record(bi, "$(P)$(R)OverwriteWarning")
     field(ZSV,  "MAJOR")
     field(ONAM, "Yes")
     field(OSV,  "NO_ALARM")
+   field(PINI, "YES")
 }
 
 record(waveform, "$(P)$(R)FullFileName")
 {
    field(FTVL, "UCHAR")
    field(NELM, "256")
+   field(PINI, "YES")
 }
 
 ################################
@@ -396,10 +430,12 @@ record(mbbo, "$(P)$(R)ScanType")
    field(SXST, "Energy File")
    field(SVVL, "7")
    field(SVST, "Helical")
+   field(PINI, "YES")
 }
 
 record(bo, "$(P)$(R)FlipStitch")
 {
    field(ZNAM, "No")
    field(ONAM, "Yes")
+   field(PINI, "YES")
 }
