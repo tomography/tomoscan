@@ -1,6 +1,6 @@
 
 file {
-	name="/home/beams19/USERTXM/epics/synApps/support/tomoscan/tomoScanApp/op/adl/tomoScan_32ID_main.adl"
+	name="/home/beams0/2BMB/epics/synApps/support/tomoscan/tomoScanApp/op/adl/tomoScan_32ID_main.adl"
 	version=030111
 }
 display {
@@ -1391,4 +1391,60 @@ text {
 		bclr=32
 	}
 	stacking="column"
+}
+text {
+	object {
+		x=424
+		y=716
+		width=160
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="PSO pulses"
+	align="horiz. right"
+}
+"text update" {
+	object {
+		x=589
+		y=716
+		width=100
+		height=18
+	}
+	monitor {
+		chan="32idMZ1:SG:UpCntr-1_COUNTS"
+		clr=14
+		bclr=51
+	}
+	limits {
+	}
+}
+text {
+	object {
+		x=424
+		y=739
+		width=160
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="FPGA pulses"
+	align="horiz. right"
+}
+"text update" {
+	object {
+		x=589
+		y=741
+		width=100
+		height=18
+	}
+	monitor {
+		chan="32idMZ1:SG:UpCntr-2_COUNTS"
+		clr=14
+		bclr=51
+	}
+	limits {
+	}
 }
