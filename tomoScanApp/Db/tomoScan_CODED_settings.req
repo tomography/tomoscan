@@ -1,0 +1,9 @@
+# This file is used by autosave to determine what PVs to save
+# It is also used by tomoScanCODED to determine what PVs to create
+
+# This is the file for the TomoScanCODED derived class.
+
+#############
+# FPGA Prefix
+#############
+$(P)$(R)FPGAPVPrefix
