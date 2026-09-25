@@ -7,13 +7,14 @@
 """
 import time
 import os
-import h5py 
+import h5py
 import sys
 import traceback
 import numpy as np
 import cv2
 import json
 import pathlib
+import uuid
 
 import sys,os
 import time
@@ -331,7 +332,7 @@ class TomoScan2BM(TomoScanHelical):
                 log.info('shutter status: %s', status)
                 log.info('close shutter: %s, value: %s', pv, value)
                 self.epics_pvs['CloseShutter'].put(value, wait=True)
-                self.wait_pv(self.epics_pvs['ShutterStatus'], 0)
+                self.wait_pv(self.epics_pvs['ShutterStatus'], 1)  # ON = blocking = beam off
                 status = self.epics_pvs['ShutterStatus'].get(as_string=True)
                 log.info('shutter status: %s', status)
 
@@ -471,14 +472,21 @@ class TomoScan2BM(TomoScanHelical):
         log.info('begin scan')
 
         # Set data directory
-        file_path = self.epics_pvs['DetectorTopDir'].get(as_string=True) + self.epics_pvs['ExperimentYearMonth'].get(as_string=True) + os.path.sep + self.epics_pvs['UserLastName'].get(as_string=True) + os.path.sep
-        self.epics_pvs['FilePath'].put(file_path, wait=True)
+        file_path = Path(self.epics_pvs['DetectorTopDir'].get(as_string=True))
+        file_path = file_path.joinpath(self.epics_pvs['ExperimentYearMonth'].get(as_string=True) + '-'
+                                       + self.epics_pvs['UserLastName'].get(as_string=True) + '-'
+                                       + self.epics_pvs['ProposalNumber'].get(as_string=True))
+        self.epics_pvs['FilePath'].put(str(file_path), wait=True)
 
         # NetBooter = NetBooter_Control(mode='telnet',id=self.access_dic['pdu_username'],password=self.access_dic['pdu_password'],ip=self.access_dic['pdu_ip_address'])           
         # NetBooter.power_off(1)
         
         # Call the base class method
         super().begin_scan()
+
+        # Create a new UUID for this scan
+        self.epics_pvs['ScanUUID'].put(str(uuid.uuid4()), wait=True)
+
         # Opens the front-end shutter
         self.open_frontend_shutter()
 
@@ -567,7 +575,8 @@ class TomoScan2BM(TomoScanHelical):
                 self.epics_pvs['ScanStatus'].put('fdt file transfer complete')
             elif copy_to_analysis_dir == 2:
                 log.info('Using scp')
-                dm.scp(full_file_name, remote_analysis_dir)
+                dm.scp(full_file_name, remote_analysis_dir,
+                       Path(self.epics_pvs['DetectorTopDir'].get()))
                 self.epics_pvs['ScanStatus'].put('scp file transfer complete')
             else:
                 log.warning('Automatic data trasfer to data analysis computer is disabled.')
@@ -680,7 +689,7 @@ class TomoScan2BM(TomoScanHelical):
         log.info('open shutter: %s, value: %s', pv, value)
         elapsed_time = 0
         while True:
-            if self.epics_pvs['ShutterStatus'].get() == int(value):
+            if self.epics_pvs['ShutterStatus'].get() == 0:  # OFF = not blocking = beam on
                 log.warning("Shutter is open in %f s", elapsed_time)
                 return
             if not self.scan_is_running:
