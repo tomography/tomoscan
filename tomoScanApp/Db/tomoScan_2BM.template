@@ -107,6 +107,14 @@ record(stringout, "$(P)$(R)ESAFNumber")
    field(PINI, "YES")
 }
 
+record(waveform, "$(P)$(R)ESAFDOINumber") 
+{
+    field(SCAN, "Passive")
+    field(DTYP, "Soft Channel")
+    field(NELM, "256")
+    field(FTVL, "CHAR")
+}
+
 record(stringout, "$(P)$(R)UserInfoUpdate")
 {
    field(VAL,  "Unknown")
@@ -258,5 +266,15 @@ record(stringout, "$(P)$(R)RoiPluginPVPrefix")
 record(stringout, "$(P)$(R)CbPluginPVPrefix")
 {
    field(VAL,  "$(CB_PLUGIN)")
+   field(PINI, "YES")
+}
+
+############
+# Scan UUID
+############
+
+record(stringout, "$(P)$(R)ScanUUID")
+{
+   field(VAL,  "Unknown")
    field(PINI, "YES")
 }

@@ -1,7 +1,14 @@
 # This file is used by autosave to determine what PVs to save
 # It is also used by tomoScan to determine what PVs to create
 
-# This is the file for the tomoscan_2bm derived class.
+# This is the file for the tomoscan_19bm derived class.
+# It matches tomoScan_7BM_settings.req with the gain-field entries removed.
+
+####################
+# Energy information
+####################
+$(P)$(R)Energy
+$(P)$(R)EnergyMode
 
 #########################
 # Beam status information
@@ -9,6 +16,22 @@
 $(P)$(R)BeamReadyPVName
 $(P)$(R)BeamReadyValue
 $(P)$(R)Testing
+
+################
+# Shutter status
+################
+$(P)$(R)ShutterStatusPVName
+
+####################
+# Optics information
+####################
+$(P)$(R)ScintillatorType
+$(P)$(R)ScintillatorThickness
+$(P)$(R)ImagePixelSize
+$(P)$(R)DetectorPixelSize
+$(P)$(R)CameraObjective
+$(P)$(R)CameraTubeLength
+$(P)$(R)CameraDistance
 
 ####################
 # Sample information
@@ -28,7 +51,6 @@ $(P)$(R)UserEmail
 $(P)$(R)ProposalNumber
 $(P)$(R)ProposalTitle
 $(P)$(R)ESAFNumber
-$(P)$(R)ESAFDOINumber
 $(P)$(R)UserInfoUpdate
 
 #################
@@ -40,43 +62,10 @@ $(P)$(R)ExperimentYearMonth
 $(P)$(R)RemoteAnalysisDir
 $(P)$(R)CopyToAnalysisDir
 
-######################
-# Fast shutter control
-######################
-$(P)$(R)CloseFastShutterPVName
-$(P)$(R)CloseFastShutterValue
-$(P)$(R)OpenFastShutterPVName
-$(P)$(R)OpenFastShutterValue
-
-################
-# Shutter status
-################
-$(P)$(R)ShutterStatusPVName
-
-################
-# mctOptics
-################
-$(P)$(R)MctOpticsPVPrefix
-
-################
-# AD plugins
-################
-$(P)$(R)PvaPluginPVPrefix
-
-######################
-# Pva Plugin PV Prefix
-######################
-$(P)$(R)PvaPluginPVPrefix
-
-######################
-# Roi Plugin PV Prefix
-######################
-$(P)$(R)RoiPluginPVPrefix
-
-#####################
-# Cb Plugin PV Prefix
-#####################
-$(P)$(R)CbPluginPVPrefix
+#########################
+# Camera External Trigger
+#########################
+$(P)$(R)ExternalTriggerSource
 
 ############
 # Scan UUID
