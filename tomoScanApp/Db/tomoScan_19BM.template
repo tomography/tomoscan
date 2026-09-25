@@ -247,4 +247,5 @@ record(stringout, "$(P)$(R)ExternalTriggerSource")
 record(stringout, "$(P)$(R)ScanUUID")
 {
    field(VAL,  "Unknown")
+   field(PINI, "YES")
 }
