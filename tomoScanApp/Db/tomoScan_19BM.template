@@ -39,6 +39,7 @@ record(ao, "$(P)$(R)Energy")
     field(SCAN, "Passive")
     field(DTYP, "Soft Channel")
     field(PREC, 2)
+    field(PINI, "YES")
 }
 
 record(mbbo, "$(P)$(R)EnergyMode")
@@ -49,6 +50,7 @@ record(mbbo, "$(P)$(R)EnergyMode")
    field(ONST, "Pink")
    field(TWVL, "2")
    field(TWST, "White")
+   field(PINI, "YES")
 }
 
 #########################
@@ -58,17 +60,20 @@ record(mbbo, "$(P)$(R)EnergyMode")
 record(stringout, "$(P)$(R)BeamReadyPVName")
 {
    field(VAL,  "$(BEAM_READY)")
+   field(PINI, "YES")
 }
 
 record(stringout, "$(P)$(R)BeamReadyValue")
 {
    field(VAL,  "$(READY_VALUE)")
+   field(PINI, "YES")
 }
 
 record(bo, "$(P)$(R)Testing")
 {
    field(ZNAM, "No")
    field(ONAM, "Yes")
+   field(PINI, "YES")
 }
 
 ################
@@ -78,6 +83,7 @@ record(bo, "$(P)$(R)Testing")
 record(stringout, "$(P)$(R)ShutterStatusPVName")
 {
    field(VAL,  "$(SHUTTER_STATUS)")
+   field(PINI, "YES")
 }
 
 ####################
@@ -87,34 +93,40 @@ record(stringout, "$(P)$(R)ShutterStatusPVName")
 record(stringout, "$(P)$(R)ScintillatorType")
 {
    field(VAL,  "Unknown")
+   field(PINI, "YES")
 }
 
 record(ao, "$(P)$(R)ScintillatorThickness")
 {
    field(PREC,  "0")
+   field(PINI, "YES")
 }
 
 record(ao, "$(P)$(R)ImagePixelSize")
 {
    field(PREC, "2")
    field(EGU,  "microns")
+   field(PINI, "YES")
 }
 
 record(ao, "$(P)$(R)DetectorPixelSize")
 {
    field(PREC, "2")
    field(EGU,  "microns")
+   field(PINI, "YES")
 }
 
 record(stringout, "$(P)$(R)CameraObjective")
 {
    field(VAL,  "Unknown")
+   field(PINI, "YES")
 }
 
 record(ao, "$(P)$(R)CameraTubeLength")
 {
    field(PREC, "0")
    field(EGU,  "mm")
+   field(PINI, "YES")
 }
 
 record(ao, "$(P)$(R)CameraDistance")
@@ -122,6 +134,7 @@ record(ao, "$(P)$(R)CameraDistance")
    field(PREC, "0")
    field(EGU,  "mm")
    field(VAL,  "0")
+   field(PINI, "YES")
 }
 
 ####################
@@ -131,21 +144,25 @@ record(ao, "$(P)$(R)CameraDistance")
 record(stringout, "$(P)$(R)SampleName")
 {
    field(VAL,  "Unknown")
+   field(PINI, "YES")
 }
 
 record(stringout, "$(P)$(R)SampleDescription1")
 {
    field(VAL,  "Unknown")
+   field(PINI, "YES")
 }
 
 record(stringout, "$(P)$(R)SampleDescription2")
 {
    field(VAL,  "Unknown")
+   field(PINI, "YES")
 }
 
 record(stringout, "$(P)$(R)SampleDescription3")
 {
    field(VAL,  "Unknown")
+   field(PINI, "YES")
 }
 
 ##################
@@ -155,6 +172,7 @@ record(stringout, "$(P)$(R)SampleDescription3")
 record(stringout, "$(P)$(R)UserName")
 {
    field(VAL,  "Unknown")
+   field(PINI, "YES")
 }
 
 record(waveform, "$(P)$(R)UserInstitution")
@@ -163,21 +181,25 @@ record(waveform, "$(P)$(R)UserInstitution")
     field(DTYP, "Soft Channel")
     field(NELM, "256")
     field(FTVL, "CHAR")
+    field(PINI, "YES")
 }
 
 record(stringout, "$(P)$(R)UserBadge")
 {
    field(VAL,  "Unknown")
+   field(PINI, "YES")
 }
 
 record(stringout, "$(P)$(R)UserEmail")
 {
    field(VAL,  "Unknown")
+   field(PINI, "YES")
 }
 
 record(stringout, "$(P)$(R)ProposalNumber")
 {
    field(VAL,  "Unknown")
+   field(PINI, "YES")
 }
 
 record(waveform, "$(P)$(R)ProposalTitle")
@@ -186,16 +208,19 @@ record(waveform, "$(P)$(R)ProposalTitle")
     field(DTYP, "Soft Channel")
     field(NELM, "256")
     field(FTVL, "CHAR")
+    field(PINI, "YES")
 }
 
 record(stringout, "$(P)$(R)ESAFNumber")
 {
    field(VAL,  "Unknown")
+   field(PINI, "YES")
 }
 
 record(stringout, "$(P)$(R)UserInfoUpdate")
 {
    field(VAL,  "Unknown")
+   field(PINI, "YES")
 }
 
 #############################
@@ -205,27 +230,32 @@ record(stringout, "$(P)$(R)UserInfoUpdate")
 record(stringout, "$(P)$(R)DetectorTopDir")
 {
    field(VAL,  "Unknown")
+   field(PINI, "YES")
 }
 
 record(stringout, "$(P)$(R)UserLastName")
 {
    field(VAL,  "Unknown")
+   field(PINI, "YES")
 }
 
 record(stringout, "$(P)$(R)ExperimentYearMonth")
 {
    field(VAL,  "Unknown")
+   field(PINI, "YES")
 }
 
 record(stringout, "$(P)$(R)RemoteAnalysisDir")
 {
    field(VAL,  "Unknown")
+   field(PINI, "YES")
 }
 
 record(bo, "$(P)$(R)CopyToAnalysisDir")
 {
    field(ZNAM, "No")
    field(ONAM, "Yes")
+   field(PINI, "YES")
 }
 
 #########################
@@ -238,6 +268,7 @@ record(bo, "$(P)$(R)CopyToAnalysisDir")
 record(stringout, "$(P)$(R)ExternalTriggerSource")
 {
     field(VAL, "$(LINE)")
+    field(PINI, "YES")
 }
 
 ############
