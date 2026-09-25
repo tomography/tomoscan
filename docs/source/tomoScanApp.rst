@@ -8,15 +8,23 @@ tomoScanApp EPICS application
 
    tomoScan.template
    tomoScan_PSO.template
+   tomoScan_FPGA.template
    tomoScan_13BM.template
    tomoScan_13BM_MCS.template
    tomoScan_13BM_PSO.template
    tomoScan_2BM.template
+   tomoScan_19BM.template
+   tomoScan_32IDC.template
+   tomoScan_CODED.template
    tomoScan_settings.req
    tomoScan_PSO_settings.req
+   tomoScan_FPGA_settings.req
    tomoScan_13BM_MCS_settings.req
    tomoScan_13BM_PSO_settings.req
    tomoScan_2BM_settings.req
+   tomoScan_19BM_settings.req
+   tomoScan_32IDC_settings.req
+   tomoScan_CODED_settings.req
    tomoScan.substitutions
    tomoScan_13BM_settings.req
    tomoScan_32ID.template
@@ -64,6 +72,33 @@ Camera and File Plugin PV Prefixes
   * - $(P)$(R)FilePluginPVPrefix
     - stringout
     - Contains the prefix for the file plugin, e.g. 13BMDPG1:HDF1: or 13BMDPG1:netCDF1:
+
+.. note::
+
+   In addition to the two records above, ``tomoscan.py`` builds several
+   derived control PVs at startup from the ``CameraPVPrefix`` (and, when
+   applicable, ``FilePluginPVPrefix`` and ``FPGA``). These are exposed as
+   ``self.control_pvs[...]`` for derived classes to use directly; they are
+   not template records:
+
+   - ``ArraySizeX_RBV`` — bound to ``<CameraPVPrefix>ArraySizeX_RBV``,
+     giving the detector horizontal pixel count. Used, for example, by
+     the motion-blur calculation in the FPGA subclass.
+
+   If the substitutions file declares an ``FPGA`` prefix (via
+   ``$(FPGA)`` — see :doc:`tomoScan_FPGA.template`), ``tomoscan.py``
+   additionally registers the softGlueZynq FPGA control PVs used by the
+   ``TomoScanFPGAPSO`` intermediate base class:
+
+   - ``FPGAAddr``, ``FPGADin``, ``FPGAClk``, ``FPGAWrt``,
+     ``FPGAEnSignal``, ``FPGANSignal`` — pulse-sequence BRAM control
+   - ``FPGAMUX2`` — trigger MUX select (0 = PSO, 1 = trigILF)
+   - ``BUFFER-1_IN_Signal``, ``BUFFER-2_IN_Signal`` — reset / enable
+     signals
+
+   Stations that do not declare an ``FPGA`` prefix (13-BM, 6-BM-B,
+   classic 2-BM, 7-BM, etc.) skip this block entirely at IOC startup;
+   the base class behavior is unchanged for them.
 
 Shutter control
 ~~~~~~~~~~~~~~~
@@ -526,6 +561,145 @@ PSO configuration
     - Write/read
     - Enable PSO programming 'Yes'.
 
+tomoScan_FPGA.template
+----------------------
+
+This is the database file that contains only the PVs required by the tomoscan_fpga_pso.py intermediate base class
+:doc:`tomoScan_FPGA.template`.
+
+This class is used at stations that trigger the camera from a softGlueZynq
+FPGA I/O module driven by the rotation-stage encoder, in place of a
+controller-native PSO output. It also carries the parameters for interlaced
+angle sequences (uniform, TIMBIR, golden-angle, van der Corput) and the
+live scan-preview readbacks (motion blur, dropped frames, achieved
+efficiency, projected scan time).
+
+FPGA prefix
+~~~~~~~~~~~
+
+.. cssclass:: table-bordered table-striped table-hover
+.. list-table::
+  :header-rows: 1
+  :widths: 5 5 5 85
+
+  * - Record name
+    - Record type
+    - Access type
+    - Description
+  * - $(P)$(R)FPGAPVPrefix
+    - stringout
+    - Configuration
+    - Contains the prefix for the softGlueZynq FPGA I/O module (e.g. ``2bmb:softGlueZynq:``).
+      When the base class ``tomoscan.py`` sees an ``FPGA`` entry in ``pv_prefixes`` it
+      registers the FPGA control PVs listed in the ``tomoscan.py`` section above.
+
+Trigger source
+~~~~~~~~~~~~~~
+
+.. cssclass:: table-bordered table-striped table-hover
+.. list-table::
+  :header-rows: 1
+  :widths: 5 5 5 85
+
+  * - Record name
+    - Record type
+    - Access type
+    - Description
+  * - $(P)$(R)TriggerSource
+    - mbbo
+    - Write/read
+    - Selects the source of the camera trigger. Choices are "PSO" (0) — pulses come
+      from the Aerotech controller's PSO output — and "FPGA" (1) — pulses come from
+      the softGlueZynq downstream of the Aerotech-emitted coarse pulse train.
+      Interlaced scans require "FPGA".
+
+Interlaced scan configuration
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. cssclass:: table-bordered table-striped table-hover
+.. list-table::
+  :header-rows: 1
+  :widths: 5 5 5 85
+
+  * - Record name
+    - Record type
+    - Access type
+    - Description
+  * - $(P)$(R)InterlacedMode
+    - mbbo
+    - Write/read
+    - Angle-sequence mode. Choices: "Uniform" (0), "Timbir" (1), "Golden" (2),
+      "Van der Corput" (3). Timbir and Van der Corput produce identical sorted angle
+      arrays; Van der Corput handles non-power-of-2 ``K``.
+  * - $(P)$(R)InterlacedRotationStart
+    - ao
+    - Configuration
+    - First rotation angle in degrees (``PREC=3``).
+  * - $(P)$(R)InterlacedNumberOfRotation
+    - ao
+    - Configuration
+    - Number of full 360° rotations to cover (integer, 1 to 1024).
+  * - $(P)$(R)InterlacedNumAngles
+    - longout
+    - Configuration
+    - Total number of angles in the interlaced sequence (``N × K``).
+  * - $(P)$(R)InterlacedRotationStop
+    - calc
+    - Status
+    - Computed end angle: ``InterlacedRotationStart + 360 × InterlacedNumberOfRotation``.
+  * - $(P)$(R)InterlacedMinStep
+    - ao
+    - Status
+    - Minimum angular step between adjacent projections in degrees (``PREC=3``).
+  * - $(P)$(R)PSOSlotStep
+    - ao
+    - Configuration
+    - PSO window step size used to size the FPGA trigger window. For all interlaced
+      modes this is ``360 / N`` degrees. Renamed from ``InterlacedPSOWindowStep``.
+
+.. note::
+
+   **PV rename:** ``InterlacedPSOWindowStep`` was renamed to ``PSOSlotStep``.
+   Any autosave value stored under the old name will be orphaned on the next
+   IOC boot. External scripts, dashboards, or archiver configurations that
+   referenced the old name must be updated.
+
+Live scan preview
+~~~~~~~~~~~~~~~~~
+
+.. cssclass:: table-bordered table-striped table-hover
+.. list-table::
+  :header-rows: 1
+  :widths: 5 5 5 85
+
+  * - Record name
+    - Record type
+    - Access type
+    - Description
+  * - $(P)$(R)InterlacedScanTime
+    - ao
+    - Status
+    - Projected scan duration for the currently configured interlaced sequence,
+      in seconds.
+  * - $(P)$(R)InterlacedEfficiencyRequested
+    - ao
+    - Configuration
+    - Requested duty-cycle efficiency (0–100), used to size the PSO window and
+      compute the required rotation speed.
+  * - $(P)$(R)InterlacedEfficiencyCalculated
+    - ao
+    - Status
+    - Achieved duty-cycle efficiency at the current settings, in percent.
+  * - $(P)$(R)MotionBlurr
+    - ao
+    - Status
+    - Estimated motion blur across the exposure at the current rotation speed,
+      in pixels (``PREC=2``, ``EGU=pixels``).
+  * - $(P)$(R)DroppedFrames
+    - ao
+    - Status
+    - Number of frames dropped in the most recent scan (integer).
+
 medm files
 ----------
 
@@ -552,10 +726,23 @@ If these PVs are changed tomoscan must be restarted.
 tomoScan_pso.adl
 ~~~~~~~~~~~~~~~~
 
-The following is the MEDM screen :download:`tomoScan_pso.adl <../../tomoScanApp/op/adl/tomoScan_pso.adl>`. 
+The following is the MEDM screen :download:`tomoScan_pso.adl <../../tomoScanApp/op/adl/tomoScan_pso.adl>`.
 It contains the PVs that control the Aerotech PSO pulse control.
 
 .. image:: img/tomoScan_pso.png
+    :width: 75%
+    :align: center
+
+tomoScanFPGAEPICS_PVs.adl
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The MEDM screen :download:`tomoScanFPGAEPICS_PVs.adl <../../tomoScanApp/op/adl/tomoScanFPGAEPICS_PVs.adl>`
+is the FPGA extension to ``tomoScanEPICS_PVs.adl``. It exposes the
+softGlueZynq FPGA control PVs registered by ``tomoscan.py`` when a station
+declares an ``FPGA`` prefix. If these PVs are changed tomoscan must be
+restarted.
+
+.. image:: img/tomoScanFPGAEPICS_PVs.png
     :width: 75%
     :align: center
 
@@ -737,6 +924,248 @@ This screen contains the PVs for the TomoScan_13BM derived class.  If the MCSPre
     :width: 75%
     :align: center
 
+Beamline 19-BM
+--------------
+
+These are the files that are specific to the TomoScan19BM derived class used at APS beamline 19-BM.
+
+tomoScan_19BM.template
+~~~~~~~~~~~~~~~~~~~~~~
+
+This is the database file for the TomoScan19BM derived class
+:doc:`tomoScan_19BM.template`.
+
+The following tables list all of the records in the tomoScan_19BM.template file.
+This file is used for records needed by the tomoscan_19bm derived class, and also
+for metadata PVs that should be saved in the tomoscan configuration file and files
+written by the areaDetector file plugins.
+
+The 19-BM template is modelled on tomoScan_7BM.template rather than tomoScan_2BM.template.
+19-BM has no mctoptics server, so the optics metadata records are defined locally here
+instead of being read from an optics server. 19-BM does not collect gain fields, and
+its only shutter is the front-end shutter (handled by ``OPEN_SHUTTER`` / ``CLOSE_SHUTTER``
+in ``tomoScan.template``), so the 7-BM gain-field and fast-shutter records are omitted.
+
+Energy information
+^^^^^^^^^^^^^^^^^^
+
+.. cssclass:: table-bordered table-striped table-hover
+.. list-table::
+  :header-rows: 1
+  :widths: 5 5 90
+
+  * - Record name
+    - Record type
+    - Description
+  * - $(P)$(R)Energy
+    - ao
+    - Beamline energy in the natural unit (``PREC=2``).
+  * - $(P)$(R)EnergyMode
+    - mbbo
+    - Beamline energy mode: "Mono" (0), "Pink" (1), "White" (2).
+
+Beam status information
+^^^^^^^^^^^^^^^^^^^^^^^
+
+.. cssclass:: table-bordered table-striped table-hover
+.. list-table::
+  :header-rows: 1
+  :widths: 5 5 90
+
+  * - Record name
+    - Record type
+    - Description
+  * - $(P)$(R)BeamReadyPVName
+    - stringout
+    - Contains the name of the PV that indicates if beam is ready.
+  * - $(P)$(R)BeamReadyValue
+    - stringout
+    - Contains the value of the beam ready PV when beam is ready.
+  * - $(P)$(R)Testing
+    - bo
+    - Bypass the beam-ready check when set to "Yes".
+
+Shutter status
+^^^^^^^^^^^^^^
+
+.. cssclass:: table-bordered table-striped table-hover
+.. list-table::
+  :header-rows: 1
+  :widths: 5 5 90
+
+  * - Record name
+    - Record type
+    - Description
+  * - $(P)$(R)ShutterStatusPVName
+    - stringout
+    - Contains the name of the PV that reads the shutter status.
+
+Optics information
+^^^^^^^^^^^^^^^^^^
+
+.. cssclass:: table-bordered table-striped table-hover
+.. list-table::
+  :header-rows: 1
+  :widths: 5 5 90
+
+  * - Record name
+    - Record type
+    - Description
+  * - $(P)$(R)ScintillatorType
+    - stringout
+    - Type of scintillator being used.
+  * - $(P)$(R)ScintillatorThickness
+    - ao
+    - Thickness of the scintillator in microns.
+  * - $(P)$(R)ImagePixelSize
+    - ao
+    - Pixel size on the sample in microns (includes objective magnification).
+  * - $(P)$(R)DetectorPixelSize
+    - ao
+    - Pixel size of the detector in microns.
+  * - $(P)$(R)CameraObjective
+    - stringout
+    - Description of the camera objective.
+  * - $(P)$(R)CameraTubeLength
+    - ao
+    - Camera tube length in mm.
+  * - $(P)$(R)CameraDistance
+    - ao
+    - Camera-to-sample distance in mm.
+
+Sample information
+^^^^^^^^^^^^^^^^^^
+
+.. cssclass:: table-bordered table-striped table-hover
+.. list-table::
+  :header-rows: 1
+  :widths: 5 5 90
+
+  * - Record name
+    - Record type
+    - Description
+  * - $(P)$(R)SampleName
+    - stringout
+    - Name of the sample.
+  * - $(P)$(R)SampleDescription1
+    - stringout
+    - Description of the sample, part 1.
+  * - $(P)$(R)SampleDescription2
+    - stringout
+    - Description of the sample, part 2.
+  * - $(P)$(R)SampleDescription3
+    - stringout
+    - Description of the sample, part 3.
+
+User information
+^^^^^^^^^^^^^^^^
+
+.. cssclass:: table-bordered table-striped table-hover
+.. list-table::
+  :header-rows: 1
+  :widths: 5 5 90
+
+  * - Record name
+    - Record type
+    - Description
+  * - $(P)$(R)UserName
+    - stringout
+    - User name.
+  * - $(P)$(R)UserInstitution
+    - waveform (CHAR)
+    - User institution (long string, up to 256 characters).
+  * - $(P)$(R)UserBadge
+    - stringout
+    - User badge number.
+  * - $(P)$(R)UserEmail
+    - stringout
+    - User email address.
+  * - $(P)$(R)ProposalNumber
+    - stringout
+    - Proposal number.
+  * - $(P)$(R)ProposalTitle
+    - waveform (CHAR)
+    - Proposal title (long string, up to 256 characters).
+  * - $(P)$(R)ESAFNumber
+    - stringout
+    - Experiment Safety Approval Form number.
+  * - $(P)$(R)UserInfoUpdate
+    - stringout
+    - Timestamp of the last user-info refresh from the ESAF service.
+
+Data management information
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. cssclass:: table-bordered table-striped table-hover
+.. list-table::
+  :header-rows: 1
+  :widths: 5 5 90
+
+  * - Record name
+    - Record type
+    - Description
+  * - $(P)$(R)DetectorTopDir
+    - stringout
+    - Top-level directory on the detector computer where scan files are written.
+  * - $(P)$(R)UserLastName
+    - stringout
+    - Operator's last name (used to build the per-experiment directory).
+  * - $(P)$(R)ExperimentYearMonth
+    - stringout
+    - Year-month tag (used to build the per-experiment directory).
+  * - $(P)$(R)RemoteAnalysisDir
+    - stringout
+    - Destination directory for automatic data transfer to the analysis computer.
+  * - $(P)$(R)CopyToAnalysisDir
+    - bo
+    - Enable ("Yes") automatic transfer of scan files to the analysis computer.
+
+Camera external trigger
+^^^^^^^^^^^^^^^^^^^^^^^
+
+.. cssclass:: table-bordered table-striped table-hover
+.. list-table::
+  :header-rows: 1
+  :widths: 5 5 90
+
+  * - Record name
+    - Record type
+    - Description
+  * - $(P)$(R)ExternalTriggerSource
+    - stringout
+    - The GenICam ``TriggerSource`` value that the PSO output is wired to on the
+      camera (e.g. ``Line0`` for the Vieworks VP-61MX on the Euresys grabber).
+
+tomoScan_19BM_settings.req
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This is the autosave request file for tomoScan_19BM.template
+:doc:`tomoScan_19BM_settings.req`.
+
+It has the same usage and type of content as tomoScan_settings.req described above, except that it
+contains the PVs for the derived class TomoScan19BM.
+
+medm files
+~~~~~~~~~~
+
+tomoScan_19BM.adl
+^^^^^^^^^^^^^^^^^
+
+The following is the MEDM screen :download:`tomoScan_19BM.adl <../../tomoScanApp/op/adl/tomoScan_19BM.adl>`.
+This screen contains the PVs for the TomoScan_19BM derived class. If the BeamReadyPV is changed then tomoscan must be restarted.
+
+.. image:: img/tomoScan_19BM.png
+    :width: 75%
+    :align: center
+
+Sub-screens accessed from the main screen:
+:download:`tomoScan_19BM_dm.adl <../../tomoScanApp/op/adl/tomoScan_19BM_dm.adl>` (data management),
+:download:`tomoScan_19BM_energy.adl <../../tomoScanApp/op/adl/tomoScan_19BM_energy.adl>` (beamline energy),
+:download:`tomoScan_19BM_experiment.adl <../../tomoScanApp/op/adl/tomoScan_19BM_experiment.adl>` (experiment / user info),
+:download:`tomoScan_19BM_optics.adl <../../tomoScanApp/op/adl/tomoScan_19BM_optics.adl>` (optics),
+:download:`tomoScan_19BM_otherpvs.adl <../../tomoScanApp/op/adl/tomoScan_19BM_otherpvs.adl>` (other PVs),
+:download:`tomoScan_19BM_sample.adl <../../tomoScanApp/op/adl/tomoScan_19BM_sample.adl>` (sample info).
+
 Beamline 2-BM
 -------------
 
@@ -830,6 +1259,9 @@ User information
   * - $(P)$(R)ESAFNumber
     - stringout
     - Experiment Safety Approval Form number
+  * - $(P)$(R)ESAFDOINumber
+    - waveform (CHAR)
+    - DOI attached to the ESAF, populated by the APS scheduling system (long string, up to 256 characters).
   * - $(P)$(R)UserInfoUpdate
     - stringout
     - Date and time of the last synchronization of the user information with the APS scheduling system
@@ -1004,6 +1436,17 @@ This is the autosave request file for tomoScan_2BM.template
 
 It has the same usage and type of content as tomoScan_settings.req described above, except that it
 contains the PVs for the derived class TomoScan2BM.
+
+Beamline 2-BM FPGA
+------------------
+
+These are the files that are specific to the TomoScan2BM (FPGA variant) derived class used at APS beamline 2-BM-B for FPGA-triggered tomography. The Python class ``TomoScan2BM`` in ``tomoscan/tomoscan_fpga_2bm.py`` inherits from the intermediate base class ``TomoScanFPGAPSO``; its PVs come from the shared :doc:`tomoScan_FPGA.template` documented above, plus the 2-BM metadata records from :doc:`tomoScan_2BM.template`.
+
+The IOC lives in ``iocBoot/iocTomoScanFPGA_2BMB/``. Its substitutions file
+declares the ``FPGA`` prefix, which makes ``tomoscan.py`` register the
+softGlueZynq FPGA control PVs listed in the ``tomoScan.template`` section
+above (``FPGAAddr``, ``FPGADin``, ``FPGAClk``, ``FPGAWrt``, ``FPGAEnSignal``,
+``FPGANSignal``, ``FPGAMUX2``, ``BUFFER-1_IN_Signal``, ``BUFFER-2_IN_Signal``).
 
 Beamline 32-ID
 --------------
@@ -1261,10 +1704,38 @@ medm files
 tomoScan_2BM.adl
 ^^^^^^^^^^^^^^^^
 
-The following is the MEDM screen :download:`tomoScan_2BM.adl <../../tomoScanApp/op/adl/tomoScan_2BM.adl>`.  
+The following is the MEDM screen :download:`tomoScan_2BM.adl <../../tomoScanApp/op/adl/tomoScan_2BM.adl>`.
 This screen contains the PVs for the TomoScan_2BM derived class.  If the BeamReadyPV is changed then tomoscan must be restarted.
 
 .. image:: img/tomoScan_2BM.png
+    :width: 75%
+    :align: center
+
+tomoScan_2BM_main.adl
+^^^^^^^^^^^^^^^^^^^^^
+
+The MEDM screen :download:`tomoScan_2BM_main.adl <../../tomoScanApp/op/adl/tomoScan_2BM_main.adl>`
+is the 2-BM custom integrated main panel. It mirrors ``tomoScan.adl`` but drops
+the shutter open/close buttons (2-BM uses its own shutter workflow) and adds
+two hard-wired 2-BM-B beam-monitor readbacks
+(``2bmbMZ1:SG:UpCntr-1_COUNTS`` and ``2bmbMZ1:SG:UpCntr-2_COUNTS``). The
+2-BM ``start_medm`` launches this screen in place of the generic ``tomoScan.adl``.
+
+.. image:: img/tomoScan_2BM_main.png
+    :width: 75%
+    :align: center
+
+tomoScanFPGA_2BM_main.adl
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The MEDM screen :download:`tomoScanFPGA_2BM_main.adl <../../tomoScanApp/op/adl/tomoScanFPGA_2BM_main.adl>`
+is the equivalent custom main panel for the 2-BM FPGA station
+(``iocTomoScanFPGA_2BMB``). It surfaces interlaced-scan controls, live scan
+status, sample motion, and file paths. The
+``iocTomoScanFPGA_2BMB/start_medm`` launcher opens this screen instead of the
+per-station ``tomoScanFPGA_2BM.adl``.
+
+.. image:: img/tomoScanFPGA_2BM_main.png
     :width: 75%
     :align: center
 
@@ -1287,6 +1758,270 @@ This screen contains the PVs for the TomoScan_32ID derived class.  If the BeamRe
 .. image:: img/tomoScan_32ID.png
     :width: 75%
     :align: center
+
+Beamline 32-ID-C
+----------------
+
+These are the files that are specific to the TomoScan32IDC derived class used at APS beamline 32-ID-C Micro-CT station (distinct from the 32-ID-C Transmission X-ray Microscope covered above).
+
+The template is a copy of tomoScan_2BM.template with the fast-shutter records removed: the Micro-CT station at 32-ID-C has no fast shutter. Beam is admitted to the station by the 32-ID-B shutter (32idb:rshtrB:), which is handled by the ``OPEN_SHUTTER`` / ``CLOSE_SHUTTER`` macros in ``tomoScan.template``.
+
+tomoScan_32IDC.template
+~~~~~~~~~~~~~~~~~~~~~~~
+
+This is the database file for the TomoScan32IDC derived class
+:doc:`tomoScan_32IDC.template`.
+
+Beam status information
+^^^^^^^^^^^^^^^^^^^^^^^
+
+.. cssclass:: table-bordered table-striped table-hover
+.. list-table::
+  :header-rows: 1
+  :widths: 5 5 90
+
+  * - Record name
+    - Record type
+    - Description
+  * - $(P)$(R)BeamReadyPVName
+    - stringout
+    - Contains the name of the PV that indicates if beam is ready.
+  * - $(P)$(R)BeamReadyValue
+    - stringout
+    - Contains the value of the beam ready PV when beam is ready.
+  * - $(P)$(R)Testing
+    - bo
+    - Bypass the beam-ready check when set to "Yes".
+
+Sample information
+^^^^^^^^^^^^^^^^^^
+
+.. cssclass:: table-bordered table-striped table-hover
+.. list-table::
+  :header-rows: 1
+  :widths: 5 5 90
+
+  * - Record name
+    - Record type
+    - Description
+  * - $(P)$(R)SampleName
+    - stringout
+    - Name of the sample.
+  * - $(P)$(R)SampleDescription1
+    - stringout
+    - Description of the sample, part 1.
+  * - $(P)$(R)SampleDescription2
+    - stringout
+    - Description of the sample, part 2.
+  * - $(P)$(R)SampleDescription3
+    - stringout
+    - Description of the sample, part 3.
+
+User information
+^^^^^^^^^^^^^^^^
+
+.. cssclass:: table-bordered table-striped table-hover
+.. list-table::
+  :header-rows: 1
+  :widths: 5 5 90
+
+  * - Record name
+    - Record type
+    - Description
+  * - $(P)$(R)UserName
+    - stringout
+    - User name.
+  * - $(P)$(R)UserInstitution
+    - waveform (CHAR)
+    - User institution (long string, up to 256 characters).
+  * - $(P)$(R)UserBadge
+    - stringout
+    - User badge number.
+  * - $(P)$(R)UserEmail
+    - stringout
+    - User email address.
+  * - $(P)$(R)ProposalNumber
+    - stringout
+    - Proposal number.
+  * - $(P)$(R)ProposalTitle
+    - waveform (CHAR)
+    - Proposal title (long string, up to 256 characters).
+  * - $(P)$(R)ESAFNumber
+    - stringout
+    - Experiment Safety Approval Form number.
+  * - $(P)$(R)ESAFDOINumber
+    - waveform (CHAR)
+    - DOI attached to the ESAF (long string, up to 256 characters).
+  * - $(P)$(R)UserInfoUpdate
+    - stringout
+    - Timestamp of the last user-info refresh from the ESAF service.
+
+Data management information
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. cssclass:: table-bordered table-striped table-hover
+.. list-table::
+  :header-rows: 1
+  :widths: 5 5 90
+
+  * - Record name
+    - Record type
+    - Description
+  * - $(P)$(R)DetectorTopDir
+    - stringout
+    - Top-level directory on the detector computer where scan files are written.
+  * - $(P)$(R)UserLastName
+    - stringout
+    - Operator's last name (used to build the per-experiment directory).
+  * - $(P)$(R)ExperimentYearMonth
+    - stringout
+    - Year-month tag (used to build the per-experiment directory).
+  * - $(P)$(R)RemoteAnalysisDir
+    - stringout
+    - Destination directory for automatic data transfer to the analysis computer.
+  * - $(P)$(R)CopyToAnalysisDir
+    - mbbo
+    - Transfer method: "None" (0), "fdt" (1), or "scp" (2).
+
+Shutter status
+^^^^^^^^^^^^^^
+
+.. cssclass:: table-bordered table-striped table-hover
+.. list-table::
+  :header-rows: 1
+  :widths: 5 5 90
+
+  * - Record name
+    - Record type
+    - Description
+  * - $(P)$(R)ShutterStatusPVName
+    - stringout
+    - Contains the name of the PV that reads the shutter status.
+
+mctOptics
+^^^^^^^^^
+
+.. cssclass:: table-bordered table-striped table-hover
+.. list-table::
+  :header-rows: 1
+  :widths: 5 5 90
+
+  * - Record name
+    - Record type
+    - Description
+  * - $(P)$(R)MctOpticsPVPrefix
+    - stringout
+    - Contains the prefix of the mctOptics IOC that supplies optics-metadata PVs
+      (ScintillatorType, ImagePixelSize, CameraObjective, etc.).
+
+Scan Types
+^^^^^^^^^^
+
+.. cssclass:: table-bordered table-striped table-hover
+.. list-table::
+  :header-rows: 1
+  :widths: 5 5 90
+
+  * - Record name
+    - Record type
+    - Description
+  * - $(P)$(R)ScanType
+    - mbbo
+    - Scan type: "Single" (0), "Vertical" (1), "Horizontal" (2), "Mosaic" (3),
+      "File" (4), "Energy" (5).
+  * - $(P)$(R)FlipStitch
+    - bo
+    - When "Yes", the horizontal-stitch scan flips alternate rows.
+
+Plugin PV prefixes
+^^^^^^^^^^^^^^^^^^
+
+.. cssclass:: table-bordered table-striped table-hover
+.. list-table::
+  :header-rows: 1
+  :widths: 5 5 90
+
+  * - Record name
+    - Record type
+    - Description
+  * - $(P)$(R)PvaPluginPVPrefix
+    - stringout
+    - PV prefix for the areaDetector PVA plugin.
+  * - $(P)$(R)RoiPluginPVPrefix
+    - stringout
+    - PV prefix for the areaDetector ROI plugin.
+  * - $(P)$(R)CbPluginPVPrefix
+    - stringout
+    - PV prefix for the areaDetector circular-buffer plugin.
+
+tomoScan_32IDC_settings.req
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This is the autosave request file for tomoScan_32IDC.template
+:doc:`tomoScan_32IDC_settings.req`.
+
+It has the same usage and type of content as tomoScan_settings.req described above, except that it
+contains the PVs for the derived class TomoScan32IDC.
+
+medm files
+~~~~~~~~~~
+
+The 32-ID-C MEDM screens live under ``tomoScanApp/op/adl/``:
+:download:`tomoScan_32IDC.adl <../../tomoScanApp/op/adl/tomoScan_32IDC.adl>` (main),
+:download:`tomoScan_32IDC_dm.adl <../../tomoScanApp/op/adl/tomoScan_32IDC_dm.adl>` (data management),
+:download:`tomoScan_32IDC_experiment.adl <../../tomoScanApp/op/adl/tomoScan_32IDC_experiment.adl>` (experiment / user info),
+:download:`tomoScan_32IDC_otherpvs.adl <../../tomoScanApp/op/adl/tomoScan_32IDC_otherpvs.adl>` (other PVs),
+:download:`tomoScan_32IDC_sample.adl <../../tomoScanApp/op/adl/tomoScan_32IDC_sample.adl>` (sample info).
+
+Beamline 32-ID FPGA
+-------------------
+
+These are the files that are specific to the TomoScanFPGA32ID derived class used at APS beamline 32-ID for FPGA-triggered tomography. The Python class ``TomoScanFPGA32ID`` in ``tomoscan/tomoscan_fpga_32id.py`` inherits from the intermediate base class ``TomoScanFPGAPSO``; its PVs come from the shared :doc:`tomoScan_FPGA.template` documented above.
+
+The IOC lives in ``iocBoot/iocTomoScanFPGA_32ID/``. Its substitutions file
+declares the ``FPGA`` prefix, which makes ``tomoscan.py`` register the
+softGlueZynq FPGA control PVs listed in the ``tomoScan.template`` section
+above.
+
+medm files
+~~~~~~~~~~
+
+The 32-ID FPGA MEDM screens live under ``tomoScanApp/op/adl/``:
+:download:`tomoScanFPGA_32ID.adl <../../tomoScanApp/op/adl/tomoScanFPGA_32ID.adl>` (32-ID FPGA display),
+:download:`tomoScanFPGA_32ID_main.adl <../../tomoScanApp/op/adl/tomoScanFPGA_32ID_main.adl>` (custom integrated main panel launched by ``iocTomoScanFPGA_32ID/start_medm``).
+
+Beamline CODED aperture (32-ID)
+-------------------------------
+
+These are the files that are specific to the TomoScanCODED32ID derived class used at APS beamline 32-ID for coded-aperture tomography with the NV200 piezo apertures. The Python class ``TomoScanCODED32ID`` in ``tomoscan/tomoscan_coded_32id.py`` inherits from ``TomoScanPSO`` (not ``TomoScanFPGAPSO``), but the station still exposes the softGlueZynq FPGA hardware prefix so the Python class can discover it.
+
+tomoScan_CODED.template
+~~~~~~~~~~~~~~~~~~~~~~~
+
+This is the database file for the TomoScanCODED32ID derived class
+:doc:`tomoScan_CODED.template`.
+
+.. cssclass:: table-bordered table-striped table-hover
+.. list-table::
+  :header-rows: 1
+  :widths: 5 5 90
+
+  * - Record name
+    - Record type
+    - Description
+  * - $(P)$(R)FPGAPVPrefix
+    - stringout
+    - Contains the prefix for the softGlueZynq FPGA I/O module that drives the
+      coded-aperture control (e.g. ``32ida:softGlueZynq:``).
+
+tomoScan_CODED_settings.req
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This is the autosave request file for tomoScan_CODED.template
+:doc:`tomoScan_CODED_settings.req`.
+
+It has the same usage and type of content as tomoScan_settings.req described above, except that it
+contains the PVs for the derived class TomoScanCODED32ID.
 
 Beamline 6-BM
 -------------
