@@ -116,7 +116,7 @@ composite {
 		x=31
 		y=49
 		width=545
-		height=195
+		height=220
 	}
 	"composite name"=""
 	children {
@@ -125,7 +125,7 @@ composite {
 				x=31
 				y=49
 				width=150
-				height=195
+				height=220
 			}
 			"composite name"=""
 			children {
@@ -230,6 +230,19 @@ composite {
 					"basic attribute" {
 						clr=14
 					}
+					textix="ESAF DOI #"
+					align="horiz. right"
+				}
+				text {
+					object {
+						x=81
+						y=249
+						width=100
+						height=20
+					}
+					"basic attribute" {
+						clr=14
+					}
 					textix="User info update"
 					align="horiz. right"
 				}
@@ -240,7 +253,7 @@ composite {
 				x=186
 				y=49
 				width=390
-				height=195
+				height=220
 			}
 			"composite name"=""
 			children {
@@ -360,6 +373,22 @@ composite {
 					object {
 						x=186
 						y=224
+						width=390
+						height=20
+					}
+					control {
+						chan="$(P)$(R)ESAFDOINumber"
+						clr=14
+						bclr=51
+					}
+					format="string"
+					limits {
+					}
+				}
+				"text entry" {
+					object {
+						x=186
+						y=249
 						width=390
 						height=20
 					}
