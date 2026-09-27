@@ -7,7 +7,8 @@
 """
 import time
 import os
-import h5py 
+import h5py
+from pathlib import Path 
 import sys
 import traceback
 import numpy as np
@@ -294,8 +295,11 @@ class TomoScan32IDSTEP(TomoScanSTEP):
         
 
         # Set data directory
-        file_path = self.epics_pvs['DetectorTopDir'].get(as_string=True) + self.epics_pvs['ExperimentYearMonth'].get(as_string=True) + os.path.sep + self.epics_pvs['UserLastName'].get(as_string=True) + os.path.sep
-        self.epics_pvs['FilePath'].put(file_path, wait=True)
+        file_path = Path(self.epics_pvs['DetectorTopDir'].get(as_string=True))
+        file_path = file_path.joinpath(self.epics_pvs['ExperimentYearMonth'].get(as_string=True) + '-'
+                                       + self.epics_pvs['UserLastName'].get(as_string=True) + '-'
+                                       + self.epics_pvs['ProposalNumber'].get(as_string=True))
+        self.epics_pvs['FilePath'].put(str(file_path), wait=True)
 
         # Call the base class method
         super().begin_scan()
