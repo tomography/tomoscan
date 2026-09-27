@@ -1,0 +1,6 @@
+# Use this line to run the locally built tomoScanApp
+../../bin/linux-x86_64/tomoScanApp st.cmd
+
+# Use this line to run the xxx application on /APSshare
+#/APSshare/epics/synApps_6_1/support/xxx-R6-1/bin/linux-x86_64/xxx st.cmd
+

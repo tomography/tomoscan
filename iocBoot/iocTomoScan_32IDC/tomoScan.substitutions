@@ -1,0 +1,27 @@
+file "$(TOP)/db/tomoScan.template"
+{
+pattern
+{  P,       R,       CAMERA,   FILE_PLUGIN,    ROTATION,             SAMPLE_X,     SAMPLE_Y,      CLOSE_SHUTTER,      CLOSE_VALUE,   OPEN_SHUTTER,       OPEN_VALUE}
+{32idc:, TomoScan:, 32idK1:,  32idK1:HDF1:,  32idcSoft:ens:c1:m1,  32idc02:m39,  32idc02:m23,  32idb:rshtrB:Close,        1,       32idb:rshtrB:Open,      1}
+}
+
+# For the Ensemble PSO_ENC_PER_ROTATION is a signed number containing the number of encoder pulses per rotation in positive dial coordinates
+# Read from the controller: GETPARM(X, 2) -> CountsPerUnit = 10000 counts/deg, so 10000 * 360 = 3600000.
+# Positive because .RVAL (-400000) and .DRBV (-40) have the same sign, i.e. encoder counts
+# increase with increasing dial position.  (.DIR is Neg, but that only flips user vs dial.)
+file "$(TOP)/db/tomoScan_PSO.template"
+{
+pattern
+{  P,       R,      PSO_MODEL, PSO_PORT, PSO_AXIS_NAME, PSO_ENC_INPUT, PSO_ENC_PER_ROTATION}
+{32idc:, TomoScan:,     0,     PSO_PORT,       X,             3,            3600000.}
+}
+
+# 32-ID-C has no fast shutter.  Beam is admitted to the C station by the 32-ID-B
+# shutter (32idb:rshtrB:), which is driven by OPEN_SHUTTER/CLOSE_SHUTTER above;
+# the 32-ID-A shutter is left open permanently.
+file "$(TOP)/db/tomoScan_32IDC.template"
+{
+pattern
+{  P,       R,             BEAM_READY,         READY_VALUE,          SHUTTER_STATUS,        PVA_PLUGIN,     ROI_PLUGIN,    CB_PLUGIN,     MCT_OPTICS}
+{32idc:, TomoScan:, SR-ACIS:32ID:FesPermitM,        1,        PA:32ID:STA_C_SBS_OPEN_PL,  32idK1:Pva1:,  32idK1:ROI1:,  32idK1:CB1:,  32id:MCTOptics:}
+}
