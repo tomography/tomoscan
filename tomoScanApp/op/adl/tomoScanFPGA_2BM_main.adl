@@ -1,0 +1,1744 @@
+
+file {
+	name="/home/beams0/2BMB/epics/synApps/support/tomoscan/iocBoot/iocTomoScanFPGA_2BMB/../../tomoScanApp/op/adl/tomoScanFPGA.adl"
+	version=030111
+}
+display {
+	object {
+		x=419
+		y=207
+		width=700
+		height=875
+	}
+	clr=14
+	bclr=4
+	cmap=""
+	gridSpacing=5
+	gridOn=0
+	snapToGrid=0
+}
+"color map" {
+	ncolors=65
+	colors {
+		ffffff,
+		ececec,
+		dadada,
+		c8c8c8,
+		bbbbbb,
+		aeaeae,
+		9e9e9e,
+		919191,
+		858585,
+		787878,
+		696969,
+		5a5a5a,
+		464646,
+		2d2d2d,
+		000000,
+		00d800,
+		1ebb00,
+		339900,
+		2d7f00,
+		216c00,
+		fd0000,
+		de1309,
+		be190b,
+		a01207,
+		820400,
+		5893ff,
+		597ee1,
+		4b6ec7,
+		3a5eab,
+		27548d,
+		fbf34a,
+		f9da3c,
+		eeb62b,
+		e19015,
+		cd6100,
+		ffb0ff,
+		d67fe2,
+		ae4ebc,
+		8b1a96,
+		610a75,
+		a4aaff,
+		8793e2,
+		6a73c1,
+		4d52a4,
+		343386,
+		c7bb6d,
+		b79d5c,
+		a47e3c,
+		7d5627,
+		58340f,
+		99ffff,
+		73dfff,
+		4ea5f9,
+		2a63e4,
+		0a00b8,
+		ebf1b5,
+		d4db9d,
+		bbc187,
+		a6a462,
+		8b8239,
+		73ff6b,
+		52da3b,
+		3cb420,
+		289315,
+		1a7309,
+	}
+}
+rectangle {
+	object {
+		x=0
+		y=10
+		width=700
+		height=25
+	}
+	"basic attribute" {
+		clr=2
+	}
+}
+text {
+	object {
+		x=0
+		y=10
+		width=700
+		height=25
+	}
+	"basic attribute" {
+		clr=54
+	}
+	textix="Tomography Data Collection   $(P)$(R)"
+	align="horiz. centered"
+}
+composite {
+	object {
+		x=-2147483624
+		y=-2147483604
+		width=1
+		height=1
+	}
+	"composite name"=""
+	children {
+	}
+}
+composite {
+	object {
+		x=-2147483624
+		y=-2147483604
+		width=1
+		height=1
+	}
+	"composite name"=""
+	children {
+	}
+}
+"related display" {
+	object {
+		x=508
+		y=90
+		width=100
+		height=20
+	}
+	display[0] {
+		label="Beamline-specific display"
+		name="$(BEAMLINE).adl"
+		args="P=$(P), R=$(R), BEAMLINE=$(BEAMLINE)"
+	}
+	clr=14
+	bclr=51
+}
+"related display" {
+	object {
+		x=160
+		y=90
+		width=50
+		height=20
+	}
+	display[0] {
+		label="Epics PV Names"
+		name="tomoScanFPGAEPICS_PVs.adl"
+		args="P=$(P), R=$(R)"
+	}
+	clr=14
+	bclr=51
+}
+text {
+	object {
+		x=15
+		y=92
+		width=140
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Epics PV names"
+}
+text {
+	object {
+		x=253
+		y=91
+		width=250
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Beamline-specific display"
+}
+rectangle {
+	object {
+		x=5
+		y=50
+		width=690
+		height=65
+	}
+	"basic attribute" {
+		clr=14
+		fill="outline"
+	}
+}
+rectangle {
+	object {
+		x=290
+		y=53
+		width=120
+		height=20
+	}
+	"basic attribute" {
+		clr=2
+	}
+}
+text {
+	object {
+		x=325
+		y=55
+		width=50
+		height=20
+	}
+	"basic attribute" {
+		clr=54
+	}
+	textix="Setup"
+	align="horiz. centered"
+}
+rectangle {
+	object {
+		x=5
+		y=245
+		width=690
+		height=145
+	}
+	"basic attribute" {
+		clr=14
+		fill="outline"
+	}
+}
+menu {
+	object {
+		x=170
+		y=365
+		width=100
+		height=20
+	}
+	control {
+		chan="$(P)$(R)FlatFieldAxis"
+		clr=14
+		bclr=51
+	}
+}
+text {
+	object {
+		x=15
+		y=365
+		width=150
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Flat field axis"
+}
+"text entry" {
+	object {
+		x=145
+		y=340
+		width=70
+		height=20
+	}
+	control {
+		chan="$(P)$(R)NumFlatFields"
+		clr=14
+		bclr=51
+	}
+	limits {
+	}
+}
+text {
+	object {
+		x=10
+		y=340
+		width=130
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="# Flat fields"
+	align="horiz. right"
+}
+rectangle {
+	object {
+		x=220
+		y=250
+		width=260
+		height=20
+	}
+	"basic attribute" {
+		clr=2
+	}
+}
+text {
+	object {
+		x=260
+		y=250
+		width=180
+		height=20
+	}
+	"basic attribute" {
+		clr=54
+	}
+	textix="Flat Field Control"
+	align="horiz. centered"
+}
+rectangle {
+	object {
+		x=5
+		y=395
+		width=690
+		height=70
+	}
+	"basic attribute" {
+		clr=14
+		fill="outline"
+	}
+}
+rectangle {
+	object {
+		x=220
+		y=400
+		width=260
+		height=20
+	}
+	"basic attribute" {
+		clr=2
+	}
+}
+text {
+	object {
+		x=260
+		y=400
+		width=180
+		height=20
+	}
+	"basic attribute" {
+		clr=54
+	}
+	textix="Dark Field Control"
+	align="horiz. centered"
+}
+rectangle {
+	object {
+		x=5
+		y=470
+		width=690
+		height=130
+	}
+	"basic attribute" {
+		clr=14
+		fill="outline"
+	}
+}
+rectangle {
+	object {
+		x=250
+		y=475
+		width=200
+		height=20
+	}
+	"basic attribute" {
+		clr=2
+	}
+}
+text {
+	object {
+		x=290
+		y=475
+		width=120
+		height=20
+	}
+	"basic attribute" {
+		clr=54
+	}
+	textix="File Control"
+	align="horiz. centered"
+}
+text {
+	object {
+		x=10
+		y=435
+		width=130
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="# Dark fields"
+}
+"text entry" {
+	object {
+		x=145
+		y=435
+		width=70
+		height=20
+	}
+	control {
+		chan="$(P)$(R)NumDarkFields"
+		clr=14
+		bclr=51
+	}
+	limits {
+	}
+}
+text {
+	object {
+		x=225
+		y=435
+		width=100
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Dark value"
+}
+"text entry" {
+	object {
+		x=330
+		y=435
+		width=70
+		height=20
+	}
+	control {
+		chan="$(P)$(R)DarkFieldValue"
+		clr=14
+		bclr=51
+	}
+	limits {
+	}
+}
+text {
+	object {
+		x=415
+		y=342
+		width=190
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Collect flat fields"
+	align="horiz. right"
+}
+menu {
+	object {
+		x=610
+		y=342
+		width=80
+		height=20
+	}
+	control {
+		chan="$(P)$(R)FlatFieldMode"
+		clr=14
+		bclr=51
+	}
+}
+text {
+	object {
+		x=415
+		y=435
+		width=190
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Collect dark fields"
+}
+menu {
+	object {
+		x=610
+		y=435
+		width=80
+		height=20
+	}
+	control {
+		chan="$(P)$(R)DarkFieldMode"
+		clr=14
+		bclr=51
+	}
+}
+rectangle {
+	object {
+		x=5
+		y=605
+		width=690
+		height=70
+	}
+	"basic attribute" {
+		clr=14
+		fill="outline"
+	}
+}
+rectangle {
+	object {
+		x=250
+		y=611
+		width=200
+		height=20
+	}
+	"basic attribute" {
+		clr=2
+	}
+}
+text {
+	object {
+		x=275
+		y=611
+		width=150
+		height=20
+	}
+	"basic attribute" {
+		clr=54
+	}
+	textix="Data Collection"
+	align="horiz. centered"
+}
+rectangle {
+	object {
+		x=305
+		y=685
+		width=90
+		height=20
+	}
+	"basic attribute" {
+		clr=2
+	}
+}
+text {
+	object {
+		x=314
+		y=685
+		width=72
+		height=20
+	}
+	"basic attribute" {
+		clr=54
+	}
+	textix="Status"
+	align="horiz. centered"
+}
+"message button" {
+	object {
+		x=250
+		y=645
+		width=120
+		height=20
+	}
+	control {
+		chan="$(P)$(R)StartScan"
+		clr=14
+		bclr=15
+	}
+	label="Start Scan"
+	press_msg="1"
+}
+"message button" {
+	object {
+		x=375
+		y=645
+		width=120
+		height=20
+	}
+	control {
+		chan="$(P)$(R)AbortScan"
+		clr=14
+		bclr=20
+	}
+	label="Abort Scan"
+	press_msg="1"
+	release_msg="0"
+}
+text {
+	object {
+		x=15
+		y=645
+		width=130
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Exposure time"
+}
+"text entry" {
+	object {
+		x=150
+		y=645
+		width=70
+		height=20
+	}
+	control {
+		chan="$(P)$(R)ExposureTime"
+		clr=14
+		bclr=51
+	}
+	limits {
+	}
+}
+rectangle {
+	object {
+		x=5
+		y=680
+		width=690
+		height=190
+	}
+	"basic attribute" {
+		clr=14
+		fill="outline"
+	}
+}
+"text update" {
+	object {
+		x=580
+		y=645
+		width=100
+		height=20
+	}
+	monitor {
+		chan="$(P)$(R)StartScan"
+		clr=14
+		bclr=2
+	}
+	clrmod="alarm"
+	format="string"
+	limits {
+	}
+}
+text {
+	object {
+		x=515
+		y=645
+		width=60
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Status"
+}
+text {
+	object {
+		x=65
+		y=840
+		width=130
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Python server"
+}
+text {
+	object {
+		x=85
+		y=715
+		width=110
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Scan status"
+}
+"text update" {
+	object {
+		x=201
+		y=715
+		width=400
+		height=20
+	}
+	monitor {
+		chan="$(P)$(R)ScanStatus"
+		clr=14
+		bclr=51
+	}
+	format="string"
+	limits {
+	}
+}
+text {
+	object {
+		x=55
+		y=815
+		width=140
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Remaining time"
+}
+text {
+	object {
+		x=75
+		y=790
+		width=120
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Elapsed time"
+}
+"text update" {
+	object {
+		x=201
+		y=790
+		width=100
+		height=20
+	}
+	monitor {
+		chan="$(P)$(R)ElapsedTime"
+		clr=14
+		bclr=51
+	}
+	format="string"
+	limits {
+	}
+}
+"text update" {
+	object {
+		x=200
+		y=815
+		width=100
+		height=20
+	}
+	monitor {
+		chan="$(P)$(R)RemainingTime"
+		clr=14
+		bclr=51
+	}
+	format="string"
+	limits {
+	}
+}
+text {
+	object {
+		x=35
+		y=740
+		width=160
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Images collected"
+}
+"text update" {
+	object {
+		x=201
+		y=740
+		width=100
+		height=20
+	}
+	monitor {
+		chan="$(P)$(R)ImagesCollected"
+		clr=14
+		bclr=51
+	}
+	format="string"
+	limits {
+	}
+}
+text {
+	object {
+		x=75
+		y=765
+		width=120
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Images saved"
+}
+"text update" {
+	object {
+		x=201
+		y=765
+		width=100
+		height=20
+	}
+	monitor {
+		chan="$(P)$(R)ImagesSaved"
+		clr=14
+		bclr=51
+	}
+	format="string"
+	limits {
+	}
+}
+"text update" {
+	object {
+		x=199
+		y=840
+		width=100
+		height=20
+	}
+	monitor {
+		chan="$(P)$(R)ServerRunning"
+		clr=14
+		bclr=2
+	}
+	clrmod="alarm"
+	format="string"
+	limits {
+	}
+}
+text {
+	object {
+		x=15
+		y=525
+		width=140
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="File directory"
+}
+"text entry" {
+	object {
+		x=160
+		y=525
+		width=530
+		height=20
+	}
+	control {
+		chan="$(P)$(R)FilePath"
+		clr=14
+		bclr=51
+	}
+	format="string"
+	limits {
+	}
+}
+text {
+	object {
+		x=15
+		y=550
+		width=140
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Base file name"
+}
+"text entry" {
+	object {
+		x=160
+		y=550
+		width=530
+		height=20
+	}
+	control {
+		chan="$(P)$(R)FileName"
+		clr=14
+		bclr=51
+	}
+	format="string"
+	limits {
+	}
+}
+text {
+	object {
+		x=570
+		y=500
+		width=70
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Exists:"
+}
+"text update" {
+	object {
+		x=645
+		y=500
+		width=40
+		height=20
+	}
+	monitor {
+		chan="$(P)$(R)FilePathExists"
+		clr=14
+		bclr=2
+	}
+	clrmod="alarm"
+	format="string"
+	limits {
+	}
+}
+text {
+	object {
+		x=15
+		y=500
+		width=180
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Overwrite warning:"
+}
+menu {
+	object {
+		x=200
+		y=500
+		width=80
+		height=20
+	}
+	control {
+		chan="$(P)$(R)OverwriteWarning"
+		clr=14
+		bclr=51
+	}
+}
+"message button" {
+	object {
+		x=565
+		y=285
+		width=120
+		height=20
+	}
+	control {
+		chan="$(P)$(R)MoveSampleIn"
+		clr=14
+		bclr=51
+	}
+	label="Move Sample In"
+	press_msg="1"
+}
+"message button" {
+	object {
+		x=565
+		y=310
+		width=120
+		height=20
+	}
+	control {
+		chan="$(P)$(R)MoveSampleOut"
+		clr=14
+		bclr=51
+	}
+	label="Move Sample Out"
+	press_msg="1"
+}
+text {
+	object {
+		x=350
+		y=365
+		width=130
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Flat exposure"
+	align="horiz. right"
+}
+menu {
+	object {
+		x=485
+		y=365
+		width=100
+		height=20
+	}
+	control {
+		chan="$(P)$(R)DifferentFlatExposure"
+		clr=14
+		bclr=51
+	}
+}
+"text update" {
+	object {
+		x=609
+		y=190
+		width=80
+		height=20
+	}
+	monitor {
+		chan="$(P)$(R)InterlacedNumberOfRotation"
+		clr=14
+		bclr=51
+	}
+	limits {
+	}
+}
+text {
+	object {
+		x=25
+		y=285
+		width=130
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="X in "
+}
+"text entry" {
+	object {
+		x=73
+		y=285
+		width=100
+		height=20
+	}
+	control {
+		chan="$(P)$(R)SampleInX"
+		clr=14
+		bclr=51
+	}
+	limits {
+	}
+}
+"text entry" {
+	object {
+		x=73
+		y=310
+		width=100
+		height=20
+	}
+	control {
+		chan="$(P)$(R)SampleOutX"
+		clr=14
+		bclr=51
+	}
+	limits {
+	}
+}
+text {
+	object {
+		x=15
+		y=310
+		width=140
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="X out"
+}
+text {
+	object {
+		x=183
+		y=310
+		width=140
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Y out "
+}
+"text entry" {
+	object {
+		x=245
+		y=310
+		width=100
+		height=20
+	}
+	control {
+		chan="$(P)$(R)SampleOutY"
+		clr=14
+		bclr=51
+	}
+	limits {
+	}
+}
+"text entry" {
+	object {
+		x=245
+		y=285
+		width=100
+		height=20
+	}
+	control {
+		chan="$(P)$(R)SampleInY"
+		clr=14
+		bclr=51
+	}
+	limits {
+	}
+}
+text {
+	object {
+		x=193
+		y=285
+		width=130
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Y in"
+}
+text {
+	object {
+		x=396
+		y=309
+		width=140
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Angle"
+}
+"text entry" {
+	object {
+		x=458
+		y=309
+		width=100
+		height=20
+	}
+	control {
+		chan="$(P)$(R)SampleOutAngle"
+		clr=14
+		bclr=51
+	}
+	limits {
+	}
+}
+text {
+	object {
+		x=356
+		y=285
+		width=140
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Use angle"
+}
+menu {
+	object {
+		x=458
+		y=285
+		width=100
+		height=20
+	}
+	control {
+		chan="$(P)$(R)SampleOutAngleEnable"
+		clr=14
+		bclr=51
+	}
+}
+"text entry" {
+	object {
+		x=330
+		y=340
+		width=70
+		height=20
+	}
+	control {
+		chan="$(P)$(R)FlatFieldValue"
+		clr=14
+		bclr=51
+	}
+	limits {
+	}
+}
+text {
+	object {
+		x=225
+		y=340
+		width=100
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Flat value"
+}
+text {
+	object {
+		x=15
+		y=575
+		width=140
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Last file name"
+}
+"text update" {
+	object {
+		x=160
+		y=578
+		width=530
+		height=15
+	}
+	monitor {
+		chan="$(P)$(R)FullFileName"
+		clr=14
+		bclr=51
+	}
+	format="string"
+	limits {
+	}
+}
+menu {
+	object {
+		x=53
+		y=125
+		width=120
+		height=20
+	}
+	control {
+		chan="$(P)$(R)InterlacedMode"
+		clr=14
+		bclr=51
+	}
+}
+text {
+	object {
+		x=10
+		y=125
+		width=40
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Type"
+}
+rectangle {
+	object {
+		x=5
+		y=120
+		width=690
+		height=120
+	}
+	"basic attribute" {
+		clr=14
+		fill="outline"
+	}
+}
+rectangle {
+	object {
+		x=176
+		y=125
+		width=260
+		height=20
+	}
+	"basic attribute" {
+		clr=2
+	}
+}
+text {
+	object {
+		x=259
+		y=124
+		width=80
+		height=20
+	}
+	"basic attribute" {
+		clr=54
+	}
+	textix="Interlaced Rotation"
+	align="horiz. centered"
+}
+text {
+	object {
+		x=370
+		y=745
+		width=160
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Mode"
+	align="horiz. right"
+}
+"choice button" {
+	object {
+		x=535
+		y=745
+		width=100
+		height=20
+	}
+	control {
+		chan="$(P)$(R)TriggerSource.VAL"
+		clr=14
+		bclr=51
+	}
+	stacking="column"
+}
+text {
+	object {
+		x=563
+		y=215
+		width=60
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Dropped frms"
+	align="horiz. right"
+}
+"text update" {
+	object {
+		x=625
+		y=217
+		width=55
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)DroppedFrames"
+		clr=14
+		bclr=51
+	}
+	limits {
+	}
+}
+"text update" {
+	object {
+		x=356
+		y=190
+		width=100
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)InterlacedRotationStop"
+		clr=14
+		bclr=51
+	}
+	limits {
+	}
+}
+text {
+	object {
+		x=252
+		y=190
+		width=100
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Stop angle"
+}
+composite {
+	object {
+		x=39
+		y=190
+		width=202
+		height=20
+	}
+	"composite name"=""
+	children {
+		"text entry" {
+			object {
+				x=141
+				y=190
+				width=100
+				height=20
+			}
+			control {
+				chan="$(P)$(R)InterlacedScanTime"
+				clr=14
+				bclr=51
+			}
+			limits {
+			}
+		}
+		text {
+			object {
+				x=39
+				y=190
+				width=100
+				height=20
+			}
+			"basic attribute" {
+				clr=14
+			}
+			textix="Scan Time (s)"
+			align="horiz. right"
+		}
+	}
+}
+text {
+	object {
+		x=246
+		y=165
+		width=110
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Angles/rot"
+	align="horiz. right"
+}
+"text entry" {
+	object {
+		x=357
+		y=165
+		width=100
+		height=20
+	}
+	control {
+		chan="$(P)$(R)InterlacedNumAngles"
+		clr=14
+		bclr=51
+	}
+	limits {
+	}
+}
+"related display" {
+	object {
+		x=539
+		y=190
+		width=60
+		height=20
+	}
+	display[0] {
+		label="Select K"
+		name="select_pow2_K.adl"
+		args="P=$(P),R=$(R)"
+	}
+	clr=14
+	bclr=51
+	label="Pick"
+}
+text {
+	object {
+		x=456
+		y=190
+		width=80
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="# of rot"
+	align="horiz. right"
+}
+composite {
+	object {
+		x=26
+		y=165
+		width=215
+		height=20
+	}
+	"composite name"=""
+	children {
+		"text entry" {
+			object {
+				x=141
+				y=165
+				width=100
+				height=20
+			}
+			control {
+				chan="$(P)$(R)InterlacedRotationStart"
+				clr=14
+				bclr=51
+			}
+			limits {
+			}
+		}
+		text {
+			object {
+				x=26
+				y=165
+				width=110
+				height=20
+			}
+			"basic attribute" {
+				clr=14
+			}
+			textix="Start angle"
+		}
+	}
+}
+"text update" {
+	object {
+		x=620
+		y=145
+		width=50
+		height=20
+	}
+	monitor {
+		chan="$(P)$(R)InterlacedEfficiencyCalculated"
+		clr=14
+		bclr=51
+	}
+	limits {
+	}
+}
+text {
+	object {
+		x=544
+		y=145
+		width=70
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Calc."
+}
+text {
+	object {
+		x=543
+		y=165
+		width=70
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Request"
+}
+text {
+	object {
+		x=471
+		y=155
+		width=70
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Effic."
+	align="horiz. right"
+}
+text {
+	object {
+		x=679
+		y=147
+		width=10
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="%"
+}
+text {
+	object {
+		x=679
+		y=167
+		width=10
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="%"
+}
+"text entry" {
+	object {
+		x=620
+		y=165
+		width=50
+		height=20
+	}
+	control {
+		chan="$(P)$(R)InterlacedEfficiencyRequested"
+		clr=14
+		bclr=51
+	}
+	limits {
+	}
+}
+text {
+	object {
+		x=267
+		y=215
+		width=140
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Motion Blurr"
+	align="horiz. right"
+}
+"text update" {
+	object {
+		x=415
+		y=215
+		width=50
+		height=20
+	}
+	monitor {
+		chan="$(P)$(R)MotionBlurr"
+		clr=14
+		bclr=51
+	}
+	limits {
+	}
+}
+text {
+	object {
+		x=475
+		y=215
+		width=15
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="px"
+}
+"text update" {
+	object {
+		x=535
+		y=770
+		width=100
+		height=18
+	}
+	monitor {
+		chan="2bmbMZ1:SG:UpCntr-1_COUNTS"
+		clr=14
+		bclr=51
+	}
+	limits {
+	}
+}
+"text update" {
+	object {
+		x=535
+		y=795
+		width=100
+		height=18
+	}
+	monitor {
+		chan="2bmbMZ1:SG:UpCntr-2_COUNTS"
+		clr=14
+		bclr=51
+	}
+	limits {
+	}
+}
+text {
+	object {
+		x=370
+		y=770
+		width=160
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="PSO pulses"
+	align="horiz. right"
+}
+text {
+	object {
+		x=370
+		y=793
+		width=160
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="FPGA pulses"
+	align="horiz. right"
+}
+text {
+	object {
+		x=10
+		y=215
+		width=140
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Rotation Speed"
+	align="horiz. right"
+}
+"text update" {
+	object {
+		x=158
+		y=215
+		width=50
+		height=20
+	}
+	monitor {
+		chan="2bmb:m102.VELO"
+		clr=14
+		bclr=51
+	}
+	limits {
+	}
+}
+text {
+	object {
+		x=211
+		y=215
+		width=140
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="deg/s"
+}
+text {
+	object {
+		x=438
+		y=125
+		width=150
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Return to start"
+}
+menu {
+	object {
+		x=601
+		y=125
+		width=80
+		height=20
+	}
+	control {
+		chan="$(P)$(R)ReturnRotation"
+		clr=14
+		bclr=51
+	}
+}
