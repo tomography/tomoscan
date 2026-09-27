@@ -18,7 +18,7 @@ file "$(TOP)/db/tomoScan_32ID.template"
 {
 pattern
 {  P,      R,              BEAM_READY,    READY_VALUE,  CLOSE_FAST_SHUTTER,             CLOSE_FAST_VALUE,  OPEN_FAST_SHUTTER,              OPEN_FAST_VALUE,    SHUTTER_STATUS,             SAMPLE_TOP_X,          SAMPLE_TOP_Z,          KOHZUMODE,            USENERGY,          USBUSY,      BRAGG,            TXM_OPTICS,      IMAGE    }
-{32id:, TomoScanFPGA:, ACIS:ShutterPermit,    1,     32idbTXM:uniblitz:control,               0,          32idbTXM:uniblitz:control,              1,          PA:32ID:STA_B_SBS_OPEN_PL, 32idbTXM:mcs:c2:m1, 32idbTXM:mcs:c2:m2,  32ida:KohzuModeBO,  32id:ID32us_energy,  ID32us:Busy, 32ida:BraggEAO, 32id:TXMOptics:, 32idbSP1:Pva1:  }
+{32id:, TomoScanFPGA:, SR-ACIS:32ID:FesPermitM,    1,     32idbTXM:uniblitz:control,               0,          32idbTXM:uniblitz:control,              1,          PA:32ID:STA_B_SBS_OPEN_PL, 32idbTXM:mcs:c2:m1, 32idbTXM:mcs:c2:m2,  32ida:KohzuModeBO,  32id:ID32us_energy,  ID32us:Busy, 32ida:BraggEAO, 32id:TXMOptics:, 32idbSP1:Pva1:  }
 }
 
 file "$(TOP)/db/tomoScan_FPGA.template"
