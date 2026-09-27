@@ -1,0 +1,12 @@
+# Database for EPICS PVs for tomography data collection software using the softGlueZynq EPICS-based
+# FPGA I/O module. CODED aperture variant: exposes the FPGA hardware prefix so the
+# TomoScanCODED32ID Python class can discover it.
+
+#############
+# FPGA Prefix
+#############
+
+record(stringout, "$(P)$(R)FPGAPVPrefix")
+{
+   field(VAL,  "$(FPGA)")
+}
