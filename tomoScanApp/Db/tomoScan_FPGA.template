@@ -49,7 +49,7 @@ record(ao, "$(P)$(R)InterlacedMinStep")
    field(PREC,  "3")
 }
 
-record(ao, "$(P)$(R)InterlacedPSOWindowStep")
+record(ao, "$(P)$(R)PSOSlotStep")
 {
    field(PREC,  "3")
 }
@@ -91,4 +91,17 @@ record(ao, "$(P)$(R)InterlacedEfficiencyRequested")
 record(ao, "$(P)$(R)InterlacedEfficiencyCalculated")
 {
    field(PREC,  "0")
+}
+
+record(ao, "$(P)$(R)MotionBlurr")
+{
+   field(DESC, "Motion blurr")
+   field(PREC, "2")
+   field(EGU,  "pixels")
+}
+
+record(ao, "$(P)$(R)DroppedFrames")
+{
+   field(DESC, "Dropped frames (preview)")
+   field(PREC, "0")
 }

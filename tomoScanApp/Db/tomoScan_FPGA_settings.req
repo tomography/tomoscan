@@ -16,9 +16,11 @@ $(P)$(R)InterlacedRotationStart
 $(P)$(R)InterlacedNumberOfRotation
 $(P)$(R)InterlacedNumAngles
 $(P)$(R)InterlacedMinStep
-$(P)$(R)InterlacedPSOWindowStep
+$(P)$(R)PSOSlotStep
 $(P)$(R)InterlacedScanTime
 $(P)$(R)InterlacedRotationStop
 $(P)$(R)InterlacedMode
 $(P)$(R)InterlacedEfficiencyRequested
 $(P)$(R)InterlacedEfficiencyCalculated
+$(P)$(R)MotionBlurr
+$(P)$(R)DroppedFrames
